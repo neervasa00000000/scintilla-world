@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WH21SW75WP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-WH21SW75WP');
+</script>
+
+<meta charset="utf-8" />
+<title>Meeting Cost Tracker — NutriThrive</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Track meeting costs in real-time. Premium, elegant, and powerful.">
+<link rel="icon" type="image/png" href="https://i.imgur.com/bZubhoR.png">
+<link rel="apple-touch-icon" href="https://i.imgur.com/bZubhoR.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --cream: #F5EFE6;
+    --tan: #E8DFCA;
+    --blue: #6D94C5;
+    --light-blue: #CBDCEB;
+    --dark-blue: #5a7fb0;
+    --text: #1a1a1a;
+    --text-light: #6b7280;
+    --success: #10b981;
+    --danger: #ef4444;
+    --white: #ffffff;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    padding: 0;
+    color: var(--text);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .app-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 48px 32px;
+  }
+
+  /* Premium Header */
+  .header-section {
+    background: var(--white);
+    border: 1px solid var(--tan);
+    border-radius: 24px;
+    padding: 40px 48px;
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .header-content h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--blue);
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .header-content .subtitle {
+    color: var(--text-light);
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  /* Main Layout */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 1024px) {
+    .main-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Column */
+  .left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Premium Cost Display */
+  .cost-display-card {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--dark-blue) 100%);
+    border: none;
+    border-radius: 28px;
+    padding: 56px 48px;
+    text-align: center;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cost-display-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .cost-display-card.running {
+    animation: gentle-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes gentle-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.98; }
+  }
+
+  .cost-label-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cost-amount-large {
+    font-size: 5.5rem;
+    font-weight: 900;
+    margin-bottom: 16px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -3px;
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .time-display-large {
+    font-size: 2rem;
+    font-weight: 600;
+    opacity: 0.95;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Premium Cards */
+  .premium-card {
+    background: var(--white);
+    border: 1px solid var(--tan);
+    border-radius: 24px;
+    padding: 40px;
+  }
+
+  .card-header {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 28px;
+    letter-spacing: -0.2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Input Fields */
+  .input-row-premium {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 640px) {
+    .input-row-premium {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .input-field-premium {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .input-field-premium label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.3px;
+  }
+
+  .input-field-premium input {
+    padding: 16px 20px;
+    border: 1.5px solid var(--tan);
+    border-radius: 14px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    background: var(--white);
+    color: var(--text);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+  }
+
+  .input-field-premium input:focus {
+    outline: none;
+    border-color: var(--blue);
+    background: var(--white);
+  }
+
+  .input-field-premium input::placeholder {
+    color: var(--text-light);
+    opacity: 0.5;
+  }
+
+  /* Rate Grid Premium */
+  .rate-grid-premium {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  @media (max-width: 968px) {
+    .rate-grid-premium {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .rate-grid-premium {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .rate-card-premium {
+    background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
+    border: 1.5px solid var(--tan);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .rate-card-premium:focus-within {
+    border-color: var(--blue);
+    background: var(--white);
+  }
+
+  .rate-label-premium {
+    font-size: 0.8125rem;
+    color: var(--text-light);
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .rate-card-premium input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--blue);
+    text-align: center;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  .rate-card-premium input:focus {
+    outline: none;
+  }
+
+  /* Premium Buttons */
+  .button-grid-premium {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 968px) {
+    .button-grid-premium {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .button-grid-premium {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .btn-premium {
+    padding: 18px 24px;
+    border: none;
+    border-radius: 14px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: 0.2px;
+    font-family: inherit;
+  }
+
+  .btn-premium:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-success {
+    background: var(--success);
+    color: var(--white);
+  }
+
+  .btn-success:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  .btn-danger-premium {
+    background: var(--danger);
+    color: var(--white);
+  }
+
+  .btn-danger-premium:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  .btn-primary-premium {
+    background: var(--blue);
+    color: var(--white);
+  }
+
+  .btn-primary-premium:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  .btn-secondary-premium {
+    background: var(--tan);
+    color: var(--text);
+  }
+
+  .btn-secondary-premium:hover:not(:disabled) {
+    background: var(--light-blue);
+  }
+
+  .btn-outline-premium {
+    background: var(--white);
+    color: var(--blue);
+    border: 1.5px solid var(--blue);
+  }
+
+  .btn-outline-premium:hover {
+    background: var(--blue);
+    color: var(--white);
+  }
+
+  /* Right Column */
+  .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Premium Stats */
+  .stats-card-premium {
+    background: var(--white);
+    border: 1px solid var(--tan);
+    border-radius: 24px;
+    padding: 40px;
+  }
+
+  .stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .stat-item-premium {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
+    border-radius: 16px;
+    border: 1px solid var(--tan);
+    transition: all 0.2s;
+  }
+
+  .stat-item-premium:hover {
+    border-color: var(--blue);
+  }
+
+  .stat-label-premium {
+    font-size: 0.9375rem;
+    color: var(--text-light);
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+
+  .stat-value-premium {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--blue);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+  }
+
+  /* Premium History */
+  .history-card-premium {
+    background: var(--white);
+    border: 1px solid var(--tan);
+    border-radius: 24px;
+    padding: 40px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+  }
+
+  .history-list-premium {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 24px;
+    padding-right: 8px;
+  }
+
+  .history-list-premium::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .history-list-premium::-webkit-scrollbar-track {
+    background: var(--cream);
+    border-radius: 3px;
+  }
+
+  .history-list-premium::-webkit-scrollbar-thumb {
+    background: var(--blue);
+    border-radius: 3px;
+  }
+
+  .history-item-premium {
+    background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
+    border: 1px solid var(--tan);
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+  }
+
+  .history-item-premium:hover {
+    border-color: var(--blue);
+  }
+
+  .history-info-premium {
+    flex: 1;
+  }
+
+  .history-cost-premium {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--blue);
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .history-meta-premium {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+
+  .history-delete-premium {
+    background: var(--danger);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+  }
+
+  .history-delete-premium:hover {
+    opacity: 0.9;
+  }
+
+  .empty-history-premium {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-light);
+  }
+
+  .empty-icon-premium {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  .empty-text-premium {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+
+  /* Premium Modal */
+  .modal-premium {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 24px;
+  }
+
+  .modal-premium.active {
+    display: flex;
+  }
+
+  .modal-box-premium {
+    background: var(--white);
+    border: 1px solid var(--tan);
+    border-radius: 28px;
+    padding: 48px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-title-premium {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--blue);
+    margin-bottom: 36px;
+    letter-spacing: -0.5px;
+  }
+
+  .modal-field-premium {
+    margin-bottom: 28px;
+  }
+
+  .modal-field-premium label {
+    display: block;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+    font-size: 0.9375rem;
+    letter-spacing: 0.2px;
+  }
+
+  .modal-field-premium input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 1.5px solid var(--tan);
+    border-radius: 14px;
+    font-size: 1rem;
+    background: var(--white);
+    color: var(--text);
+    font-family: inherit;
+    transition: all 0.25s;
+  }
+
+  .modal-field-premium input:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+
+  .checkbox-field-premium {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
+    border-radius: 16px;
+    border: 1px solid var(--tan);
+  }
+
+  .checkbox-field-premium input {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: var(--blue);
+  }
+
+  .checkbox-field-premium label {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    font-size: 0.9375rem;
+    letter-spacing: 0.2px;
+  }
+
+  .modal-buttons-premium {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 36px;
+  }
+
+  @media (max-width: 640px) {
+    .app-wrapper {
+      padding: 24px 16px;
+    }
+
+    .header-section {
+      padding: 32px 24px;
+    }
+
+    .header-content h1 {
+      font-size: 2rem;
+    }
+
+    .cost-amount-large {
+      font-size: 4rem;
+    }
+
+    .time-display-large {
+      font-size: 1.5rem;
+    }
+
+    .premium-card {
+      padding: 32px 24px;
+    }
+
+    .button-grid-premium {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+
+<body>
+  <div class="app-wrapper">
+    <!-- Premium Header -->
+    <div class="header-section">
+      <div class="header-content">
+        <h1>Meeting Cost Tracker</h1>
+        <div class="subtitle">Track meeting expenses with precision and elegance</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-premium btn-outline-premium" id="exportBtn">📤 Export</button>
+        <button class="btn-premium btn-outline-premium" id="settingsBtn">⚙️ Settings</button>
+      </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Cost Display -->
+        <div class="cost-display-card" id="display">
+          <div class="cost-label-text">Current Meeting Cost</div>
+          <div class="cost-amount-large" id="costDisplay">$0.00</div>
+          <div class="time-display-large" id="timeDisplay">00:00:00</div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="premium-card">
+          <div class="card-header">⚙️ Meeting Details</div>
+          <div class="input-row-premium">
+            <div class="input-field-premium">
+              <label for="attendees">Attendees</label>
+              <input type="number" id="attendees" min="1" value="5" />
+            </div>
+            <div class="input-field-premium">
+              <label for="hourly">Hourly Rate</label>
+              <input type="number" id="hourly" step="0.01" min="0" value="50" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Rate Cards -->
+        <div class="premium-card">
+          <div class="card-header">📊 Rate Conversion</div>
+          <div class="rate-grid-premium">
+            <div class="rate-card-premium">
+              <div class="rate-label-premium">Hourly</div>
+              <input type="number" id="hourlyCard" step="0.01" min="0" value="50" />
+            </div>
+            <div class="rate-card-premium">
+              <div class="rate-label-premium">Daily</div>
+              <input type="number" id="daily" step="0.01" min="0" value="400" />
+            </div>
+            <div class="rate-card-premium">
+              <div class="rate-label-premium">Weekly</div>
+              <input type="number" id="weekly" step="0.01" min="0" value="2000" />
+            </div>
+            <div class="rate-card-premium">
+              <div class="rate-label-premium">Monthly</div>
+              <input type="number" id="monthly" step="0.01" min="0" value="8666.67" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="premium-card">
+          <div class="card-header">🎮 Controls</div>
+          <div class="button-grid-premium">
+            <button class="btn-premium btn-success" id="startBtn">▶️ Start</button>
+            <button class="btn-premium btn-danger-premium" id="stopBtn" disabled>⏸️ Stop</button>
+            <button class="btn-premium btn-primary-premium" id="saveBtn">💾 Save</button>
+            <button class="btn-premium btn-secondary-premium" id="resetBtn">🔄 Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Stats Card -->
+        <div class="stats-card-premium">
+          <div class="card-header">📈 Statistics</div>
+          <div class="stats-list">
+            <div class="stat-item-premium">
+              <span class="stat-label-premium">Today's Total</span>
+              <span class="stat-value-premium" id="dailyCost">$0.00</span>
+            </div>
+            <div class="stat-item-premium">
+              <span class="stat-label-premium">Meetings</span>
+              <span class="stat-value-premium" id="meetCount">0</span>
+            </div>
+            <div class="stat-item-premium">
+              <span class="stat-label-premium">This Month</span>
+              <span class="stat-value-premium" id="monthCost">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Card -->
+        <div class="history-card-premium">
+          <div class="card-header">📋 History</div>
+          <div id="entriesList" class="history-list-premium"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Premium Modal -->
+  <div class="modal-premium" id="modal">
+    <div class="modal-box-premium">
+      <div class="modal-title-premium">⚙️ Settings</div>
+      
+      <div class="modal-field-premium">
+        <label>Hours per day</label>
+        <input type="number" id="cfgHoursPerDay" step="0.1" min="0" value="8" />
+      </div>
+
+      <div class="modal-field-premium">
+        <label>Days per week</label>
+        <input type="number" id="cfgDaysPerWeek" step="0.1" min="0" value="5" />
+      </div>
+
+      <div class="modal-field-premium">
+        <label>Weeks per month</label>
+        <input type="number" id="cfgWeeksPerMonth" step="0.01" min="0" value="4.33333" />
+      </div>
+
+      <div class="checkbox-field-premium">
+        <input type="checkbox" id="cfgAutoSave" />
+        <label for="cfgAutoSave">Auto-save when stopping</label>
+      </div>
+
+      <div class="modal-buttons-premium">
+        <button class="btn-premium btn-secondary-premium" id="modalCancel">Cancel</button>
+        <button class="btn-premium btn-success" id="modalSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const KEY_PREFIX = 'nutri_meet_tracker_';
+const CFG_KEY = 'nutri_meet_cfg_v1';
+
+const hourlyInput = document.getElementById('hourly');
+const hourlyCardInput = document.getElementById('hourlyCard');
+const dailyInput = document.getElementById('daily');
+const weeklyInput = document.getElementById('weekly');
+const monthlyInput = document.getElementById('monthly');
+const attendeesInput = document.getElementById('attendees');
+const costDisplay = document.getElementById('costDisplay');
+const timeDisplay = document.getElementById('timeDisplay');
+const display = document.getElementById('display');
+const entriesList = document.getElementById('entriesList');
+const dailyCostEl = document.getElementById('dailyCost');
+const meetCount = document.getElementById('meetCount');
+const monthCostEl = document.getElementById('monthCost');
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const saveBtn = document.getElementById('saveBtn');
+const resetBtn = document.getElementById('resetBtn');
+const exportBtn = document.getElementById('exportBtn');
+const settingsBtn = document.getElementById('settingsBtn');
+const modal = document.getElementById('modal');
+const modalSave = document.getElementById('modalSave');
+const modalCancel = document.getElementById('modalCancel');
+const cfgHoursPerDay = document.getElementById('cfgHoursPerDay');
+const cfgDaysPerWeek = document.getElementById('cfgDaysPerWeek');
+const cfgWeeksPerMonth = document.getElementById('cfgWeeksPerMonth');
+const cfgAutoSave = document.getElementById('cfgAutoSave');
+
+let intervalId = null;
+let startTime = null;
+let elapsedSeconds = 0;
+let attendees = 0;
+let hourlyRate = 0;
+let lastTotalCost = 0;
+
+let cfg = loadCfg();
+
+function formatDateKey(d = new Date()){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return KEY_PREFIX + y + m + dd;
+}
+
+function parseDateFromKey(key){
+  if (!key.startsWith(KEY_PREFIX)) return null;
+  const tail = key.slice(KEY_PREFIX.length);
+  if (!/^\d{8}$/.test(tail)) return null;
+  const y = +tail.slice(0,4);
+  const mo = +tail.slice(4,6) - 1;
+  const d = +tail.slice(6,8);
+  return new Date(y,mo,d);
+}
+
+function loadDailyData(date = new Date()){
+  const key = formatDateKey(date);
+  const raw = localStorage.getItem(key);
+  return raw ? JSON.parse(raw) : { meetings: [] };
+}
+
+function saveDailyData(data, date = new Date()){
+  const key = formatDateKey(date);
+  localStorage.setItem(key, JSON.stringify(data));
+  renderAll();
+}
+
+function saveCfg(){
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+}
+
+function loadCfg(){
+  try{
+    const raw = localStorage.getItem(CFG_KEY);
+    if (!raw) return { hoursPerDay:8, daysPerWeek:5, weeksPerMonth:4.33333, autoSave:false };
+    return JSON.parse(raw);
+  }catch(e){
+    return { hoursPerDay:8, daysPerWeek:5, weeksPerMonth:4.33333, autoSave:false };
+  }
+}
+
+let _ignore = false;
+
+function toFixed2(v){ return Number(v || 0).toFixed(2); }
+
+function syncHourlyInputs(){
+  const val = hourlyInput.value;
+  hourlyCardInput.value = val;
+}
+
+function syncHourlyCardInputs(){
+  const val = hourlyCardInput.value;
+  hourlyInput.value = val;
+}
+
+hourlyInput.addEventListener('input', () => {
+  syncHourlyInputs();
+  updateFromHourly();
+});
+
+hourlyCardInput.addEventListener('input', () => {
+  syncHourlyCardInputs();
+  updateFromHourly();
+});
+
+function updateFromHourly(){
+  if (_ignore) return;
+  _ignore = true;
+  const hr = parseFloat(hourlyInput.value) || 0;
+  dailyInput.value = toFixed2(hr * cfg.hoursPerDay);
+  weeklyInput.value = toFixed2((hr * cfg.hoursPerDay) * cfg.daysPerWeek);
+  monthlyInput.value = toFixed2(((hr * cfg.hoursPerDay) * cfg.daysPerWeek) * cfg.weeksPerMonth);
+  _ignore = false;
+}
+
+function updateFromDaily(){
+  if (_ignore) return;
+  _ignore = true;
+  const d = parseFloat(dailyInput.value) || 0;
+  const hr = d / cfg.hoursPerDay;
+  hourlyInput.value = toFixed2(hr);
+  hourlyCardInput.value = toFixed2(hr);
+  weeklyInput.value = toFixed2(d * cfg.daysPerWeek);
+  monthlyInput.value = toFixed2((d * cfg.daysPerWeek) * cfg.weeksPerMonth);
+  _ignore = false;
+}
+
+function updateFromWeekly(){
+  if (_ignore) return;
+  _ignore = true;
+  const w = parseFloat(weeklyInput.value) || 0;
+  const daily = w / cfg.daysPerWeek;
+  const hr = daily / cfg.hoursPerDay;
+  dailyInput.value = toFixed2(daily);
+  hourlyInput.value = toFixed2(hr);
+  hourlyCardInput.value = toFixed2(hr);
+  monthlyInput.value = toFixed2(w * cfg.weeksPerMonth);
+  _ignore = false;
+}
+
+function updateFromMonthly(){
+  if (_ignore) return;
+  _ignore = true;
+  const m = parseFloat(monthlyInput.value) || 0;
+  const weekly = m / cfg.weeksPerMonth;
+  const daily = weekly / cfg.daysPerWeek;
+  const hr = daily / cfg.hoursPerDay;
+  weeklyInput.value = toFixed2(weekly);
+  dailyInput.value = toFixed2(daily);
+  hourlyInput.value = toFixed2(hr);
+  hourlyCardInput.value = toFixed2(hr);
+  _ignore = false;
+}
+
+dailyInput.addEventListener('input', updateFromDaily);
+weeklyInput.addEventListener('input', updateFromWeekly);
+monthlyInput.addEventListener('input', updateFromMonthly);
+
+function initConversions(){
+  const hr = parseFloat(hourlyInput.value);
+  const d = parseFloat(dailyInput.value);
+  const w = parseFloat(weeklyInput.value);
+  const m = parseFloat(monthlyInput.value);
+  if (!isNaN(hr) && hr > 0) { updateFromHourly(); }
+  else if (!isNaN(d) && d > 0) { updateFromDaily(); }
+  else if (!isNaN(w) && w > 0) { updateFromWeekly(); }
+  else if (!isNaN(m) && m > 0) { updateFromMonthly(); }
+  else { hourlyInput.value = '50.00'; hourlyCardInput.value = '50.00'; updateFromHourly(); }
+}
+
+function startMeeting(){
+  attendees = Math.max(1, parseInt(attendeesInput.value) || 1);
+  hourlyRate = parseFloat(hourlyInput.value) || 0;
+  if (hourlyRate <= 0){ alert('Please enter a valid hourly rate.'); return; }
+  startTime = Date.now();
+  elapsedSeconds = 0;
+  lastTotalCost = 0;
+  if (intervalId) clearInterval(intervalId);
+  intervalId = setInterval(updateCost, 100);
+  updateCost();
+  display.classList.add('running');
+  startBtn.disabled = true;
+  stopBtn.disabled = false;
+}
+
+function updateCost(){
+  if (!startTime) return;
+  elapsedSeconds = (Date.now() - startTime) / 1000;
+  const costPerSecond = (attendees * hourlyRate) / 3600;
+  const total = costPerSecond * elapsedSeconds;
+  lastTotalCost = total;
+  costDisplay.textContent = '$' + total.toFixed(2);
+  const h = Math.floor(elapsedSeconds / 3600);
+  const m = Math.floor((elapsedSeconds % 3600) / 60);
+  const s = Math.floor(elapsedSeconds % 60);
+  timeDisplay.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function stopMeeting(){
+  if (intervalId) clearInterval(intervalId);
+  intervalId = null;
+  display.classList.remove('running');
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+  if (cfg.autoSave) {
+    saveMeeting(true);
+  }
+}
+
+function resetMeeting(){
+  stopMeeting();
+  startTime = null; elapsedSeconds = 0; lastTotalCost = 0;
+  costDisplay.textContent = '$0.00'; timeDisplay.textContent = '00:00:00';
+  startBtn.disabled = false;
+}
+
+function saveMeeting(isAuto=false){
+  stopMeeting();
+  if (!(lastTotalCost > 0)){
+    if (!isAuto) alert('No meeting cost to save. Start a meeting first.');
+    return;
+  }
+  const data = loadDailyData();
+  data.meetings.push({
+    ts: Date.now(),
+    durationSec: Math.round(elapsedSeconds || 0),
+    cost: parseFloat(lastTotalCost.toFixed(2)),
+    attendees: attendees,
+    hourlyRate: parseFloat(hourlyInput.value) || 0
+  });
+  saveDailyData(data);
+  resetMeeting();
+}
+
+function renderAll(){
+  renderDay();
+  renderMonth();
+}
+
+function renderDay(){
+  const data = loadDailyData();
+  const totalCost = (data.meetings || []).reduce((s,m) => s + (m.cost||0), 0);
+  dailyCostEl.textContent = '$' + totalCost.toFixed(2);
+  const count = (data.meetings || []).length;
+  meetCount.textContent = String(count);
+  const items = (data.meetings || []).slice().sort((a,b) => b.ts - a.ts);
+  entriesList.innerHTML = '';
+  if (items.length === 0){
+    entriesList.innerHTML = `
+      <div class="empty-history-premium">
+        <div class="empty-icon-premium">📋</div>
+        <div class="empty-text-premium">No meetings saved yet</div>
+      </div>
+    `;
+    return;
+  }
+  items.forEach(it => {
+    const el = document.createElement('div');
+    el.className = 'history-item-premium';
+    el.innerHTML = `
+      <div class="history-info-premium">
+        <div class="history-cost-premium">$${(it.cost||0).toFixed(2)}</div>
+        <div class="history-meta-premium">${formatTime(it.durationSec)} • ${it.attendees} attendee${it.attendees > 1 ? 's' : ''} @ $${it.hourlyRate}/hr</div>
+      </div>
+      <button class="history-delete-premium" onclick="deleteEntry(${it.ts})">Delete</button>
+    `;
+    entriesList.appendChild(el);
+  });
+}
+
+function renderMonth(){
+  const now = new Date(); const year = now.getFullYear(); const month = now.getMonth();
+  let monthCost = 0;
+  for (let i=0;i<localStorage.length;i++){
+    const key = localStorage.key(i);
+    if (!key || !key.startsWith(KEY_PREFIX)) continue;
+    const d = parseDateFromKey(key);
+    if (!d) continue;
+    if (d.getFullYear() === year && d.getMonth() === month){
+      const dayData = JSON.parse(localStorage.getItem(key));
+      monthCost += (dayData.meetings || []).reduce((s,m) => s + (m.cost || 0), 0);
+    }
+  }
+  monthCostEl.textContent = '$' + monthCost.toFixed(2);
+}
+
+function deleteEntry(ts){
+  const data = loadDailyData();
+  data.meetings = (data.meetings || []).filter(m => m.ts !== ts);
+  saveDailyData(data);
+}
+
+function exportCSV(){
+  const data = loadDailyData();
+  const rows = [['timestamp','time','durationSec','attendees','hourlyRate','cost']];
+  (data.meetings || []).forEach(m => rows.push([
+    new Date(m.ts).toISOString(),
+    new Date(m.ts).toLocaleTimeString(),
+    m.durationSec || '',
+    m.attendees || '',
+    m.hourlyRate || '',
+    m.cost || ''
+  ]));
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `meetings_${(new Date()).toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function openSettings(){
+  modal.classList.add('active');
+  cfgHoursPerDay.value = cfg.hoursPerDay;
+  cfgDaysPerWeek.value = cfg.daysPerWeek;
+  cfgWeeksPerMonth.value = cfg.weeksPerMonth;
+  cfgAutoSave.checked = !!cfg.autoSave;
+}
+
+function closeSettings(){
+  modal.classList.remove('active');
+}
+
+settingsBtn.addEventListener('click', openSettings);
+modalCancel.addEventListener('click', closeSettings);
+modal.addEventListener('click', (e) => { if (e.target === modal) closeSettings(); });
+modalSave.addEventListener('click', () => {
+  cfg = {
+    hoursPerDay: parseFloat(cfgHoursPerDay.value) || 8,
+    daysPerWeek: parseFloat(cfgDaysPerWeek.value) || 5,
+    weeksPerMonth: parseFloat(cfgWeeksPerMonth.value) || 4.33333,
+    autoSave: !!cfgAutoSave.checked
+  };
+  saveCfg();
+  initConversions();
+  renderAll();
+  closeSettings();
+});
+
+startBtn.addEventListener('click', startMeeting);
+stopBtn.addEventListener('click', stopMeeting);
+saveBtn.addEventListener('click', () => saveMeeting(false));
+resetBtn.addEventListener('click', resetMeeting);
+exportBtn.addEventListener('click', exportCSV);
+
+function pad(n){ return String(n).padStart(2,'0'); }
+function formatTime(sec){ const h = Math.floor(sec/3600); const m = Math.floor((sec%3600)/60); const s = Math.floor(sec%60); return `${pad(h)}:${pad(m)}:${pad(s)}`; }
+
+window.addEventListener('load', () => {
+  cfg = loadCfg();
+  if (cfgHoursPerDay) cfgHoursPerDay.value = cfg.hoursPerDay;
+  if (cfgDaysPerWeek) cfgDaysPerWeek.value = cfg.daysPerWeek;
+  if (cfgWeeksPerMonth) cfgWeeksPerMonth.value = cfg.weeksPerMonth;
+  if (cfgAutoSave) cfgAutoSave.checked = !!cfg.autoSave;
+  initConversions();
+  renderAll();
+  stopBtn.disabled = true;
+});
+
+window.deleteEntry = deleteEntry;
+</script>
+
+<div style="max-width: 1400px; margin: 48px auto 0; padding: 0 32px 48px;">
+  <div style="background: var(--white); border: 1px solid var(--tan); border-radius: 24px; padding: 40px; text-align: center;">
+    <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--blue); margin-bottom: 16px; letter-spacing: -0.5px;">Shop NutriThrive Products</h3>
+    <p style="color: var(--text-light); margin-bottom: 24px; font-size: 1rem;">Discover premium superfoods and wellness products:</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+      <a href="https://nutrithrive.com.au/pages/products/product-detail.html" style="background: var(--blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Moringa Powder →</a>
+      <a href="https://nutrithrive.com.au/pages/products/product-curry-leaves.html" style="background: var(--blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Curry Leaves →</a>
+      <a href="https://nutrithrive.com.au/pages/products/product-black-tea.html" style="background: var(--blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Black Tea →</a>
+      <a href="https://nutrithrive.com.au/pages/products/products.html" style="background: transparent; color: var(--blue); border: 2px solid var(--blue); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">All Products →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

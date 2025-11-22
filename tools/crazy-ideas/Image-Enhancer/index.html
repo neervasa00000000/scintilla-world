@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <title>Instant Image Enhancer | NutriThrive Labs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="https://i.imgur.com/bZubhoR.png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/bZubhoR.png">
+  <link rel="shortcut icon" href="https://i.imgur.com/bZubhoR.png">
+  <style>
+    :root {
+      --bg: #EBFFD8;
+      --panel: #C4E1E6;
+      --pane-alt: #A4CCD9;
+      --ink: #2f4f57;
+      --muted: #456b74;
+      --accent: #8DBCC7;
+      --accent-soft: #A4CCD9;
+      --border: #8DBCC7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+
+    .app-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .hero {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .eyebrow {
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      color: var(--accent-soft);
+      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px 0;
+      font-size: clamp(2rem, 3.6vw, 3rem);
+      letter-spacing: -0.015em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #d7f0f4;
+      font-size: 0.9rem;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .hero-action {
+      align-self: center;
+      justify-self: end;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .primary-btn {
+      border: none;
+      background: var(--accent);
+      color: #F5F5F0;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .hero-action { justify-self: stretch; }
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .drop-zone {
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
+      background: var(--pane-alt);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .drop-zone.dragover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .preview-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--pane-alt);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .preview-card span {
+      font-size: 0.92rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .preview-card img {
+      max-width: 100%;
+      max-height: 320px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      object-fit: contain;
+      display: none;
+    }
+
+    .preview-card img.visible {
+      display: block;
+    }
+
+    .empty-state {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px;
+      width: 100%;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .control-group {
+      flex: 1;
+      min-width: 220px;
+      background: var(--pane-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .control-group label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--ink);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .cta-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--panel);
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cta-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .link-btn {
+      border: 1px solid var(--accent);
+      color: var(--ink);
+      padding: 8px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">NutriThrive Labs</p>
+        <h1>Instant Image Enhancer</h1>
+        <p>Brighten dull photos, add clarity, and download a crisp PNG in seconds. Entirely browser-based, so your files never leave your device.</p>
+        <div class="badge-list">
+          <span class="badge">100% local</span>
+          <span class="badge">No sign-up</span>
+          <span class="badge">Works offline</span>
+        </div>
+      </div>
+      <div class="hero-action">
+        <button class="primary-btn" id="uploadTrigger">Upload image</button>
+        <small style="color:var(--muted);">PNG, JPG, or HEIC up to ~20 MB</small>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <section class="panel">
+        <h2>Drop a file</h2>
+        <div class="drop-zone" id="dropZone">
+          Drag & drop your photo here or click to browse
+        </div>
+        <input type="file" id="fileInput" accept="image/*" hidden>
+        <div class="preview-grid">
+          <div class="preview-card">
+            <span>Original</span>
+            <img id="inputImg" alt="Original preview" />
+            <div class="empty-state" id="originalEmpty">Drop an image to see the original preview.</div>
+          </div>
+          <div class="preview-card">
+            <span>Enhanced</span>
+            <img id="outputImg" alt="Enhanced preview" />
+            <div class="empty-state" id="enhancedEmpty">Enhance the photo to view the result.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Fine tune</h2>
+        <div class="controls">
+          <div class="control-group">
+            <label>
+              Brightness
+              <span id="brightnessLabel">+10</span>
+            </label>
+            <input type="range" id="brightnessRange" min="-30" max="40" value="10">
+          </div>
+          <div class="control-group">
+            <label>
+              Contrast
+              <span id="contrastLabel">+10</span>
+            </label>
+            <input type="range" id="contrastRange" min="-20" max="40" value="10">
+          </div>
+          <div class="control-group">
+            <label>
+              Warmth
+              <span id="warmthLabel">+5</span>
+            </label>
+            <input type="range" id="warmthRange" min="-20" max="30" value="5">
+          </div>
+          <div class="control-group">
+            <label>
+              Sharpness
+              <span id="sharpnessLabel">0</span>
+            </label>
+            <input type="range" id="sharpnessRange" min="0" max="60" value="0">
+          </div>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="primary-btn" id="enhanceBtn" disabled>Enhance image</button>
+          <a id="downloadLink" class="link-btn" style="display:none;">Download PNG</a>
+        </div>
+      </section>
+    </div>
+
+    <div class="cta-card">
+      <p>Editing late? Stay sharp the natural way with NutriThrive superfoods:</p>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
+        <a href="https://nutrithrive.com.au/pages/products/product-detail.html" class="link-btn">Moringa Powder →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-curry-leaves.html" class="link-btn">Curry Leaves →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-black-tea.html" class="link-btn">Black Tea →</a>
+        <a href="https://nutrithrive.com.au/pages/products/products.html" class="link-btn">All Products →</a>
+      </div>
+    </div>
+
+    <footer>
+      Processing happens locally using HTML5 Canvas. For scanned or very dark photos, you may need dedicated desktop software for best results.
+    </footer>
+  </div>
+
+  <canvas id="hiddenCanvas" style="display:none;"></canvas>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadTrigger = document.getElementById('uploadTrigger');
+    const dropZone = document.getElementById('dropZone');
+    const inputImg = document.getElementById('inputImg');
+    const outputImg = document.getElementById('outputImg');
+    const enhanceBtn = document.getElementById('enhanceBtn');
+    const downloadLink = document.getElementById('downloadLink');
+    const brightnessRange = document.getElementById('brightnessRange');
+    const contrastRange = document.getElementById('contrastRange');
+    const warmthRange = document.getElementById('warmthRange');
+    const brightnessLabel = document.getElementById('brightnessLabel');
+    const contrastLabel = document.getElementById('contrastLabel');
+    const warmthLabel = document.getElementById('warmthLabel');
+    const sharpnessRange = document.getElementById('sharpnessRange');
+    const sharpnessLabel = document.getElementById('sharpnessLabel');
+    const originalEmpty = document.getElementById('originalEmpty');
+    const enhancedEmpty = document.getElementById('enhancedEmpty');
+    const canvas = document.getElementById('hiddenCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let uploadedImg = null;
+    let pendingTimeout = null;
+
+    uploadTrigger.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) {
+        loadImage(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files[0]) loadImage(e.target.files[0]);
+    });
+
+    function resetOutputs() {
+      outputImg.classList.remove('visible');
+      outputImg.src = '';
+      enhancedEmpty.style.display = 'block';
+      downloadLink.style.display = 'none';
+    }
+
+    function loadImage(file) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        uploadedImg = new Image();
+        uploadedImg.onload = () => {
+          inputImg.src = uploadedImg.src;
+          inputImg.classList.add('visible');
+          originalEmpty.style.display = 'none';
+          resetOutputs();
+          enhanceBtn.disabled = false;
+        };
+        uploadedImg.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function runEnhancements() {
+      if (!uploadedImg) return;
+      canvas.width = uploadedImg.width;
+      canvas.height = uploadedImg.height;
+      ctx.drawImage(uploadedImg, 0, 0);
+
+      const brightness = parseInt(brightnessRange.value, 10);
+      const contrast = parseInt(contrastRange.value, 10);
+      const warmth = parseInt(warmthRange.value, 10);
+      const sharpness = parseInt(sharpnessRange.value, 10);
+
+      brightnessLabel.textContent = brightness >= 0 ? `+${brightness}` : brightness;
+      contrastLabel.textContent = contrast >= 0 ? `+${contrast}` : contrast;
+      warmthLabel.textContent = warmth >= 0 ? `+${warmth}` : warmth;
+      sharpnessLabel.textContent = sharpness;
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      const contrastFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] = clamp(contrastFactor * (data[i] - 128) + 128 + brightness + warmth, 0, 255);
+        data[i + 1] = clamp(contrastFactor * (data[i + 1] - 128) + 128 + brightness, 0, 255);
+        data[i + 2] = clamp(contrastFactor * (data[i + 2] - 128) + 128 + brightness - warmth / 2, 0, 255);
+      }
+
+      if (sharpness > 0) {
+        applySharpness(imageData, canvas.width, canvas.height, sharpness / 100);
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      const resultURL = canvas.toDataURL('image/png');
+      outputImg.src = resultURL;
+      outputImg.classList.add('visible');
+      enhancedEmpty.style.display = 'none';
+      downloadLink.href = resultURL;
+      downloadLink.download = 'nutrithrive-enhanced.png';
+      downloadLink.style.display = 'inline-flex';
+    }
+
+    function applySharpness(imageData, width, height, intensity) {
+      const src = imageData.data;
+      const copy = new Uint8ClampedArray(src);
+      const kernel = [
+        0, -1, 0,
+        -1, 4 + intensity * 4, -1,
+        0, -1, 0
+      ];
+
+      for (let y = 1; y < height - 1; y++) {
+        for (let x = 1; x < width - 1; x++) {
+          for (let c = 0; c < 3; c++) {
+            let accum = 0;
+            for (let ky = -1; ky <= 1; ky++) {
+              for (let kx = -1; kx <= 1; kx++) {
+                const px = ((y + ky) * width + (x + kx)) * 4 + c;
+                const weight = kernel[(ky + 1) * 3 + (kx + 1)];
+                accum += copy[px] * weight;
+              }
+            }
+            const idx = (y * width + x) * 4 + c;
+            src[idx] = clamp(accum, 0, 255);
+          }
+        }
+      }
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function scheduleEnhancement() {
+      if (!uploadedImg) return;
+      if (pendingTimeout) {
+        clearTimeout(pendingTimeout);
+      }
+      pendingTimeout = setTimeout(() => {
+        pendingTimeout = null;
+        runEnhancements();
+      }, 120);
+    }
+
+    enhanceBtn.addEventListener('click', () => {
+      if (pendingTimeout) {
+        clearTimeout(pendingTimeout);
+        pendingTimeout = null;
+      }
+      runEnhancements();
+    });
+    [brightnessRange, contrastRange, warmthRange, sharpnessRange].forEach(range => {
+      range.addEventListener('input', scheduleEnhancement);
+    });
+  </script>
+</body>
+</html>
+

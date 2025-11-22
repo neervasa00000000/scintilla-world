@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WH21SW75WP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-WH21SW75WP');
+</script>
+
+  <meta charset="UTF-8" />
+  <title>Universal File Converter | NutriThrive Quick Tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Convert files between formats: Images (HEIC, PNG, JPG, GIF, WEBP, TIFF, SVG), Documents (PDF, DOC, DOCX, TXT, RTF, ODT, HTML), Audio (MP3, WAV, OGG, FLAC, M4A), Video (MP4, MOV, AVI, WMV, WEBM, MKV), Archives (ZIP, RAR, 7Z, TAR)." />
+  <link rel="icon" type="image/png" href="https://i.imgur.com/bZubhoR.png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/bZubhoR.png">
+  <link rel="shortcut icon" href="https://i.imgur.com/bZubhoR.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #8AA624;
+      --light: #DBE4C9;
+      --bg: #FFFFF0;
+      --accent: #FEA405;
+      --text: #1a1a1a;
+      --text-light: #666666;
+      --border: #DBE4C9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .app-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 60px 40px;
+    }
+
+    @media (max-width: 768px) {
+      .app-container {
+        padding: 40px 24px;
+      }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      padding-bottom: 40px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .header p {
+      color: var(--text-light);
+      font-size: 1.1rem;
+      font-weight: 400;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .converter-card {
+      background: white;
+      border: 2px solid var(--border);
+      padding: 50px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .converter-card {
+        padding: 32px 24px;
+      }
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 32px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .file-drop-zone {
+      border: 2px solid var(--border);
+      padding: 80px 40px;
+      text-align: center;
+      background: var(--bg);
+      cursor: pointer;
+      transition: border-color 0.2s;
+      margin-bottom: 32px;
+    }
+
+    .file-drop-zone:hover {
+      border-color: var(--primary);
+    }
+
+    .file-drop-zone.dragover {
+      border-color: var(--primary);
+      background: var(--light);
+    }
+
+    .file-drop-zone-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .file-drop-zone-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .file-drop-zone-hint {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+
+    .file-info {
+      display: none;
+      padding: 24px;
+      background: var(--bg);
+      margin-bottom: 32px;
+      border: 2px solid var(--border);
+    }
+
+    .file-info.active {
+      display: block;
+    }
+
+    .file-name {
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-size: 1rem;
+      letter-spacing: -0.2px;
+    }
+
+    .file-size {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+
+    .format-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .format-selector {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    .format-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .format-label {
+      font-weight: 500;
+      color: var(--text);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .format-select {
+      padding: 16px 20px;
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 400;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      font-family: inherit;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231a1a1a' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 12px;
+      padding-right: 40px;
+    }
+
+    .format-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .format-select option {
+      padding: 12px 16px;
+      background: white;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    .format-select option:checked {
+      background: var(--primary);
+      color: white;
+    }
+
+    .format-select option:hover {
+      background: var(--light);
+    }
+
+    .format-select optgroup {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.85rem;
+      padding: 8px 0;
+      background: var(--bg);
+    }
+
+    .format-select optgroup option {
+      padding-left: 24px;
+      font-weight: 400;
+    }
+
+    .convert-btn {
+      width: 100%;
+      padding: 20px 32px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-bottom: 32px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .convert-btn:hover:not(:disabled) {
+      background: var(--accent);
+    }
+
+    .convert-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: var(--border);
+      color: var(--text-light);
+    }
+
+    .status-message {
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      font-weight: 400;
+      display: none;
+      border: 2px solid;
+    }
+
+    .status-message.active {
+      display: block;
+    }
+
+    .status-success {
+      background: var(--bg);
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
+    .status-error {
+      background: var(--bg);
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .status-info {
+      background: var(--bg);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .download-section {
+      display: none;
+      padding: 32px;
+      background: var(--bg);
+      border: 2px solid var(--primary);
+      text-align: center;
+    }
+
+    .download-section.active {
+      display: block;
+    }
+
+    .download-section > div {
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+    }
+
+    .download-btn {
+      padding: 16px 40px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .download-btn:hover {
+      background: var(--accent);
+    }
+
+    .format-categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .category-card {
+      background: white;
+      border: 2px solid var(--border);
+      padding: 28px 24px;
+    }
+
+    .category-title {
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .category-formats {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 2;
+      font-weight: 400;
+    }
+
+    .category-formats code {
+      background: var(--bg);
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .preview-area {
+      margin-top: 32px;
+      padding: 24px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      display: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-area.active {
+      display: block;
+    }
+
+    .preview-area img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .preview-area video {
+      max-width: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    .preview-area audio {
+      width: 100%;
+      margin-top: 12px;
+      display: block;
+    }
+    
+    /* Hide preview during conversion to prevent glitches */
+    .converting .preview-area {
+      display: none !important;
+    }
+    
+    /* Prevent layout shifts */
+    .converter-card {
+      min-height: 200px;
+      transition: none;
+    }
+    
+    /* Smooth status updates */
+    .status-message {
+      transition: opacity 0.2s ease;
+      will-change: contents;
+    }
+    
+    /* Prevent video from causing glitches */
+    video {
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      margin-top: 60px;
+      padding-top: 40px;
+      border-top: 2px solid var(--border);
+      font-weight: 400;
+    }
+  </style>
+  <script src="pdf.min.js"></script>
+  <script src="pdf.worker.min.js" type="text/javascript"></script>
+  <script src="jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js" onerror="console.error('Failed to load html-docx-js')"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <script>
+    // Wait for libraries to load and ensure html-docx-js is available
+    window.addEventListener('load', function() {
+      // Check multiple possible global names for html-docx-js
+      if (typeof HTMLDocx === 'undefined' && typeof window !== 'undefined') {
+        window.HTMLDocx = window.HTMLDocx || window.htmlDocx || window.htmlDocxJs || null;
+      }
+    });
+  </script>
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
+    }
+  </script>
+</head>
+<body>
+  <div class="app-container">
+    <div class="header">
+      <h1>Universal File Converter</h1>
+      <p>Convert files between formats instantly. Images, Documents, Audio, Video, and Archives—all in your browser.</p>
+        </div>
+
+    <div class="converter-card">
+      <div class="section-title">Upload File</div>
+      
+      <div class="file-drop-zone" id="dropZone">
+        <div class="file-drop-zone-icon">+</div>
+        <div class="file-drop-zone-text">Drop your file here or click to browse</div>
+        <div class="file-drop-zone-hint">Supports all major file formats</div>
+      </div>
+      <input type="file" id="fileInput" accept="*/*" />
+
+      <div class="file-info" id="fileInfo">
+        <div class="file-name" id="fileName"></div>
+        <div class="file-size" id="fileSize"></div>
+        </div>
+
+      <div class="preview-area" id="previewArea"></div>
+
+      <div class="format-selector">
+        <div class="format-group">
+          <label class="format-label">From Format</label>
+          <select class="format-select" id="fromFormat" disabled>
+            <option value="">Select source format...</option>
+          </select>
+      </div>
+        <div class="format-group">
+          <label class="format-label">To Format</label>
+          <select class="format-select" id="toFormat" disabled>
+            <option value="">Select target format...</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="convert-btn" id="convertBtn" disabled>Convert File</button>
+
+      <div class="status-message" id="statusMessage"></div>
+
+      <div class="download-section" id="downloadSection">
+        <div>Conversion Complete</div>
+        <button class="download-btn" id="downloadBtn">Download Converted File</button>
+        </div>
+      </div>
+
+    <div class="converter-card">
+      <div class="section-title">Supported Formats</div>
+      <div class="format-categories">
+        <div class="category-card">
+          <div class="category-title">Images</div>
+          <div class="category-formats">
+            <code>HEIC</code> <code>PNG</code> <code>JPG</code> <code>GIF</code><br>
+            <code>WEBP</code> <code>TIFF</code> <code>SVG</code>
+        </div>
+        </div>
+        <div class="category-card">
+          <div class="category-title">Documents</div>
+          <div class="category-formats">
+            <code>PDF</code> <code>DOC</code> <code>DOCX</code> <code>TXT</code><br>
+            <code>RTF</code> <code>ODT</code> <code>HTML</code>
+        </div>
+        </div>
+        <div class="category-card">
+          <div class="category-title">Audio</div>
+          <div class="category-formats">
+            <code>MP3</code> <code>WAV</code> <code>OGG</code><br>
+            <code>FLAC</code> <code>M4A</code>
+        </div>
+          </div>
+        <div class="category-card">
+          <div class="category-title">Video</div>
+          <div class="category-formats">
+            <code>MP4</code> <code>MOV</code> <code>AVI</code><br>
+            <code>WMV</code> <code>WEBM</code> <code>MKV</code>
+          </div>
+        </div>
+        <div class="category-card">
+          <div class="category-title">Archives</div>
+          <div class="category-formats">
+            <code>ZIP</code> <code>RAR</code> <code>7Z</code> <code>TAR</code>
+          </div>
+        </div>
+    </div>
+      </div>
+
+    <footer>
+      All conversions happen locally in your browser. Your files never leave your device.
+    </footer>
+
+    <div style="background: white; border: 2px solid var(--border); padding: 40px; margin-top: 40px; text-align: center;">
+      <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text); margin-bottom: 16px;">Shop NutriThrive Products</h3>
+      <p style="color: var(--text-light); margin-bottom: 24px; font-size: 1rem;">Discover premium superfoods and wellness products:</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+        <a href="https://nutrithrive.com.au/pages/products/product-detail.html" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Moringa Powder →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-curry-leaves.html" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Curry Leaves →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-black-tea.html" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Black Tea →</a>
+        <a href="https://nutrithrive.com.au/pages/products/products.html" style="background: transparent; color: var(--primary); border: 2px solid var(--primary); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">All Products →</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const fromFormat = document.getElementById('fromFormat');
+    const toFormat = document.getElementById('toFormat');
+    const convertBtn = document.getElementById('convertBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    const downloadSection = document.getElementById('downloadSection');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const previewArea = document.getElementById('previewArea');
+
+    let currentFile = null;
+    let convertedBlob = null;
+
+    // Format categories
+    const formats = {
+      images: ['HEIC', 'PNG', 'JPG', 'JPEG', 'GIF', 'WEBP', 'TIFF', 'SVG'],
+      documents: ['PDF', 'DOC', 'DOCX', 'TXT', 'RTF', 'ODT', 'HTML'],
+      audio: ['MP3', 'WAV', 'OGG', 'FLAC', 'M4A'],
+      video: ['MP4', 'MOV', 'AVI', 'WMV', 'WEBM', 'MKV'],
+      archives: ['ZIP', 'RAR', '7Z', 'TAR']
+    };
+
+    // All formats combined
+    const allFormats = [...formats.images, ...formats.documents, ...formats.audio, ...formats.video, ...formats.archives];
+
+    // Get file extension
+    function getFileExtension(filename) {
+      return filename.split('.').pop().toUpperCase();
+    }
+
+    // Format file size
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    // Show status
+    let statusTimeout = null;
+    let isUpdating = false;
+    function showStatus(message, type = 'info', persist = false) {
+      // Prevent rapid updates that cause flickering
+      if (isUpdating && persist) {
+        // For persistent messages, update immediately without animation
+        statusMessage.textContent = message;
+        statusMessage.className = `status-message active status-${type}`;
+        return;
+      }
+      
+      isUpdating = true;
+      requestAnimationFrame(() => {
+        statusMessage.textContent = message;
+        statusMessage.className = `status-message active status-${type}`;
+        isUpdating = false;
+      });
+      
+      // Clear previous timeout
+      if (statusTimeout) {
+        clearTimeout(statusTimeout);
+        statusTimeout = null;
+      }
+      
+      // Only auto-hide if not persisting (for conversion progress)
+      if (!persist) {
+        statusTimeout = setTimeout(() => {
+          statusMessage.classList.remove('active');
+          statusTimeout = null;
+        }, 5000);
+      }
+    }
+
+    // Handle file selection
+    function handleFile(file) {
+      if (!file) return;
+
+      currentFile = file;
+      const ext = getFileExtension(file.name);
+      
+      fileName.textContent = file.name;
+      fileSize.textContent = formatFileSize(file.size);
+      fileInfo.classList.add('active');
+      downloadSection.classList.remove('active');
+      previewArea.classList.remove('active');
+      convertedBlob = null;
+
+      // Populate from format
+      fromFormat.innerHTML = '<option value="">Select source format...</option>';
+      if (allFormats.includes(ext)) {
+        const option = document.createElement('option');
+        option.value = ext;
+        option.textContent = ext;
+        option.selected = true;
+        fromFormat.appendChild(option);
+      } else {
+        const option = document.createElement('option');
+        option.value = ext;
+        option.textContent = ext + ' (detected)';
+        option.selected = true;
+        fromFormat.appendChild(option);
+      }
+
+      // Populate to format based on category
+      toFormat.innerHTML = '<option value="">Select target format...</option>';
+      
+      if (ext === 'PDF') {
+        // PDF can convert to documents AND images - add grouped options
+        const docFormats = formats.documents.filter(f => f !== ext);
+        const imgFormats = formats.images;
+        
+        // Add Document formats group
+        if (docFormats.length > 0) {
+          const docGroup = document.createElement('optgroup');
+          docGroup.label = 'Document formats:';
+          docFormats.forEach(format => {
+            const option = document.createElement('option');
+            option.value = format;
+            option.textContent = format;
+            docGroup.appendChild(option);
+          });
+          toFormat.appendChild(docGroup);
+        }
+        
+        // Add Image formats group
+        if (imgFormats.length > 0) {
+          const imgGroup = document.createElement('optgroup');
+          imgGroup.label = 'Image formats:';
+          imgFormats.forEach(format => {
+            const option = document.createElement('option');
+            option.value = format;
+            option.textContent = format;
+            imgGroup.appendChild(option);
+          });
+          toFormat.appendChild(imgGroup);
+        }
+      } else if (formats.images.includes(ext)) {
+        const imgGroup = document.createElement('optgroup');
+        imgGroup.label = 'Image formats:';
+        formats.images.filter(f => f !== ext).forEach(format => {
+          const option = document.createElement('option');
+          option.value = format;
+          option.textContent = format;
+          imgGroup.appendChild(option);
+        });
+        toFormat.appendChild(imgGroup);
+      } else if (formats.documents.includes(ext)) {
+        const docGroup = document.createElement('optgroup');
+        docGroup.label = 'Document formats:';
+        formats.documents.filter(f => f !== ext).forEach(format => {
+          const option = document.createElement('option');
+          option.value = format;
+          option.textContent = format;
+          docGroup.appendChild(option);
+        });
+        toFormat.appendChild(docGroup);
+      } else if (formats.audio.includes(ext)) {
+        const audioGroup = document.createElement('optgroup');
+        audioGroup.label = 'Audio formats:';
+        formats.audio.filter(f => f !== ext).forEach(format => {
+          const option = document.createElement('option');
+          option.value = format;
+          option.textContent = format;
+          audioGroup.appendChild(option);
+        });
+        toFormat.appendChild(audioGroup);
+      } else if (formats.video.includes(ext)) {
+        const videoGroup = document.createElement('optgroup');
+        videoGroup.label = 'Video formats:';
+        formats.video.filter(f => f !== ext).forEach(format => {
+          const option = document.createElement('option');
+          option.value = format;
+          option.textContent = format;
+          videoGroup.appendChild(option);
+        });
+        toFormat.appendChild(videoGroup);
+      } else if (formats.archives.includes(ext)) {
+        const archiveGroup = document.createElement('optgroup');
+        archiveGroup.label = 'Archive formats:';
+        formats.archives.filter(f => f !== ext).forEach(format => {
+          const option = document.createElement('option');
+          option.value = format;
+          option.textContent = format;
+          archiveGroup.appendChild(option);
+        });
+        toFormat.appendChild(archiveGroup);
+      } else {
+        // Unknown format - show all formats grouped
+        const docGroup = document.createElement('optgroup');
+        docGroup.label = 'Document formats:';
+        formats.documents.filter(f => f !== ext).forEach(format => {
+          const option = document.createElement('option');
+          option.value = format;
+          option.textContent = format;
+          docGroup.appendChild(option);
+        });
+        toFormat.appendChild(docGroup);
+        
+        const imgGroup = document.createElement('optgroup');
+        imgGroup.label = 'Image formats:';
+        formats.images.forEach(format => {
+          const option = document.createElement('option');
+          option.value = format;
+          option.textContent = format;
+          imgGroup.appendChild(option);
+        });
+        toFormat.appendChild(imgGroup);
+      }
+
+      fromFormat.disabled = false;
+      toFormat.disabled = false;
+      convertBtn.disabled = !toFormat.value;
+
+      // Show preview
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewArea.innerHTML = `<img src="${e.target.result}" alt="Preview" />`;
+          previewArea.classList.add('active');
+        };
+        reader.onerror = () => {
+          previewArea.classList.remove('active');
+        };
+        reader.readAsDataURL(file);
+      } else if (file.type.startsWith('video/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const video = document.createElement('video');
+          video.controls = true;
+          video.src = e.target.result;
+          video.style.maxWidth = '100%';
+          video.style.height = 'auto';
+          previewArea.innerHTML = '';
+          previewArea.appendChild(video);
+          previewArea.classList.add('active');
+        };
+        reader.onerror = () => {
+          previewArea.classList.remove('active');
+        };
+        reader.readAsDataURL(file);
+      } else if (file.type.startsWith('audio/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewArea.innerHTML = `<audio controls src="${e.target.result}"></audio>`;
+          previewArea.classList.add('active');
+        };
+        reader.onerror = () => {
+          previewArea.classList.remove('active');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewArea.classList.remove('active');
+      }
+    }
+
+    // File input handlers
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+
+    // Drag and drop
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropZone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(evt => {
+      dropZone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove('dragover');
+      });
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+
+    // Format change handlers
+    toFormat.addEventListener('change', () => {
+      convertBtn.disabled = !toFormat.value || !fromFormat.value;
+    });
+
+    fromFormat.addEventListener('change', () => {
+      convertBtn.disabled = !toFormat.value || !fromFormat.value;
+    });
+
+    // Convert function
+    convertBtn.addEventListener('click', async () => {
+      if (!currentFile || !fromFormat.value || !toFormat.value) return;
+
+        convertBtn.disabled = true;
+      downloadSection.classList.remove('active');
+      previewArea.classList.remove('active'); // Hide preview during conversion
+      document.querySelector('.converter-card').classList.add('converting'); // Add converting class
+      showStatus('Converting...', 'info', true); // Persist status during conversion
+
+      try {
+        const fromExt = fromFormat.value.toLowerCase();
+        const toExt = toFormat.value.toLowerCase();
+        
+        convertedBlob = await convertFile(currentFile, fromExt, toExt);
+        
+        if (convertedBlob) {
+          downloadSection.classList.add('active');
+          showStatus('Conversion successful!', 'success');
+        } else {
+          showStatus('Conversion not supported for this format combination.', 'error');
+        }
+      } catch (error) {
+        console.error('Conversion error:', error);
+        showStatus('Conversion failed: ' + error.message, 'error');
+      } finally {
+      convertBtn.disabled = false;
+        document.querySelector('.converter-card').classList.remove('converting'); // Remove converting class
+      }
+    });
+
+    // Download handler
+    downloadBtn.addEventListener('click', () => {
+      if (!convertedBlob) return;
+      
+      const url = URL.createObjectURL(convertedBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      const originalName = currentFile.name.replace(/\.[^/.]+$/, '');
+      a.download = `${originalName}.${toFormat.value.toLowerCase()}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Conversion functions
+    async function convertFile(file, fromExt, toExt) {
+      // Image conversions
+      if (formats.images.map(f => f.toLowerCase()).includes(fromExt) && 
+          formats.images.map(f => f.toLowerCase()).includes(toExt)) {
+        return await convertImage(file, toExt);
+      }
+
+      // PDF conversions (check before general document conversions)
+      if (fromExt === 'pdf') {
+        if (toExt === 'txt') {
+          return await pdfToText(file);
+        }
+        if (toExt === 'html') {
+          return await pdfToHtml(file);
+        }
+        if (toExt === 'rtf') {
+          // PDF to RTF via text extraction
+          const textBlob = await pdfToText(file);
+          const text = await textBlob.text();
+          const rtf = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ${text.replace(/\n/g, '\\par ').replace(/[{}]/g, '')}}`;
+          return new Blob([rtf], { type: 'application/rtf' });
+        }
+        if (toExt === 'docx') {
+          return await pdfToDocx(file);
+        }
+      // PDF to Image conversions
+      if (formats.images.map(f => f.toLowerCase()).includes(toExt)) {
+        showStatus('Converting PDF to image... This may take a moment.', 'info', true);
+        return await pdfToImage(file, toExt);
+      }
+        // DOC conversion - try via DOCX first
+        if (toExt === 'doc') {
+          try {
+            // Convert PDF to DOCX first, then try to save as DOC
+            // Note: DOCX files can be opened by older Word versions
+            const docxBlob = await pdfToDocx(file);
+            // DOCX is compatible with Word 2003+ and can be opened as DOC
+            // We'll return DOCX but inform the user
+            showStatus('DOC format is outdated. Generated DOCX file instead (compatible with Word 2003+).', 'info');
+            return docxBlob;
+          } catch (e) {
+            throw new Error('DOC conversion requires server-side processing. DOCX format is recommended (compatible with all Word versions).');
+          }
+        }
+        // ODT require server-side processing
+        if (toExt === 'odt') {
+          throw new Error('ODT conversion requires server-side processing. Try converting to DOCX, TXT or HTML first.');
+        }
+      }
+
+      // Text to PDF
+      if (fromExt === 'txt' && toExt === 'pdf') {
+        return await textToPdf(file);
+      }
+
+      // DOCX conversions
+      if (fromExt === 'docx') {
+        if (toExt === 'pdf') {
+          return await docxToPdf(file);
+        }
+        if (toExt === 'txt') {
+          return await docxToText(file);
+        }
+        if (toExt === 'html') {
+          return await docxToHtml(file);
+        }
+        if (toExt === 'rtf') {
+          return await docxToRtf(file);
+        }
+        if (toExt === 'doc') {
+          // DOCX files can be opened by Word 2003+ as DOC
+          // Return DOCX but inform user
+          showStatus('DOC format is outdated. Generated DOCX file instead (compatible with Word 2003+).', 'info');
+          const textBlob = await docxToText(file);
+          return await textToDocx(textBlob);
+        }
+        if (toExt === 'odt') {
+          throw new Error('DOCX to ODT conversion requires server-side processing. Try converting to PDF or HTML instead.');
+        }
+      }
+
+      // HTML conversions
+      if (fromExt === 'html') {
+        if (toExt === 'pdf') {
+          return await htmlToPdf(file);
+        }
+        if (toExt === 'txt') {
+          const html = await file.text();
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+          const text = tempDiv.innerText || tempDiv.textContent || '';
+          return new Blob([text], { type: 'text/plain' });
+        }
+      }
+
+      // Document conversions (non-PDF, non-DOCX)
+      if (formats.documents.map(f => f.toLowerCase()).includes(fromExt) && 
+          formats.documents.map(f => f.toLowerCase()).includes(toExt)) {
+        return await convertDocument(file, fromExt, toExt);
+      }
+
+      // Archive conversions
+      if (formats.archives.map(f => f.toLowerCase()).includes(fromExt) && 
+          formats.archives.map(f => f.toLowerCase()).includes(toExt)) {
+        return await convertArchive(file, fromExt, toExt);
+      }
+
+      // Video conversions
+      if (formats.video.map(f => f.toLowerCase()).includes(fromExt) && 
+          formats.video.map(f => f.toLowerCase()).includes(toExt)) {
+        return await convertVideo(file, fromExt, toExt);
+      }
+
+      // Audio conversions
+      if (formats.audio.map(f => f.toLowerCase()).includes(fromExt) && 
+          formats.audio.map(f => f.toLowerCase()).includes(toExt)) {
+        return await convertAudio(file, fromExt, toExt);
+      }
+
+      showStatus('Conversion between ' + fromExt + ' and ' + toExt + ' is not yet supported.', 'error');
+      return null;
+    }
+
+    // Image conversion
+    async function convertImage(file, targetFormat) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            
+            canvas.toBlob((blob) => {
+              resolve(blob);
+            }, `image/${targetFormat === 'jpg' ? 'jpeg' : targetFormat}`, 0.95);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // PDF to Text
+    async function pdfToText(file) {
+      if (!window.pdfjsLib) throw new Error('PDF library not loaded');
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let text = '';
+      let hasText = false;
+      
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const content = await page.getTextContent();
+        const pageText = content.items.map(item => item.str).join(' ').trim();
+        
+        if (pageText.length > 0) {
+          hasText = true;
+        text += pageText + '\n\n';
+      }
+      }
+      
+      // If no text was extracted, the PDF might be image-based
+      if (!hasText || text.trim().length === 0) {
+        throw new Error('This PDF appears to be image-based or scanned. No selectable text was found. Please use OCR software first to extract text, then convert.');
+      }
+      
+      return new Blob([text.trim()], { type: 'text/plain' });
+    }
+
+    // PDF to HTML
+    async function pdfToHtml(file) {
+      if (!window.pdfjsLib) throw new Error('PDF library not loaded');
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Converted PDF</title></head><body>';
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const content = await page.getTextContent();
+        html += '<div style="page-break-after:always;padding:20px;">';
+        content.items.forEach(item => {
+          html += `<p>${item.str}</p>`;
+        });
+        html += '</div>';
+      }
+      html += '</body></html>';
+      return new Blob([html], { type: 'text/html' });
+    }
+
+    // PDF to Image
+    async function pdfToImage(file, targetFormat) {
+      if (!window.pdfjsLib) throw new Error('PDF library not loaded');
+      
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      
+      // For multi-page PDFs, combine all pages into one tall image
+      const scale = 2; // Higher quality (2x resolution)
+      const pages = [];
+      let totalHeight = 0;
+      let maxWidth = 0;
+      
+      // Show progress for large PDFs
+      if (pdf.numPages > 1) {
+        showStatus(`Rendering ${pdf.numPages} pages...`, 'info', true);
+      }
+      
+      // Render all pages first to get dimensions
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale });
+        maxWidth = Math.max(maxWidth, viewport.width);
+        totalHeight += viewport.height;
+        pages.push({ page, viewport, height: viewport.height });
+      }
+      
+      // Create combined canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = maxWidth;
+      canvas.height = totalHeight;
+      const ctx = canvas.getContext('2d');
+      
+      // Fill with white background
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Render all pages onto the canvas
+      let currentY = 0;
+      for (let i = 0; i < pages.length; i++) {
+        const { page, viewport } = pages[i];
+        
+        // Show progress
+        if (pdf.numPages > 1) {
+          showStatus(`Rendering page ${i + 1} of ${pdf.numPages}...`, 'info', true);
+        }
+        
+        // Save context before translation
+        ctx.save();
+        
+        // Translate to position for this page
+        ctx.translate(0, currentY);
+        
+        // Render the page
+        const renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        
+        await page.render(renderContext).promise;
+        
+        // Restore context
+        ctx.restore();
+        
+        // Move to next page position
+        currentY += viewport.height;
+      }
+      
+      // Convert canvas to blob in target format
+      return new Promise((resolve, reject) => {
+        let mimeType;
+        let quality = 0.95;
+        
+        // Determine MIME type and quality based on target format
+        if (targetFormat === 'jpg' || targetFormat === 'jpeg') {
+          mimeType = 'image/jpeg';
+          quality = 0.92; // Slightly lower for JPEG
+        } else if (targetFormat === 'png') {
+          mimeType = 'image/png';
+        } else if (targetFormat === 'webp') {
+          mimeType = 'image/webp';
+          quality = 0.90;
+        } else if (targetFormat === 'gif') {
+          // GIF doesn't support quality parameter, convert to PNG first then handle separately
+          mimeType = 'image/png';
+        } else if (targetFormat === 'tiff' || targetFormat === 'tif') {
+          // Browser doesn't support TIFF directly, convert to PNG
+          mimeType = 'image/png';
+        } else {
+          mimeType = 'image/png'; // Default fallback
+        }
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            // For formats that need special handling
+            if (targetFormat === 'gif') {
+              // GIF conversion would require additional library
+              // For now, return PNG and inform user
+              showStatus('GIF conversion requires additional processing. PNG format provided.', 'info');
+            }
+            if (targetFormat === 'tiff' || targetFormat === 'tif') {
+              showStatus('TIFF conversion requires additional processing. PNG format provided.', 'info');
+            }
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to convert PDF to image. Please try a different format.'));
+          }
+        }, mimeType, quality);
+      });
+    }
+
+    // PDF to DOCX
+    async function pdfToDocx(file) {
+      const htmlDocxLib = await getHtmlDocxLib();
+      
+      const textBlob = await pdfToText(file);
+      const text = await textBlob.text();
+      
+      // Validate text content
+      if (!text || text.trim().length === 0) {
+        throw new Error('No text content extracted from PDF. The PDF may be image-based or scanned. Please use OCR software first.');
+      }
+      
+      // Convert text to HTML first
+      const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+      
+      if (paragraphs.length === 0) {
+        // Fallback: use single line breaks
+        const lines = text.split(/\n/).filter(l => l.trim().length > 0);
+        if (lines.length === 0) {
+          throw new Error('No readable text found in PDF. The file may be image-based.');
+        }
+        paragraphs.push(...lines);
+      }
+      
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;line-height:1.6;padding:20px;max-width:800px;margin:0 auto;}p{margin:12px 0;white-space:pre-wrap;}</style></head><body>${paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`).join('')}</body></html>`;
+      
+      // Use the library to convert HTML to DOCX
+      const converted = htmlDocxLib.asBlob(html);
+      
+      // Validate the converted blob
+      if (!converted || converted.size === 0) {
+        throw new Error('Failed to generate DOCX file. Please try converting to TXT or HTML first.');
+      }
+      
+      return converted;
+    }
+
+    // Helper function to get html-docx-js library
+    async function getHtmlDocxLib() {
+      let htmlDocxLib = window.HTMLDocx || window.htmlDocx || window.htmlDocxJs || (typeof HTMLDocx !== 'undefined' ? HTMLDocx : null);
+      
+      if (!htmlDocxLib || typeof htmlDocxLib.asBlob !== 'function') {
+        // Try loading from unpkg as fallback
+        if (!window.htmlDocxLoaded) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/html-docx-js@0.3.1/dist/html-docx.js';
+            script.onload = () => {
+              window.htmlDocxLoaded = true;
+              resolve();
+            };
+            script.onerror = () => {
+              console.error('Failed to load html-docx-js from fallback CDN');
+              resolve(); // Don't reject, just continue
+            };
+            document.head.appendChild(script);
+          });
+        }
+        
+        htmlDocxLib = window.HTMLDocx || window.htmlDocx || window.htmlDocxJs;
+        if (!htmlDocxLib || typeof htmlDocxLib.asBlob !== 'function') {
+          throw new Error('DOCX library failed to load. Please check your internet connection and reload the page.');
+        }
+      }
+      
+      return htmlDocxLib;
+    }
+
+    // Text to DOCX
+    async function textToDocx(file) {
+      const htmlDocxLib = await getHtmlDocxLib();
+      const text = await file.text();
+      
+      // Validate text content
+      if (!text || text.trim().length === 0) {
+        throw new Error('Text file is empty. Please provide a file with content.');
+      }
+      
+      // Convert text to HTML first, then to DOCX
+      const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+      if (paragraphs.length === 0) {
+        // Fallback: use single line breaks
+        paragraphs.push(...text.split(/\n/).filter(l => l.trim().length > 0));
+      }
+      
+      if (paragraphs.length === 0) {
+        throw new Error('No readable content found in text file.');
+      }
+      
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;line-height:1.6;padding:20px;max-width:800px;margin:0 auto;}p{margin:12px 0;white-space:pre-wrap;}</style></head><body>${paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`).join('')}</body></html>`;
+      const result = await htmlToDocx(new Blob([html], { type: 'text/html' }));
+      
+      if (!result || result.size === 0) {
+        throw new Error('Failed to generate DOCX file.');
+      }
+      
+      return result;
+    }
+
+    // HTML to DOCX
+    async function htmlToDocx(file) {
+      const htmlDocxLib = await getHtmlDocxLib();
+      const html = await file.text();
+      const converted = htmlDocxLib.asBlob(html);
+      return converted;
+    }
+
+    // DOCX to Text
+    async function docxToText(file) {
+      if (typeof mammoth === 'undefined') {
+        throw new Error('DOCX reader library not loaded. Please reload the page.');
+      }
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      return new Blob([result.value], { type: 'text/plain' });
+    }
+
+    // DOCX to HTML
+    async function docxToHtml(file) {
+      if (typeof mammoth === 'undefined') {
+        throw new Error('DOCX reader library not loaded. Please reload the page.');
+      }
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      return new Blob([result.value], { type: 'text/html' });
+    }
+
+    // DOCX to PDF
+    async function docxToPdf(file) {
+      if (typeof mammoth === 'undefined' || !window.jspdf) {
+        throw new Error('Required libraries not loaded. Please reload the page.');
+      }
+      // Convert DOCX to text first, then to PDF
+      const textBlob = await docxToText(file);
+      return await textToPdf(textBlob);
+    }
+
+    // DOCX to RTF
+    async function docxToRtf(file) {
+      if (typeof mammoth === 'undefined') {
+        throw new Error('DOCX reader library not loaded. Please reload the page.');
+      }
+      // Convert DOCX to text first, then to RTF
+      const textBlob = await docxToText(file);
+      const text = await textBlob.text();
+      const rtf = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ${text.replace(/\n/g, '\\par ').replace(/[{}]/g, '')}}`;
+      return new Blob([rtf], { type: 'application/rtf' });
+    }
+
+    // Text to PDF
+    async function textToPdf(file) {
+      if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('PDF generator not loaded');
+      const text = await file.text();
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+        const margin = 48;
+        const width = doc.internal.pageSize.getWidth() - margin * 2;
+        const lines = doc.splitTextToSize(text, width);
+      doc.setFont('Helvetica', 'Normal');
+        doc.setFontSize(12);
+      let y = margin + 12;
+      for (let i = 0; i < lines.length; i++) {
+        if (y > doc.internal.pageSize.getHeight() - margin) {
+          doc.addPage();
+          y = margin;
+        }
+        doc.text(lines[i], margin, y);
+        y += 14;
+      }
+      return doc.output('blob');
+    }
+
+    // HTML to PDF
+    async function htmlToPdf(file) {
+      if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('PDF generator not loaded');
+      const html = await file.text();
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      const text = tempDiv.innerText || tempDiv.textContent || '';
+      return await textToPdf(new Blob([text], { type: 'text/plain' }));
+    }
+
+    // Document conversion (simplified - mainly text extraction)
+    async function convertDocument(file, fromExt, toExt) {
+      // TXT conversions
+      if (toExt === 'txt') {
+        // For text-based formats, try to read as text
+        try {
+          const text = await file.text();
+          return new Blob([text], { type: 'text/plain' });
+        } catch (e) {
+          throw new Error('Could not extract text from this file format.');
+        }
+      }
+      
+      // TXT to other formats
+      if (fromExt === 'txt') {
+        if (toExt === 'pdf') {
+          return await textToPdf(file);
+        }
+        if (toExt === 'html') {
+          const text = await file.text();
+          const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Converted Text</title><style>body{font-family:sans-serif;line-height:1.6;max-width:800px;margin:40px auto;padding:20px;}</style></head><body><pre style="white-space:pre-wrap;word-wrap:break-word;">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre></body></html>`;
+          return new Blob([html], { type: 'text/html' });
+        }
+        if (toExt === 'rtf') {
+          const text = await file.text();
+          const rtf = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ${text.replace(/\n/g, '\\par ')}}`;
+          return new Blob([rtf], { type: 'application/rtf' });
+        }
+      }
+
+      // RTF conversions
+      if (fromExt === 'rtf' && toExt === 'txt') {
+        const rtf = await file.text();
+        // Simple RTF to text extraction (removes RTF codes)
+        const text = rtf.replace(/\{[^}]*\}/g, '').replace(/\\[a-z]+\d*\s?/gi, '').replace(/\\par/g, '\n').trim();
+        return new Blob([text], { type: 'text/plain' });
+      }
+
+      // TXT to DOCX
+      if (fromExt === 'txt' && toExt === 'docx') {
+        return await textToDocx(file);
+      }
+
+      // HTML to DOCX
+      if (fromExt === 'html' && toExt === 'docx') {
+        return await htmlToDocx(file);
+      }
+
+      // DOC, ODT reading requires special libraries
+      if (['doc', 'odt'].includes(fromExt)) {
+        throw new Error(`Reading ${fromExt.toUpperCase()} files requires server-side processing. Please convert your file to DOCX, TXT or HTML first, then convert to your desired format.`);
+      }
+
+      // DOC conversion - try via DOCX
+      if (toExt === 'doc') {
+        try {
+          // Try converting to DOCX first
+          if (fromExt === 'txt') {
+            const docxBlob = await textToDocx(file);
+            showStatus('DOC format is outdated. Generated DOCX file instead (compatible with Word 2003+).', 'info');
+            return docxBlob;
+          }
+          if (fromExt === 'html') {
+            const docxBlob = await htmlToDocx(file);
+            showStatus('DOC format is outdated. Generated DOCX file instead (compatible with Word 2003+).', 'info');
+            return docxBlob;
+          }
+        } catch (e) {
+          throw new Error('DOC conversion requires server-side processing. DOCX format is recommended (compatible with all Word versions).');
+        }
+      }
+      // ODT writing requires server-side processing
+      if (toExt === 'odt') {
+        throw new Error('ODT conversion requires server-side processing. Try converting to DOCX, TXT or HTML instead.');
+      }
+
+      throw new Error(`Conversion from ${fromExt.toUpperCase()} to ${toExt.toUpperCase()} is not supported. Try converting to TXT or HTML as an intermediate format.`);
+    }
+
+    // Archive conversion
+    async function convertArchive(file, fromExt, toExt) {
+      if (!window.JSZip) throw new Error('Archive library not loaded');
+      
+      if (fromExt === 'zip' && toExt === 'zip') {
+        // Re-zip (just return original)
+        return file;
+      }
+
+      if (fromExt === 'zip') {
+        if (toExt === 'rar' || toExt === '7z') {
+          // ZIP to RAR/7Z requires server-side processing
+          throw new Error(`${toExt.toUpperCase()} conversion requires server-side processing. ZIP files can be opened by most archive tools.`);
+        }
+        
+        if (toExt === 'tar') {
+          // Convert ZIP to TAR (simplified - just re-zip)
+          showStatus('TAR conversion requires additional library. ZIP format maintained.', 'info');
+          return file;
+        }
+      }
+
+      // RAR/7Z to ZIP requires extraction libraries
+      if (['rar', '7z'].includes(fromExt)) {
+        throw new Error(`${fromExt.toUpperCase()} extraction requires server-side processing. Please extract the file first, then create a new ZIP archive.`);
+      }
+
+      throw new Error(`Archive conversion from ${fromExt.toUpperCase()} to ${toExt.toUpperCase()} is not supported.`);
+    }
+
+    // Video conversion
+    async function convertVideo(file, fromExt, toExt) {
+      return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        video.preload = 'auto';
+        video.muted = true;
+        video.playsInline = true;
+        video.setAttribute('crossorigin', 'anonymous');
+        
+        const url = URL.createObjectURL(file);
+        video.src = url;
+
+        let recorder = null;
+        let stream = null;
+        let chunks = [];
+        let recording = false;
+        let animationFrameId = null;
+
+        // Determine MIME type based on target format
+        let mimeType = 'video/webm';
+        
+        if (toExt === 'webm') {
+          mimeType = 'video/webm;codecs=vp8';
+        } else if (toExt === 'mp4') {
+          mimeType = 'video/mp4;codecs=avc1.42E01E';
+        } else if (toExt === 'mov') {
+          mimeType = 'video/quicktime;codecs=avc1.42E01E';
+        } else if (toExt === 'avi') {
+          mimeType = 'video/x-msvideo;codecs=avc1.42E01E';
+        } else if (toExt === 'wmv') {
+          mimeType = 'video/x-ms-wmv';
+        } else if (toExt === 'mkv') {
+          mimeType = 'video/x-matroska;codecs=vp8';
+        }
+
+        // Check if MediaRecorder supports the format
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+          // Try common alternatives
+          const alternatives = [
+            'video/webm;codecs=vp8',
+            'video/webm',
+            'video/mp4',
+            'video/webm;codecs=vp9'
+          ];
+          
+          mimeType = alternatives.find(type => MediaRecorder.isTypeSupported(type)) || 'video/webm';
+          
+          if (!MediaRecorder.isTypeSupported(mimeType)) {
+            URL.revokeObjectURL(url);
+            reject(new Error('Video conversion not supported in this browser. Please use Chrome or Firefox.'));
+            return;
+          }
+          
+          // Inform user about format change
+          if (toExt !== 'webm') {
+            showStatus(`Browser doesn't support ${toExt.toUpperCase()} directly. Converting to WEBM format instead.`, 'info');
+          }
+        }
+
+        const cleanup = () => {
+          if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+          if (recorder && recorder.state !== 'inactive') {
+            try {
+              recorder.stop();
+            } catch (e) {}
+          }
+          if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+          }
+          video.pause();
+          video.src = '';
+          URL.revokeObjectURL(url);
+        };
+
+        let metadataLoaded = false;
+        
+        video.onloadedmetadata = () => {
+          if (metadataLoaded) return; // Prevent duplicate calls
+          metadataLoaded = true;
+          
+          // Hide video element to prevent visual glitches
+          video.style.display = 'none';
+          video.style.position = 'absolute';
+          video.style.visibility = 'hidden';
+          
+          showStatus(`Video loaded: ${video.videoWidth}x${video.videoHeight}, ${video.duration.toFixed(1)}s`, 'info', true);
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+
+          // Create stream from canvas
+          stream = canvas.captureStream(30); // 30 FPS
+          
+          // Create MediaRecorder
+          try {
+            recorder = new MediaRecorder(stream, {
+              mimeType: mimeType,
+              videoBitsPerSecond: 2500000 // 2.5 Mbps
+            });
+          } catch (e) {
+            cleanup();
+            reject(new Error('Failed to create MediaRecorder: ' + e.message));
+            return;
+          }
+
+          recorder.ondataavailable = (e) => {
+            if (e.data && e.data.size > 0) {
+              chunks.push(e.data);
+            }
+          };
+
+          recorder.onstop = () => {
+            cleanup();
+            if (chunks.length === 0) {
+              reject(new Error('No video data recorded. The video may be too short, corrupted, or the conversion was interrupted.'));
+              return;
+            }
+            
+            const totalSize = chunks.reduce((sum, chunk) => sum + chunk.size, 0);
+            if (totalSize === 0) {
+              reject(new Error('Recorded video file is empty. The conversion may have failed.'));
+              return;
+            }
+            
+            showStatus('Finalizing conversion...', 'info', true);
+            const blob = new Blob(chunks, { type: mimeType.split(';')[0] });
+            resolve(blob);
+          };
+
+          recorder.onerror = (e) => {
+            cleanup();
+            reject(new Error('Recording error: ' + (e.error || 'Unknown error')));
+          };
+
+          // Draw video frames to canvas
+          let frameCount = 0;
+          const drawFrame = () => {
+            // Check if video ended or paused
+            if (video.ended) {
+              if (recording && recorder.state === 'recording') {
+                recorder.stop();
+              }
+              return;
+            }
+            
+            if (video.paused && recording) {
+              // Video paused but we're recording - wait a bit
+              animationFrameId = requestAnimationFrame(drawFrame);
+              return;
+            }
+
+            // Draw current frame
+            try {
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            } catch (e) {
+              cleanup();
+              reject(new Error('Failed to draw video frame: ' + e.message));
+              return;
+            }
+            
+            // Start recording when video starts playing
+            if (!recording && video.currentTime > 0 && recorder.state === 'inactive') {
+              recording = true;
+              try {
+                recorder.start(100); // Collect data every 100ms
+                showStatus(`Recording video... (${Math.floor(video.currentTime)}s / ${Math.floor(video.duration)}s)`, 'info', true);
+              } catch (e) {
+                cleanup();
+                reject(new Error('Failed to start recording: ' + e.message));
+                return;
+              }
+            }
+            
+            // Update progress during recording
+            if (recording && frameCount % 30 === 0) {
+              const progress = Math.floor((video.currentTime / video.duration) * 100);
+              showStatus(`Converting... ${progress}% (${Math.floor(video.currentTime)}s / ${Math.floor(video.duration)}s)`, 'info', true);
+            }
+            
+            frameCount++;
+            animationFrameId = requestAnimationFrame(drawFrame);
+          };
+
+          // Wait for video to be ready
+          let timeout = null;
+          let playbackStarted = false;
+          
+          video.oncanplaythrough = () => {
+            if (playbackStarted) return; // Prevent multiple calls
+            playbackStarted = true;
+            
+            showStatus('Starting video conversion...', 'info', true);
+            
+            // Start playback
+            const playPromise = video.play();
+            
+            if (playPromise !== undefined) {
+              playPromise.then(() => {
+                drawFrame();
+                
+                // Safety timeout - add extra buffer for long videos
+                const durationMs = (video.duration || 60) * 1000;
+                timeout = setTimeout(() => {
+                  if (recording && recorder.state === 'recording') {
+                    showStatus('Conversion timeout reached. Stopping...', 'info', true);
+                    recorder.stop();
+                  }
+                }, durationMs + 20000); // 20 second buffer
+              }).catch(err => {
+                cleanup();
+                reject(new Error('Could not play video. Browser may block autoplay. Try clicking on the page first, then convert again.'));
+              });
+            } else {
+              // Fallback for older browsers
+              drawFrame();
+            }
+          };
+
+          // Stop after video ends
+          video.onended = () => {
+            if (timeout) {
+              clearTimeout(timeout);
+            }
+            if (recording && recorder.state === 'recording') {
+              recorder.stop();
+            }
+          };
+        };
+
+        video.onerror = (e) => {
+          cleanup();
+          reject(new Error('Could not load video file: ' + (video.error ? video.error.message : 'Unknown error')));
+        };
+
+        // Timeout for loading - only check if metadata hasn't loaded
+        setTimeout(() => {
+          if (!metadataLoaded && (!video.readyState || video.readyState < 2)) {
+            cleanup();
+            reject(new Error('Video file took too long to load. The file may be corrupted or too large.'));
+          }
+        }, 30000); // 30 second timeout
+      });
+    }
+
+    // Audio conversion
+    async function convertAudio(file, fromExt, toExt) {
+      return new Promise((resolve, reject) => {
+        const audio = document.createElement('audio');
+        audio.preload = 'auto';
+        
+        const url = URL.createObjectURL(file);
+        audio.src = url;
+
+        audio.oncanplaythrough = () => {
+          // Determine MIME type based on target format
+          let mimeType = 'audio/webm';
+          
+          if (toExt === 'webm' || toExt === 'ogg') {
+            mimeType = 'audio/webm';
+          } else if (toExt === 'mp3') {
+            mimeType = 'audio/mpeg';
+          } else if (toExt === 'wav') {
+            mimeType = 'audio/wav';
+          } else if (toExt === 'm4a') {
+            mimeType = 'audio/mp4';
+          } else if (toExt === 'flac') {
+            mimeType = 'audio/flac';
+          }
+
+          // Check if MediaRecorder supports the format
+          if (!MediaRecorder.isTypeSupported(mimeType)) {
+            // Fallback to webm
+            mimeType = 'audio/webm';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+              URL.revokeObjectURL(url);
+              reject(new Error('Audio conversion not supported in this browser. Try Chrome or Firefox.'));
+        return;
+      }
+          }
+
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const source = audioContext.createMediaElementSource(audio);
+          const destination = audioContext.createMediaStreamDestination();
+          source.connect(destination);
+          source.connect(audioContext.destination);
+
+          const chunks = [];
+          const recorder = new MediaRecorder(destination.stream, {
+            mimeType: mimeType,
+            audioBitsPerSecond: 128000 // 128 kbps
+          });
+
+          recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) {
+              chunks.push(e.data);
+            }
+          };
+
+          recorder.onstop = () => {
+            const blob = new Blob(chunks, { type: mimeType });
+            audioContext.close();
+            URL.revokeObjectURL(url);
+            resolve(blob);
+          };
+
+          recorder.onerror = (e) => {
+            audioContext.close();
+            URL.revokeObjectURL(url);
+            reject(new Error('Recording error: ' + e.error));
+          };
+
+          audio.onplay = () => {
+            recorder.start();
+          };
+
+          audio.onended = () => {
+            recorder.stop();
+          };
+
+          // Start playback
+          audio.play().catch(err => {
+            audioContext.close();
+            URL.revokeObjectURL(url);
+            reject(new Error('Could not play audio: ' + err.message));
+          });
+
+          // Safety timeout
+          setTimeout(() => {
+            if (recorder.state === 'recording') {
+              recorder.stop();
+            }
+          }, (audio.duration || 60) * 1000 + 5000);
+        };
+
+        audio.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error('Could not load audio file'));
+        };
+      });
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,43 @@
+{
+  "name": "tab-amnesty-desktop",
+  "version": "1.0.0",
+  "description": "Desktop Tab Amnesty app - snooze, restore, declutter tabs!",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [
+    "tabs",
+    "productivity",
+    "snooze",
+    "tab-manager"
+  ],
+  "author": "Tab Amnesty",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^27.1.0"
+  },
+  "build": {
+    "appId": "com.tabamnesty.desktop",
+    "productName": "Tab Amnesty",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules",
+      "!dist"
+    ],
+    "mac": {
+      "icon": "icon-128.png"
+    },
+    "win": {
+      "icon": "icon-128.png"
+    },
+    "linux": {
+      "icon": "icon-128.png"
+    }
+  }
+}
+

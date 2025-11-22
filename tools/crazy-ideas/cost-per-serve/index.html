@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Cost-Per-Serving Calculator | Nutri Budget Helper</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="https://i.imgur.com/bZubhoR.png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/bZubhoR.png">
+  <link rel="shortcut icon" href="https://i.imgur.com/bZubhoR.png">
+  <meta name="description" content="See how much your products really cost per serving. Compare moringa, curry leaves, tea and more to make budget-friendly healthy choices.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+    
+    :root {
+      --color1: #D7C097;
+      --color2: #E7DEAF;
+      --color3: #73AF6F;
+      --color4: #007E6E;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--color2);
+      color: var(--color4);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      color: var(--color4);
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--color4);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--color1);
+      border-radius: 0;
+      padding: 2rem;
+      border: 3px solid var(--color4);
+    }
+
+    .card h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--color4);
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: var(--color4);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--color4);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    select,
+    input[type="number"] {
+      padding: 0.875rem 1rem;
+      border-radius: 0;
+      border: 2px solid var(--color4);
+      background: var(--color2);
+      color: var(--color4);
+      font-size: 1rem;
+      font-weight: 500;
+      outline: none;
+      font-family: inherit;
+    }
+
+    select:focus,
+    input[type="number"]:focus {
+      background: var(--color2);
+      border-color: var(--color3);
+    }
+
+    .unit {
+      color: var(--color4);
+      font-size: 0.75rem;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .helper {
+      font-size: 0.75rem;
+      color: var(--color4);
+      margin-top: 0.25rem;
+    }
+
+    .btn-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.75rem;
+      background: var(--color3);
+      color: var(--color2);
+      border: 3px solid var(--color4);
+      border-radius: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .btn-primary:hover {
+      background: var(--color4);
+      color: var(--color2);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: 2px solid var(--color4);
+      color: var(--color4);
+      border-radius: 0;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-ghost:hover {
+      background: var(--color4);
+      color: var(--color2);
+    }
+
+    .results-summary {
+      margin-top: 1.5rem;
+      border-radius: 0;
+      background: var(--color3);
+      border: 3px solid var(--color4);
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .results-main {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+      align-items: baseline;
+      margin-bottom: 1rem;
+    }
+
+    .results-main > div {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .results-main .label {
+      font-size: 0.8rem;
+      color: var(--color4);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .results-main strong {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color2);
+      display: block;
+    }
+
+    .results-detail {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 2px solid var(--color4);
+      font-size: 0.9rem;
+      color: var(--color4);
+      line-height: 1.7;
+    }
+
+    .results-detail span {
+      color: var(--color2);
+      font-weight: 600;
+    }
+
+    .secondary-card {
+      background: var(--color1);
+      border-radius: 0;
+      padding: 2rem;
+      border: 3px solid var(--color4);
+      height: fit-content;
+    }
+
+    .secondary-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--color4);
+    }
+
+    .secondary-card p {
+      font-size: 0.9rem;
+      color: var(--color4);
+      margin-bottom: 1rem;
+    }
+
+    .compare-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      color: var(--color4);
+    }
+
+    .compare-list li {
+      margin-bottom: 0.75rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .compare-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--color3);
+      font-weight: bold;
+    }
+
+    .product-cta {
+      margin-top: 1.5rem;
+      border-radius: 0;
+      padding: 1.25rem;
+      background: var(--color2);
+      border: 3px solid var(--color4);
+      font-size: 0.875rem;
+      color: var(--color4);
+      line-height: 1.7;
+    }
+
+    .product-cta strong {
+      color: var(--color4);
+      font-weight: 600;
+    }
+
+    .product-cta a {
+      color: var(--color3);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .product-cta a:hover {
+      color: var(--color4);
+    }
+
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--color4);
+      padding-top: 2rem;
+      border-top: 2px solid var(--color4);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>🥄 Cost Calculator</h1>
+      <p class="subtitle">
+        See how much your products really cost per serving, and compare them
+        to smoothies, greens powders and café drinks. Perfect for budget-conscious
+        healthy eating.
+      </p>
+    </header>
+
+    <div class="layout">
+      <!-- LEFT: Calculator -->
+      <section class="card">
+        <h2>Enter Product Details</h2>
+        <p>Select one of your products or use "Custom" to test anything from the supermarket.</p>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="productSelect">Product</label>
+            <select id="productSelect">
+              <option value="moringa">Moringa powder</option>
+              <option value="curry">Dried curry leaves</option>
+              <option value="tea">Darjeeling black tea</option>
+              <option value="custom">Custom product</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="$">$ (AUD)</option>
+              <option value="€">€</option>
+              <option value="£">£</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="packPrice">Pack price</label>
+            <input id="packPrice" type="number" min="0" step="0.01" />
+            <div class="helper">Total cost for one pack.</div>
+          </div>
+
+          <div class="field">
+            <label for="packGrams">Pack size in grams</label>
+            <input id="packGrams" type="number" min="1" step="1" />
+            <div class="helper">e.g. 200g bag, 80g tin, etc.</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="servingSize">Serving size (grams)</label>
+            <input id="servingSize" type="number" min="0.1" step="0.1" />
+            <div class="helper">How much you actually use per serve.</div>
+          </div>
+
+          <div class="field">
+            <label for="labelServing">Optional: label serving (g)</label>
+            <input id="labelServing" type="number" min="0" step="0.1" />
+            <div class="helper">If label suggests a serving size, add it here.</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary" id="calcBtn">
+            ✨ Calculate
+          </button>
+          <button class="btn-ghost" id="resetBtn">⟳ Reset</button>
+        </div>
+
+        <div id="resultsBox" class="results-summary" style="display:none;">
+          <div class="results-main">
+            <div>
+              <span class="label">Cost per serving</span>
+              <strong id="costPerServingText">$0.00</strong>
+            </div>
+            <div>
+              <span class="label">Servings per pack</span>
+              <strong id="servingsPerPackText">0</strong>
+            </div>
+          </div>
+          <div class="results-detail" id="extraInfoText"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Comparison + backlink zone -->
+      <aside class="secondary-card">
+        <h3>Compare with Other Options</h3>
+        <p>
+          Use this to show how your superfood compares to:
+        </p>
+        <ul class="compare-list">
+          <li>Daily greens powder subscription</li>
+          <li>Café smoothies and juices</li>
+          <li>Energy drinks or bottled iced tea</li>
+          <li>Other "detox" or "immunity" blends</li>
+        </ul>
+
+        <div id="comparisonBox" class="product-cta">
+          <strong>Shop NutriThrive Products:</strong>
+          <br /><br />
+          ✅ <a href="https://nutrithrive.com.au/pages/products/product-detail.html" id="moringaLink">Moringa Powder</a> — Budget-friendly micronutrients & natural energy boost<br />
+          ✅ <a href="https://nutrithrive.com.au/pages/products/product-curry-leaves.html" id="curryLink">Dried Curry Leaves</a> — Antioxidant support & gut health benefits<br />
+          ✅ <a href="https://nutrithrive.com.au/pages/products/product-black-tea.html" id="teaLink">Darjeeling Black Tea</a> — Calm caffeine source & focus enhancement<br />
+          <br />
+          <a href="https://nutrithrive.com.au/pages/products/products.html" style="font-weight:600; color:var(--color3);">View All Products →</a>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      This is a simple educational calculator. Prices are estimates only – always check your packaging and serving
+      sizes.
+    </footer>
+  </div>
+
+  <script>
+    const products = {
+      moringa: {
+        name: "Moringa powder",
+        defaultPrice: 19.95,
+        defaultGrams: 200,
+        defaultServing: 3,
+        url: "https://nutrithrive.com.au/pages/products/product-detail.html"
+      },
+      curry: {
+        name: "Dried curry leaves",
+        defaultPrice: 8.50,
+        defaultGrams: 50,
+        defaultServing: 1,
+        url: "https://nutrithrive.com.au/pages/products/product-curry-leaves.html"
+      },
+      tea: {
+        name: "Darjeeling black tea",
+        defaultPrice: 14.95,
+        defaultGrams: 100,
+        defaultServing: 2.5,
+        url: "https://nutrithrive.com.au/pages/products/product-black-tea.html"
+      }
+    };
+
+    const productSelect = document.getElementById("productSelect");
+    const currencySelect = document.getElementById("currency");
+    const packPriceInput = document.getElementById("packPrice");
+    const packGramsInput = document.getElementById("packGrams");
+    const servingSizeInput = document.getElementById("servingSize");
+    const labelServingInput = document.getElementById("labelServing");
+    const calcBtn = document.getElementById("calcBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const resultsBox = document.getElementById("resultsBox");
+    const costPerServingText = document.getElementById("costPerServingText");
+    const servingsPerPackText = document.getElementById("servingsPerPackText");
+    const extraInfoText = document.getElementById("extraInfoText");
+
+    const moringaLink = document.getElementById("moringaLink");
+    const curryLink = document.getElementById("curryLink");
+    const teaLink = document.getElementById("teaLink");
+
+    function loadProductDefaults() {
+      const key = productSelect.value;
+      if (products[key]) {
+        const p = products[key];
+        packPriceInput.value = p.defaultPrice;
+        packGramsInput.value = p.defaultGrams;
+        servingSizeInput.value = p.defaultServing;
+
+        moringaLink.href = products.moringa.url;
+        curryLink.href = products.curry.url;
+        teaLink.href = products.tea.url;
+      } else if (key === "custom") {
+        packPriceInput.value = "";
+        packGramsInput.value = "";
+        servingSizeInput.value = "";
+      }
+      resultsBox.style.display = "none";
+      extraInfoText.textContent = "";
+    }
+
+    productSelect.addEventListener("change", loadProductDefaults);
+
+    function formatCurrency(amount, symbol) {
+      if (isNaN(amount) || !isFinite(amount)) return symbol + "0.00";
+      return symbol + amount.toFixed(2);
+    }
+
+    function calculate() {
+      const currencySymbol = currencySelect.value || "$";
+      const price = parseFloat(packPriceInput.value);
+      const grams = parseFloat(packGramsInput.value);
+      const serving = parseFloat(servingSizeInput.value);
+      const labelServing = parseFloat(labelServingInput.value);
+
+      if (!price || !grams || !serving || price <= 0 || grams <= 0 || serving <= 0) {
+        alert("Please fill in pack price, pack size and serving size with values greater than zero.");
+        return;
+      }
+
+      const servingsPerPack = grams / serving;
+      const costPerServing = price / servingsPerPack;
+      const costPer100g = price / grams * 100;
+
+      costPerServingText.textContent = formatCurrency(costPerServing, currencySymbol);
+      servingsPerPackText.textContent = servingsPerPack.toFixed(1);
+
+      let detailText =
+        "That's about <span>" +
+        formatCurrency(costPerServing, currencySymbol) +
+        "</span> per " +
+        serving.toFixed(1) +
+        "g serving";
+
+      detailText += " and roughly <span>" +
+        formatCurrency(costPer100g, currencySymbol) +
+        "</span> per 100g.";
+
+      if (!isNaN(labelServing) && labelServing > 0) {
+        const labelServingsPerPack = grams / labelServing;
+        const labelCostPerServing = price / labelServingsPerPack;
+        detailText +=
+          " If you follow the label serving of " +
+          labelServing.toFixed(1) +
+          "g, that's about <span>" +
+          formatCurrency(labelCostPerServing, currencySymbol) +
+          "</span> per serve.";
+      }
+
+      extraInfoText.innerHTML = detailText;
+      resultsBox.style.display = "block";
+    }
+
+    calcBtn.addEventListener("click", calculate);
+
+    resetBtn.addEventListener("click", () => {
+      productSelect.value = "moringa";
+      currencySelect.value = "$";
+      packPriceInput.value = "";
+      packGramsInput.value = "";
+      servingSizeInput.value = "";
+      labelServingInput.value = "";
+      resultsBox.style.display = "none";
+      extraInfoText.textContent = "";
+      loadProductDefaults();
+    });
+
+    [packPriceInput, packGramsInput, servingSizeInput, labelServingInput, currencySelect].forEach((el) => {
+      el.addEventListener("input", () => {
+        if (packPriceInput.value && packGramsInput.value && servingSizeInput.value) {
+          calculate();
+        }
+      });
+    });
+
+    loadProductDefaults();
+  </script>
+</body>
+</html>

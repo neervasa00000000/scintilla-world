@@ -15,8 +15,8 @@
 ```bash
 cd /Users/neervasa/Desktop/scintilla-world
 
-# Add remote repository (replace YOUR_USERNAME with your GitHub username)
-git remote add origin https://github.com/YOUR_USERNAME/scintilla-world.git
+# Add remote repository
+git remote add origin https://github.com/neervasa00000000/scintilla-world.git
 
 # Add all files
 git add .
@@ -38,7 +38,7 @@ git push -u origin main
 3. Under **Source**, select **"Deploy from a branch"**
 4. Branch: `main`, Folder: `/ (root)`
 5. Click **Save**
-6. Your site will be live at: `https://YOUR_USERNAME.github.io/scintilla-world`
+6. Your site will be live at: `https://neervasa00000000.github.io/scintilla-world`
 
 **To use custom domain (scintilla.world):**
 - In GitHub Pages settings, add `scintilla.world` in the **Custom domain** field
@@ -91,7 +91,7 @@ git push -u origin main
 3. Add CNAME record:
    - **Type:** `CNAME`
    - **Name:** `www`
-   - **Value:** `YOUR_USERNAME.github.io`
+   - **Value:** `neervasa00000000.github.io`
    - **TTL:** 3600
 
 ### If using Netlify:

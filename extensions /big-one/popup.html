@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Amnesty</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="header-icon">⏰</div>
+                <div class="header-text">
+                    <h1>Tab Amnesty</h1>
+                    <p class="subtitle">Snooze tabs. Free RAM. Save sanity.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📑</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="tabsSnoozed">0</div>
+                    <div class="stat-label">Tabs Snoozed</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💾</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="ramSaved">0 MB</div>
+                    <div class="stat-label">RAM Saved</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="timeSaved">0h</div>
+                    <div class="stat-label">Time Saved</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Bar -->
+        <div class="quick-actions-bar">
+            <button class="quick-action-btn" id="clearAllBtn" title="Snooze all tabs until tomorrow">
+                <span class="quick-action-icon">🧹</span>
+                <span class="quick-action-text">Clear All</span>
+            </button>
+            <button class="quick-action-btn" id="snoozeWeekendBtn" title="Snooze all tabs until weekend">
+                <span class="quick-action-icon">🎉</span>
+                <span class="quick-action-text">Weekend</span>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Open Tabs Section -->
+            <div class="section open-tabs-section">
+                <div class="section-header">
+                    <div class="section-title-group">
+                        <span class="section-icon">🗂️</span>
+                        <h2>Open Tabs</h2>
+                    </div>
+                    <div class="tab-count-badge" id="openTabCount">0</div>
+                </div>
+                
+                <div class="tabs-list" id="openTabsList">
+                    <div class="empty-state">
+                        <div class="empty-icon">📑</div>
+                        <p class="empty-title">No tabs to manage</p>
+                        <p class="empty-hint">Open some tabs to get started</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Snoozed Tabs Section -->
+            <div class="section snoozed-section">
+                <div class="section-header">
+                    <div class="section-title-group">
+                        <span class="section-icon">😴</span>
+                        <h2>Snoozed Tabs</h2>
+                    </div>
+                    <div class="tab-count-badge" id="snoozedTabCount">0</div>
+                </div>
+                
+                <div class="snoozed-list" id="snoozedList">
+                    <div class="empty-state">
+                        <div class="empty-icon">💤</div>
+                        <p class="empty-title">No snoozed tabs</p>
+                        <p class="empty-hint">Snooze tabs to see them here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Snooze Modal -->
+    <div class="modal" id="snoozeModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span class="modal-icon">⏰</span>
+                    <h3>Snooze Tab Until...</h3>
+                </div>
+                <button class="modal-close" id="closeModalBtn" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="snooze-options-grid">
+                    <div class="snooze-option" data-time="tonight">
+                        <div class="snooze-emoji">🌙</div>
+                        <div class="snooze-label">Tonight</div>
+                        <div class="snooze-time">9:00 PM</div>
+                    </div>
+                    <div class="snooze-option" data-time="tomorrow">
+                        <div class="snooze-emoji">☀️</div>
+                        <div class="snooze-label">Tomorrow</div>
+                        <div class="snooze-time">9:00 AM</div>
+                    </div>
+                    <div class="snooze-option" data-time="weekend">
+                        <div class="snooze-emoji">📅</div>
+                        <div class="snooze-label">This Weekend</div>
+                        <div class="snooze-time">Saturday</div>
+                    </div>
+                    <div class="snooze-option" data-time="nextweek">
+                        <div class="snooze-emoji">🗓️</div>
+                        <div class="snooze-label">Next Week</div>
+                        <div class="snooze-time">Monday</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <span class="toast-icon" id="toastIcon">✓</span>
+            <span class="toast-message" id="toastMessage">Tab snoozed!</span>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

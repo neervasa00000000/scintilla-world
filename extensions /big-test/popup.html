@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Block The Buy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 420px;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #0f0f0f;
+      color: #ffffff;
+      min-height: 520px;
+      overflow-x: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      padding: 28px 24px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ff4444 0%, #ff6b6b 50%, #ff4444 100%);
+    }
+
+    h1 {
+      font-size: 1.75em;
+      margin: 0 0 6px 0;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .icon {
+      font-size: 1.2em;
+      filter: drop-shadow(0 2px 4px rgba(255, 68, 68, 0.5));
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.875em;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(180deg, #00ff88 0%, #00cc66 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    .stat-label {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.8125em;
+      margin-bottom: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      font-size: 2.25em;
+      font-weight: 800;
+      color: #00ff88;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .toggle-section {
+      margin-top: 24px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.08) 0%, rgba(255, 68, 68, 0.04) 100%);
+      border: 1px solid rgba(255, 68, 68, 0.2);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .status-text {
+      font-weight: 600;
+      color: #00ff88;
+      font-size: 0.9375em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #00ff88;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.8;
+        transform: scale(1.2);
+      }
+    }
+
+    .toggle-btn {
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.875em;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .toggle-btn:hover {
+      background: linear-gradient(135deg, #333 0%, #2a2a2a 100%);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .toggle-btn:active {
+      transform: translateY(0);
+    }
+
+    .info-section {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(255, 170, 0, 0.05);
+      border: 1px solid rgba(255, 170, 0, 0.15);
+      border-radius: 10px;
+      font-size: 0.8125em;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.6;
+    }
+
+    .info-section strong {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+    }
+
+    /* Smooth scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>
+      <span class="icon">🛑</span>
+      Block The Buy
+    </h1>
+    <div class="subtitle">Universal Purchase Blocker</div>
+  </div>
+
+  <div class="content">
+    <div class="stat-card">
+      <div class="stat-label">🛒 Blocked Purchases</div>
+      <div class="stat-value" id="blocked-count">0</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">💰 Money Saved</div>
+      <div class="stat-value" id="money-saved">$0</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">⏰ Work Hours Saved</div>
+      <div class="stat-value" id="hours-saved">0</div>
+    </div>
+
+    <div class="toggle-section">
+      <div class="status-text">
+        <span class="status-dot"></span>
+        Status: Active
+      </div>
+      <button class="toggle-btn" id="reset-btn">Reset Stats</button>
+    </div>
+
+    <div class="info-section">
+      <strong>Universal Protection:</strong> Blocks all purchases, subscriptions, and checkouts with a mandatory 24-hour delay. Works on all websites including Shein, Amazon, eBay, and more.
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

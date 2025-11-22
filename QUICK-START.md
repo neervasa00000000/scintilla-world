@@ -13,7 +13,7 @@
 cd /Users/neervasa/Desktop/scintilla-world
 
 # Create repo on GitHub first, then:
-git remote add origin https://github.com/YOUR_USERNAME/scintilla-world.git
+git remote add origin https://github.com/neervasa00000000/scintilla-world.git
 git branch -M main
 git push -u origin main
 ```

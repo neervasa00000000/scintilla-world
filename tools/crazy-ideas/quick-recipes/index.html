@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quick Recipe Generator | Nutri Goals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Tap a goal, pick your vibe, and get instant smoothie, meal, and snack ideas using moringa, curry leaves, protein, and black tea." />
+  <link rel="icon" type="image/png" href="https://i.imgur.com/bZubhoR.png">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/bZubhoR.png">
+  <link rel="shortcut icon" href="https://i.imgur.com/bZubhoR.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #F9E7B2;
+      --paper: #FFFDF6;
+      --card: #FFF2CE;
+      --ink: #3B2B1F;
+      --muted: #7B5E3C;
+      --accent: #D34E4E;
+      --accent-soft: #DDC57A;
+      --accent-dark: #CE7E5A;
+      --line: #E7D5AA;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      background-image: linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+      background-size: 28px 28px;
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 24px 72px;
+    }
+
+    header { text-align: center; margin-bottom: 32px; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .highlight {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: var(--paper);
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      max-width: 640px;
+      margin: 12px auto 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1.05fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--paper);
+      border-radius: 20px;
+      padding: 28px;
+      border: 2px solid var(--line);
+    }
+
+    .section-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 16px;
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .chip.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .tip-card {
+      margin-top: 20px;
+      padding: 16px 18px;
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .cta-buttons {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn-action {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 22px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .btn-action.generate {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-action.clear {
+      background: transparent;
+      border: 2px solid var(--line);
+      color: var(--ink);
+    }
+
+    .status-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .recipes-area { display: grid; gap: 18px; }
+
+    .recipe-card {
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 20px 22px;
+    }
+
+    .recipe-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .recipe-heading h3 { margin: 0; font-size: 1.25rem; }
+
+    .label-pill {
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--ink);
+    }
+
+    .tag-set {
+      margin: 6px 0 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag-pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 0.78rem;
+      background: var(--card);
+    }
+
+    ul, ol {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: var(--ink);
+    }
+
+    .nutrition {
+      margin-top: 12px;
+      border-radius: 12px;
+      border: 1px dashed var(--accent-dark);
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      color: var(--accent-dark);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .recipe-cta {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .recipe-cta button, .recipe-cta a {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .recipe-cta button { background: var(--accent); color: #fff; }
+    .recipe-cta a {
+      background: var(--accent-soft);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      text-decoration: none;
+    }
+
+    footer {
+      margin-top: 36px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style></style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="highlight">⚡ Instant ideas • 🛒 Shop-ready</div>
+      <h1>Quick Recipe Generator</h1>
+      <p class="subtitle">Tap a goal, pick your vibe, and get instant smoothie, meal, and snack ideas featuring moringa, curry leaves, protein, and Darjeeling tea.</p>
+    </header>
+    <div class="layout">
+      <section class="panel" id="controlsPanel">
+        <div class="section-label">Step 1 · Health goal</div>
+        <div class="chip-row" id="goalChips"></div>
+        <div class="section-label" style="margin-top:22px;">Step 2 · Diet style</div>
+        <div class="chip-row" id="dietChips"></div>
+        <div class="tip-card">
+          Pick one goal & diet, then hit Generate. Each recipe uses at least one hero ingredient — moringa, curry leaves, protein, or Darjeeling tea.
+        </div>
+        <div class="cta-buttons">
+          <button class="btn-action generate" id="generateBtn">✨ Generate recipes</button>
+          <button class="btn-action clear" id="clearBtn">Reset</button>
+        </div>
+        <div class="status-note" id="statusNote">Select a goal and diet to see ideas.</div>
+      </section>
+      <section class="panel" id="resultsPanel">
+        <div class="section-label">Your recipes</div>
+        <div class="recipes-area" id="recipesContainer"></div>
+      </section>
+    </div>
+    
+    <div class="panel" style="margin-top:24px; background:var(--card); border:2px solid var(--accent);">
+      <div class="section-label">Shop NutriThrive Products</div>
+      <p style="color:var(--muted); margin-bottom:16px;">Get the ingredients for these recipes delivered to your door:</p>
+      <div style="display:flex; flex-wrap:wrap; gap:12px;">
+        <a href="https://nutrithrive.com.au/pages/products/product-detail.html" class="btn-action generate" style="text-decoration:none; display:inline-block;">Moringa Powder →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-curry-leaves.html" class="btn-action generate" style="text-decoration:none; display:inline-block;">Curry Leaves →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-black-tea.html" class="btn-action generate" style="text-decoration:none; display:inline-block;">Black Tea →</a>
+        <a href="https://nutrithrive.com.au/pages/products/products.html" class="btn-action clear" style="text-decoration:none; display:inline-block;">View All Products →</a>
+      </div>
+    </div>
+    
+    <footer>
+      Nutrition values are approximate. Adjust ingredients for your own dietary needs. Have fun experimenting!
+    </footer>
+  </div>
+  <script>
+    const GOALS = [
+      { value: 'energy', label: 'Boost Energy', emoji: '⚡' },
+      { value: 'weight', label: 'Manage Appetite', emoji: '🎯' },
+      { value: 'gut', label: 'Gut Health', emoji: '🌿' },
+      { value: 'skin', label: 'Skin + Glow', emoji: '✨' }
+    ];
+
+    const DIETS = [
+      { value: 'any', label: 'Flexible', emoji: '🙂' },
+      { value: 'vegan', label: 'Vegan', emoji: '🌱' },
+      { value: 'gluten-free', label: 'Gluten-Free', emoji: '🚫🌾' },
+      { value: 'high-protein', label: 'High Protein', emoji: '💪' },
+      { value: 'low-carb', label: 'Low Carb', emoji: '🍽️' }
+    ];
+
+    const PRODUCT_LINKS = {
+      moringa: 'https://nutrithrive.com.au/pages/products/product-detail.html',
+      curry: 'https://nutrithrive.com.au/pages/products/product-curry-leaves.html',
+      tea: 'https://nutrithrive.com.au/pages/products/product-black-tea.html',
+      protein: 'https://nutrithrive.com.au/pages/products/product-detail.html',
+      bundleEnergy: '#',
+      bundleGut: '#',
+      bundleSkin: '#'
+    };
+
+    const RECIPES = [
+      { id: 'energy_moringa_smoothie', name: 'Morning Moringa Booster', type: 'Smoothie', goal: 'energy', diets: ['vegan','gluten-free','high-protein','any'], coreProducts: ['moringa','protein'],
+        ingredients: ['1 frozen banana','1 cup oat or almond milk','1 tbsp plant protein','1 tsp moringa powder','Ice & optional date'],
+        steps: ['Blend everything until super smooth.','Taste and tweak sweetness with a date or maple drizzle.','Serve super cold.'],
+        nutrition: { calories: 320, protein: 16, fiber: 6, vitamins: 'B-vitamins + plant iron from moringa' } },
+      { id: 'energy_tea_tonic', name: 'Darjeeling Focus Tonic', type: 'Drink', goal: 'energy', diets: ['vegan','gluten-free','low-carb','any'], coreProducts: ['tea'],
+        ingredients: ['1 cup brewed Darjeeling tea, chilled','1/2 cup sparkling water','Juice of 1/4 lemon','1 tsp honey (opt)','Ice + lemon slice'],
+        steps: ['Combine tea, sparkling water, lemon and honey.','Pour over ice and garnish.','Sip pre-work or mid-afternoon.'],
+        nutrition: { calories: 25, protein: 0, fiber: 0, vitamins: 'Light antioxidant lift + gentle caffeine' } },
+      { id: 'weight_moringa_bowl', name: 'Green Glow Smoothie Bowl', type: 'Bowl', goal: 'weight', diets: ['vegan','gluten-free','any'], coreProducts: ['moringa'],
+        ingredients: ['1 frozen banana','1/2 cup frozen berries','1 tsp moringa','1/2 cup plant milk','1 tbsp chia','Crunchy toppings'],
+        steps: ['Blend thick and spoonable.','Pour into a bowl.','Top with fruit + nuts for texture.'],
+        nutrition: { calories: 280, protein: 7, fiber: 8, vitamins: 'Vitamin C + plant antioxidants' } },
+      { id: 'weight_protein_snack', name: 'High-Protein Snack Shake', type: 'Shake', goal: 'weight', diets: ['high-protein','gluten-free','any'], coreProducts: ['protein','moringa'],
+        ingredients: ['1 scoop protein powder','1 tsp moringa','1 cup water or plant milk','Ice cubes','Optional: 1/2 banana'],
+        steps: ['Shake or blend until frothy.','Adjust thickness with water.','Sip slowly for satiety.'],
+        nutrition: { calories: 190, protein: 22, fiber: 2, vitamins: 'Protein hit + micronutrients from moringa' } },
+      { id: 'gut_curry_rice', name: 'Curry Leaf Gut Bowl', type: 'Meal', goal: 'gut', diets: ['vegan','any'], coreProducts: ['curry'],
+        ingredients: ['1/2 cup brown rice','1/2 cup lentils/chickpeas','1 tbsp dried curry leaves','Mixed veggies','1 tsp olive oil','Lemon + seasoning'],
+        steps: ['Toast curry leaves in oil.','Add lentils & veggies; sauté.','Stir in rice, season, finish with lemon.'],
+        nutrition: { calories: 390, protein: 15, fiber: 10, vitamins: 'Fiber, plant protein, aromatic polyphenols' } },
+      { id: 'gut_curry_tea', name: 'Curry Leaf Digest Tea', type: 'Drink', goal: 'gut', diets: ['vegan','gluten-free','low-carb','any'], coreProducts: ['curry'],
+        ingredients: ['1 tsp dried curry leaves','1 cup hot water','Slice of ginger','Lemon slice'],
+        steps: ['Steep curry leaves + ginger 5 min.','Strain, add lemon.','Drink warm after meals.'],
+        nutrition: { calories: 5, protein: 0, fiber: 0, vitamins: 'Aromatic compounds that may support digestion' } },
+      { id: 'skin_tea_glow', name: 'Glow-from-Within Elixir', type: 'Drink', goal: 'skin', diets: ['vegan','gluten-free','low-carb','any'], coreProducts: ['tea','moringa'],
+        ingredients: ['1 cup warm Darjeeling tea','1/2 tsp moringa','1 tsp lemon juice','1 tsp honey (opt)'],
+        steps: ['Let tea cool slightly.','Whisk in moringa, lemon, honey.','Sip slowly, enjoy the ritual.'],
+        nutrition: { calories: 35, protein: 1, fiber: 1, vitamins: 'Vitamin C + tea and moringa antioxidants' } },
+      { id: 'skin_moringa_yogurt', name: 'Moringa Yogurt Glow Bowl', type: 'Snack', goal: 'skin', diets: ['gluten-free','high-protein','any'], coreProducts: ['moringa'],
+        ingredients: ['3/4 cup Greek or coconut yogurt','1/2 tsp moringa','1/4 cup berries','1 tsp chia seeds','Honey drizzle'],
+        steps: ['Stir moringa into yogurt.','Top with berries & chia.','Finish with a little honey.'],
+        nutrition: { calories: 230, protein: 13, fiber: 4, vitamins: 'Protein + antioxidant boost' } }
+    ];
+
+    const goalChips = document.getElementById('goalChips');
+    const dietChips = document.getElementById('dietChips');
+    const recipesContainer = document.getElementById('recipesContainer');
+    const statusNote = document.getElementById('statusNote');
+    const generateBtn = document.getElementById('generateBtn');
+    const clearBtn = document.getElementById('clearBtn');
+
+    let selectedGoal = '';
+    let selectedDiet = '';
+
+    function createChip(row, item, type) {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chip';
+      chip.textContent = `${item.emoji} ${item.label}`;
+      chip.dataset.value = item.value;
+      chip.addEventListener('click', () => {
+        Array.from(row.children).forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        if (type === 'goal') {
+          selectedGoal = item.value;
+        } else {
+          selectedDiet = item.value;
+        }
+      });
+      row.appendChild(chip);
+    }
+
+    GOALS.forEach(item => createChip(goalChips, item, 'goal'));
+    DIETS.forEach(item => createChip(dietChips, item, 'diet'));
+
+    function goalLabel(goal) {
+      const g = GOALS.find(g => g.value === goal);
+      return g ? g.label : goal;
+    }
+
+    function dietLabel(diet) {
+      const d = DIETS.find(d => d.value === diet);
+      return d ? d.label : diet;
+    }
+
+    function getRecipes(goal, diet) {
+      const filtered = RECIPES.filter(r => {
+        if (r.goal !== goal) return false;
+        if (!diet || diet === 'any') return true;
+        return r.diets.includes(diet) || r.diets.includes('any');
+      });
+      if (filtered.length === 0) {
+        return RECIPES.filter(r => r.goal === goal);
+      }
+      return filtered;
+    }
+
+    function createNutritionText(n) {
+      return `<strong>${n.calories} kcal</strong> · ${n.protein}g protein · ${n.fiber}g fibre · ${n.vitamins}`;
+    }
+
+    function getShopLink(recipe, goal) {
+      if (goal === 'energy') return PRODUCT_LINKS.bundleEnergy || PRODUCT_LINKS.moringa;
+      if (goal === 'gut') return PRODUCT_LINKS.bundleGut || PRODUCT_LINKS.curry;
+      if (goal === 'skin') return PRODUCT_LINKS.bundleSkin || PRODUCT_LINKS.tea;
+      if (goal === 'weight') return PRODUCT_LINKS.bundleEnergy || PRODUCT_LINKS.protein;
+      if (recipe.coreProducts.includes('moringa')) return PRODUCT_LINKS.moringa;
+      if (recipe.coreProducts.includes('curry')) return PRODUCT_LINKS.curry;
+      if (recipe.coreProducts.includes('tea')) return PRODUCT_LINKS.tea;
+      if (recipe.coreProducts.includes('protein')) return PRODUCT_LINKS.protein;
+      return '#';
+    }
+
+    function makeRecipeCard(recipe, goal, diet) {
+      const card = document.createElement('div');
+      card.className = 'recipe-card';
+
+      const header = document.createElement('div');
+      header.className = 'recipe-heading';
+      const h3 = document.createElement('h3');
+      h3.textContent = recipe.name;
+      const badge = document.createElement('span');
+      badge.className = 'tag-pill';
+      badge.textContent = recipe.type;
+      header.append(h3, badge);
+      card.appendChild(header);
+
+      const tagSet = document.createElement('div');
+      tagSet.className = 'tag-set';
+      const goalTag = document.createElement('span');
+      goalTag.className = 'tag-pill';
+      goalTag.textContent = goalLabel(goal);
+      tagSet.appendChild(goalTag);
+      if (diet && diet !== 'any') {
+        const dietTag = document.createElement('span');
+        dietTag.className = 'tag-pill';
+        dietTag.textContent = dietLabel(diet);
+        tagSet.appendChild(dietTag);
+      }
+      card.appendChild(tagSet);
+
+      const ingTitle = document.createElement('div');
+      ingTitle.className = 'section-label';
+      ingTitle.textContent = 'Ingredients';
+      card.appendChild(ingTitle);
+
+      const ingList = document.createElement('ul');
+      recipe.ingredients.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        ingList.appendChild(li);
+      });
+      card.appendChild(ingList);
+
+      const stepsTitle = document.createElement('div');
+      stepsTitle.className = 'section-label';
+      stepsTitle.textContent = 'Steps';
+      card.appendChild(stepsTitle);
+
+      const stepsList = document.createElement('ol');
+      recipe.steps.forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        stepsList.appendChild(li);
+      });
+      card.appendChild(stepsList);
+
+      const nutr = document.createElement('div');
+      nutr.className = 'nutrition';
+      nutr.innerHTML = createNutritionText(recipe.nutrition);
+      card.appendChild(nutr);
+
+      const ctas = document.createElement('div');
+      ctas.className = 'recipe-cta';
+
+      const downloadBtn = document.createElement('button');
+      downloadBtn.textContent = '⬇ Save Recipe';
+      downloadBtn.addEventListener('click', () => downloadRecipe(recipe, goal, diet));
+
+      const shopLink = document.createElement('a');
+      shopLink.textContent = '🛒 Shop ingredients';
+      shopLink.target = '_blank';
+      shopLink.rel = 'noopener';
+      shopLink.href = getShopLink(recipe, goal);
+
+      ctas.append(downloadBtn, shopLink);
+      card.appendChild(ctas);
+
+      return card;
+    }
+
+    function downloadRecipe(recipe, goal, diet) {
+      const lines = [];
+      lines.push(`${recipe.name}`);
+      lines.push(`Goal: ${goalLabel(goal)}`);
+      if (diet && diet !== 'any') lines.push(`Diet: ${dietLabel(diet)}`);
+      lines.push('');
+      lines.push('Ingredients:');
+      recipe.ingredients.forEach((ing, i) => lines.push(`  ${i + 1}. ${ing}`));
+      lines.push('');
+      lines.push('Steps:');
+      recipe.steps.forEach((step, i) => lines.push(`  ${i + 1}. ${step}`));
+      lines.push('');
+      lines.push('Nutrition (approx):');
+      lines.push(`  • ${recipe.nutrition.calories} kcal`);
+      lines.push(`  • ${recipe.nutrition.protein}g protein`);
+      lines.push(`  • ${recipe.nutrition.fiber}g fibre`);
+      lines.push(`  • Notes: ${recipe.nutrition.vitamins}`);
+      lines.push('\nCreated with the NutriThrive Quick Recipe Generator.');
+
+      const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = recipe.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function handleGenerate() {
+      if (!selectedGoal) {
+        alert('Pick a goal first.');
+        return;
+      }
+      if (!selectedDiet) {
+        alert('Pick a diet preference.');
+        return;
+      }
+      const recipes = getRecipes(selectedGoal, selectedDiet);
+      recipesContainer.innerHTML = '';
+      if (recipes.length === 0) {
+        statusNote.textContent = 'No recipes yet for that combo. Try another diet.';
+        return;
+      }
+      recipes.slice(0, 3).forEach(recipe => {
+        recipesContainer.appendChild(makeRecipeCard(recipe, selectedGoal, selectedDiet));
+      });
+      statusNote.textContent = `Showing ${Math.min(recipes.length,3)} idea(s) for ${goalLabel(selectedGoal)} (${dietLabel(selectedDiet)}).`;
+    }
+
+    function handleClear() {
+      selectedGoal = '';
+      selectedDiet = '';
+      Array.from(goalChips.children).forEach(c => c.classList.remove('active'));
+      Array.from(dietChips.children).forEach(c => c.classList.remove('active'));
+      recipesContainer.innerHTML = '';
+      statusNote.textContent = 'Select a goal and diet to see ideas.';
+    }
+
+    generateBtn.addEventListener('click', handleGenerate);
+    clearBtn.addEventListener('click', handleClear);
+  </script>
+</body>
+</html>

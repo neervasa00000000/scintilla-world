@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Amnesty - Snooze Your Tabs",
+  "version": "1.1.0",
+  "description": "Snooze tabs to specific times. Free your RAM. Save your sanity.",
+  "icons": {
+    "16": "lazy-sleep.png",
+    "48": "lazy-sleep.png",
+    "128": "lazy-sleep.png"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "alarms",
+    "notifications",
+    "favicon"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Tab Amnesty",
+    "default_icon": {
+      "16": "lazy-sleep.png",
+      "48": "lazy-sleep.png",
+      "128": "lazy-sleep.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
+
