@@ -104,11 +104,30 @@
       border-radius: 12px;
       cursor: pointer;
       font-size: 1rem;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .primary-btn:hover {
+      background: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    .primary-btn:active,
+    .primary-btn.active {
+      background: var(--ink);
+      transform: translateY(0);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .primary-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    .primary-btn:disabled:hover {
+      transform: none;
+      background: var(--accent);
     }
 
     .workspace {
@@ -256,6 +275,23 @@
       border-radius: 999px;
       text-decoration: none;
       font-weight: 600;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .link-btn:hover {
+      background: var(--accent);
+      color: #F5F5F0;
+    }
+
+    .link-btn:active,
+    .link-btn.active {
+      background: var(--ink);
+      color: #F5F5F0;
+      border-color: var(--ink);
+      transform: scale(0.98);
     }
 
     footer {
@@ -271,7 +307,7 @@
       <div>
         <p class="eyebrow">NutriThrive Labs</p>
         <h1>Instant Image Enhancer</h1>
-        <p>Brighten dull photos, add clarity, and download a crisp PNG in seconds. Entirely browser-based, so your files never leave your device.</p>
+        <p>Fix blurry photos, brighten dull images, add clarity, and download in your original format (JPG, PNG, WEBP, GIF) in seconds. Entirely browser-based, so your files never leave your device.</p>
         <div class="badge-list">
           <span class="badge">100% local</span>
           <span class="badge">No sign-up</span>
@@ -336,10 +372,21 @@
             </label>
             <input type="range" id="sharpnessRange" min="0" max="60" value="0">
           </div>
+          <div class="control-group">
+            <label>
+              Deblur
+              <span id="deblurLabel">0</span>
+            </label>
+            <input type="range" id="deblurRange" min="0" max="100" value="0">
+          </div>
         </div>
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
           <button class="primary-btn" id="enhanceBtn" disabled>Enhance image</button>
-          <a id="downloadLink" class="link-btn" style="display:none;">Download PNG</a>
+          <button class="primary-btn" id="autoDeblurBtn" disabled style="background: var(--accent-soft);">Auto Fix Blur</button>
+          <a id="downloadLink" class="link-btn" style="display:none;">Download</a>
+        </div>
+        <div id="blurStatus" style="margin-top: 12px; padding: 12px; background: var(--pane-alt); border-radius: 8px; font-size: 0.9rem; color: var(--muted); display: none;">
+          <strong>Blur Detection:</strong> <span id="blurStatusText"></span>
         </div>
       </section>
     </div>
@@ -355,7 +402,7 @@
     </div>
 
     <footer>
-      Processing happens locally using HTML5 Canvas. For scanned or very dark photos, you may need dedicated desktop software for best results.
+      Processing happens locally using HTML5 Canvas. Blur detection and deblurring use advanced algorithms to improve image clarity. For severely blurred or scanned photos, you may need dedicated desktop software for best results.
     </footer>
   </div>
 
@@ -377,6 +424,11 @@
     const warmthLabel = document.getElementById('warmthLabel');
     const sharpnessRange = document.getElementById('sharpnessRange');
     const sharpnessLabel = document.getElementById('sharpnessLabel');
+    const deblurRange = document.getElementById('deblurRange');
+    const deblurLabel = document.getElementById('deblurLabel');
+    const autoDeblurBtn = document.getElementById('autoDeblurBtn');
+    const blurStatus = document.getElementById('blurStatus');
+    const blurStatusText = document.getElementById('blurStatusText');
     const originalEmpty = document.getElementById('originalEmpty');
     const enhancedEmpty = document.getElementById('enhancedEmpty');
     const canvas = document.getElementById('hiddenCanvas');
@@ -384,6 +436,8 @@
 
     let uploadedImg = null;
     let pendingTimeout = null;
+    let originalFormat = 'png';
+    let originalFileName = 'enhanced';
 
     uploadTrigger.addEventListener('click', () => fileInput.click());
 
@@ -410,6 +464,9 @@
       outputImg.src = '';
       enhancedEmpty.style.display = 'block';
       downloadLink.style.display = 'none';
+      blurStatus.style.display = 'none';
+      deblurRange.value = 0;
+      deblurLabel.textContent = '0';
     }
 
     function loadImage(file) {
@@ -422,10 +479,94 @@
           originalEmpty.style.display = 'none';
           resetOutputs();
           enhanceBtn.disabled = false;
+          autoDeblurBtn.disabled = false;
+          
+          // Detect and store original format
+          const fileName = file.name.toLowerCase();
+          originalFileName = fileName.substring(0, fileName.lastIndexOf('.')) || 'enhanced';
+          
+          if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
+            originalFormat = 'jpeg';
+          } else if (fileName.endsWith('.png')) {
+            originalFormat = 'png';
+          } else if (fileName.endsWith('.webp')) {
+            originalFormat = 'webp';
+          } else if (fileName.endsWith('.gif')) {
+            originalFormat = 'gif';
+          } else {
+            // Try to detect from file type
+            const mimeType = file.type;
+            if (mimeType.includes('jpeg')) {
+              originalFormat = 'jpeg';
+            } else if (mimeType.includes('png')) {
+              originalFormat = 'png';
+            } else if (mimeType.includes('webp')) {
+              originalFormat = 'webp';
+            } else if (mimeType.includes('gif')) {
+              originalFormat = 'gif';
+            } else {
+              originalFormat = 'png'; // default fallback
+            }
+          }
+          
+          detectBlur();
         };
         uploadedImg.src = evt.target.result;
       };
       reader.readAsDataURL(file);
+    }
+
+    function detectBlur() {
+      if (!uploadedImg) return;
+      
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      const sampleSize = Math.min(uploadedImg.width, uploadedImg.height, 400);
+      tempCanvas.width = sampleSize;
+      tempCanvas.height = sampleSize;
+      tempCtx.drawImage(uploadedImg, 0, 0, sampleSize, sampleSize);
+      
+      const imageData = tempCtx.getImageData(0, 0, sampleSize, sampleSize);
+      const data = imageData.data;
+      
+      let variance = 0;
+      let mean = 0;
+      const grayscale = [];
+      
+      for (let i = 0; i < data.length; i += 4) {
+        const gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        grayscale.push(gray);
+        mean += gray;
+      }
+      mean /= grayscale.length;
+      
+      for (let i = 0; i < grayscale.length; i++) {
+        variance += Math.pow(grayscale[i] - mean, 2);
+      }
+      variance /= grayscale.length;
+      
+      const blurScore = Math.sqrt(variance);
+      let blurLevel = 'Low';
+      let recommendedDeblur = 0;
+      
+      if (blurScore < 15) {
+        blurLevel = 'High';
+        recommendedDeblur = 60;
+      } else if (blurScore < 25) {
+        blurLevel = 'Medium';
+        recommendedDeblur = 35;
+      } else if (blurScore < 35) {
+        blurLevel = 'Low';
+        recommendedDeblur = 15;
+      }
+      
+      blurStatusText.textContent = `${blurLevel} blur detected (score: ${blurScore.toFixed(1)})`;
+      blurStatus.style.display = 'block';
+      
+      if (recommendedDeblur > 0) {
+        deblurRange.value = recommendedDeblur;
+        deblurLabel.textContent = recommendedDeblur;
+      }
     }
 
     function runEnhancements() {
@@ -438,13 +579,15 @@
       const contrast = parseInt(contrastRange.value, 10);
       const warmth = parseInt(warmthRange.value, 10);
       const sharpness = parseInt(sharpnessRange.value, 10);
+      const deblur = parseInt(deblurRange.value, 10);
 
       brightnessLabel.textContent = brightness >= 0 ? `+${brightness}` : brightness;
       contrastLabel.textContent = contrast >= 0 ? `+${contrast}` : contrast;
       warmthLabel.textContent = warmth >= 0 ? `+${warmth}` : warmth;
       sharpnessLabel.textContent = sharpness;
+      deblurLabel.textContent = deblur;
 
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const data = imageData.data;
       const contrastFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
 
@@ -454,18 +597,70 @@
         data[i + 2] = clamp(contrastFactor * (data[i + 2] - 128) + 128 + brightness - warmth / 2, 0, 255);
       }
 
+      if (deblur > 0) {
+        imageData = applyDeblur(imageData, canvas.width, canvas.height, deblur / 100);
+      }
+
       if (sharpness > 0) {
         applySharpness(imageData, canvas.width, canvas.height, sharpness / 100);
       }
 
       ctx.putImageData(imageData, 0, 0);
-      const resultURL = canvas.toDataURL('image/png');
+      
+      // Use original format for download
+      const mimeType = originalFormat === 'jpeg' ? 'image/jpeg' : 
+                       originalFormat === 'webp' ? 'image/webp' :
+                       originalFormat === 'gif' ? 'image/gif' : 'image/png';
+      const quality = originalFormat === 'jpeg' ? 0.92 : undefined;
+      
+      const resultURL = quality !== undefined ? 
+        canvas.toDataURL(mimeType, quality) : 
+        canvas.toDataURL(mimeType);
+      
       outputImg.src = resultURL;
       outputImg.classList.add('visible');
       enhancedEmpty.style.display = 'none';
       downloadLink.href = resultURL;
-      downloadLink.download = 'nutrithrive-enhanced.png';
+      downloadLink.download = `${originalFileName}-enhanced.${originalFormat}`;
+      downloadLink.textContent = `Download ${originalFormat.toUpperCase()}`;
       downloadLink.style.display = 'inline-flex';
+    }
+
+    function applyDeblur(imageData, width, height, intensity) {
+      const src = imageData.data;
+      const result = new ImageData(new Uint8ClampedArray(src), width, height);
+      const dst = result.data;
+      
+      const radius = Math.max(1, Math.floor(intensity * 3));
+      const unsharpAmount = intensity * 2;
+      
+      for (let y = radius; y < height - radius; y++) {
+        for (let x = radius; x < width - radius; x++) {
+          for (let c = 0; c < 3; c++) {
+            let sum = 0;
+            let count = 0;
+            
+            for (let ky = -radius; ky <= radius; ky++) {
+              for (let kx = -radius; kx <= radius; kx++) {
+                const dist = Math.sqrt(kx * kx + ky * ky);
+                if (dist <= radius) {
+                  const px = ((y + ky) * width + (x + kx)) * 4 + c;
+                  const weight = 1 - (dist / radius) * 0.5;
+                  sum += src[px] * weight;
+                  count += weight;
+                }
+              }
+            }
+            
+            const blurred = sum / count;
+            const idx = (y * width + x) * 4 + c;
+            const original = src[idx];
+            dst[idx] = clamp(original + (original - blurred) * unsharpAmount, 0, 255);
+          }
+        }
+      }
+      
+      return result;
     }
 
     function applySharpness(imageData, width, height, intensity) {
@@ -515,9 +710,30 @@
         clearTimeout(pendingTimeout);
         pendingTimeout = null;
       }
+      enhanceBtn.classList.add('active');
+      setTimeout(() => enhanceBtn.classList.remove('active'), 200);
       runEnhancements();
     });
-    [brightnessRange, contrastRange, warmthRange, sharpnessRange].forEach(range => {
+
+    autoDeblurBtn.addEventListener('click', () => {
+      if (!uploadedImg) return;
+      autoDeblurBtn.classList.add('active');
+      setTimeout(() => autoDeblurBtn.classList.remove('active'), 200);
+      detectBlur();
+      const recommendedDeblur = parseInt(deblurRange.value, 10);
+      if (recommendedDeblur > 0) {
+        sharpnessRange.value = Math.min(40, recommendedDeblur / 2);
+        sharpnessLabel.textContent = sharpnessRange.value;
+        runEnhancements();
+      }
+    });
+
+    downloadLink.addEventListener('click', () => {
+      downloadLink.classList.add('active');
+      setTimeout(() => downloadLink.classList.remove('active'), 200);
+    });
+
+    [brightnessRange, contrastRange, warmthRange, sharpnessRange, deblurRange].forEach(range => {
       range.addEventListener('input', scheduleEnhancement);
     });
   </script>
