@@ -7,6 +7,14 @@
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false
+
+# Allow extensions folder to be accessible
+[[redirects]]
+  from = "/extensions/*"
+  to = "/extensions/:splat"
+  status = 200
+  force = false
 
 [context.production.environment]
   NODE_ENV = "production"
