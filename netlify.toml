@@ -16,6 +16,13 @@
   status = 200
   force = false
 
+# Allow tools folder to be accessible
+[[redirects]]
+  from = "/tools/*"
+  to = "/tools/:splat"
+  status = 200
+  force = false
+
 [context.production.environment]
   NODE_ENV = "production"
 
