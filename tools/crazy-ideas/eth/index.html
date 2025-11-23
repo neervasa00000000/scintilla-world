@@ -576,9 +576,10 @@ Date,Type,Amount,Asset,Price,Fee<br>
                 // Use Etherscan API V2 (updated endpoint)
                 const apiKey = 'YourApiKeyToken'; // Users can replace with their free API key from etherscan.io
                 const baseUrl = 'https://api.etherscan.io/v2/api';
+                const chainid = '1'; // Ethereum mainnet chain ID (required for V2 API)
                 
                 // Fetch normal ETH transactions using V2 API
-                const normalTxUrl = `${baseUrl}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKey}`;
+                const normalTxUrl = `${baseUrl}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&chainid=${chainid}&apikey=${apiKey}`;
                 
                 console.log('Fetching transactions via Etherscan API V2...');
                 const normalResponse = await fetch(normalTxUrl);
