@@ -355,15 +355,33 @@ Date,Type,Amount,Asset,Price,Fee<br>
 
             <div id="wallet-tab" class="tab-content">
                 <div style="background: rgba(192, 21, 47, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(192, 21, 47, 0.3);">
-                    <strong>⚠️ Wallet import has limitations</strong>
-                    <p style="margin: 8px 0 0 0; font-size: 13px;">Browser security (CORS) often blocks direct API calls. CSV import is more reliable and supports all exchanges and chains.</p>
+                    <strong>⚠️ Wallet import requires API key</strong>
+                    <p style="margin: 8px 0 0 0; font-size: 13px;">To fetch transactions from blockchain, you need a free API key from Etherscan. <strong>CSV import (recommended)</strong> works without any API key and is more reliable.</p>
                 </div>
+                
+                <div style="background: rgba(33, 128, 141, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(33, 128, 141, 0.3);">
+                    <strong>🔑 What is an API key?</strong>
+                    <p style="margin: 8px 0 0 0; font-size: 13px; line-height: 1.6;">
+                        An API key is like a password that lets apps access blockchain data. Etherscan provides <strong>free API keys</strong> to anyone. 
+                        You can get one in 2 minutes:
+                    </p>
+                    <ol style="margin: 8px 0 0 0; padding-left: 20px; font-size: 13px; line-height: 1.8;">
+                        <li>Go to <a href="https://etherscan.io/apis" target="_blank" style="color: var(--color-primary);">etherscan.io/apis</a></li>
+                        <li>Click "Sign Up" (free account)</li>
+                        <li>Copy your API key</li>
+                        <li>Paste it in the code (line 577) replacing "YourApiKeyToken"</li>
+                    </ol>
+                    <p style="margin: 12px 0 0 0; font-size: 13px; color: var(--color-text-secondary);">
+                        <strong>💡 Don't want to deal with API keys?</strong> Use CSV import instead - it's easier and works 100% of the time!
+                    </p>
+                </div>
+
                 <div class="input-group">
                     <label>Ethereum Wallet Address</label>
                     <input type="text" id="walletAddress" placeholder="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb">
-                    <p class="help-text">Attempts to fetch ETH transactions via Etherscan. May be blocked by browser security. For reliable imports, use CSV tab.</p>
+                    <p class="help-text">⚠️ Requires API key. Without one, this will fail. <strong>Use CSV import instead</strong> - it's free and works immediately!</p>
                 </div>
-                <button onclick="fetchWalletData()">Try Fetch Transactions</button>
+                <button onclick="fetchWalletData()">Try Fetch Transactions (Requires API Key)</button>
                 
                 <div style="margin-top: 16px; padding: 12px; background: rgba(33, 128, 141, 0.08); border-radius: 8px;">
                     <strong>💡 Recommended: Export from Etherscan</strong>
@@ -574,9 +592,16 @@ Date,Type,Amount,Asset,Price,Fee<br>
 
             try {
                 // Use Etherscan API V2 (updated endpoint)
-                const apiKey = 'YourApiKeyToken'; // Users can replace with their free API key from etherscan.io
+                // ⚠️ IMPORTANT: Replace 'YourApiKeyToken' with your free API key from etherscan.io/apis
+                // Without an API key, this feature won't work. Use CSV import instead!
+                const apiKey = 'YourApiKeyToken'; // Get free API key: https://etherscan.io/apis
                 const baseUrl = 'https://api.etherscan.io/v2/api';
                 const chainid = '1'; // Ethereum mainnet chain ID (required for V2 API)
+                
+                // Check if user hasn't set their API key
+                if (apiKey === 'YourApiKeyToken' || !apiKey || apiKey.trim() === '') {
+                    throw new Error('API_KEY_REQUIRED');
+                }
                 
                 // Fetch normal ETH transactions using V2 API
                 const normalTxUrl = `${baseUrl}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&chainid=${chainid}&apikey=${apiKey}`;
@@ -633,21 +658,40 @@ Date,Type,Amount,Asset,Price,Fee<br>
                 document.getElementById('loader').classList.remove('active');
                 console.error('Fetch error:', error);
                 
-                let errorMsg = 'Could not fetch transactions from blockchain.\n\n';
+                let errorMsg = '';
                 
-                if (error.message.includes('CORS') || error.message.includes('fetch') || error.message.includes('HTTP error')) {
-                    errorMsg += '❌ BROWSER SECURITY BLOCK: Etherscan API V2 blocked by browser CORS policy.\n\n';
+                if (error.message === 'API_KEY_REQUIRED') {
+                    errorMsg = '🔑 API Key Required\n\n';
+                    errorMsg += 'To fetch transactions from blockchain, you need a free API key from Etherscan.\n\n';
+                    errorMsg += '📝 How to get one (2 minutes):\n';
+                    errorMsg += '1. Go to etherscan.io/apis\n';
+                    errorMsg += '2. Sign up for a free account\n';
+                    errorMsg += '3. Copy your API key\n';
+                    errorMsg += '4. Open this page\'s code (right-click → View Source)\n';
+                    errorMsg += '5. Find line 577, replace "YourApiKeyToken" with your key\n';
+                    errorMsg += '6. Save and refresh\n\n';
+                    errorMsg += '💡 EASIER OPTION: Use CSV import instead!\n';
+                    errorMsg += '• Go to etherscan.io/address/' + address + '\n';
+                    errorMsg += '• Click "Download CSV Export"\n';
+                    errorMsg += '• Upload in CSV Import tab\n';
+                    errorMsg += '• No API key needed, works immediately!';
+                } else if (error.message.includes('CORS') || error.message.includes('fetch') || error.message.includes('HTTP error')) {
+                    errorMsg = '❌ Browser Security Block\n\n';
+                    errorMsg += 'Etherscan API blocked by browser security (CORS).\n\n';
                     errorMsg += '✅ SOLUTION: Use CSV import instead:\n';
                     errorMsg += '1. Go to etherscan.io/address/' + address + '\n';
                     errorMsg += '2. Click "Download CSV Export" button\n';
                     errorMsg += '3. Upload the CSV file in the CSV Import tab\n\n';
-                    errorMsg += 'OR get a free API key from etherscan.io/apis and update the apiKey variable in the code.';
-                } else if (error.message.includes('API') || error.message.includes('V2') || error.message.includes('deprecated')) {
-                    errorMsg += '⚠️ ' + error.message + '\n\n';
-                    errorMsg += '📚 Using Etherscan API V2. Get a free API key from etherscan.io/apis\n';
-                    errorMsg += '💡 For best results, use CSV import from etherscan.io instead.';
+                    errorMsg += 'This method works 100% of the time and requires no API key!';
+                } else if (error.message.includes('API') || error.message.includes('V2') || error.message.includes('deprecated') || error.message.includes('chainid')) {
+                    errorMsg = '⚠️ API Error\n\n';
+                    errorMsg += error.message + '\n\n';
+                    errorMsg += '📚 Get a free API key: etherscan.io/apis\n';
+                    errorMsg += '💡 Or use CSV import - it\'s easier and works without API keys!';
                 } else {
-                    errorMsg += error.message;
+                    errorMsg = 'Could not fetch transactions.\n\n';
+                    errorMsg += error.message + '\n\n';
+                    errorMsg += '💡 TIP: Use CSV import instead - it\'s more reliable and works without API keys!';
                 }
                 
                 alert(errorMsg);
