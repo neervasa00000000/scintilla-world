@@ -573,20 +573,25 @@ Date,Type,Amount,Asset,Price,Fee<br>
             transactions = [];
 
             try {
-                // Use Etherscan API with better error handling
+                // Use Etherscan API V2 (updated endpoint)
                 const apiKey = 'YourApiKeyToken'; // Users can replace with their free API key from etherscan.io
-                const baseUrl = 'https://api.etherscan.io/api';
+                const baseUrl = 'https://api.etherscan.io/v2/api';
                 
-                // Fetch normal ETH transactions
+                // Fetch normal ETH transactions using V2 API
                 const normalTxUrl = `${baseUrl}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKey}`;
                 
-                console.log('Fetching transactions...');
+                console.log('Fetching transactions via Etherscan API V2...');
                 const normalResponse = await fetch(normalTxUrl);
-                const normalData = await normalResponse.json();
-                console.log('Etherscan response:', normalData);
                 
-                if (normalData.message === 'NOTOK') {
-                    throw new Error(normalData.result || 'Etherscan API error. You may need to add your own API key (free from etherscan.io)');
+                if (!normalResponse.ok) {
+                    throw new Error(`HTTP error! status: ${normalResponse.status}`);
+                }
+                
+                const normalData = await normalResponse.json();
+                console.log('Etherscan V2 response:', normalData);
+                
+                if (normalData.status === '0' || normalData.message === 'NOTOK') {
+                    throw new Error(normalData.result || normalData.message || 'Etherscan API V2 error. You may need to add your own API key (free from etherscan.io/apis)');
                 }
                 
                 if (normalData.status === '1' && normalData.result && Array.isArray(normalData.result)) {
@@ -629,16 +634,17 @@ Date,Type,Amount,Asset,Price,Fee<br>
                 
                 let errorMsg = 'Could not fetch transactions from blockchain.\n\n';
                 
-                if (error.message.includes('CORS') || error.message.includes('fetch')) {
-                    errorMsg += '❌ BROWSER SECURITY BLOCK: Etherscan API blocked by browser CORS policy.\n\n';
+                if (error.message.includes('CORS') || error.message.includes('fetch') || error.message.includes('HTTP error')) {
+                    errorMsg += '❌ BROWSER SECURITY BLOCK: Etherscan API V2 blocked by browser CORS policy.\n\n';
                     errorMsg += '✅ SOLUTION: Use CSV import instead:\n';
                     errorMsg += '1. Go to etherscan.io/address/' + address + '\n';
                     errorMsg += '2. Click "Download CSV Export" button\n';
                     errorMsg += '3. Upload the CSV file in the CSV Import tab\n\n';
-                    errorMsg += 'OR get a free API key from etherscan.io and add it to the code.';
-                } else if (error.message.includes('API')) {
-                    errorMsg += error.message + '\n\n';
-                    errorMsg += 'Get a free API key from etherscan.io/apis';
+                    errorMsg += 'OR get a free API key from etherscan.io/apis and update the apiKey variable in the code.';
+                } else if (error.message.includes('API') || error.message.includes('V2') || error.message.includes('deprecated')) {
+                    errorMsg += '⚠️ ' + error.message + '\n\n';
+                    errorMsg += '📚 Using Etherscan API V2. Get a free API key from etherscan.io/apis\n';
+                    errorMsg += '💡 For best results, use CSV import from etherscan.io instead.';
                 } else {
                     errorMsg += error.message;
                 }
