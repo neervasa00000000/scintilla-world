@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Tax Calculator - Free & Privacy-Focused</title>
+    <style>
+        :root {
+            --color-bg-primary: #fcfcf9;
+            --color-surface: #fffffe;
+            --color-text-primary: #133434;
+            --color-text-secondary: #626c71;
+            --color-primary: #21808d;
+            --color-primary-hover: #1d7480;
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-success: #21808d;
+            --color-error: #c0152f;
+            --color-warning: #a84b2f;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg-primary: #1f2121;
+                --color-surface: #262828;
+                --color-text-primary: #f5f5f5;
+                --color-text-secondary: rgba(167, 169, 169, 0.7);
+                --color-primary: #32b8c6;
+                --color-primary-hover: #2da6b2;
+                --color-border: rgba(119, 124, 124, 0.3);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        .card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: var(--color-text-primary);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--color-text-primary);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--color-surface);
+            color: var(--color-text-primary);
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        textarea {
+            min-height: 120px;
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        button {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--color-primary-hover);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: rgba(98, 108, 113, 0.12);
+            color: var(--color-text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(98, 108, 113, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .transaction-list {
+            margin-top: 20px;
+        }
+
+        .transaction-item {
+            padding: 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .transaction-item strong {
+            color: var(--color-primary);
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(33, 128, 141, 0.08);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .stat-value.positive {
+            color: var(--color-success);
+        }
+
+        .stat-value.negative {
+            color: var(--color-error);
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: 4px;
+        }
+
+        .privacy-badge {
+            display: inline-block;
+            background: rgba(33, 128, 141, 0.12);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--color-primary);
+            margin-bottom: 16px;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .example-csv {
+            background: rgba(98, 108, 113, 0.08);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 13px;
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loader.active {
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Crypto Tax Calculator</h1>
+            <p class="subtitle">Free • Privacy-Focused • Client-Side Only</p>
+            <div class="privacy-badge">✓ Your data never leaves your browser</div>
+        </header>
+
+        <div class="card">
+            <h2>Import Transactions</h2>
+            
+            <div class="tab-container">
+                <button class="tab active" onclick="switchTab('csv')">CSV Import</button>
+                <button class="tab" onclick="switchTab('wallet')">Wallet Address</button>
+                <button class="tab" onclick="switchTab('manual')">Manual Entry</button>
+            </div>
+
+            <div id="csv-tab" class="tab-content active">
+                <div class="input-group">
+                    <label>Upload CSV File</label>
+                    <input type="file" id="csvFile" accept=".csv">
+                    <p class="help-text">CSV format: Date, Type, Amount, Asset, Price, Fee</p>
+                </div>
+                
+                <div class="example-csv">
+Example CSV format:<br>
+Date,Type,Amount,Asset,Price,Fee<br>
+2024-01-15,BUY,1.5,ETH,2500,10<br>
+2024-06-20,SELL,0.5,ETH,3200,8<br>
+2024-08-10,BUY,0.02,BTC,45000,15
+                </div>
+                <div class="input-group">
+                    <label>Or Paste CSV Data</label>
+                    <textarea id="csvText" placeholder="Paste your CSV data here..."></textarea>
+                </div>
+                <button onclick="processCSVText()" style="margin-top: 8px;">Import Pasted CSV</button>
+                <div style="margin-top: 16px; padding: 12px; background: rgba(33, 128, 141, 0.08); border-radius: 8px;">
+                    <strong>📥 Where to get CSV files:</strong>
+                    <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 13px;">
+                        <li><strong>Exchanges:</strong> Binance, Coinbase, Kraken (Export → Transaction History)</li>
+                        <li><strong>Etherscan:</strong> etherscan.io/address/YOUR_ADDRESS → Download CSV</li>
+                        <li><strong>Tax tools:</strong> Koinly, CoinTracking (export to CSV)</li>
+                        <li><strong>Manual:</strong> Create spreadsheet with format above</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="wallet-tab" class="tab-content">
+                <div style="background: rgba(192, 21, 47, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(192, 21, 47, 0.3);">
+                    <strong>⚠️ Wallet import has limitations</strong>
+                    <p style="margin: 8px 0 0 0; font-size: 13px;">Browser security (CORS) often blocks direct API calls. CSV import is more reliable and supports all exchanges and chains.</p>
+                </div>
+                <div class="input-group">
+                    <label>Ethereum Wallet Address</label>
+                    <input type="text" id="walletAddress" placeholder="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb">
+                    <p class="help-text">Attempts to fetch ETH transactions via Etherscan. May be blocked by browser security. For reliable imports, use CSV tab.</p>
+                </div>
+                <button onclick="fetchWalletData()">Try Fetch Transactions</button>
+                
+                <div style="margin-top: 16px; padding: 12px; background: rgba(33, 128, 141, 0.08); border-radius: 8px;">
+                    <strong>💡 Recommended: Export from Etherscan</strong>
+                    <ol style="margin: 8px 0 0 0; padding-left: 20px; font-size: 13px;">
+                        <li>Go to etherscan.io/address/YOUR_ADDRESS</li>
+                        <li>Click "Download CSV Export"</li>
+                        <li>Upload in CSV Import tab above</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div id="manual-tab" class="tab-content">
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="manualDate">
+                </div>
+                <div class="input-group">
+                    <label>Transaction Type</label>
+                    <select id="manualType">
+                        <option value="BUY">Buy</option>
+                        <option value="SELL">Sell</option>
+                        <option value="TRADE">Trade/Swap</option>
+                        <option value="STAKE">Staking Reward</option>
+                        <option value="AIRDROP">Airdrop</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Amount</label>
+                    <input type="number" id="manualAmount" step="0.00000001" placeholder="1.5">
+                </div>
+                <div class="input-group">
+                    <label>Asset</label>
+                    <input type="text" id="manualAsset" placeholder="ETH, BTC, etc.">
+                </div>
+                <div class="input-group">
+                    <label>Price (AUD)</label>
+                    <input type="number" id="manualPrice" step="0.01" placeholder="2500.00">
+                </div>
+                <div class="input-group">
+                    <label>Fee (AUD)</label>
+                    <input type="number" id="manualFee" step="0.01" placeholder="10.00">
+                </div>
+                <button onclick="addManualTransaction()">Add Transaction</button>
+            </div>
+
+            <div class="loader" id="loader">
+                <div class="spinner"></div>
+                <p>Processing transactions...</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Settings</h2>
+            <div class="input-group">
+                <label>Tax Year</label>
+                <select id="taxYear">
+                    <option value="2024">2024-2025</option>
+                    <option value="2023">2023-2024</option>
+                    <option value="2022">2022-2023</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Cost Basis Method</label>
+                <select id="costMethod">
+                    <option value="FIFO">FIFO (First In, First Out)</option>
+                    <option value="LIFO">LIFO (Last In, First Out)</option>
+                    <option value="HIFO">HIFO (Highest In, First Out)</option>
+                </select>
+                <p class="help-text">ATO typically requires FIFO method for Australian taxpayers</p>
+            </div>
+            <div class="button-group">
+                <button onclick="calculateTax()">Calculate Tax Report</button>
+                <button class="btn-secondary" onclick="clearData()">Clear All Data</button>
+            </div>
+        </div>
+
+        <div id="transactionDisplay" class="card" style="display:none;">
+            <h2>Imported Transactions (<span id="txCount">0</span>)</h2>
+            <div id="transactionList" class="transaction-list"></div>
+        </div>
+
+        <div id="results" class="card results">
+            <h2>Tax Report - FY <span id="reportYear"></span></h2>
+            
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Capital Gains</div>
+                    <div class="stat-value positive" id="totalGains">$0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Capital Losses</div>
+                    <div class="stat-value negative" id="totalLosses">$0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Net Capital Gain/Loss</div>
+                    <div class="stat-value" id="netGainLoss">$0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Taxable Income (Other)</div>
+                    <div class="stat-value" id="taxableIncome">$0.00</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 12px;">Transaction Details</h3>
+            <table id="detailsTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Asset</th>
+                        <th>Amount</th>
+                        <th>Cost Basis</th>
+                        <th>Proceeds</th>
+                        <th>Gain/Loss</th>
+                    </tr>
+                </thead>
+                <tbody id="detailsBody"></tbody>
+            </table>
+
+            <div class="button-group" style="margin-top: 24px;">
+                <button onclick="exportCSV()">Download CSV Report</button>
+                <button class="btn-secondary" onclick="exportJSON()">Download JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let transactions = [];
+        let holdings = {}; // Track holdings for cost basis calculation
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // CSV Import
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    parseCSV(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            transactions = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                if (values.length >= 6) {
+                    transactions.push({
+                        date: values[0],
+                        type: values[1].toUpperCase(),
+                        amount: parseFloat(values[2]),
+                        asset: values[3].toUpperCase(),
+                        price: parseFloat(values[4]),
+                        fee: parseFloat(values[5])
+                    });
+                }
+            }
+            
+            displayTransactions();
+        }
+
+        // Manual transaction entry
+        function addManualTransaction() {
+            const tx = {
+                date: document.getElementById('manualDate').value,
+                type: document.getElementById('manualType').value,
+                amount: parseFloat(document.getElementById('manualAmount').value),
+                asset: document.getElementById('manualAsset').value.toUpperCase(),
+                price: parseFloat(document.getElementById('manualPrice').value),
+                fee: parseFloat(document.getElementById('manualFee').value) || 0
+            };
+            if (!tx.date || !tx.amount || !tx.asset || !tx.price) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            transactions.push(tx);
+            displayTransactions();
+            
+            // Clear form
+            document.getElementById('manualDate').value = '';
+            document.getElementById('manualAmount').value = '';
+            document.getElementById('manualAsset').value = '';
+            document.getElementById('manualPrice').value = '';
+            document.getElementById('manualFee').value = '';
+        }
+
+        // Real wallet transaction fetching via Etherscan API
+        async function fetchWalletData() {
+            const address = document.getElementById('walletAddress').value.trim();
+            if (!address || !address.startsWith('0x')) {
+                alert('Please enter a valid Ethereum address (starts with 0x)');
+                return;
+            }
+
+            document.getElementById('loader').classList.add('active');
+            transactions = [];
+
+            try {
+                // Use Etherscan API with better error handling
+                const apiKey = 'YourApiKeyToken'; // Users can replace with their free API key from etherscan.io
+                const baseUrl = 'https://api.etherscan.io/api';
+                
+                // Fetch normal ETH transactions
+                const normalTxUrl = `${baseUrl}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${apiKey}`;
+                
+                console.log('Fetching transactions...');
+                const normalResponse = await fetch(normalTxUrl);
+                const normalData = await normalResponse.json();
+                console.log('Etherscan response:', normalData);
+                
+                if (normalData.message === 'NOTOK') {
+                    throw new Error(normalData.result || 'Etherscan API error. You may need to add your own API key (free from etherscan.io)');
+                }
+                
+                if (normalData.status === '1' && normalData.result && Array.isArray(normalData.result)) {
+                    const ethTxs = normalData.result.slice(-50); // Get last 50 transactions
+                    
+                    for (const tx of ethTxs) {
+                        const value = parseFloat(tx.value) / 1e18; // Convert Wei to ETH
+                        if (value > 0.001) { // Only include transactions > 0.001 ETH
+                            const date = new Date(parseInt(tx.timeStamp) * 1000).toISOString().split('T')[0];
+                            const isReceived = tx.to.toLowerCase() === address.toLowerCase();
+                            const type = isReceived ? 'BUY' : 'SELL';
+                            
+                            // Get ETH price at transaction time (with delay to avoid rate limits)
+                            await sleep(250); // 250ms delay between price API calls
+                            const price = await getHistoricalPrice('ethereum', tx.timeStamp);
+                            
+                            transactions.push({
+                                date: date,
+                                type: type,
+                                amount: value,
+                                asset: 'ETH',
+                                price: price,
+                                fee: (parseFloat(tx.gasUsed) * parseFloat(tx.gasPrice) / 1e18 * price) || 0
+                            });
+                        }
+                    }
+                }
+
+                document.getElementById('loader').classList.remove('active');
+                
+                if (transactions.length === 0) {
+                    alert('No significant transactions found for this address.\n\nTIP: For best results, use CSV import instead. You can export transactions from:\n• Etherscan.io (go to your address, click "Download CSV")\n• Your exchange (Binance, Coinbase, etc.)\n• Portfolio trackers (CoinTracking, Koinly, etc.)');
+                } else {
+                    displayTransactions();
+                    alert(`✓ Successfully loaded ${transactions.length} transactions!\n\nNote: Only ETH transactions > 0.001 ETH shown to avoid spam. For complete history, use CSV import.`);
+                }
+            } catch (error) {
+                document.getElementById('loader').classList.remove('active');
+                console.error('Fetch error:', error);
+                
+                let errorMsg = 'Could not fetch transactions from blockchain.\n\n';
+                
+                if (error.message.includes('CORS') || error.message.includes('fetch')) {
+                    errorMsg += '❌ BROWSER SECURITY BLOCK: Etherscan API blocked by browser CORS policy.\n\n';
+                    errorMsg += '✅ SOLUTION: Use CSV import instead:\n';
+                    errorMsg += '1. Go to etherscan.io/address/' + address + '\n';
+                    errorMsg += '2. Click "Download CSV Export" button\n';
+                    errorMsg += '3. Upload the CSV file in the CSV Import tab\n\n';
+                    errorMsg += 'OR get a free API key from etherscan.io and add it to the code.';
+                } else if (error.message.includes('API')) {
+                    errorMsg += error.message + '\n\n';
+                    errorMsg += 'Get a free API key from etherscan.io/apis';
+                } else {
+                    errorMsg += error.message;
+                }
+                
+                alert(errorMsg);
+            }
+        }
+
+        // Helper function to add delay between API calls
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Get historical crypto price from CoinGecko API (free)
+        async function getHistoricalPrice(coinId, timestamp) {
+            try {
+                // Map common symbols to CoinGecko IDs
+                const coinMap = {
+                    'eth': 'ethereum',
+                    'ethereum': 'ethereum',
+                    'btc': 'bitcoin',
+                    'bitcoin': 'bitcoin',
+                    'usdt': 'tether',
+                    'usdc': 'usd-coin',
+                    'dai': 'dai',
+                    'uni': 'uniswap',
+                    'link': 'chainlink',
+                    'wbtc': 'wrapped-bitcoin'
+                };
+                const id = coinMap[coinId] || coinId;
+                const date = new Date(parseInt(timestamp) * 1000);
+                const dateStr = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+                
+                // Use CoinGecko free API
+                const url = `https://api.coingecko.com/api/v3/coins/${id}/history?date=${dateStr}`;
+                const response = await fetch(url);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.market_data?.current_price?.aud || data.market_data?.current_price?.usd || 0;
+                } else {
+                    // Fallback to current price if historical not available
+                    return await getCurrentPrice(id);
+                }
+            } catch (error) {
+                console.error('Price fetch error:', error);
+                return 0;
+            }
+        }
+
+        // Get current crypto price from CoinGecko API (free, fallback)
+        async function getCurrentPrice(coinId) {
+            try {
+                const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=aud`;
+                const response = await fetch(url);
+                const data = await response.json();
+                return data[coinId]?.aud || 0;
+            } catch (error) {
+                console.error('Current price fetch error:', error);
+                return 0;
+            }
+        }
+
+        function displayTransactions() {
+            const display = document.getElementById('transactionDisplay');
+            const list = document.getElementById('transactionList');
+            const count = document.getElementById('txCount');
+            
+            if (transactions.length === 0) {
+                display.style.display = 'none';
+                return;
+            }
+
+            display.style.display = 'block';
+            count.textContent = transactions.length;
+            
+            list.innerHTML = transactions.map((tx, i) => `
+                <div class="transaction-item">
+                    <strong>${tx.type}</strong> ${tx.amount} ${tx.asset} on ${tx.date} 
+                    @ $${tx.price.toFixed(2)} (Fee: $${tx.fee.toFixed(2)})
+                </div>
+            `).join('');
+        }
+
+        function calculateTax() {
+            if (transactions.length === 0) {
+                alert('Please import or add transactions first');
+                return;
+            }
+
+            const method = document.getElementById('costMethod').value;
+            const taxYear = document.getElementById('taxYear').value;
+            
+            // Sort transactions by date
+            const sorted = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Reset holdings
+            holdings = {};
+            
+            let totalGains = 0;
+            let totalLosses = 0;
+            let taxableIncome = 0;
+            let details = [];
+
+            sorted.forEach(tx => {
+                if (!holdings[tx.asset]) {
+                    holdings[tx.asset] = [];
+                }
+
+                if (tx.type === 'BUY') {
+                    // Add to holdings
+                    holdings[tx.asset].push({
+                        amount: tx.amount,
+                        costBasis: tx.price * tx.amount + tx.fee,
+                        pricePerUnit: (tx.price * tx.amount + tx.fee) / tx.amount,
+                        date: tx.date
+                    });
+                    
+                    details.push({
+                        date: tx.date,
+                        type: tx.type,
+                        asset: tx.asset,
+                        amount: tx.amount,
+                        costBasis: tx.price * tx.amount + tx.fee,
+                        proceeds: 0,
+                        gainLoss: 0
+                    });
+                } else if (tx.type === 'SELL') {
+                    // Calculate gains using specified method
+                    let remainingToSell = tx.amount;
+                    let totalCostBasis = 0;
+                    let proceeds = tx.price * tx.amount - tx.fee;
+
+                    // Apply cost basis method
+                    if (method === 'FIFO') {
+                        holdings[tx.asset].sort((a, b) => new Date(a.date) - new Date(b.date));
+                    } else if (method === 'LIFO') {
+                        holdings[tx.asset].sort((a, b) => new Date(b.date) - new Date(a.date));
+                    } else if (method === 'HIFO') {
+                        holdings[tx.asset].sort((a, b) => b.pricePerUnit - a.pricePerUnit);
+                    }
+
+                    while (remainingToSell > 0 && holdings[tx.asset].length > 0) {
+                        const lot = holdings[tx.asset][0];
+                        const amountFromLot = Math.min(remainingToSell, lot.amount);
+                        
+                        totalCostBasis += lot.pricePerUnit * amountFromLot;
+                        remainingToSell -= amountFromLot;
+                        lot.amount -= amountFromLot;
+                        if (lot.amount <= 0) {
+                            holdings[tx.asset].shift();
+                        }
+                    }
+
+                    const gainLoss = proceeds - totalCostBasis;
+                    
+                    if (gainLoss > 0) {
+                        totalGains += gainLoss;
+                    } else {
+                        totalLosses += Math.abs(gainLoss);
+                    }
+
+                    details.push({
+                        date: tx.date,
+                        type: tx.type,
+                        asset: tx.asset,
+                        amount: tx.amount,
+                        costBasis: totalCostBasis,
+                        proceeds: proceeds,
+                        gainLoss: gainLoss
+                    });
+                } else if (tx.type === 'STAKE' || tx.type === 'AIRDROP') {
+                    // Income from staking/airdrops
+                    const income = tx.price * tx.amount;
+                    taxableIncome += income;
+                    // Add to holdings at current price
+                    holdings[tx.asset].push({
+                        amount: tx.amount,
+                        costBasis: income,
+                        pricePerUnit: tx.price,
+                        date: tx.date
+                    });
+
+                    details.push({
+                        date: tx.date,
+                        type: tx.type,
+                        asset: tx.asset,
+                        amount: tx.amount,
+                        costBasis: income,
+                        proceeds: income,
+                        gainLoss: 0
+                    });
+                }
+            });
+
+            // Display results
+            document.getElementById('reportYear').textContent = taxYear;
+            document.getElementById('totalGains').textContent = '$' + totalGains.toFixed(2);
+            document.getElementById('totalLosses').textContent = '$' + totalLosses.toFixed(2);
+            
+            const netGainLoss = totalGains - totalLosses;
+            const netElement = document.getElementById('netGainLoss');
+            netElement.textContent = '$' + netGainLoss.toFixed(2);
+            netElement.className = 'stat-value ' + (netGainLoss >= 0 ? 'positive' : 'negative');
+            
+            document.getElementById('taxableIncome').textContent = '$' + taxableIncome.toFixed(2);
+
+            // Display details table
+            const tbody = document.getElementById('detailsBody');
+            tbody.innerHTML = details.map(d => `
+                <tr>
+                    <td>${d.date}</td>
+                    <td>${d.type}</td>
+                    <td>${d.asset}</td>
+                    <td>${d.amount.toFixed(8)}</td>
+                    <td>$${d.costBasis.toFixed(2)}</td>
+                    <td>$${d.proceeds.toFixed(2)}</td>
+                    <td style="color: ${d.gainLoss >= 0 ? 'var(--color-success)' : 'var(--color-error)'}">
+                        ${d.gainLoss >= 0 ? '+' : ''}$${d.gainLoss.toFixed(2)}
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('results').classList.add('active');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exportCSV() {
+            let csv = 'Date,Type,Asset,Amount,Cost Basis,Proceeds,Gain/Loss\n';
+            
+            const rows = Array.from(document.querySelectorAll('#detailsBody tr'));
+            rows.forEach(row => {
+                const cells = Array.from(row.querySelectorAll('td')).map(cell => 
+                    cell.textContent.replace(/[$,]/g, '')
+                );
+                csv += cells.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'crypto-tax-report-' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+        }
+
+        function exportJSON() {
+            const report = {
+                taxYear: document.getElementById('taxYear').value,
+                method: document.getElementById('costMethod').value,
+                summary: {
+                    totalGains: parseFloat(document.getElementById('totalGains').textContent.replace(/[$,]/g, '')),
+                    totalLosses: parseFloat(document.getElementById('totalLosses').textContent.replace(/[$,]/g, '')),
+                    netGainLoss: parseFloat(document.getElementById('netGainLoss').textContent.replace(/[$,]/g, '')),
+                    taxableIncome: parseFloat(document.getElementById('taxableIncome').textContent.replace(/[$,]/g, ''))
+                },
+                transactions: transactions
+            };
+
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'crypto-tax-report-' + new Date().toISOString().split('T')[0] + '.json';
+            a.click();
+        }
+
+        function clearData() {
+            if (confirm('Are you sure you want to clear all data?')) {
+                transactions = [];
+                holdings = {};
+                document.getElementById('transactionDisplay').style.display = 'none';
+                document.getElementById('results').classList.remove('active');
+                document.getElementById('csvFile').value = '';
+                document.getElementById('csvText').value = '';
+                document.getElementById('walletAddress').value = '';
+            }
+        }
+
+        // Handle paste CSV data
+        function processCSVText() {
+            const csvText = document.getElementById('csvText').value.trim();
+            if (!csvText) {
+                alert('Please paste CSV data first');
+                return;
+            }
+            
+            try {
+                parseCSV(csvText);
+                if (transactions.length > 0) {
+                    alert(`✓ Successfully imported ${transactions.length} transactions from CSV!`);
+                }
+            } catch (error) {
+                alert('Error parsing CSV: ' + error.message);
+            }
+        }
+
+        document.getElementById('csvText').addEventListener('change', function(e) {
+            if (e.target.value.trim()) {
+                parseCSV(e.target.value);
+            }
+        });
+    </script>
+</body>
+</html>
+
