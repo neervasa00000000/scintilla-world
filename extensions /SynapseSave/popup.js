@@ -1,4 +1,4 @@
-// Tab Amnesty - Optimized Popup Script
+// SynapseSave - Optimized Popup Script
 
 let currentTabId = null;
 let stats = { tabsSnoozed: 0, ramSaved: 0, timeSaved: 0 };
@@ -149,6 +149,14 @@ function createSnoozedItem(snoozedTab) {
     item.dataset.tabId = snoozedTab.tabId;
     
     const timeUntil = formatTimeUntil(snoozedTab.wakeTime);
+    const wakeDate = new Date(snoozedTab.wakeTime);
+    const wakeTimeStr = wakeDate.toLocaleString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        hour: 'numeric', 
+        minute: '2-digit',
+        hour12: true 
+    });
     
     const header = document.createElement('div');
     header.className = 'snoozed-header';
@@ -160,7 +168,8 @@ function createSnoozedItem(snoozedTab) {
     
     const time = document.createElement('div');
     time.className = 'snoozed-time';
-    time.innerHTML = `⏰ ${timeUntil}`;
+    time.innerHTML = `⏰ ${timeUntil}<br><span style="font-size: 0.6rem; opacity: 0.7;">${wakeTimeStr}</span>`;
+    time.title = `Will wake at: ${wakeTimeStr}`;
     
     header.appendChild(title);
     header.appendChild(time);
@@ -203,6 +212,12 @@ async function performSnooze(tabId, wakeTime, timeOption) {
     const tab = await chrome.tabs.get(tabId).catch(() => null);
     if (!tab) return;
 
+    // Get tab group ID if tab belongs to a group
+    let groupId = null;
+    if (tab.groupId && tab.groupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
+        groupId = tab.groupId;
+    }
+
     // 1. Update Storage
     const result = await chrome.storage.local.get(['snoozedTabs']);
     const snoozedTabs = result.snoozedTabs || [];
@@ -214,7 +229,8 @@ async function performSnooze(tabId, wakeTime, timeOption) {
         favIconUrl: tab.favIconUrl, // Backup
         wakeTime: wakeTime,
         snoozedAt: Date.now(),
-        timeOption: timeOption
+        timeOption: timeOption,
+        groupId: groupId // Store original group ID
     });
     await chrome.storage.local.set({ snoozedTabs });
 
@@ -247,6 +263,12 @@ async function batchSnooze(timeOption) {
 
     // Prepare all data promises
     const snoozePromises = filteredTabs.map(async (tab) => {
+        // Get tab group ID if tab belongs to a group
+        let groupId = null;
+        if (tab.groupId && tab.groupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
+            groupId = tab.groupId;
+        }
+        
         snoozedTabs.push({
             tabId: tab.id,
             url: tab.url,
@@ -254,7 +276,8 @@ async function batchSnooze(timeOption) {
             favIconUrl: tab.favIconUrl,
             wakeTime: wakeTime,
             snoozedAt: Date.now(),
-            timeOption: timeOption
+            timeOption: timeOption,
+            groupId: groupId // Store original group ID
         });
         
         // Create alarm
@@ -281,7 +304,33 @@ async function reopenTab(tabId) {
     const targetTab = snoozedTabs.find(st => st.tabId === tabId);
     
     if (targetTab) {
-        await chrome.tabs.create({ url: targetTab.url, active: false }); // Open in background
+        // Create the tab
+        const newTab = await chrome.tabs.create({ 
+            url: targetTab.url, 
+            active: false 
+        });
+        
+        // Restore to original group if it had one
+        if (targetTab.groupId !== null && targetTab.groupId !== undefined) {
+            try {
+                // Check if the group still exists
+                const group = await chrome.tabGroups.get(targetTab.groupId).catch(() => null);
+                if (group) {
+                    // Group exists, add tab back to it
+                    await chrome.tabs.group({
+                        groupId: targetTab.groupId,
+                        tabIds: [newTab.id]
+                    });
+                } else {
+                    // Group doesn't exist anymore, try to create a new group with the same properties
+                    // Note: We can't restore exact group properties, but we can at least group it
+                    // For now, we'll just leave it ungrouped if the original group is gone
+                }
+            } catch (error) {
+                // If grouping fails, tab will just open normally (not grouped)
+                console.log('Could not restore tab to group:', error);
+            }
+        }
         
         // Cleanup
         chrome.alarms.clear(`snooze_${tabId}_${targetTab.wakeTime}`);
@@ -321,25 +370,18 @@ function calculateWakeTime(option) {
     const dayOfWeek = now.getDay();
     
     switch(option) {
-        case 'tonight':
-            wakeTime.setHours(21, 0, 0, 0);
-            if (wakeTime <= now) wakeTime.setDate(wakeTime.getDate() + 1);
-            break;
-        case 'tomorrow':
-            wakeTime.setDate(now.getDate() + 1);
-            wakeTime.setHours(9, 0, 0, 0);
-            break;
-        case 'weekend':
-            let daysUntilSat = (6 - dayOfWeek + 7) % 7;
-            if (daysUntilSat === 0) daysUntilSat = 7;
-            wakeTime.setDate(now.getDate() + daysUntilSat);
-            wakeTime.setHours(9, 0, 0, 0);
+        case 'oneday':
+            // Add exactly 24 hours from now (not a fixed time)
+            wakeTime = new Date(now.getTime() + (24 * 60 * 60 * 1000));
             break;
         case 'nextweek':
-            let daysUntilMon = (1 - dayOfWeek + 7) % 7;
-            if (daysUntilMon === 0) daysUntilMon = 7;
-            wakeTime.setDate(now.getDate() + daysUntilMon);
+            // Add exactly 7 days from now at 9:00 AM
+            wakeTime = new Date(now);
+            wakeTime.setDate(now.getDate() + 7);
             wakeTime.setHours(9, 0, 0, 0);
+            wakeTime.setMinutes(0);
+            wakeTime.setSeconds(0);
+            wakeTime.setMilliseconds(0);
             break;
     }
     
@@ -363,9 +405,22 @@ function formatTimeUntil(timestamp) {
     const mins = Math.floor(diff / 60000);
     const hours = Math.floor(mins / 60);
     const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+    const remainingMins = mins % 60;
     
-    if (days > 0) return `${days}d ${hours % 24}h`;
-    if (hours > 0) return `${hours}h ${mins % 60}m`;
+    // More accurate display
+    if (days > 0) {
+        if (remainingHours > 0) {
+            return `${days}d ${remainingHours}h`;
+        }
+        return `${days}d`;
+    }
+    if (hours > 0) {
+        if (remainingMins > 0) {
+            return `${hours}h ${remainingMins}m`;
+        }
+        return `${hours}h`;
+    }
     return `${mins}m`;
 }
 
@@ -424,12 +479,7 @@ function setupEventListeners() {
     // Quick Actions - USING THE NEW BATCH FUNCTION
     const clearAllBtn = document.getElementById('clearAllBtn');
     if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', () => batchSnooze('tomorrow'));
-    }
-    
-    const snoozeWeekendBtn = document.getElementById('snoozeWeekendBtn');
-    if (snoozeWeekendBtn) {
-        snoozeWeekendBtn.addEventListener('click', () => batchSnooze('weekend'));
+        clearAllBtn.addEventListener('click', () => batchSnooze('oneday'));
     }
     
     // Snooze Options - Use event delegation for better performance

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tab Amnesty</title>
+    <title>SynapseSave</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
             <div class="header-content">
                 <div class="header-icon">⏰</div>
                 <div class="header-text">
-                    <h1>Tab Amnesty</h1>
+                    <h1>SynapseSave</h1>
                     <p class="subtitle">Snooze tabs. Free RAM. Save sanity.</p>
                 </div>
             </div>
@@ -46,13 +46,9 @@
 
         <!-- Quick Actions Bar -->
         <div class="quick-actions-bar">
-            <button class="quick-action-btn" id="clearAllBtn" title="Snooze all tabs until tomorrow">
+            <button class="quick-action-btn" id="clearAllBtn" title="Snooze all tabs for one day">
                 <span class="quick-action-icon">🧹</span>
                 <span class="quick-action-text">Clear All</span>
-            </button>
-            <button class="quick-action-btn" id="snoozeWeekendBtn" title="Snooze all tabs until weekend">
-                <span class="quick-action-icon">🎉</span>
-                <span class="quick-action-text">Weekend</span>
             </button>
         </div>
 
@@ -115,25 +111,15 @@
             </div>
             <div class="modal-body">
                 <div class="snooze-options-grid">
-                    <div class="snooze-option" data-time="tonight">
-                        <div class="snooze-emoji">🌙</div>
-                        <div class="snooze-label">Tonight</div>
-                        <div class="snooze-time">9:00 PM</div>
-                    </div>
-                    <div class="snooze-option" data-time="tomorrow">
-                        <div class="snooze-emoji">☀️</div>
-                        <div class="snooze-label">Tomorrow</div>
-                        <div class="snooze-time">9:00 AM</div>
-                    </div>
-                    <div class="snooze-option" data-time="weekend">
-                        <div class="snooze-emoji">📅</div>
-                        <div class="snooze-label">This Weekend</div>
-                        <div class="snooze-time">Saturday</div>
+                    <div class="snooze-option" data-time="oneday">
+                        <div class="snooze-emoji">⏰</div>
+                        <div class="snooze-label">One Day</div>
+                        <div class="snooze-time">24 hours</div>
                     </div>
                     <div class="snooze-option" data-time="nextweek">
                         <div class="snooze-emoji">🗓️</div>
                         <div class="snooze-label">Next Week</div>
-                        <div class="snooze-time">Monday</div>
+                        <div class="snooze-time">7 days</div>
                     </div>
                 </div>
             </div>

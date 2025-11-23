@@ -1,4 +1,4 @@
-// Tab Amnesty - Background Service Worker
+// SynapseSave - Background Service Worker
 
 // Listen for alarms (when tabs should wake up)
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -17,7 +17,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
             chrome.notifications.create({
                 type: 'basic',
                 iconUrl: snoozedTab.favIconUrl || 'icon48.png',
-                title: 'Tab Amnesty',
+                title: 'SynapseSave',
                 message: `"${snoozedTab.title}" is ready to reopen!`,
                 buttons: [
                     { title: 'Open Now' },
@@ -52,21 +52,41 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
             if (buttonIndex === 0) {
                 // Open Now
                 try {
-                    await chrome.tabs.create({
+                    // Get the full snoozed tab data to restore group
+                    const snoozedResult = await chrome.storage.local.get(['snoozedTabs']);
+                    const snoozedTabs = snoozedResult.snoozedTabs || [];
+                    const snoozedTab = snoozedTabs.find(st => 
+                        st.tabId === notificationData.tabId && st.wakeTime === notificationData.wakeTime
+                    );
+                    
+                    const newTab = await chrome.tabs.create({
                         url: notificationData.url,
                         active: true
                     });
+                    
+                    // Restore to original group if it had one
+                    if (snoozedTab && snoozedTab.groupId !== null && snoozedTab.groupId !== undefined) {
+                        try {
+                            const group = await chrome.tabGroups.get(snoozedTab.groupId).catch(() => null);
+                            if (group) {
+                                await chrome.tabs.group({
+                                    groupId: snoozedTab.groupId,
+                                    tabIds: [newTab.id]
+                                });
+                            }
+                        } catch (e) {
+                            console.log("Could not restore tab to group:", e);
+                        }
+                    }
+                    
+                    // Remove from snoozed
+                    const updated = snoozedTabs.filter(st => 
+                        !(st.tabId === notificationData.tabId && st.wakeTime === notificationData.wakeTime)
+                    );
+                    await chrome.storage.local.set({ snoozedTabs: updated });
                 } catch (e) {
                     console.log("Error opening tab:", e);
                 }
-                
-                // Remove from snoozed
-                const snoozedResult = await chrome.storage.local.get(['snoozedTabs']);
-                const snoozedTabs = snoozedResult.snoozedTabs || [];
-                const updated = snoozedTabs.filter(st => 
-                    !(st.tabId === notificationData.tabId && st.wakeTime === notificationData.wakeTime)
-                );
-                await chrome.storage.local.set({ snoozedTabs: updated });
                 
                 // Clear alarm
                 chrome.alarms.clear(`snooze_${notificationData.tabId}_${notificationData.wakeTime}`);
