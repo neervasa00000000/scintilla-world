@@ -1411,9 +1411,9 @@
               }
             }
           },
-          // Ordinal day with month (with or without year): "10th nov 25", "10th november 2025", "22nd nov"
+          // Ordinal day with month (with or without year): "10th nov 25", "10th november 2025", "22nd nov", "Event 10th nov 25 at 3pm"
           {
-            regex: /(\d{1,2})(?:st|nd|rd|th)\s+(\w{3,9})(?:\s+(\d{2,4}))?/i,
+            regex: /(\d{1,2})(?:st|nd|rd|th)\s+(\w{3,9})(?:\s+(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
             handler: function(match) {
               const day = parseInt(removeOrdinal(match[1]));
               const monthIdx = findMonth(match[2]);
@@ -1422,6 +1422,9 @@
               const year = match[3] ? parseYear(match[3]) : now.getFullYear();
               // Create date at noon to avoid timezone issues causing day shift
               let date = new Date(year, monthIdx, day, 12, 0, 0, 0);
+              
+              // Validate date
+              if (isNaN(date.getTime())) return null;
               
               // If date is in the past and no year was specified, try next year
               if (!match[3] && date < now) {
@@ -1462,6 +1465,17 @@
               }
               
               // Check if time is in the match itself
+              if (match[4]) {
+                let hour = parseInt(match[4]);
+                let minute = parseInt(match[5] || '0');
+                if (match[6]) {
+                  if (match[6].toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                  if (match[6].toLowerCase() === 'am' && hour === 12) hour = 0;
+                }
+                date.setHours(hour, minute, 0, 0);
+                return { start: { date: () => date }, text: match[0] };
+              }
+              
               const time = extractTime(text);
               const result = this.parseTime(date, time.hour, time.minute, time.ampm);
               if (result) {
