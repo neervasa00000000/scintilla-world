@@ -887,10 +887,11 @@
               return { start: { date: () => date }, text: match[0] };
             }
           },
-          // Day number before month (with or without year): "22 nov", "22 nov 2025", "22nd nov event at 11pm" - HIGH PRIORITY
+          // Day number before month (with or without year): "22 nov", "22 nov 2025", "22nd nov event at 11pm", "on 11 nov 2025"
           {
-            regex: /(\d{1,2})(?:st|nd|rd|th)?\s+(\w{3,9})(?:\s+(\d{2,4}))?/i,
-            handler: function(match) {
+            regex: /(\d{1,2})(?:st|nd|rd|th)?\s+(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?:\s+(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
+            handler: function(match, fullText) {
+              const textToUse = fullText || text;
               // Check if second part is actually a month name
               const monthIdx = findMonth(match[2]);
               if (monthIdx < 0) return null; // Not a month, skip this pattern
@@ -1243,7 +1244,8 @@
           // Allow text before the date (removed \b to allow matching anywhere in text)
           {
             regex: /((?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)|\d{1,2})\s*[\/\-\.,]\s*(\d{1,2})(?:st|nd|rd|th)?(?:\s*[\/\-\.,]\s*(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
-            handler: function(match) {
+            handler: function(match, fullText) {
+              const textToUse = fullText || text;
               let month, day, year;
               const part1 = match[1].toLowerCase();
               const part2 = parseInt(removeOrdinal(match[2]));
@@ -1293,13 +1295,28 @@
               // Create date at noon to avoid timezone issues causing day shift
               let date = new Date(year, month, day, 12, 0, 0, 0);
               
+              // Validate date
+              if (isNaN(date.getTime())) return null;
+              
+              // Check if time is in the match itself (match[4])
+              if (match[4]) {
+                let hour = parseInt(match[4]);
+                let minute = parseInt(match[5] || '0');
+                if (match[6]) {
+                  if (match[6].toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                  if (match[6].toLowerCase() === 'am' && hour === 12) hour = 0;
+                }
+                date.setHours(hour, minute, 0, 0);
+                return { start: { date: () => date }, text: match[0] };
+              }
+              
               // If date is in the past and no year was specified, try next year
               if (!part3 && date < now) {
                 date = new Date(year + 1, month, day, 12, 0, 0, 0);
               }
               
               // Check for time range first
-              const timeRange = extractTimeRange(text);
+              const timeRange = extractTimeRange(textToUse);
               if (timeRange) {
                 const startDate = new Date(date);
                 const endDate = new Date(date);
