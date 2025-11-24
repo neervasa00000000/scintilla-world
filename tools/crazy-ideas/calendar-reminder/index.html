@@ -1456,12 +1456,18 @@
                 
                 return {
                   start: { date: () => startDate },
-                  end: { date: () => endDate }
+                  end: { date: () => endDate },
+                  text: match[0]
                 };
               }
               
+              // Check if time is in the match itself
               const time = extractTime(text);
-              return this.parseTime(date, time.hour, time.minute, time.ampm);
+              const result = this.parseTime(date, time.hour, time.minute, time.ampm);
+              if (result) {
+                result.text = match[0];
+              }
+              return result;
             }
           },
           // "Dec 25 2025 at 6pm" or "25 Dec 2025 6pm" or "december 25 2025"
