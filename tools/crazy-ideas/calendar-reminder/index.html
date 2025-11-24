@@ -701,7 +701,7 @@
         
         // Patterns for common date/time expressions (ordered by specificity)
         const patterns = [
-          // MM/DD/YYYY format: "11/10/2025 at 2pm", "11/10/25 at 2pm"
+          // MM/DD/YYYY format: "11/10/2025 at 2pm", "11/10/25 at 2pm", "Meeting 11/10/2025 at 2pm"
           {
             regex: /(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{2,4})(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
             handler: function(match) {
@@ -749,8 +749,9 @@
             }
           },
           // Month before day with slashes: "nov / 19 / 2025", "nov/19/2025", "Party nov / 19 / 2025 from 11 pm to 12 am"
+          // Allow text before the month name (removed \b to allow matching anywhere in text)
           {
-            regex: /\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s*\/\s*(\d{1,2})(?:st|nd|rd|th)?\s*\/\s*(\d{2,4})/i,
+            regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s*\/\s*(\d{1,2})(?:st|nd|rd|th)?\s*\/\s*(\d{2,4})/i,
             handler: function(match) {
               const monthIdx = findMonth(match[1]);
               if (monthIdx < 0) return null;
@@ -793,8 +794,9 @@
           },
           // Month before day: "nov 10 2025 6pm", "november 10 2025 6pm", "Birthday party nov 10 2025 6pm"
           // Match month names specifically: jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec or full names
+          // Allow text before the month name (removed \b to allow matching anywhere in text)
           {
-            regex: /\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
+            regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
             handler: function(match) {
               const monthIdx = findMonth(match[1]);
               if (monthIdx < 0) return null;
