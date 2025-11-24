@@ -2220,8 +2220,10 @@
           if (!eventText) continue;
           
           const results = chrono.parse(eventText, now, { forwardDate: true });
+          console.log('chrono.parse returned:', results, 'Length:', results ? results.length : 0, 'First result:', results && results[0], 'Has start?', results && results[0] && results[0].start);
 
           if (!results || results.length === 0 || !results[0].start) {
+            console.log('Skipping event - parse failed. Results:', results, 'Length:', results ? results.length : 0, 'Has start?', results && results[0] && results[0].start);
             // Skip events that can't be parsed
             continue;
           }
