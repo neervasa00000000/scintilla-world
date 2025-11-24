@@ -706,9 +706,8 @@
           // Allow text before the month name (removed \b to allow matching anywhere in text)
           // MOVED TO TOP for higher priority
           {
-            regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm))?/i,
+            regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
             // Note: \s+ matches any whitespace including newlines after normalization
-            // Fixed: Changed (am|pm)? to (am|pm) - time must have am/pm if present
             handler: function(match, fullText) {
               const textToUse = fullText || text;
               const monthIdx = findMonth(match[1]);
