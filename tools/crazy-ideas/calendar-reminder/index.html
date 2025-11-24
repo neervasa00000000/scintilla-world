@@ -1898,8 +1898,12 @@
         // Try specific patterns first
         for (let i = 0; i < patterns.length; i++) {
           const pattern = patterns[i];
-          // Try matching both original text and normalized text
-          let match = normalizedText.match(pattern.regex) || text.match(pattern.regex);
+          // Try matching normalized text first (handles newlines)
+          let match = normalizedText.match(pattern.regex);
+          if (!match) {
+            // Fallback to original text
+            match = text.match(pattern.regex);
+          }
           if (match) {
             try {
               // Pass the full normalized text to handler for time range extraction
@@ -1912,7 +1916,7 @@
                 return [result];
               }
             } catch (e) {
-              console.error('Parse error:', e, 'Pattern index:', i, 'Pattern:', pattern.regex.toString(), 'Match:', match, 'Text:', normalizedText);
+              console.error('Parse error:', e, 'Pattern index:', i, 'Pattern:', pattern.regex.toString(), 'Match:', match, 'Normalized text:', normalizedText);
             }
           }
         }
