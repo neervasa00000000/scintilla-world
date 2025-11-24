@@ -710,31 +710,20 @@
             // Note: \s+ matches any whitespace including newlines after normalization
             handler: function(match, fullText) {
               const textToUse = fullText || text;
-              console.log('Handler called with match:', match, 'fullText:', fullText);
               const monthIdx = findMonth(match[1]);
-              console.log('Month index:', monthIdx, 'for:', match[1]);
-              if (monthIdx < 0) {
-                console.log('Invalid month, returning null');
-                return null;
-              }
+              if (monthIdx < 0) return null;
               const day = parseInt(removeOrdinal(match[2]));
               const year = match[3] ? parseYear(match[3]) : now.getFullYear();
               let date = new Date(year, monthIdx, day, 12, 0, 0, 0);
               
-              console.log('Parsed date:', date, 'day:', day, 'year:', year);
-              
               // Validate date
-              if (isNaN(date.getTime())) {
-                console.log('Invalid date, returning null');
-                return null;
-              }
+              if (isNaN(date.getTime())) return null;
               
               if (!match[3] && date < now) {
                 date = new Date(year + 1, monthIdx, day, 12, 0, 0, 0);
               }
               
               const timeRange = extractTimeRange(textToUse);
-              console.log('Time range:', timeRange);
               if (timeRange) {
                 const startDate = new Date(date);
                 const endDate = new Date(date);
@@ -753,11 +742,9 @@
                 }
                 endDate.setHours(endHour, endMinute, 0, 0);
                 if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
-                console.log('Returning time range result');
                 return { start: { date: () => startDate }, end: { date: () => endDate }, text: match[0] };
               }
               
-              console.log('match[4]:', match[4], 'match[5]:', match[5], 'match[6]:', match[6]);
               if (match[4]) {
                 let hour = parseInt(match[4]);
                 let minute = parseInt(match[5] || '0');
@@ -766,7 +753,6 @@
                   if (match[6].toLowerCase() === 'am' && hour === 12) hour = 0;
                 }
                 date.setHours(hour, minute, 0, 0);
-                console.log('Returning single time result:', date);
                 return { start: { date: () => date }, text: match[0] };
               }
               
@@ -1922,32 +1908,21 @@
             match = text.match(pattern.regex);
           }
           if (match) {
-            // Debug: log first few patterns to see what's matching
-            if (i < 5) {
-              console.log('Pattern', i, 'matched:', pattern.regex.toString().substring(0, 50), 'Match:', match[0]);
-            }
             try {
               // Pass the full normalized text to handler for time range extraction
               const result = pattern.handler.call(this, match, normalizedText);
-              console.log('Pattern', i, 'handler returned:', result, 'Type:', typeof result, 'Has start?', result && result.start, 'Start type:', result && result.start && typeof result.start);
               if (result && result.start) {
                 // Ensure text property is set for title extraction
                 if (!result.text) {
                   result.text = match[0];
                 }
-                console.log('Pattern', i, 'returning result:', result);
                 return [result];
-              } else {
-                console.log('Pattern', i, 'matched but handler returned null or no start. Result:', result, 'Has start?', result && result.start);
               }
             } catch (e) {
               console.error('Parse error:', e, 'Pattern index:', i, 'Pattern:', pattern.regex.toString(), 'Match:', match, 'Normalized text:', normalizedText);
             }
           }
         }
-        
-        // If we get here, no pattern matched
-        console.log('No pattern matched for text:', normalizedText);
         
         // Fallback: Intelligent component-based parsing
         // Extract all date/time components and combine them intelligently
@@ -2212,43 +2187,29 @@
       try {
         const now = new Date();
         const eventTexts = splitIntoEvents(text);
-        console.log('splitIntoEvents returned:', eventTexts, 'Length:', eventTexts.length);
         const allEvents = [];
         
         // Parse each event separately
         for (let i = 0; i < eventTexts.length; i++) {
           const eventText = eventTexts[i].trim();
-          console.log('Processing event text', i, ':', eventText);
-          if (!eventText) {
-            console.log('Skipping empty event text');
-            continue;
-          }
+          if (!eventText) continue;
           
           const results = chrono.parse(eventText, now, { forwardDate: true });
-          console.log('chrono.parse returned:', results, 'Length:', results ? results.length : 0, 'First result:', results && results[0], 'Has start?', results && results[0] && results[0].start);
 
           if (!results || results.length === 0 || !results[0].start) {
-            console.log('Skipping event - parse failed. Results:', results, 'Length:', results ? results.length : 0, 'Has start?', results && results[0] && results[0].start);
             // Skip events that can't be parsed
             continue;
           }
 
           const parsedResult = results[0];
-          console.log('Processing parsedResult:', parsedResult, 'Has start?', parsedResult.start, 'Start type:', typeof parsedResult.start);
           
           if (!parsedResult.start || typeof parsedResult.start.date !== 'function') {
-            console.log('ERROR: parsedResult.start is invalid:', parsedResult.start);
             continue;
           }
           
           const evStart = parsedResult.start.date();
-          const timeDiff = evStart.getTime() - now.getTime();
-          console.log('evStart:', evStart, 'now:', now, 'Time difference (ms):', timeDiff, 'Hours:', timeDiff / (1000 * 60 * 60));
           
           // Allow all events, including past events (users may want to log past events or have incorrect system clock)
-          console.log('Event parsed successfully, proceeding...');
-          
-          console.log('Event passed validation, adding to allEvents');
 
           // Get end time
           let evEnd = null;
@@ -2315,14 +2276,14 @@
           summary = summary.replace(/^(on|at|from|to|next|this|tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\s+/i, '');
           
           // Remove location patterns if found
-          if (location) {
-            summary = summary.replace(new RegExp(`\\s*at\\s+${location.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'), '');
-            summary = summary.replace(new RegExp(`\\s*in\\s+${location.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'), '');
-          }
-          
+            if (location) {
+              summary = summary.replace(new RegExp(`\\s*at\\s+${location.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'), '');
+              summary = summary.replace(new RegExp(`\\s*in\\s+${location.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'), '');
+            }
+            
           // Remove trailing date/time related words
           summary = summary.replace(/\s+(on|at|from|to|next|this|tomorrow|today)$/i, '');
-          summary = summary.trim();
+            summary = summary.trim();
 
           // If summary is empty or too short, try extracting from original text differently
           if (!summary || summary.length < 2) {
@@ -2409,9 +2370,9 @@
               <b>Description:</b> ${event.originalText}
             </div>
             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
-              <a href="data:text/calendar;charset=utf8,${encodeURIComponent(ics)}" download="event${allEvents.length > 1 ? '-' + (i + 1) : ''}.ics" class="ics-link">
+            <a href="data:text/calendar;charset=utf8,${encodeURIComponent(ics)}" download="event${allEvents.length > 1 ? '-' + (i + 1) : ''}.ics" class="ics-link">
                 ➡️ Download ICS
-              </a>
+            </a>
               <a href="${googleCalendarUrl}" target="_blank" class="ics-link" style="background: #4285f4; color: white;">
                 📅 Add to Google Calendar
               </a>
