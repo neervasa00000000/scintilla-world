@@ -3,9 +3,17 @@
   publish = "."
   command = ""
 
+# Serve main website from root (index.html redirects to website/)
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/"
+  to = "/website/index.html"
+  status = 200
+  force = false
+
+# Allow website folder to be accessible
+[[redirects]]
+  from = "/website/*"
+  to = "/website/:splat"
   status = 200
   force = false
 
@@ -23,6 +31,12 @@
   status = 200
   force = false
 
+# Allow assets folder to be accessible
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+  force = false
+
 [context.production.environment]
   NODE_ENV = "production"
-

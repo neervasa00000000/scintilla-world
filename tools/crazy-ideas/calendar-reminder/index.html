@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quick Calendar Reminder | NutriThrive Labs</title>
-  <link rel="icon" type="image/png" href="https://i.imgur.com/bZubhoR.png">
-  <link rel="apple-touch-icon" href="https://i.imgur.com/bZubhoR.png">
-  <link rel="shortcut icon" href="https://i.imgur.com/bZubhoR.png">
+  <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
+  <link rel="shortcut icon" href="/assets/logo/favicon.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     
@@ -1860,6 +1860,56 @@
               return { start: { date: () => date } };
             }
           },
+          // "on 27th next month at 11 am" or "27th next month at 11 am" - ordinal day with "next month"
+          // MOVED UP for higher priority - must match before simpler "on 27th" pattern
+          {
+            regex: /(?:on\s+)?(\d{1,2})(?:st|nd|rd|th)\s+next\s+month\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i,
+            handler: function(match) {
+              const day = parseInt(removeOrdinal(match[1]));
+              const currentMonth = now.getMonth();
+              const currentYear = now.getFullYear();
+              
+              // Create date for the specified day in the next month
+              let date = new Date(currentYear, currentMonth + 1, day, 12, 0, 0, 0);
+              
+              // Parse time
+              let hour = parseInt(match[2]);
+              let minute = parseInt(match[3] || '0');
+              const ampm = match[4];
+              if (ampm) {
+                if (ampm.toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                if (ampm.toLowerCase() === 'am' && hour === 12) hour = 0;
+              }
+              date.setHours(hour, minute, 0, 0);
+              
+              return { start: { date: () => date }, text: match[0] };
+            }
+          },
+          // "next month on 27th at 11 am" or "next month 27th at 11 am" - "next month" before ordinal day
+          // MOVED UP for higher priority - must match before simpler "on 27th" pattern
+          {
+            regex: /next\s+month\s+(?:on\s+)?(\d{1,2})(?:st|nd|rd|th)\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i,
+            handler: function(match) {
+              const day = parseInt(removeOrdinal(match[1]));
+              const currentMonth = now.getMonth();
+              const currentYear = now.getFullYear();
+              
+              // Create date for the specified day in the next month
+              let date = new Date(currentYear, currentMonth + 1, day, 12, 0, 0, 0);
+              
+              // Parse time
+              let hour = parseInt(match[2]);
+              let minute = parseInt(match[3] || '0');
+              const ampm = match[4];
+              if (ampm) {
+                if (ampm.toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                if (ampm.toLowerCase() === 'am' && hour === 12) hour = 0;
+              }
+              date.setHours(hour, minute, 0, 0);
+              
+              return { start: { date: () => date }, text: match[0] };
+            }
+          },
           // "in X days" or "X days from now"
           {
             regex: /(?:in\s+)?(\d+)\s+days?\s+(?:from\s+now)?/i,
@@ -1870,11 +1920,47 @@
               return this.parseTime(date, time.hour, time.minute, time.ampm);
             }
           },
+          // "on 27th at 11 am" or "27th at 11 am" - ordinal day without month (defaults to current month)
+          // Must NOT match if "next month" is present (that's handled by patterns above)
+          {
+            regex: /(?:on\s+)?(\d{1,2})(?:st|nd|rd|th)\s+(?!next\s+month)(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i,
+            handler: function(match) {
+              const day = parseInt(removeOrdinal(match[1]));
+              const currentMonth = now.getMonth();
+              const currentYear = now.getFullYear();
+              
+              // Create date for the specified day in the current month
+              let date = new Date(currentYear, currentMonth, day, 12, 0, 0, 0);
+              
+              // If the day has passed this month, use next month
+              if (date < now) {
+                date = new Date(currentYear, currentMonth + 1, day, 12, 0, 0, 0);
+              }
+              
+              // Parse time
+              let hour = parseInt(match[2]);
+              let minute = parseInt(match[3] || '0');
+              const ampm = match[4];
+              if (ampm) {
+                if (ampm.toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                if (ampm.toLowerCase() === 'am' && hour === 12) hour = 0;
+              }
+              date.setHours(hour, minute, 0, 0);
+              
+              return { start: { date: () => date }, text: match[0] };
+            }
+          },
           // "Event at 10am" or "[anything] at [time]" - time only, default to today
           // MOVED TO END - only match if no date patterns matched (to avoid matching "at 2pm" in "11/10/2025 at 2pm")
+          // Must NOT match if "next month" is present (that's handled by patterns above)
           {
             regex: /at\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i,
-            handler: function(match) {
+            handler: function(match, fullText) {
+              const textToUse = fullText || text;
+              // Don't match if "next month" appears in the text (handled by patterns above)
+              if (/next\s+month/i.test(textToUse)) {
+                return null;
+              }
               const date = new Date(now);
               let hour = parseInt(match[1]);
               let minute = parseInt(match[2] || '0');
