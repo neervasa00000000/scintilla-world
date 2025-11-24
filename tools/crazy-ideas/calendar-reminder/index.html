@@ -1869,6 +1869,27 @@
               const time = extractTime(text);
               return this.parseTime(date, time.hour, time.minute, time.ampm);
             }
+          },
+          // "Event at 10am" or "[anything] at [time]" - time only, default to today
+          // MOVED TO END - only match if no date patterns matched (to avoid matching "at 2pm" in "11/10/2025 at 2pm")
+          {
+            regex: /at\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i,
+            handler: function(match) {
+              const date = new Date(now);
+              let hour = parseInt(match[1]);
+              let minute = parseInt(match[2] || '0');
+              const ampm = match[3];
+              if (ampm) {
+                if (ampm.toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                if (ampm.toLowerCase() === 'am' && hour === 12) hour = 0;
+              }
+              date.setHours(hour, minute, 0, 0);
+              // If time has passed today, use tomorrow
+              if (date < now) {
+                date.setDate(date.getDate() + 1);
+              }
+              return { start: { date: () => date }, text: match[0] };
+            }
           }
         ];
         
