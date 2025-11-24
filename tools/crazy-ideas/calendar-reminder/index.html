@@ -701,6 +701,156 @@
         
         // Patterns for common date/time expressions (ordered by specificity)
         const patterns = [
+          // MM/DD/YYYY format: "11/10/2025 at 2pm", "11/10/25 at 2pm"
+          {
+            regex: /(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{2,4})(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
+            handler: function(match) {
+              const month = parseInt(match[1]) - 1; // JS months are 0-indexed
+              const day = parseInt(match[2]);
+              const year = parseYear(match[3]);
+              let date = new Date(year, month, day, 12, 0, 0, 0);
+              
+              if (date < now && !match[3] || match[3].length === 2) {
+                // If past date and 2-digit year, try next year
+                if (match[3].length === 2) {
+                  date = new Date(parseYear(match[3]), month, day, 12, 0, 0, 0);
+                }
+              }
+              
+              const timeRange = extractTimeRange(text);
+              if (timeRange) {
+                const startDate = new Date(date);
+                const endDate = new Date(date);
+                let startHour = timeRange.start.hour;
+                let startMinute = timeRange.start.minute;
+                if (timeRange.start.ampm) {
+                  if (timeRange.start.ampm.toLowerCase() === 'pm' && startHour !== 12) startHour += 12;
+                  if (timeRange.start.ampm.toLowerCase() === 'am' && startHour === 12) startHour = 0;
+                }
+                startDate.setHours(startHour, startMinute, 0, 0);
+                let endHour = timeRange.end.hour;
+                let endMinute = timeRange.end.minute;
+                if (timeRange.end.ampm) {
+                  if (timeRange.end.ampm.toLowerCase() === 'pm' && endHour !== 12) endHour += 12;
+                  if (timeRange.end.ampm.toLowerCase() === 'am' && endHour === 12) endHour = 0;
+                }
+                endDate.setHours(endHour, endMinute, 0, 0);
+                if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
+                return { start: { date: () => startDate }, end: { date: () => endDate } };
+              }
+              
+              if (match[4]) {
+                let hour = parseInt(match[4]);
+                let minute = parseInt(match[5] || '0');
+                if (match[6]) {
+                  if (match[6].toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                  if (match[6].toLowerCase() === 'am' && hour === 12) hour = 0;
+                }
+                date.setHours(hour, minute, 0, 0);
+              }
+              
+              return { start: { date: () => date }, text: match[0] };
+            }
+          },
+          // Month before day with slashes: "nov / 19 / 2025", "nov/19/2025"
+          {
+            regex: /(\w{3,9})\s*\/\s*(\d{1,2})(?:st|nd|rd|th)?\s*\/\s*(\d{2,4})/i,
+            handler: function(match) {
+              const monthIdx = findMonth(match[1]);
+              if (monthIdx < 0) return null;
+              const day = parseInt(removeOrdinal(match[2]));
+              const year = parseYear(match[3]);
+              let date = new Date(year, monthIdx, day, 12, 0, 0, 0);
+              
+              const timeRange = extractTimeRange(text);
+              if (timeRange) {
+                const startDate = new Date(date);
+                const endDate = new Date(date);
+                let startHour = timeRange.start.hour;
+                let startMinute = timeRange.start.minute;
+                if (timeRange.start.ampm) {
+                  if (timeRange.start.ampm.toLowerCase() === 'pm' && startHour !== 12) startHour += 12;
+                  if (timeRange.start.ampm.toLowerCase() === 'am' && startHour === 12) startHour = 0;
+                }
+                startDate.setHours(startHour, startMinute, 0, 0);
+                let endHour = timeRange.end.hour;
+                let endMinute = timeRange.end.minute;
+                if (timeRange.end.ampm) {
+                  if (timeRange.end.ampm.toLowerCase() === 'pm' && endHour !== 12) endHour += 12;
+                  if (timeRange.end.ampm.toLowerCase() === 'am' && endHour === 12) endHour = 0;
+                }
+                endDate.setHours(endHour, endMinute, 0, 0);
+                if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
+                return { start: { date: () => startDate }, end: { date: () => endDate }, text: match[0] };
+              }
+              
+              const time = extractTime(text);
+              return this.parseTime(date, time.hour, time.minute, time.ampm);
+            }
+          },
+          // Month before day: "nov 10 2025 6pm", "november 10 2025 6pm"
+          {
+            regex: /(\w{3,9})\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
+            handler: function(match) {
+              const monthIdx = findMonth(match[1]);
+              if (monthIdx < 0) return null;
+              const day = parseInt(removeOrdinal(match[2]));
+              const year = match[3] ? parseYear(match[3]) : now.getFullYear();
+              let date = new Date(year, monthIdx, day, 12, 0, 0, 0);
+              
+              if (!match[3] && date < now) {
+                date = new Date(year + 1, monthIdx, day, 12, 0, 0, 0);
+              }
+              
+              const timeRange = extractTimeRange(text);
+              if (timeRange) {
+                const startDate = new Date(date);
+                const endDate = new Date(date);
+                let startHour = timeRange.start.hour;
+                let startMinute = timeRange.start.minute;
+                if (timeRange.start.ampm) {
+                  if (timeRange.start.ampm.toLowerCase() === 'pm' && startHour !== 12) startHour += 12;
+                  if (timeRange.start.ampm.toLowerCase() === 'am' && startHour === 12) startHour = 0;
+                }
+                startDate.setHours(startHour, startMinute, 0, 0);
+                let endHour = timeRange.end.hour;
+                let endMinute = timeRange.end.minute;
+                if (timeRange.end.ampm) {
+                  if (timeRange.end.ampm.toLowerCase() === 'pm' && endHour !== 12) endHour += 12;
+                  if (timeRange.end.ampm.toLowerCase() === 'am' && endHour === 12) endHour = 0;
+                }
+                endDate.setHours(endHour, endMinute, 0, 0);
+                if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
+                return { start: { date: () => startDate }, end: { date: () => endDate }, text: match[0] };
+              }
+              
+              if (match[4]) {
+                let hour = parseInt(match[4]);
+                let minute = parseInt(match[5] || '0');
+                if (match[6]) {
+                  if (match[6].toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                  if (match[6].toLowerCase() === 'am' && hour === 12) hour = 0;
+                }
+                date.setHours(hour, minute, 0, 0);
+                return { start: { date: () => date }, text: match[0] };
+              }
+              
+              const time = extractTime(text);
+              return this.parseTime(date, time.hour, time.minute, time.ampm);
+            }
+          },
+          // "tomorrow on 13:00" or "tomorrow on 13:30" - 24-hour format with "on"
+          {
+            regex: /tomorrow\s+on\s+(\d{1,2})(?::(\d{2}))?/i,
+            handler: function(match) {
+              const date = new Date(now);
+              date.setDate(date.getDate() + 1);
+              const hour = parseInt(match[1]);
+              const minute = parseInt(match[2] || '0');
+              date.setHours(hour, minute, 0, 0);
+              return { start: { date: () => date }, text: match[0] };
+            }
+          },
           // Day number before month (with or without year): "22 nov", "22 nov 2025", "22nd nov event at 11pm" - HIGH PRIORITY
           {
             regex: /(\d{1,2})(?:st|nd|rd|th)?\s+(\w{3,9})(?:\s+(\d{2,4}))?/i,
@@ -1999,22 +2149,50 @@
             }
           }
 
-          // Extract summary (remove date/time/location from original text)
+          // Extract summary (event title) - extract text BEFORE date/time patterns
           let summary = eventText;
           
+          // Find where the date/time pattern starts in the text
+          let dateTimeStart = eventText.length;
           if (parsedResult.text) {
-            summary = eventText.replace(parsedResult.text, "").trim();
-            
-            // Remove location patterns
-            if (location) {
-              summary = summary.replace(new RegExp(`\\s*at\\s+${location.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'), '');
-              summary = summary.replace(new RegExp(`\\s*in\\s+${location.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'), '');
+            const dateTimeIndex = eventText.toLowerCase().indexOf(parsedResult.text.toLowerCase());
+            if (dateTimeIndex >= 0) {
+              dateTimeStart = dateTimeIndex;
             }
-            
-            summary = summary.trim();
+          }
+          
+          // Extract everything before the date/time as the title
+          summary = eventText.substring(0, dateTimeStart).trim();
+          
+          // Remove common date/time keywords that might be at the start
+          summary = summary.replace(/^(on|at|from|to|next|this|tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\s+/i, '');
+          
+          // Remove location patterns if found
+          if (location) {
+            summary = summary.replace(new RegExp(`\\s*at\\s+${location.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'), '');
+            summary = summary.replace(new RegExp(`\\s*in\\s+${location.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'), '');
+          }
+          
+          // Remove trailing date/time related words
+          summary = summary.replace(/\s+(on|at|from|to|next|this|tomorrow|today)$/i, '');
+          summary = summary.trim();
+
+          // If summary is empty or too short, try extracting from original text differently
+          if (!summary || summary.length < 2) {
+            // Fallback: remove common date/time patterns from the full text
+            summary = eventText
+              .replace(/\b(next|this|tomorrow|today)\s+\w+/gi, '')
+              .replace(/\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/gi, '')
+              .replace(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d+/gi, '')
+              .replace(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/g, '')
+              .replace(/\d{1,2}(st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*/gi, '')
+              .replace(/\d{1,2}(?::\d{2})?\s*(am|pm)/gi, '')
+              .replace(/\d{1,2}:\d{2}/g, '')
+              .replace(/\s+/g, ' ')
+              .trim();
           }
 
-          // If summary is empty or too short, use a default
+          // If still empty, use a default
           if (!summary || summary.length < 2) {
             summary = "Event";
           }
@@ -2070,6 +2248,12 @@
             "DESCRIPTION:" + event.originalText.replace(/\n/g, " ") + "\n" +
             "END:VEVENT\nEND:VCALENDAR";
 
+          // Generate Google Calendar URL
+          const formatGoogleDate = (dt) => {
+            return dt.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+          };
+          const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.summary)}&dates=${formatGoogleDate(event.start)}/${formatGoogleDate(event.end)}${event.location ? '&location=' + encodeURIComponent(event.location) : ''}&details=${encodeURIComponent(event.originalText)}`;
+
           html += `
             <div class="event-summary" ${i > 0 ? 'style="margin-top: 1.5em;"' : ''}>
               <b>Event ${allEvents.length > 1 ? (i + 1) + ': ' : ''}${event.summary}</b><br>
@@ -2077,9 +2261,14 @@
               ${event.location ? '<b>Location:</b> ' + event.location + '<br>' : ''}
               <b>Description:</b> ${event.originalText}
             </div>
-            <a href="data:text/calendar;charset=utf8,${encodeURIComponent(ics)}" download="event${allEvents.length > 1 ? '-' + (i + 1) : ''}.ics" class="ics-link">
-              ➡️ Download Event ${allEvents.length > 1 ? (i + 1) + ' ' : ''}(.ics)
-            </a>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+              <a href="data:text/calendar;charset=utf8,${encodeURIComponent(ics)}" download="event${allEvents.length > 1 ? '-' + (i + 1) : ''}.ics" class="ics-link">
+                ➡️ Download ICS
+              </a>
+              <a href="${googleCalendarUrl}" target="_blank" class="ics-link" style="background: #4285f4; color: white;">
+                📅 Add to Google Calendar
+              </a>
+            </div>
           `;
         }
         
