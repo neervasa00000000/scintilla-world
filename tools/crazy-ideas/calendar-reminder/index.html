@@ -701,100 +701,10 @@
         
         // Patterns for common date/time expressions (ordered by specificity)
         const patterns = [
-          // MM/DD/YYYY format: "11/10/2025 at 2pm", "11/10/25 at 2pm", "Meeting 11/10/2025 at 2pm"
-          {
-            regex: /(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{2,4})(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
-            handler: function(match) {
-              const month = parseInt(match[1]) - 1; // JS months are 0-indexed
-              const day = parseInt(match[2]);
-              const year = parseYear(match[3]);
-              let date = new Date(year, month, day, 12, 0, 0, 0);
-              
-              // Validate date
-              if (isNaN(date.getTime())) return null;
-              
-              const timeRange = extractTimeRange(text);
-              if (timeRange) {
-                const startDate = new Date(date);
-                const endDate = new Date(date);
-                let startHour = timeRange.start.hour;
-                let startMinute = timeRange.start.minute;
-                if (timeRange.start.ampm) {
-                  if (timeRange.start.ampm.toLowerCase() === 'pm' && startHour !== 12) startHour += 12;
-                  if (timeRange.start.ampm.toLowerCase() === 'am' && startHour === 12) startHour = 0;
-                }
-                startDate.setHours(startHour, startMinute, 0, 0);
-                let endHour = timeRange.end.hour;
-                let endMinute = timeRange.end.minute;
-                if (timeRange.end.ampm) {
-                  if (timeRange.end.ampm.toLowerCase() === 'pm' && endHour !== 12) endHour += 12;
-                  if (timeRange.end.ampm.toLowerCase() === 'am' && endHour === 12) endHour = 0;
-                }
-                endDate.setHours(endHour, endMinute, 0, 0);
-                if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
-                return { start: { date: () => startDate }, end: { date: () => endDate }, text: match[0] };
-              }
-              
-              if (match[4]) {
-                let hour = parseInt(match[4]);
-                let minute = parseInt(match[5] || '0');
-                if (match[6]) {
-                  if (match[6].toLowerCase() === 'pm' && hour !== 12) hour += 12;
-                  if (match[6].toLowerCase() === 'am' && hour === 12) hour = 0;
-                }
-                date.setHours(hour, minute, 0, 0);
-              }
-              
-              return { start: { date: () => date }, text: match[0] };
-            }
-          },
-          // Month before day with slashes: "nov / 19 / 2025", "nov/19/2025", "Party nov / 19 / 2025 from 11 pm to 12 am"
-          // Allow text before the month name (removed \b to allow matching anywhere in text)
-          {
-            regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s*\/\s*(\d{1,2})(?:st|nd|rd|th)?\s*\/\s*(\d{2,4})/i,
-            handler: function(match) {
-              const monthIdx = findMonth(match[1]);
-              if (monthIdx < 0) return null;
-              const day = parseInt(removeOrdinal(match[2]));
-              const year = parseYear(match[3]);
-              let date = new Date(year, monthIdx, day, 12, 0, 0, 0);
-              
-              // Validate date
-              if (isNaN(date.getTime())) return null;
-              
-              const timeRange = extractTimeRange(text);
-              if (timeRange) {
-                const startDate = new Date(date);
-                const endDate = new Date(date);
-                let startHour = timeRange.start.hour;
-                let startMinute = timeRange.start.minute;
-                if (timeRange.start.ampm) {
-                  if (timeRange.start.ampm.toLowerCase() === 'pm' && startHour !== 12) startHour += 12;
-                  if (timeRange.start.ampm.toLowerCase() === 'am' && startHour === 12) startHour = 0;
-                }
-                startDate.setHours(startHour, startMinute, 0, 0);
-                let endHour = timeRange.end.hour;
-                let endMinute = timeRange.end.minute;
-                if (timeRange.end.ampm) {
-                  if (timeRange.end.ampm.toLowerCase() === 'pm' && endHour !== 12) endHour += 12;
-                  if (timeRange.end.ampm.toLowerCase() === 'am' && endHour === 12) endHour = 0;
-                }
-                endDate.setHours(endHour, endMinute, 0, 0);
-                if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
-                return { start: { date: () => startDate }, end: { date: () => endDate }, text: match[0] + (timeRange ? ' from ' + timeRange.start.hour + (timeRange.start.ampm || '') + ' to ' + timeRange.end.hour + (timeRange.end.ampm || '') : '') };
-              }
-              
-              const time = extractTime(text);
-              const result = this.parseTime(date, time.hour, time.minute, time.ampm);
-              if (result) {
-                result.text = match[0];
-              }
-              return result;
-            }
-          },
           // Month before day: "nov 10 2025 6pm", "november 10 2025 6pm", "Birthday party nov 10 2025 6pm"
           // Match month names specifically: jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec or full names
           // Allow text before the month name (removed \b to allow matching anywhere in text)
+          // MOVED TO TOP for higher priority
           {
             regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
             handler: function(match) {
@@ -847,9 +757,100 @@
               const time = extractTime(text);
               const result = this.parseTime(date, time.hour, time.minute, time.ampm);
               if (result) {
-                result.text = match[0] + (time.hour ? ' ' + time.hour + (time.ampm ? time.ampm : '') : '');
+                result.text = match[0];
               }
               return result;
+            }
+          },
+          // Month before day with slashes: "nov / 19 / 2025", "nov/19/2025", "Party nov / 19 / 2025 from 11 pm to 12 am"
+          // Allow text before the month name (removed \b to allow matching anywhere in text)
+          {
+            regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s*\/\s*(\d{1,2})(?:st|nd|rd|th)?\s*\/\s*(\d{2,4})/i,
+            handler: function(match) {
+              const monthIdx = findMonth(match[1]);
+              if (monthIdx < 0) return null;
+              const day = parseInt(removeOrdinal(match[2]));
+              const year = parseYear(match[3]);
+              let date = new Date(year, monthIdx, day, 12, 0, 0, 0);
+              
+              // Validate date
+              if (isNaN(date.getTime())) return null;
+              
+              const timeRange = extractTimeRange(text);
+              if (timeRange) {
+                const startDate = new Date(date);
+                const endDate = new Date(date);
+                let startHour = timeRange.start.hour;
+                let startMinute = timeRange.start.minute;
+                if (timeRange.start.ampm) {
+                  if (timeRange.start.ampm.toLowerCase() === 'pm' && startHour !== 12) startHour += 12;
+                  if (timeRange.start.ampm.toLowerCase() === 'am' && startHour === 12) startHour = 0;
+                }
+                startDate.setHours(startHour, startMinute, 0, 0);
+                let endHour = timeRange.end.hour;
+                let endMinute = timeRange.end.minute;
+                if (timeRange.end.ampm) {
+                  if (timeRange.end.ampm.toLowerCase() === 'pm' && endHour !== 12) endHour += 12;
+                  if (timeRange.end.ampm.toLowerCase() === 'am' && endHour === 12) endHour = 0;
+                }
+                endDate.setHours(endHour, endMinute, 0, 0);
+                if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
+                return { start: { date: () => startDate }, end: { date: () => endDate }, text: match[0] };
+              }
+              
+              const time = extractTime(text);
+              const result = this.parseTime(date, time.hour, time.minute, time.ampm);
+              if (result) {
+                result.text = match[0];
+              }
+              return result;
+            }
+          },
+          // MM/DD/YYYY format: "11/10/2025 at 2pm", "11/10/25 at 2pm", "Meeting 11/10/2025 at 2pm"
+          {
+            regex: /(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{2,4})(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
+            handler: function(match) {
+              const month = parseInt(match[1]) - 1; // JS months are 0-indexed
+              const day = parseInt(match[2]);
+              const year = parseYear(match[3]);
+              let date = new Date(year, month, day, 12, 0, 0, 0);
+              
+              // Validate date
+              if (isNaN(date.getTime())) return null;
+              
+              const timeRange = extractTimeRange(text);
+              if (timeRange) {
+                const startDate = new Date(date);
+                const endDate = new Date(date);
+                let startHour = timeRange.start.hour;
+                let startMinute = timeRange.start.minute;
+                if (timeRange.start.ampm) {
+                  if (timeRange.start.ampm.toLowerCase() === 'pm' && startHour !== 12) startHour += 12;
+                  if (timeRange.start.ampm.toLowerCase() === 'am' && startHour === 12) startHour = 0;
+                }
+                startDate.setHours(startHour, startMinute, 0, 0);
+                let endHour = timeRange.end.hour;
+                let endMinute = timeRange.end.minute;
+                if (timeRange.end.ampm) {
+                  if (timeRange.end.ampm.toLowerCase() === 'pm' && endHour !== 12) endHour += 12;
+                  if (timeRange.end.ampm.toLowerCase() === 'am' && endHour === 12) endHour = 0;
+                }
+                endDate.setHours(endHour, endMinute, 0, 0);
+                if (endDate <= startDate) endDate.setDate(endDate.getDate() + 1);
+                return { start: { date: () => startDate }, end: { date: () => endDate }, text: match[0] };
+              }
+              
+              if (match[4]) {
+                let hour = parseInt(match[4]);
+                let minute = parseInt(match[5] || '0');
+                if (match[6]) {
+                  if (match[6].toLowerCase() === 'pm' && hour !== 12) hour += 12;
+                  if (match[6].toLowerCase() === 'am' && hour === 12) hour = 0;
+                }
+                date.setHours(hour, minute, 0, 0);
+              }
+              
+              return { start: { date: () => date }, text: match[0] };
             }
           },
           // "tomorrow on 13:00" or "tomorrow on 13:30" - 24-hour format with "on"
