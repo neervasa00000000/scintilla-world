@@ -1,4 +1,4 @@
-// SynapseSave - Background Service Worker
+// SynapseSave - Background Service Workeri 
 
 // Listen for alarms (when tabs should wake up)
 chrome.alarms.onAlarm.addListener(async (alarm) => {
