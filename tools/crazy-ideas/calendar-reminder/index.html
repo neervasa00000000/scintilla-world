@@ -1327,13 +1327,18 @@
                 
                 return {
                   start: { date: () => startDate },
-                  end: { date: () => endDate }
+                  end: { date: () => endDate },
+                  text: match[0]
                 };
               }
               
               // Single time
               const time = extractTime(text);
-              return this.parseTime(date, time.hour, time.minute, time.ampm);
+              const result = this.parseTime(date, time.hour, time.minute, time.ampm);
+              if (result) {
+                result.text = match[0];
+              }
+              return result;
             }
           },
           // Month name with day (with or without year): "nov 10 2025", "november 10 2025", "nov 10th 2025", "22 nov", "nov 22"
