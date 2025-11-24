@@ -754,7 +754,7 @@
                 return { start: { date: () => date }, text: match[0] };
               }
               
-              const time = extractTime(text);
+              const time = extractTime(textToUse);
               const result = this.parseTime(date, time.hour, time.minute, time.ampm);
               if (result) {
                 result.text = match[0];
@@ -766,7 +766,8 @@
           // Allow text before the month name (removed \b to allow matching anywhere in text)
           {
             regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s*\/\s*(\d{1,2})(?:st|nd|rd|th)?\s*\/\s*(\d{2,4})/i,
-            handler: function(match) {
+            handler: function(match, fullText) {
+              const textToUse = fullText || text;
               const monthIdx = findMonth(match[1]);
               if (monthIdx < 0) return null;
               const day = parseInt(removeOrdinal(match[2]));
@@ -776,7 +777,7 @@
               // Validate date
               if (isNaN(date.getTime())) return null;
               
-              const timeRange = extractTimeRange(text);
+              const timeRange = extractTimeRange(textToUse);
               if (timeRange) {
                 const startDate = new Date(date);
                 const endDate = new Date(date);
@@ -798,7 +799,7 @@
                 return { start: { date: () => startDate }, end: { date: () => endDate }, text: match[0] };
               }
               
-              const time = extractTime(text);
+              const time = extractTime(textToUse);
               const result = this.parseTime(date, time.hour, time.minute, time.ampm);
               if (result) {
                 result.text = match[0];
@@ -809,7 +810,8 @@
           // MM/DD/YYYY format: "11/10/2025 at 2pm", "11/10/25 at 2pm", "Meeting 11/10/2025 at 2pm"
           {
             regex: /(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{2,4})(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
-            handler: function(match) {
+            handler: function(match, fullText) {
+              const textToUse = fullText || text;
               const month = parseInt(match[1]) - 1; // JS months are 0-indexed
               const day = parseInt(match[2]);
               const year = parseYear(match[3]);
@@ -818,7 +820,7 @@
               // Validate date
               if (isNaN(date.getTime())) return null;
               
-              const timeRange = extractTimeRange(text);
+              const timeRange = extractTimeRange(textToUse);
               if (timeRange) {
                 const startDate = new Date(date);
                 const endDate = new Date(date);
@@ -1872,11 +1874,13 @@
         ];
         
         // Try specific patterns first
-        for (const pattern of patterns) {
+        for (let i = 0; i < patterns.length; i++) {
+          const pattern = patterns[i];
           const match = text.match(pattern.regex);
           if (match) {
             try {
-              const result = pattern.handler.call(this, match);
+              // Pass the full text to handler for time range extraction
+              const result = pattern.handler.call(this, match, text);
               if (result && result.start) {
                 // Ensure text property is set for title extraction
                 if (!result.text) {
@@ -1885,7 +1889,7 @@
                 return [result];
               }
             } catch (e) {
-              console.error('Parse error:', e, 'Pattern:', pattern.regex, 'Match:', match);
+              console.error('Parse error:', e, 'Pattern index:', i, 'Pattern:', pattern.regex.toString(), 'Match:', match);
             }
           }
         }
