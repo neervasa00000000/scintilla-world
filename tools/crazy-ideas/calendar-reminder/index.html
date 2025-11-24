@@ -757,9 +757,7 @@
               }
               
               const time = extractTime(textToUse);
-              console.log('Extracted time:', time);
               const result = this.parseTime(date, time.hour, time.minute, time.ampm);
-              console.log('parseTime result:', result);
               if (result) {
                 result.text = match[0];
               }
