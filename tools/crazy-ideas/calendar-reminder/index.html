@@ -1345,8 +1345,9 @@
             }
           },
           // Month name with day (with or without year): "nov 10 2025", "november 10 2025", "nov 10th 2025", "22 nov", "nov 22"
+          // Allow text before the month name (removed \b to allow matching anywhere in text)
           {
-            regex: /\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{2,4}))?/i,
+            regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{2,4}))?/i,
             handler: function(match) {
               try {
                 const monthIdx = findMonth(match[1]);
