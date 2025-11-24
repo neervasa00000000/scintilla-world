@@ -2212,12 +2212,17 @@
       try {
         const now = new Date();
         const eventTexts = splitIntoEvents(text);
+        console.log('splitIntoEvents returned:', eventTexts, 'Length:', eventTexts.length);
         const allEvents = [];
         
         // Parse each event separately
         for (let i = 0; i < eventTexts.length; i++) {
           const eventText = eventTexts[i].trim();
-          if (!eventText) continue;
+          console.log('Processing event text', i, ':', eventText);
+          if (!eventText) {
+            console.log('Skipping empty event text');
+            continue;
+          }
           
           const results = chrono.parse(eventText, now, { forwardDate: true });
           console.log('chrono.parse returned:', results, 'Length:', results ? results.length : 0, 'First result:', results && results[0], 'Has start?', results && results[0] && results[0].start);
