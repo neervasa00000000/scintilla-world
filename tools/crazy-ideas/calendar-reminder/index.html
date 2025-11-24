@@ -708,7 +708,8 @@
           {
             regex: /(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s+(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
             // Note: \s+ matches any whitespace including newlines after normalization
-            handler: function(match) {
+            handler: function(match, fullText) {
+              const textToUse = fullText || text;
               const monthIdx = findMonth(match[1]);
               if (monthIdx < 0) return null;
               const day = parseInt(removeOrdinal(match[2]));
@@ -722,7 +723,7 @@
                 date = new Date(year + 1, monthIdx, day, 12, 0, 0, 0);
               }
               
-              const timeRange = extractTimeRange(text);
+              const timeRange = extractTimeRange(textToUse);
               if (timeRange) {
                 const startDate = new Date(date);
                 const endDate = new Date(date);
