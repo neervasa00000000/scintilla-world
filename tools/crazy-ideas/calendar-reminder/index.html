@@ -2242,12 +2242,12 @@
           }
           
           const evStart = parsedResult.start.date();
-          console.log('evStart:', evStart);
+          console.log('evStart:', evStart, 'now:', now, 'Comparison:', evStart < now, 'Difference (ms):', evStart.getTime() - now.getTime());
           
-          // Validate that the date is in the future or today
-          if (evStart < new Date(now.getTime() - 60000)) {
-            console.log('Skipping past event:', evStart);
-            continue; // Skip past events
+          // Validate that the date is in the future or today (allow events up to 1 hour in the past to account for timezone issues)
+          if (evStart < new Date(now.getTime() - 60 * 60 * 1000)) {
+            console.log('Skipping past event:', evStart, 'Current time:', now);
+            continue; // Skip past events (more than 1 hour ago)
           }
           
           console.log('Event passed validation, adding to allEvents');
