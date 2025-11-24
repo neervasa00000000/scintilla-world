@@ -2229,12 +2229,23 @@
           }
 
           const parsedResult = results[0];
+          console.log('Processing parsedResult:', parsedResult, 'Has start?', parsedResult.start, 'Start type:', typeof parsedResult.start);
+          
+          if (!parsedResult.start || typeof parsedResult.start.date !== 'function') {
+            console.log('ERROR: parsedResult.start is invalid:', parsedResult.start);
+            continue;
+          }
+          
           const evStart = parsedResult.start.date();
+          console.log('evStart:', evStart);
           
           // Validate that the date is in the future or today
           if (evStart < new Date(now.getTime() - 60000)) {
+            console.log('Skipping past event:', evStart);
             continue; // Skip past events
           }
+          
+          console.log('Event passed validation, adding to allEvents');
 
           // Get end time
           let evEnd = null;
