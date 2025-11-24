@@ -1877,9 +1877,15 @@
           if (match) {
             try {
               const result = pattern.handler.call(this, match);
-              if (result && result.start) return [result];
+              if (result && result.start) {
+                // Ensure text property is set for title extraction
+                if (!result.text) {
+                  result.text = match[0];
+                }
+                return [result];
+              }
             } catch (e) {
-              console.error('Parse error:', e);
+              console.error('Parse error:', e, 'Pattern:', pattern.regex, 'Match:', match);
             }
           }
         }
