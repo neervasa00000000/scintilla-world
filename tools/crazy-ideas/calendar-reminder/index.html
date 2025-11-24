@@ -2245,14 +2245,8 @@
           const timeDiff = evStart.getTime() - now.getTime();
           console.log('evStart:', evStart, 'now:', now, 'Time difference (ms):', timeDiff, 'Hours:', timeDiff / (1000 * 60 * 60));
           
-          // Only skip events that are clearly in the past (more than 1 hour ago)
-          // This allows for timezone differences and clock skew
-          if (timeDiff < -60 * 60 * 1000) {
-            console.log('Skipping past event (more than 1 hour ago):', evStart, 'Current time:', now);
-            continue;
-          }
-          
-          console.log('Event is valid (future or within 1 hour), proceeding...');
+          // Allow all events, including past events (users may want to log past events or have incorrect system clock)
+          console.log('Event parsed successfully, proceeding...');
           
           console.log('Event passed validation, adding to allEvents');
 
