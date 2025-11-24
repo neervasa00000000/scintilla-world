@@ -1929,6 +1929,7 @@
             try {
               // Pass the full normalized text to handler for time range extraction
               const result = pattern.handler.call(this, match, normalizedText);
+              console.log('Pattern', i, 'handler returned:', result, 'Type:', typeof result, 'Has start?', result && result.start, 'Start type:', result && result.start && typeof result.start);
               if (result && result.start) {
                 // Ensure text property is set for title extraction
                 if (!result.text) {
