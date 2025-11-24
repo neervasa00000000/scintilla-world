@@ -1236,7 +1236,7 @@
           },
           // Slash/dash/dot separated dates: 11/10/2025, 11-10-2025, 11.10.2025, nov/10/2025, nov / 10 / 2025, 28/11 (day/month)
           {
-            regex: /(\w{3,9}|\d{1,2})\s*[\/\-\.,]\s*(\d{1,2})(?:st|nd|rd|th)?(?:\s*[\/\-\.,]\s*(\d{2,4}))?/i,
+            regex: /\b((?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)|\d{1,2})\s*[\/\-\.,]\s*(\d{1,2})(?:st|nd|rd|th)?(?:\s*[\/\-\.,]\s*(\d{2,4}))?(?:\s+(?:at\s+)?(\d{1,2})(?::(\d{2}))?\s*(am|pm)?)?/i,
             handler: function(match) {
               let month, day, year;
               const part1 = match[1].toLowerCase();
