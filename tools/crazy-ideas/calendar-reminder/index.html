@@ -1400,7 +1400,11 @@
                   return { start: { date: () => date } };
                 }
                 // Use the extracted time - parseTime will handle am/pm conversion
-                return this.parseTime(date, time.hour, time.minute, time.ampm);
+                const result = this.parseTime(date, time.hour, time.minute, time.ampm);
+                if (result) {
+                  result.text = match[0];
+                }
+                return result;
               } catch (e) {
                 console.error('Error in month name pattern handler:', e);
                 return null;
