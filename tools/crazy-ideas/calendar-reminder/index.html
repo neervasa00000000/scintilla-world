@@ -1934,9 +1934,10 @@
                 if (!result.text) {
                   result.text = match[0];
                 }
+                console.log('Pattern', i, 'returning result:', result);
                 return [result];
-              } else if (i < 5) {
-                console.log('Pattern', i, 'matched but handler returned null or no start:', result);
+              } else {
+                console.log('Pattern', i, 'matched but handler returned null or no start. Result:', result, 'Has start?', result && result.start);
               }
             } catch (e) {
               console.error('Parse error:', e, 'Pattern index:', i, 'Pattern:', pattern.regex.toString(), 'Match:', match, 'Normalized text:', normalizedText);
