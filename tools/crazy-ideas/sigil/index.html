@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGIL - Sacred Geometry Generator</title>
+  <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
+  <link rel="shortcut icon" href="/assets/logo/favicon.png">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React and ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  
+  <!-- Babel Standalone for JSX transformation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+    
+    // Icon components
+    const Sparkles = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+      </svg>
+    );
+    
+    const Shuffle = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <polyline points="16 3 21 3 21 8"></polyline>
+        <line x1="4" y1="20" x2="21" y2="3"></line>
+        <polyline points="21 16 21 21 16 21"></polyline>
+        <line x1="15" y1="15" x2="21" y2="21"></line>
+        <line x1="4" y1="4" x2="9" y2="9"></line>
+      </svg>
+    );
+    
+    const Share2 = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+    );
+    
+    const Hash = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <line x1="4" y1="9" x2="20" y2="9"></line>
+        <line x1="4" y1="15" x2="20" y2="15"></line>
+        <line x1="10" y1="3" x2="8" y2="21"></line>
+        <line x1="16" y1="3" x2="14" y2="21"></line>
+      </svg>
+    );
+    
+    const Zap = ({ size = 24, className = "", fill = "none" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" className={className}>
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+    );
+
+    // --- MATH CORE ---
+    // This converts string data into physics parameters for the Harmonograph
+    const generateSigilParams = (str) => {
+      let h1 = 0xdeadbeef;
+      let h2 = 0x41c6ce57;
+      for (let i = 0; i < str.length; i++) {
+        let ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      
+      const s1 = (h1 >>> 0) / 4294967296;
+      const s2 = (h2 >>> 0) / 4294967296;
+      // Determine Symmetry ( Sacred Geometry constants: 3, 4, 5, 6, 8, 12 )
+      const symmetryOptions = [1, 2, 3, 4, 5, 6, 8, 12];
+      const symIndex = Math.floor(s1 * symmetryOptions.length);
+      
+      return {
+        f1: (s1 * 5) + 1,        // Frequency X
+        f2: (s2 * 5) + 1,        // Frequency Y
+        modFreq: (s1 * s2) * 0.5, // Modulation Frequency (Breathing)
+        p1: s1 * Math.PI * 2,     // Phase X
+        p2: s2 * Math.PI * 2,     // Phase Y
+        symmetry: symmetryOptions[symIndex],
+        hue: Math.floor(s1 * 360),
+        hueRange: 30 + (s2 * 60), // How much the color varies
+        lineSpeed: 0.01 + (s2 * 0.02)
+      };
+    };
+
+    const SigilCanvas = ({ text }) => {
+      const canvasRef = useRef(null);
+      const animationRef = useRef(null);
+      const params = useMemo(() => generateSigilParams(text), [text]);
+      const [flash, setFlash] = useState(false);
+
+      // Trigger flash animation on text change
+      useEffect(() => {
+        setFlash(true);
+        const timer = setTimeout(() => setFlash(false), 600);
+        return () => clearTimeout(timer);
+      }, [text]);
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        
+        let animationId = null;
+        
+        const initCanvas = () => {
+          // Retina scaling for crisp rendering
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const rect = canvas.getBoundingClientRect();
+          canvas.width = rect.width * dpr;
+          canvas.height = rect.height * dpr;
+          ctx.scale(dpr, dpr);
+          canvas.style.width = rect.width + 'px';
+          canvas.style.height = rect.height + 'px';
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          return { width: rect.width, height: rect.height };
+        };
+        
+        const { width: w, height: h } = initCanvas();
+        const cx = w / 2;
+        const cy = h / 2;
+        // Scale down slightly to fit rotation
+        const scale = Math.min(w, h) * 0.18; 
+        let time = 0;
+        
+        const render = () => {
+          // 1. Trail Effect - Darker background refresh for sharper lines
+          ctx.fillStyle = 'rgba(5, 5, 8, 0.08)';
+          ctx.fillRect(0, 0, w, h);
+          // 2. Setup Glowing Line
+          ctx.globalCompositeOperation = 'lighter'; 
+          ctx.lineWidth = 1.2;
+          
+          // Calculate curve point for this frame
+          // Using modulated sine waves for "breathing" organic shapes
+          const mod = Math.sin(time * params.modFreq) + 1.5; // Modulation envelope
+          
+          const rawX = (Math.sin(params.f1 * time + params.p1) + Math.cos(params.f2 * time)) * mod;
+          const rawY = (Math.sin(params.f2 * time + params.p2) + Math.cos(params.f1 * time)) * mod;
+          // 3. Draw Symmetrical Copies (Mandala Logic)
+          const angleStep = (Math.PI * 2) / params.symmetry;
+          
+          const currentHue = (params.hue + Math.sin(time * 0.5) * params.hueRange) % 360;
+          ctx.strokeStyle = `hsla(${currentHue}, 85%, 60%, 0.6)`;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = `hsla(${currentHue}, 85%, 60%, 0.4)`;
+          
+          ctx.beginPath();
+          
+          for (let s = 0; s < params.symmetry; s++) {
+            const theta = s * angleStep;
+            
+            // Rotate the raw point around center
+            const rotX = rawX * Math.cos(theta) - rawY * Math.sin(theta);
+            const rotY = rawX * Math.sin(theta) + rawY * Math.cos(theta);
+            
+            // We draw small segments to visualize flow
+            // To make it look like a continuous line, we project slightly backwards in time
+            // but for a particle/trail effect, just drawing the dot or short line is enough.
+            // Let's draw a short trail vector.
+            
+            const prevMod = Math.sin((time - 0.05) * params.modFreq) + 1.5;
+            const prevRawX = (Math.sin(params.f1 * (time - 0.05) + params.p1) + Math.cos(params.f2 * (time - 0.05))) * prevMod;
+            const prevRawY = (Math.sin(params.f2 * (time - 0.05) + params.p2) + Math.cos(params.f1 * (time - 0.05))) * prevMod;
+            
+            const prevRotX = prevRawX * Math.cos(theta) - prevRawY * Math.sin(theta);
+            const prevRotY = prevRawX * Math.sin(theta) + prevRawY * Math.cos(theta);
+            ctx.moveTo(cx + prevRotX * scale, cy + prevRotY * scale);
+            ctx.lineTo(cx + rotX * scale, cy + rotY * scale);
+            
+            // Optional: Add dots at tips for "constellation" feel
+            if (Math.random() > 0.95) {
+                 ctx.fillStyle = `hsla(${currentHue}, 100%, 80%, 0.8)`;
+                 ctx.fillRect(cx + rotX * scale, cy + rotY * scale, 1.5, 1.5);
+            }
+          }
+          ctx.stroke();
+          
+          // Reset composite
+          ctx.globalCompositeOperation = 'source-over';
+          time += params.lineSpeed;
+          animationId = requestAnimationFrame(render);
+        };
+        
+        render();
+        
+        return () => {
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+          }
+        };
+      }, [params]);
+
+      return (
+        <div className="relative w-full aspect-square bg-[#050508] rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
+           {/* Flash Overlay for visual feedback */}
+          <div 
+            className={`absolute inset-0 bg-white pointer-events-none transition-opacity duration-700 z-50 ${flash ? 'opacity-15' : 'opacity-0'}`} 
+          />
+          <canvas ref={canvasRef} className="w-full h-full" style={{ width: '100%', height: '100%' }} />
+          
+          {/* Intent Confirmation Overlay */}
+          <div className="absolute top-4 right-4 text-right pointer-events-none">
+            <p className="text-white/30 text-[9px] tracking-widest uppercase mb-1">Active Intent</p>
+            <p className="text-white font-bold text-xs uppercase tracking-wider bg-white/5 px-2 py-1 rounded border border-white/5 inline-block">
+              {text.length > 20 ? text.substring(0, 20) + '...' : text}
+            </p>
+          </div>
+          {/* Mathematical Stats Overlay */}
+          <div className="absolute top-4 left-4 font-mono text-[10px] text-white/30 space-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+            <p>SYMMETRY: {params.symmetry}X</p>
+            <p>FREQ_MOD: {params.f1.toFixed(2)} / {params.f2.toFixed(2)}</p>
+            <p>ENERGY: {params.modFreq.toFixed(3)}</p>
+          </div>
+          <div className="absolute bottom-4 right-4 font-mono text-[10px] text-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+            <p>RENDER: SYMMETRICAL_HARMONICS</p>
+          </div>
+        </div>
+      );
+    };
+
+    function SigilApp() {
+      const [input, setInput] = useState('');
+      const [activeText, setActiveText] = useState('universe'); 
+      
+      const handleGenerate = (e) => {
+        e.preventDefault();
+        if (input.trim()) {
+          setActiveText(input);
+        }
+      };
+
+      const handleRandom = () => {
+        const words = ["Ether", "Quantum", "Solar", "Lunar", "Void", "Nexus", "Pulse", "Zen", "Chaos", "Order", "Love", "Hope"];
+        const random = words[Math.floor(Math.random() * words.length)] + " " + Math.floor(Math.random() * 999);
+        setInput(random);
+        setActiveText(random);
+      };
+
+      const handleCapture = () => {
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+          canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sigil-${Date.now()}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+          });
+        }
+      };
+
+      return (
+        <div className="min-h-screen bg-black text-white font-sans selection:bg-fuchsia-500/30 flex flex-col items-center justify-center p-4">
+          
+          {/* Background Ambience */}
+          <div className="fixed inset-0 pointer-events-none">
+            <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-900/10 rounded-full blur-[100px]" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-900/10 rounded-full blur-[100px]" />
+          </div>
+          <div className="relative z-10 w-full max-w-md space-y-6">
+            
+            {/* Header */}
+            <div className="text-center space-y-2">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Zap size={20} className="text-fuchsia-400" fill="currentColor" />
+                <span className="text-xs font-bold tracking-[0.3em] text-fuchsia-400 uppercase">Sigil Engine</span>
+              </div>
+              <h1 className="text-5xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-600">
+                SIGIL
+              </h1>
+              <p className="text-slate-500 text-xs uppercase tracking-widest">
+                Sacred Geometry Generator
+              </p>
+            </div>
+            {/* Visualizer Card */}
+            <SigilCanvas text={activeText} />
+            {/* Input Area */}
+            <div className="bg-white/5 backdrop-blur-md border border-white/10 p-1 rounded-2xl flex items-center shadow-lg">
+              <form onSubmit={handleGenerate} className="flex-1 flex items-center">
+                <div className="pl-4 text-slate-500">
+                  <Hash size={16} />
+                </div>
+                <input 
+                  type="text" 
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type intent here..."
+                  className="w-full bg-transparent text-white p-4 focus:outline-none placeholder-slate-600 font-medium"
+                />
+                <button 
+                  type="submit"
+                  className="mr-1 p-3 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors"
+                >
+                  <Sparkles size={18} />
+                </button>
+              </form>
+            </div>
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-3">
+              <button 
+                onClick={handleRandom}
+                className="flex items-center justify-center gap-2 py-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white"
+              >
+                <Shuffle size={14} />
+                Randomize
+              </button>
+              
+              <button 
+                onClick={handleCapture}
+                className="flex items-center justify-center gap-2 py-4 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 transition-all text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-fuchsia-900/40"
+              >
+                <Share2 size={14} />
+                Capture
+              </button>
+            </div>
+            {/* Footer Note */}
+            <p className="text-center text-[10px] text-slate-600 leading-relaxed max-w-xs mx-auto">
+              Generated using symmetrical amplitude modulation equations driven by the SHA-256 entropy of your text input.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    // Render the app
+    ReactDOM.render(<SigilApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>
+
