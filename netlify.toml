@@ -20,7 +20,20 @@
 # Allow extensions folder to be accessible
 [[redirects]]
   from = "/extensions/*"
-  to = "/extensions/:splat"
+  to = "/extensions /:splat"
+  status = 200
+  force = false
+
+# Privacy policy redirect
+[[redirects]]
+  from = "/privacy-policy"
+  to = "/extensions /SynapseSave/privacy-policy.html"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/privacy"
+  to = "/extensions /SynapseSave/privacy-policy.html"
   status = 200
   force = false
 
