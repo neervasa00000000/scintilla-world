@@ -84,12 +84,12 @@ function createTabItem(tab) {
         faviconUrl.searchParams.set("pageUrl", tab.url);
         faviconUrl.searchParams.set("size", "32");
         
-        const img = document.createElement('img');
-        img.src = faviconUrl.toString();
-        img.alt = '';
+    const img = document.createElement('img');
+    img.src = faviconUrl.toString();
+    img.alt = '';
         
         // Improved error handling with fallback
-        img.onerror = function() {
+    img.onerror = function() {
             // Fallback to emoji icon if favicon fails to load
             faviconEl.textContent = '🌐';
             faviconEl.style.fontSize = '10px';

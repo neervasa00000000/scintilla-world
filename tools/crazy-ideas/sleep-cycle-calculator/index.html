@@ -30,7 +30,7 @@
             /* Animation Variables */
             --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
             --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-        }
+            }
         * {
             box-sizing: border-box;
             margin: 0;
@@ -514,7 +514,7 @@
                 <div class="info-header">
                     <svg class="info-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     <span>The Science</span>
-                </div>
+            </div>
                 <ul class="info-list">
                     <li>Sleep cycles last ~90 minutes.</li>
                     <li>Waking mid-cycle causes grogginess (inertia).</li>
@@ -527,7 +527,7 @@
                 <div class="info-header">
                     <svg class="info-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
                     <span>Pro Tips</span>
-                </div>
+            </div>
                 <ul class="info-list">
                     <li>Calculation includes <strong>15 mins</strong> to fall asleep.</li>
                     <li>Keep your bedroom cool (65°F / 18°C).</li>
@@ -574,7 +574,7 @@
             setTimeout(() => label.style.opacity = 1, 200);
             // Hide results to encourage recalculation
             document.getElementById('resultsArea').classList.remove('visible');
-        }
+            }
 
         function calculate() {
             const timeInput = document.getElementById('timeInput').value;
@@ -608,12 +608,12 @@
 
                 // Score the result based on age recommendation
                 const isOptimal = totalHours >= ageInfo.min && totalHours <= ageInfo.max;
-
-                results.push({
+                    
+                    results.push({
                     timeObj: resultDate,
                     timeString: formatTime(resultDate),
-                    cycles: cycles,
-                    hours: totalHours.toFixed(1),
+                        cycles: cycles,
+                        hours: totalHours.toFixed(1),
                     isOptimal: isOptimal
                 });
             }
@@ -625,7 +625,7 @@
                 results.sort((a, b) => b.timeObj - a.timeObj); 
             } else {
                 results.sort((a, b) => a.timeObj - b.timeObj);
-            }
+                }
 
             renderResults(results, ageInfo);
         }
