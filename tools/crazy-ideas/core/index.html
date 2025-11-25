@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORE - Holographic Thought Engine</title>
+  <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
+  <link rel="shortcut icon" href="/assets/logo/favicon.png">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React and ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  
+  <!-- Babel Standalone for JSX transformation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn { animation: fadeIn 1s ease-out; }
+    .animate-slideUp { animation: slideUp 0.8s ease-out forwards; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+    
+    // Icon components
+    const Sparkles = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+      </svg>
+    );
+    
+    const Scan = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2m0 6v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path>
+      </svg>
+    );
+    
+    const Rotate3d = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <path d="M16.466 7.5C15.643 4.237 13.952 2 12 2 9.239 2 7 6.477 7 12s2.239 10 5 10c.342 0 .677-.069 1-.2"></path>
+        <path d="M7.534 16.5C8.357 19.763 10.048 22 12 22c2.761 0 5-4.477 5-10s-2.239-10-5-10c-.342 0-.677.069-1 .2"></path>
+        <path d="M12 2v20"></path>
+      </svg>
+    );
+    
+    const Zap = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+    );
+
+    // --- MATH UTILITIES (3D Projection Engine) ---
+    // Hasher: Text -> Numbers
+    const generateCoreParams = (str) => {
+      let h = 0xdeadbeef;
+      for (let i = 0; i < str.length; i++) {
+        h = Math.imul(h ^ str.charCodeAt(i), 2654435761);
+      }
+      const s = ((h >>> 0) / 4294967296);
+      
+      return {
+        ringCount: Math.floor(s * 4) + 3, // 3 to 7 rings
+        coreDensity: Math.floor(s * 500) + 300,
+        chaos: s > 0.5,
+        speed: 0.005 + (s * 0.02),
+        hue: Math.floor(s * 360),
+        hueRange: 60,
+        tilt: (s - 0.5) * 2 // Random tilt
+      };
+    };
+
+    const HologramCanvas = ({ text }) => {
+      const canvasRef = useRef(null);
+      const animationRef = useRef(null);
+      const containerRef = useRef(null);
+      
+      // Interaction State
+      const [rotation, setRotation] = useState({ x: 0, y: 0 });
+      const isDragging = useRef(false);
+      const lastMouse = useRef({ x: 0, y: 0 });
+      const params = useMemo(() => generateCoreParams(text), [text]);
+      
+      // --- 3D PARTICLE SYSTEM SETUP ---
+      const particles = useMemo(() => {
+        const pts = [];
+        
+        // 1. Generate CORE (Sphere)
+        for (let i = 0; i < params.coreDensity; i++) {
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos((Math.random() * 2) - 1);
+          const r = 40 + Math.random() * 20; // Radius 40-60
+          
+          pts.push({
+            x: r * Math.sin(phi) * Math.cos(theta),
+            y: r * Math.sin(phi) * Math.sin(theta),
+            z: r * Math.cos(phi),
+            type: 'core',
+            size: Math.random() * 1.5,
+            phase: Math.random() * Math.PI
+          });
+        }
+        
+        // 2. Generate RINGS (Orbitals)
+        for (let r = 0; r < params.ringCount; r++) {
+          const radius = 80 + (r * 30);
+          const ringTiltX = (Math.random() - 0.5) * 2;
+          const ringTiltZ = (Math.random() - 0.5) * 2;
+          const particleCount = 100 + (r * 50);
+          
+          for (let i = 0; i < particleCount; i++) {
+            const angle = (i / particleCount) * Math.PI * 2;
+            
+            // Base Circle
+            let px = radius * Math.cos(angle);
+            let py = 0;
+            let pz = radius * Math.sin(angle);
+            
+            // Apply Ring Tilt
+            const tx = px;
+            const ty = py * Math.cos(ringTiltX) - pz * Math.sin(ringTiltX);
+            const tz = py * Math.sin(ringTiltX) + pz * Math.cos(ringTiltX);
+            
+            pts.push({
+              x: tx,
+              y: ty,
+              z: tz,
+              type: 'ring',
+              size: Math.random() * 1.2,
+              speed: (r % 2 === 0 ? 1 : -1) * (0.01 + Math.random() * 0.005), // Alternate directions
+              angle: angle,
+              radius: radius,
+              tiltX: ringTiltX
+            });
+          }
+        }
+        return pts;
+      }, [params]);
+
+      // --- INTERACTION HANDLERS ---
+      const handleMouseDown = (e) => {
+        isDragging.current = true;
+        lastMouse.current = { x: e.clientX, y: e.clientY };
+      };
+      
+      const handleMouseMove = (e) => {
+        if (!isDragging.current) return;
+        const deltaX = e.clientX - lastMouse.current.x;
+        const deltaY = e.clientY - lastMouse.current.y;
+        
+        setRotation(prev => ({
+          x: prev.x + deltaY * 0.01,
+          y: prev.y + deltaX * 0.01
+        }));
+        
+        lastMouse.current = { x: e.clientX, y: e.clientY };
+      };
+      
+      const handleMouseUp = () => {
+        isDragging.current = false;
+      };
+
+      // --- RENDER LOOP ---
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        
+        let animationId = null;
+        
+        const initCanvas = () => {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const rect = canvas.getBoundingClientRect();
+          canvas.width = rect.width * dpr;
+          canvas.height = rect.height * dpr;
+          ctx.scale(dpr, dpr);
+          canvas.style.width = rect.width + 'px';
+          canvas.style.height = rect.height + 'px';
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          return { width: rect.width, height: rect.height };
+        };
+        
+        const { width, height } = initCanvas();
+        const cx = width / 2;
+        const cy = height / 2;
+        const fov = 400; // Field of view
+        let time = 0;
+        
+        const render = () => {
+          // Clear with trail effect
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+          ctx.fillRect(0, 0, width, height);
+          
+          ctx.globalCompositeOperation = 'lighter'; // Hologram additive blending
+          
+          // Auto rotation + User rotation
+          const autoRotY = time * 0.2;
+          const rotX = rotation.x;
+          const rotY = rotation.y + autoRotY;
+          
+          // Pulse for Core
+          const pulse = 1 + Math.sin(time * 3) * 0.05;
+          
+          particles.forEach(p => {
+            let x = p.x;
+            let y = p.y;
+            let z = p.z;
+            
+            // Animate Rings
+            if (p.type === 'ring') {
+              p.angle += p.speed;
+              // Re-calculate position based on new angle
+              const px = p.radius * Math.cos(p.angle);
+              const pz = p.radius * Math.sin(p.angle);
+              x = px;
+              y = 0;
+              z = pz;
+              // Re-apply tilt
+              const ty = y * Math.cos(p.tiltX) - z * Math.sin(p.tiltX);
+              const tz = y * Math.sin(p.tiltX) + z * Math.cos(p.tiltX);
+              y = ty;
+              z = tz;
+            } else {
+              // Core pulsing
+              x *= pulse;
+              y *= pulse;
+              z *= pulse;
+            }
+            
+            // 3D Rotation Matrix (Y-axis then X-axis)
+            // Rotate Y
+            let tx = x * Math.cos(rotY) - z * Math.sin(rotY);
+            let tz = x * Math.sin(rotY) + z * Math.cos(rotY);
+            x = tx;
+            z = tz;
+            
+            // Rotate X
+            let ty = y * Math.cos(rotX) - z * Math.sin(rotX);
+            tz = y * Math.sin(rotX) + z * Math.cos(rotX);
+            y = ty;
+            z = tz;
+            
+            // Projection (3D -> 2D)
+            const scale = fov / (fov + z);
+            const x2d = cx + x * scale;
+            const y2d = cy + y * scale;
+            
+            // Draw Particle
+            if (z > -fov) { // Only draw if in front of camera
+              const dist = Math.sqrt(x*x + y*y + z*z);
+              const alpha = p.type === 'core' ? 0.8 : 0.6;
+              
+              // Color Logic
+              let hue = params.hue;
+              if (p.type === 'ring') hue = (params.hue + 40) % 360;
+              
+              ctx.fillStyle = `hsla(${hue}, 80%, 60%, ${alpha})`;
+              
+              const size = p.size * scale;
+              ctx.beginPath();
+              ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          });
+          
+          time += 0.01;
+          animationId = requestAnimationFrame(render);
+        };
+        
+        render();
+        
+        return () => {
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+          }
+        };
+      }, [particles, rotation, params]);
+
+      return (
+        <div 
+          ref={containerRef}
+          className="relative w-full aspect-square bg-black rounded-full overflow-hidden shadow-[0_0_50px_rgba(255,255,255,0.1)] border border-white/10 cursor-move group"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onTouchStart={(e) => handleMouseDown(e.touches[0])}
+          onTouchMove={(e) => handleMouseMove(e.touches[0])}
+          onTouchEnd={handleMouseUp}
+        >
+          <canvas ref={canvasRef} className="w-full h-full block" />
+          
+          {/* Hologram Overlay Lines */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0)_50%,rgba(0,0,0,0.2)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 pointer-events-none bg-[length:100%_4px,6px_100%] opacity-50" />
+          
+          <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="inline-flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-xs text-white/50">
+              <Rotate3d size={12} />
+              <span>DRAG TO ROTATE VIEW</span>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- MAIN APP ---
+    function CoreApp() {
+      const [input, setInput] = useState('');
+      const [activeText, setActiveText] = useState('CORE SYSTEM');
+      const [generated, setGenerated] = useState(false);
+
+      const handleGenerate = (e) => {
+        e.preventDefault();
+        if (input.trim()) {
+          setActiveText(input);
+          setGenerated(true);
+        }
+      };
+
+      const handleRandom = () => {
+        const concepts = ["Singularity", "Hope", "Entropy", "Stardust", "Cybernetics", "Void", "Genesis", "Aeon"];
+        const text = concepts[Math.floor(Math.random() * concepts.length)];
+        setInput(text);
+        setActiveText(text);
+        setGenerated(true);
+      };
+
+      return (
+        <div className="min-h-screen bg-[#020202] text-white font-sans flex flex-col items-center justify-center p-4 relative overflow-hidden">
+          
+          {/* Deep Space Background */}
+          <div className="absolute inset-0 z-0">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vw] bg-blue-900/5 rounded-full blur-[120px]" />
+          </div>
+          
+          {/* Main UI Container */}
+          <div className="relative z-10 w-full max-w-md flex flex-col items-center">
+            
+            {/* Header */}
+            <div className="text-center mb-8 animate-fadeIn">
+              <h1 className="text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-600 mb-2">
+                CORE
+              </h1>
+              <p className="text-slate-500 text-[10px] tracking-[0.4em] uppercase">
+                Holographic Thought Engine
+              </p>
+            </div>
+            
+            {/* The 3D Viewport */}
+            <div className="w-full mb-8 relative">
+               <HologramCanvas text={activeText} />
+               
+               {/* Decorative HUD Elements */}
+               <div className="absolute top-0 left-0 w-4 h-4 border-l border-t border-white/20 pointer-events-none" />
+               <div className="absolute top-0 right-0 w-4 h-4 border-r border-t border-white/20 pointer-events-none" />
+               <div className="absolute bottom-0 left-0 w-4 h-4 border-l border-b border-white/20 pointer-events-none" />
+               <div className="absolute bottom-0 right-0 w-4 h-4 border-r border-b border-white/20 pointer-events-none" />
+            </div>
+            
+            {/* Input Interface */}
+            <div className="w-full space-y-4 animate-slideUp">
+              <form onSubmit={handleGenerate} className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-lg group-hover:blur-xl transition-all opacity-0 group-hover:opacity-100" />
+                <input 
+                  type="text" 
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Initialize Core Parameter..."
+                  className="relative w-full bg-black/40 backdrop-blur-xl border border-white/10 text-center text-white p-5 rounded-xl focus:outline-none focus:border-white/30 transition-all font-medium text-lg placeholder-slate-600"
+                />
+              </form>
+              <div className="flex justify-center gap-4">
+                 <button 
+                    onClick={handleGenerate}
+                    disabled={!input}
+                    className={`flex items-center gap-2 px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest transition-all
+                      ${input ? 'bg-white text-black hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'bg-white/5 text-slate-500 cursor-not-allowed'}
+                    `}
+                 >
+                    <Scan size={14} />
+                    Materialize
+                 </button>
+                 
+                 <button 
+                   onClick={handleRandom}
+                   className="p-3 rounded-full bg-white/5 hover:bg-white/10 text-white transition-all"
+                 >
+                   <Zap size={18} />
+                 </button>
+              </div>
+            </div>
+            
+            {/* Stats */}
+            {generated && (
+              <div className="mt-8 grid grid-cols-3 gap-8 text-center w-full px-4 opacity-50">
+                 <div>
+                   <p className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Mass</p>
+                   <p className="text-xs font-mono">{Math.floor(activeText.length * 42.5)} MB</p>
+                 </div>
+                 <div>
+                   <p className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Spin</p>
+                   <p className="text-xs font-mono">{activeText.length % 2 === 0 ? 'CLOCKWISE' : 'COUNTER'}</p>
+                 </div>
+                 <div>
+                   <p className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">State</p>
+                   <p className="text-xs font-mono">STABLE</p>
+                 </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Render the app
+    ReactDOM.render(<CoreApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>
+
