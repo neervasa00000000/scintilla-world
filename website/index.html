@@ -92,36 +92,6 @@
         
         // --- Functional Tool Components ---
         
-        // Simple functional widgets for showcase
-        const SleepCalculator = () => {
-            return (
-                <div className="p-4 h-full flex flex-col items-center justify-center cursor-pointer group" onClick={() => window.open('/tools/crazy-ideas/sleep-cycle-calculator/', '_blank')}>
-                    <i data-lucide="moon" className="w-8 h-8 text-purple-400 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <h3 className="font-bold uppercase tracking-wider text-sm text-purple-400">Sleep Calculator</h3>
-                    <p className="text-xs text-gray-400 mt-1 text-center">Click to open</p>
-                </div>
-            );
-        };
-
-        const PasswordGen = () => {
-            return (
-                <div className="p-4 h-full flex flex-col items-center justify-center cursor-pointer group" onClick={() => window.open('/tools/crazy-ideas/', '_blank')}>
-                    <i data-lucide="lock" className="w-8 h-8 text-emerald-400 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <h3 className="font-bold uppercase tracking-wider text-sm text-emerald-400">Password Gen</h3>
-                    <p className="text-xs text-gray-400 mt-1 text-center">Click to open</p>
-                </div>
-            );
-        };
-
-        const UnitConverter = () => {
-            return (
-                <div className="p-4 h-full flex flex-col items-center justify-center cursor-pointer group" onClick={() => window.open('/tools/crazy-ideas/', '_blank')}>
-                    <i data-lucide="arrow-left-right" className="w-8 h-8 text-blue-400 mb-2 group-hover:scale-110 transition-transform"></i>
-                    <h3 className="font-bold uppercase tracking-wider text-sm text-blue-400">Unit Converter</h3>
-                    <p className="text-xs text-gray-400 mt-1 text-center">Click to open</p>
-                </div>
-            );
-        };
 
         // --- Main Layout Components ---
         const ToolCard = ({ children, className = "", colSpan = "col-span-1", rowSpan = "row-span-1", onClick }) => (
@@ -224,9 +194,14 @@
                             </div>
                         </ToolCard>
                         
-                        {/* Functional Tool 1: Sleep Calc */}
-                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1">
-                            <SleepCalculator />
+                        {/* Sleep Cycle Calculator */}
+                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1" onClick={() => window.open('/tools/crazy-ideas/sleep-cycle-calculator/', '_blank')}>
+                            <ToolLinkCard 
+                                title="Sleep Calculator" 
+                                icon="moon" 
+                                description="Calculate optimal sleep times based on sleep cycles."
+                                color="purple"
+                            />
                         </ToolCard>
                         
                         {/* Stat Card */}
@@ -234,14 +209,24 @@
                             <StatCard icon="zap" label="Free Tools" value="12+" color="blue" />
                         </ToolCard>
                         
-                        {/* Functional Tool 2: Password Gen */}
-                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1">
-                            <PasswordGen />
+                        {/* Password Generator */}
+                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1" onClick={() => window.open('/tools/crazy-ideas/', '_blank')}>
+                            <ToolLinkCard 
+                                title="Password Gen" 
+                                icon="lock" 
+                                description="Generate secure passwords instantly."
+                                color="emerald"
+                            />
                         </ToolCard>
                         
-                        {/* Functional Tool 3: Unit Converter */}
-                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1">
-                            <UnitConverter />
+                        {/* Unit Converter */}
+                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1" onClick={() => window.open('/tools/crazy-ideas/', '_blank')}>
+                            <ToolLinkCard 
+                                title="Unit Converter" 
+                                icon="arrow-left-right" 
+                                description="Convert between PX, REM, and other units."
+                                color="blue"
+                            />
                         </ToolCard>
                         
                         {/* Cost Per Serve Calculator */}
