@@ -142,137 +142,83 @@
       border-color: var(--color3);
     }
 
-    /* Currency Button Styles */
-    .currency-selector {
+    /* Generate Button Styles - Cool & Modern */
+    .generate-btn {
       position: relative;
-    }
-
-    .currency-select-hidden {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-      width: 0;
-      height: 0;
-    }
-
-    .currency-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      padding: 0.875rem 1.25rem;
-      border-radius: 12px;
-      border: 2px solid var(--color4);
-      background: linear-gradient(135deg, var(--color4) 0%, #005a4f 100%);
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      outline: none;
-      transition: all 0.3s ease;
-      font-family: inherit;
-      box-shadow: 0 2px 8px rgba(0, 126, 110, 0.2);
-      min-width: 100px;
-    }
-
-    .currency-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 126, 110, 0.3);
-      border-color: var(--color3);
-      background: linear-gradient(135deg, var(--color3) 0%, var(--color4) 100%);
-    }
-
-    .currency-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(0, 126, 110, 0.2);
-    }
-
-    .currency-symbol {
-      font-size: 1.25rem;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .currency-label {
-      font-size: 0.75rem;
-      font-weight: 500;
-      opacity: 0.9;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .currency-arrow {
-      margin-left: 0.25rem;
-      opacity: 0.8;
-      transition: transform 0.3s ease;
-    }
-
-    .currency-btn:hover .currency-arrow {
-      transform: translateY(2px);
-    }
-
-    .currency-dropdown {
-      position: absolute;
-      top: calc(100% + 0.5rem);
-      left: 0;
-      right: 0;
-      background: var(--color1);
-      border: 2px solid var(--color4);
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0, 126, 110, 0.15);
-      z-index: 100;
-      overflow: hidden;
-      display: none;
-    }
-
-    .currency-dropdown.show {
-      display: block;
-      animation: slideDown 0.2s ease;
-    }
-
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .currency-option {
-      display: flex;
-      align-items: center;
       gap: 0.75rem;
-      padding: 0.875rem 1.25rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border-bottom: 1px solid rgba(0, 126, 110, 0.1);
-    }
-
-    .currency-option:last-child {
-      border-bottom: none;
-    }
-
-    .currency-option:hover {
-      background: var(--color2);
-    }
-
-    .currency-option.active {
-      background: var(--color3);
-      color: var(--color2);
-    }
-
-    .currency-option-symbol {
+      padding: 1rem 2rem;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background-size: 200% 200%;
+      color: white;
       font-size: 1.1rem;
       font-weight: 700;
-      min-width: 1.5rem;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      font-family: inherit;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+      overflow: hidden;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      animation: gradientShift 3s ease infinite;
     }
 
-    .currency-option-label {
-      font-size: 0.875rem;
-      font-weight: 500;
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+      animation-duration: 1.5s;
+    }
+
+    .generate-btn:active {
+      transform: translateY(-1px) scale(0.98);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .generate-icon {
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s ease;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    .generate-btn:hover .generate-icon {
+      transform: rotate(15deg) scale(1.1);
+    }
+
+    .generate-text {
+      position: relative;
+      z-index: 2;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .generate-shine {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .generate-btn:hover .generate-shine {
+      left: 100%;
+    }
+
+    .currency-select-hidden {
+      display: none;
     }
 
     .unit {
@@ -501,35 +447,19 @@
           </div>
 
           <div class="field">
-            <label for="currency">Currency</label>
-            <div class="currency-selector">
-              <button type="button" class="currency-btn" id="currencyBtn" aria-label="Select currency">
-                <span class="currency-symbol" id="currencySymbol">$</span>
-                <span class="currency-label" id="currencyLabel">AUD</span>
-                <svg class="currency-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 4.5L6 7.5L9 4.5"/>
+            <label>Quick Action</label>
+            <button type="button" class="generate-btn" id="generateBtn">
+              <span class="generate-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                 </svg>
-              </button>
-              <div class="currency-dropdown" id="currencyDropdown">
-                <div class="currency-option active" data-value="$" data-label="AUD">
-                  <span class="currency-option-symbol">$</span>
-                  <span class="currency-option-label">Australian Dollar (AUD)</span>
-                </div>
-                <div class="currency-option" data-value="€" data-label="EUR">
-                  <span class="currency-option-symbol">€</span>
-                  <span class="currency-option-label">Euro (EUR)</span>
-                </div>
-                <div class="currency-option" data-value="£" data-label="GBP">
-                  <span class="currency-option-symbol">£</span>
-                  <span class="currency-option-label">British Pound (GBP)</span>
-                </div>
-              </div>
-              <select id="currency" class="currency-select-hidden" aria-hidden="true">
-                <option value="$">$ (AUD)</option>
-                <option value="€">€ (EUR)</option>
-                <option value="£">£ (GBP)</option>
-              </select>
-            </div>
+              </span>
+              <span class="generate-text">Generate</span>
+              <span class="generate-shine"></span>
+            </button>
+            <select id="currency" class="currency-select-hidden" aria-hidden="true" style="display: none;">
+              <option value="$">$ (AUD)</option>
+            </select>
           </div>
         </div>
 
@@ -641,10 +571,7 @@
 
     const productSelect = document.getElementById("productSelect");
     const currencySelect = document.getElementById("currency");
-    const currencyBtn = document.getElementById("currencyBtn");
-    const currencyDropdown = document.getElementById("currencyDropdown");
-    const currencySymbol = document.getElementById("currencySymbol");
-    const currencyLabel = document.getElementById("currencyLabel");
+    const generateBtn = document.getElementById("generateBtn");
     const packPriceInput = document.getElementById("packPrice");
     const packGramsInput = document.getElementById("packGrams");
     const servingSizeInput = document.getElementById("servingSize");
@@ -738,12 +665,6 @@
     resetBtn.addEventListener("click", () => {
       productSelect.value = "moringa";
       currencySelect.value = "$";
-      currencySymbol.textContent = "$";
-      currencyLabel.textContent = "AUD";
-      currencyDropdown.querySelectorAll('.currency-option').forEach(opt => {
-        opt.classList.remove('active');
-        if (opt.dataset.value === '$') opt.classList.add('active');
-      });
       packPriceInput.value = "";
       packGramsInput.value = "";
       servingSizeInput.value = "";
@@ -753,46 +674,22 @@
       loadProductDefaults();
     });
 
-    // Currency button functionality
-    currencyBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      currencyDropdown.classList.toggle('show');
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!currencyBtn.contains(e.target) && !currencyDropdown.contains(e.target)) {
-        currencyDropdown.classList.remove('show');
+    // Generate button functionality
+    generateBtn.addEventListener('click', () => {
+      // Trigger calculation
+      if (packPriceInput.value && packGramsInput.value && servingSizeInput.value) {
+        calculate();
+        // Add a nice animation effect
+        generateBtn.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          generateBtn.style.transform = '';
+        }, 150);
+      } else {
+        // If fields are empty, focus on first empty field
+        if (!packPriceInput.value) packPriceInput.focus();
+        else if (!packGramsInput.value) packGramsInput.focus();
+        else if (!servingSizeInput.value) servingSizeInput.focus();
       }
-    });
-
-    // Handle currency option selection
-    currencyDropdown.querySelectorAll('.currency-option').forEach(option => {
-      option.addEventListener('click', () => {
-        const value = option.dataset.value;
-        const label = option.dataset.label;
-        
-        // Update hidden select
-        currencySelect.value = value;
-        
-        // Update button display
-        currencySymbol.textContent = value;
-        currencyLabel.textContent = label;
-        
-        // Update active state
-        currencyDropdown.querySelectorAll('.currency-option').forEach(opt => {
-          opt.classList.remove('active');
-        });
-        option.classList.add('active');
-        
-        // Close dropdown
-        currencyDropdown.classList.remove('show');
-        
-        // Trigger calculation if results are shown
-        if (resultsBox.style.display !== 'none') {
-          calcBtn.click();
-        }
-      });
     });
 
     [packPriceInput, packGramsInput, servingSizeInput, labelServingInput, currencySelect].forEach((el) => {
