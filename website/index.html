@@ -91,7 +91,124 @@
         const { useState, useEffect, useRef } = React;
         
         // --- Functional Tool Components ---
-        
+        // 1. Sleep Calculator
+        const SleepCalculator = () => {
+            const [wakeTime, setWakeTime] = useState('');
+            const [bedTimes, setBedTimes] = useState([]);
+            const calculateSleep = () => {
+                if (!wakeTime) return;
+                const [hours, minutes] = wakeTime.split(':').map(Number);
+                const wakeDate = new Date();
+                wakeDate.setHours(hours, minutes, 0);
+                // Cycles are 90 mins. Calculate backwards 4, 5, and 6 cycles.
+                const cycles = [6, 5, 4];
+                const times = cycles.map(c => {
+                    const sleepTime = new Date(wakeDate.getTime() - (c * 90 * 60000) - (15 * 60000)); // 15 min to fall asleep
+                    return sleepTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                });
+                setBedTimes(times);
+            };
+            return (
+                <div className="p-4 h-full flex flex-col">
+                    <div className="flex items-center gap-2 mb-4 text-purple-400">
+                        <i data-lucide="moon" className="w-5 h-5"></i>
+                        <h3 className="font-bold uppercase tracking-wider text-sm">Smart Sleep</h3>
+                    </div>
+                    <div className="flex-grow flex flex-col justify-center">
+                        <label className="text-xs text-gray-400 mb-1">I want to wake up at:</label>
+                        <div className="flex gap-2 mb-4">
+                            <input 
+                                type="time" 
+                                className="bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-purple-500 w-full"
+                                onChange={(e) => setWakeTime(e.target.value)}
+                            />
+                            <button onClick={calculateSleep} className="bg-purple-600 hover:bg-purple-500 text-white px-4 rounded transition-colors">
+                                Go
+                            </button>
+                        </div>
+                        {bedTimes.length > 0 && (
+                            <div className="space-y-2 animate-pulse">
+                                <p className="text-xs text-gray-400">You should fall asleep at:</p>
+                                <div className="flex justify-between gap-1">
+                                    {bedTimes.map((t, i) => (
+                                        <span key={i} className="bg-white/10 rounded px-2 py-1 text-sm font-mono text-purple-200">{t}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // 2. Quick Password Generator
+        const PasswordGen = () => {
+            const [pass, setPass] = useState('CLICK_GENERATE');
+            
+            const generate = () => {
+                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+                let result = "";
+                for (let i = 0; i < 12; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                setPass(result);
+            };
+            const copyToClipboard = () => {
+                const textarea = document.createElement('textarea');
+                textarea.value = pass;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert("Copied!");
+            };
+            return (
+                <div className="p-4 h-full flex flex-col">
+                    <div className="flex items-center gap-2 mb-4 text-emerald-400">
+                        <i data-lucide="lock" className="w-5 h-5"></i>
+                        <h3 className="font-bold uppercase tracking-wider text-sm">Secure Pass</h3>
+                    </div>
+                    <div className="flex-grow flex flex-col justify-center items-center gap-3">
+                        <div onClick={copyToClipboard} className="cursor-pointer w-full bg-black/30 border border-emerald-500/30 p-3 rounded text-center font-mono text-emerald-200 hover:bg-emerald-900/20 transition-colors break-all">
+                            {pass}
+                        </div>
+                        <button onClick={generate} className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 rounded font-bold text-xs uppercase tracking-widest transition-all">
+                            Generate New
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // 3. PX to REM Converter
+        const UnitConverter = () => {
+            const [px, setPx] = useState(16);
+            
+            return (
+                <div className="p-4 h-full flex flex-col">
+                    <div className="flex items-center gap-2 mb-4 text-blue-400">
+                        <i data-lucide="arrow-left-right" className="w-5 h-5"></i>
+                        <h3 className="font-bold uppercase tracking-wider text-sm">PX ➜ REM</h3>
+                    </div>
+                    <div className="flex-grow flex items-center justify-between gap-4">
+                        <div className="flex-1">
+                            <input 
+                                type="number" 
+                                value={px} 
+                                onChange={(e) => setPx(e.target.value)} 
+                                className="w-full bg-transparent border-b border-blue-500/50 text-2xl font-mono text-center focus:outline-none"
+                            />
+                            <div className="text-center text-xs text-gray-500 mt-1">Pixels</div>
+                        </div>
+                        <div className="text-blue-500 font-bold">=</div>
+                        <div className="flex-1 text-center">
+                            <div className="text-2xl font-mono text-white">{(px / 16).toFixed(3)}</div>
+                            <div className="text-xs text-gray-500 mt-1">REM</div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
 
         // --- Main Layout Components ---
         const ToolCard = ({ children, className = "", colSpan = "col-span-1", rowSpan = "row-span-1", onClick }) => (
@@ -194,14 +311,9 @@
                             </div>
                         </ToolCard>
                         
-                        {/* Sleep Cycle Calculator */}
-                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1" onClick={() => window.open('/tools/crazy-ideas/sleep-cycle-calculator/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Sleep Calculator" 
-                                icon="moon" 
-                                description="Calculate optimal sleep times based on sleep cycles."
-                                color="purple"
-                            />
+                        {/* Functional Tool 1: Sleep Calc */}
+                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1">
+                            <SleepCalculator />
                         </ToolCard>
                         
                         {/* Stat Card */}
@@ -209,24 +321,14 @@
                             <StatCard icon="zap" label="Free Tools" value="12+" color="blue" />
                         </ToolCard>
                         
-                        {/* Password Generator */}
-                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1" onClick={() => window.open('/tools/crazy-ideas/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Password Gen" 
-                                icon="lock" 
-                                description="Generate secure passwords instantly."
-                                color="emerald"
-                            />
+                        {/* Functional Tool 2: Password Gen */}
+                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1">
+                            <PasswordGen />
                         </ToolCard>
                         
-                        {/* Unit Converter */}
-                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1" onClick={() => window.open('/tools/crazy-ideas/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Unit Converter" 
-                                icon="arrow-left-right" 
-                                description="Convert between PX, REM, and other units."
-                                color="blue"
-                            />
+                        {/* Functional Tool 3: Unit Converter */}
+                        <ToolCard colSpan="col-span-1" rowSpan="row-span-1">
+                            <UnitConverter />
                         </ToolCard>
                         
                         {/* Cost Per Serve Calculator */}
