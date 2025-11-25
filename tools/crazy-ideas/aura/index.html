@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA - Emotional Alchemy Engine</title>
+  <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
+  <link rel="shortcut icon" href="/assets/logo/favicon.png">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React and ReactDOM (development for Babel compatibility) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  
+  <!-- Babel Standalone for JSX transformation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Lucide Icons (standalone) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); filter: blur(10px); }
+      to { opacity: 1; transform: scale(1); filter: blur(0px); }
+    }
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 0.1; transform: scale(1); }
+      50% { opacity: 0.2; transform: scale(1.1); }
+    }
+    .animate-fadeIn { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-scaleIn { animation: scaleIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-pulse-slow { animation: pulse-slow 8s ease-in-out infinite; }
+    .delay-1000 { animation-delay: 1s; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+    
+    // Icon components using Lucide
+    const Icon = ({ name, size = 24, className = "" }) => {
+      const iconRef = useRef(null);
+      useEffect(() => {
+        if (iconRef.current && lucide && lucide[name]) {
+          const iconElement = lucide[name]({ size, className });
+          if (iconElement) {
+            iconRef.current.innerHTML = '';
+            iconRef.current.appendChild(iconElement);
+          }
+        }
+      }, [name, size, className]);
+      return <span ref={iconRef} className={className}></span>;
+    };
+    
+    // Simple SVG icon components
+    const Hash = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <line x1="4" y1="9" x2="20" y2="9"></line>
+        <line x1="4" y1="15" x2="20" y2="15"></line>
+        <line x1="10" y1="3" x2="8" y2="21"></line>
+        <line x1="16" y1="3" x2="14" y2="21"></line>
+      </svg>
+    );
+    
+    const Sparkles = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+      </svg>
+    );
+    
+    const RefreshCw = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <polyline points="1 20 1 14 7 14"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+      </svg>
+    );
+    
+    const Share2 = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+    );
+
+    // --- Procedural Generation Logic ---
+
+    // Generates a numerical seed from a string
+    const generateSeed = (str) => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+      }
+      return Math.abs(hash);
+    };
+
+    // Selects a color palette based on the seed
+    const getColorPalette = (seed, length) => {
+      const palettes = [
+        ['#FF416C', '#FF4B2B', '#ff9a9e'], // Passion/Anger (Red/Orange)
+        ['#2193b0', '#6dd5ed', '#ccffff'], // Calm/Sad (Blue/Cyan)
+        ['#833ab4', '#fd1d1d', '#fcb045'], // Chaos (Purple/Red/Orange)
+        ['#11998e', '#38ef7d', '#a8ff78'], // Growth/Envy (Greens)
+        ['#232526', '#414345', '#ffffff'], // Void/Numb (Grayscale)
+        ['#FF0099', '#493240', '#00F260'], // Glitch (Neon)
+        ['#FDFC47', '#24FE41', '#ffffff'], // Electric (Yellow/Green)
+        ['#A1FFCE', '#FAFFD1', '#FF9966'], // Dream (Pastel)
+      ];
+      const index = (seed + length) % palettes.length;
+      return palettes[index];
+    };
+
+    // Determines the movement behavior of particles
+    const getShapeType = (seed) => {
+      const shapes = ['orb', 'flow', 'nebula', 'shatter', 'spiral'];
+      return shapes[seed % shapes.length];
+    };
+
+    // Generates a mystical name for the output
+    const generateName = (seed) => {
+      const adjs = ['Void', 'Crimson', 'Silent', 'Electric', 'Hollow', 'Radiant', 'Chaos', 'Deep', 'Astral', 'Lucid'];
+      const nouns = ['Echo', 'Storm', 'Bloom', 'Fragment', 'Pulse', 'Nebula', 'Signal', 'Dust', 'Memory', 'Ghost'];
+      return `${adjs[seed % adjs.length]} ${nouns[(seed * 2) % nouns.length]}`;
+    };
+
+    // --- Canvas Visualizer Component ---
+    const AuraVisualizer = ({ text }) => {
+      const canvasRef = useRef(null);
+      const animationRef = useRef(null);
+      
+      const seed = useMemo(() => generateSeed(text), [text]);
+      const colors = useMemo(() => getColorPalette(seed, text.length), [seed, text]);
+      const shapeType = useMemo(() => getShapeType(seed), [seed]);
+      const auraName = useMemo(() => generateName(seed), [seed]);
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        
+        // Handle Retina Display Scaling
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        
+        const width = rect.width;
+        const height = rect.height;
+        
+        // Physics variables
+        let particles = [];
+        let time = 0;
+        
+        // Initialize Particles
+        const createParticles = () => {
+          particles = [];
+          // Calculate density based on text length (more text = denser cloud)
+          const count = Math.min(200 + text.length * 5, 1000); 
+          
+          for(let i = 0; i < count; i++) {
+            particles.push({
+              x: width / 2,
+              y: height / 2,
+              angle: Math.random() * Math.PI * 2,
+              velocity: Math.random() * 2 + 0.5,
+              radius: Math.random() * 2.5,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              offset: Math.random() * 100, // Random starting phase
+              life: Math.random(),
+              orbitRadius: Math.random() * 100 + 50
+            });
+          }
+        };
+        
+        createParticles();
+        
+        // Animation Loop
+        const render = () => {
+          time += 0.01;
+          
+          // Clear with slight transparency for trail effect
+          ctx.fillStyle = 'rgba(10, 10, 12, 0.15)';
+          ctx.fillRect(0, 0, width, height);
+          
+          ctx.globalCompositeOperation = 'lighter'; // Additive blending for "glow"
+          particles.forEach(p => {
+            // --- Movement Logic based on Shape Type ---
+            
+            if (shapeType === 'orb') {
+              // Circular breathing motion
+              p.angle += 0.01 * (seed % 2 === 0 ? 1 : -1);
+              const breathing = Math.sin(time * 2) * 20;
+              p.x = width/2 + Math.cos(p.angle + p.offset) * (p.orbitRadius + breathing);
+              p.y = height/2 + Math.sin(p.angle + p.offset) * (p.orbitRadius + breathing);
+              
+            } else if (shapeType === 'spiral') {
+              // Spiraling outwards
+              p.angle += 0.05;
+              const r = (p.offset + time * 20) % (width/2);
+              p.x = width/2 + Math.cos(p.angle + p.offset) * r;
+              p.y = height/2 + Math.sin(p.angle + p.offset) * r;
+            } else if (shapeType === 'flow') {
+              // Directional flow
+              p.x += Math.cos(p.angle) * p.velocity;
+              p.y += Math.sin(p.angle) * p.velocity;
+              p.angle += Math.sin(time + p.offset) * 0.05; // Wiggle
+              
+              // Wrap around screen
+              if (p.x < 0) p.x = width;
+              if (p.x > width) p.x = 0;
+              if (p.y < 0) p.y = height;
+              if (p.y > height) p.y = 0;
+              
+            } else if (shapeType === 'nebula') {
+               // Perlin-like noise movement (simulated)
+               const noiseX = Math.sin(p.y * 0.01 + time);
+               const noiseY = Math.cos(p.x * 0.01 + time);
+               p.x += noiseX * 2;
+               p.y += noiseY * 2;
+               
+               // Soft boundaries
+               if (p.x < 0) p.x = width;
+               if (p.x > width) p.x = 0;
+               if (p.y < 0) p.y = height;
+               if (p.y > height) p.y = 0;
+               
+            } else {
+               // 'Shatter' / Chaos
+               p.x += (Math.random() - 0.5) * 4;
+               p.y += (Math.random() - 0.5) * 4;
+               // Gravity pull back to center (elastic)
+               p.x += (width/2 - p.x) * 0.05;
+               p.y += (height/2 - p.y) * 0.05;
+            }
+            
+            // Draw Particle
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+          });
+          animationRef.current = requestAnimationFrame(render);
+        };
+        
+        render();
+        
+        return () => {
+          if (animationRef.current) {
+            cancelAnimationFrame(animationRef.current);
+          }
+        };
+      }, [text, seed, colors, shapeType]);
+
+      return (
+        <div className="relative w-full aspect-square max-w-md mx-auto rounded-xl overflow-hidden shadow-2xl border border-white/10 group bg-black">
+          <canvas 
+            ref={canvasRef} 
+            className="w-full h-full block" 
+            style={{ width: '100%', height: '100%' }}
+          />
+          
+          {/* Aesthetic Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 pointer-events-none" />
+          
+          <div className="absolute bottom-0 left-0 right-0 p-6 flex justify-between items-end">
+            <div>
+               <div className="flex items-center space-x-2 mb-2">
+                 <div className="h-[1px] w-8 bg-white/50"></div>
+                 <p className="text-white/50 text-[10px] tracking-[0.3em] uppercase font-mono">Analysis Complete</p>
+               </div>
+               <h3 className="text-3xl font-bold text-white tracking-tighter mix-blend-screen">{auraName}</h3>
+               <p className="text-white/40 text-[10px] font-mono mt-1">ID: {seed.toString(16).toUpperCase().padStart(8, '0')}</p>
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              {colors.map((c, i) => (
+                <div key={i} className="w-2 h-2 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]" style={{background: c}} />
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- Main Application ---
+    function AuraApp() {
+      const [input, setInput] = useState('');
+      const [transmuted, setTransmuted] = useState(false);
+      const [activeText, setActiveText] = useState('');
+      const [loading, setLoading] = useState(false);
+
+      const handleTransmute = (e) => {
+        e.preventDefault();
+        if (!input.trim()) return;
+        
+        setLoading(true);
+        // Fake loading delay for dramatic effect
+        setTimeout(() => {
+          setActiveText(input);
+          setTransmuted(true);
+          setLoading(false);
+        }, 1500);
+      };
+
+      const reset = () => {
+        setTransmuted(false);
+        setInput('');
+        setActiveText('');
+      };
+
+      const handleSave = () => {
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+          canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `aura-${Date.now()}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+          });
+        }
+      };
+
+      return (
+        <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-indigo-500/30 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+          
+          {/* Ambient Background */}
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+            <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-indigo-900/10 rounded-full blur-[120px] animate-pulse-slow" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-fuchsia-900/10 rounded-full blur-[120px] animate-pulse-slow delay-1000" />
+          </div>
+
+          {/* Header */}
+          <header className="relative z-10 text-center mb-8 animate-fadeIn">
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-2 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-600">
+              AURA
+            </h1>
+            <p className="text-slate-500 text-xs md:text-sm tracking-[0.5em] uppercase font-light">
+              Emotional Alchemy Engine
+            </p>
+          </header>
+
+          {/* Main Content Area */}
+          <main className="relative z-10 w-full max-w-lg">
+            {!transmuted ? (
+              <div className="flex flex-col items-center animate-fadeIn">
+                <div className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden group">
+                  
+                  {/* Decorative scan line */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+                  <label className="block text-slate-300 text-lg mb-6 font-light text-center">
+                    What is weighing on your soul?
+                  </label>
+                  
+                  <div className="relative">
+                    <textarea
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="Type a secret, a fear, a name, or a wish..."
+                      className="w-full bg-black/40 text-white text-xl p-5 rounded-xl border border-white/10 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all resize-none h-48 placeholder-slate-600 mb-6 font-light"
+                    />
+                    <div className="absolute bottom-8 right-4 text-white/10"><Hash size={20} /></div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center text-slate-500 text-xs mb-6 font-mono">
+                    <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> System Ready</span>
+                    <span className="flex items-center gap-2">V 2.0.4</span>
+                  </div>
+                  <button
+                    onClick={handleTransmute}
+                    disabled={!input.trim() || loading}
+                    className={`w-full py-4 rounded-xl font-bold tracking-[0.2em] uppercase transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden
+                      ${input.trim() 
+                        ? 'bg-white text-black hover:bg-slate-200 shadow-[0_0_30px_rgba(255,255,255,0.1)]' 
+                        : 'bg-white/5 text-white/20 cursor-not-allowed'}
+                    `}
+                  >
+                    {loading ? (
+                      <span className="animate-pulse">Analyzing Signature...</span>
+                    ) : (
+                      <>
+                        <Sparkles size={16} className="inline-block" />
+                        <span>Transmute</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                
+                <p className="mt-8 text-slate-600 text-xs max-w-xs text-center leading-relaxed">
+                  *Your words are processed locally and destroyed immediately. Only the visual artifact remains.
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center animate-scaleIn w-full">
+                
+                {/* The Visualizer */}
+                <div className="w-full mb-6">
+                   <AuraVisualizer text={activeText} />
+                </div>
+                
+                {/* Actions */}
+                <div className="grid grid-cols-2 gap-4 w-full">
+                  <button 
+                    onClick={reset}
+                    className="flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-all border border-white/10 font-medium group"
+                  >
+                    <span className="group-hover:-rotate-180 transition-transform duration-500 inline-block"><RefreshCw size={18} /></span>
+                    <span>New Aura</span>
+                  </button>
+                  
+                  <button 
+                    onClick={handleSave}
+                    className="flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-900/50 font-medium group"
+                  >
+                    <span className="group-hover:scale-110 transition-transform inline-block"><Share2 size={18} /></span>
+                    <span>Save</span>
+                  </button>
+                </div>
+                <div className="mt-8 p-4 bg-white/5 rounded-lg border border-white/5 text-center w-full">
+                  <p className="text-slate-400 text-xs uppercase tracking-widest mb-1">Interpretation</p>
+                  <p className="text-white text-sm font-light italic">
+                    "This visual represents the unique energy signature of your input. No two inputs generate the exact same Aura."
+                  </p>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      );
+    }
+
+    // Render the app
+    ReactDOM.render(<AuraApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>
+
