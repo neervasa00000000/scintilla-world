@@ -1,4 +1,109 @@
-// SynapseSave - Background Service Workeri 
+// SynapseSave - Background Service Worker
+
+// Helper function to restore or recreate a group
+async function restoreGroup(tab, newTabId) {
+    // Handle old tabs that might only have groupId without groupInfo
+    if (!tab.groupInfo && !tab.groupId) {
+        return; // No group info to restore
+    }
+
+    try {
+        // Small delay to ensure tab is fully initialized before grouping
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Verify tab still exists before grouping
+        try {
+            await chrome.tabs.get(newTabId);
+        } catch (e) {
+            console.log('Tab no longer exists, cannot group');
+            return;
+        }
+
+        // First, check if the original group still exists
+        let targetGroupId = tab.groupId;
+        if (targetGroupId && targetGroupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
+            try {
+                const existingGroup = await chrome.tabGroups.get(targetGroupId);
+                if (existingGroup) {
+                    // Group exists, add tab back to it
+                    await chrome.tabs.group({
+                        groupId: targetGroupId,
+                        tabIds: [newTabId]
+                    });
+                    return;
+                }
+            } catch (e) {
+                // Group doesn't exist, will recreate below
+            }
+        }
+
+        // Group doesn't exist, need to recreate it
+        // For old tabs without groupInfo, try to get group info from storage or use groupId as key
+        let groupInfo = tab.groupInfo;
+        if (!groupInfo && tab.groupId) {
+            // Try to get group info if available, otherwise use minimal info
+            groupInfo = {
+                id: tab.groupId,
+                title: '',
+                color: 'grey'
+            };
+        }
+
+        if (!groupInfo) {
+            return; // Can't restore without group info
+        }
+
+        // Check if we've already recreated this group for another tab
+        const storage = await chrome.storage.local.get(['recreatedGroups']);
+        const recreatedGroups = storage.recreatedGroups || {};
+        
+        // Create a unique key: use original groupId if available, otherwise use title+color
+        // This ensures tabs from the same original group go to the same recreated group
+        const groupKey = tab.groupId 
+            ? `group_${tab.groupId}` 
+            : `${groupInfo.title || 'Untitled'}_${groupInfo.color || 'grey'}`;
+        
+        if (recreatedGroups[groupKey]) {
+            // We've already recreated this group, add tab to it
+            try {
+                await chrome.tabs.group({
+                    groupId: recreatedGroups[groupKey],
+                    tabIds: [newTabId]
+                });
+                return;
+            } catch (e) {
+                // Recreated group might have been deleted, create new one below
+                delete recreatedGroups[groupKey];
+            }
+        }
+
+        // Create a new group with the stored properties
+        const newGroupId = await chrome.tabs.group({ tabIds: [newTabId] });
+        
+        // Update the group with stored properties
+        const updateData = {};
+        if (groupInfo.title) {
+            updateData.title = groupInfo.title;
+        }
+        if (groupInfo.color) {
+            updateData.color = groupInfo.color;
+        }
+        if (groupInfo.collapsed !== undefined) {
+            updateData.collapsed = groupInfo.collapsed;
+        }
+        
+        if (Object.keys(updateData).length > 0) {
+            await chrome.tabGroups.update(newGroupId, updateData);
+        }
+        
+        // Store the mapping so other tabs from the same group can use it
+        recreatedGroups[groupKey] = newGroupId;
+        await chrome.storage.local.set({ recreatedGroups });
+    } catch (error) {
+        // If grouping fails, tab will just open normally (not grouped)
+        console.log('Could not restore tab to group:', error);
+    }
+}
 
 // Listen for alarms (when tabs should wake up)
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -65,18 +170,8 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
                     });
                     
                     // Restore to original group if it had one
-                    if (snoozedTab && snoozedTab.groupId !== null && snoozedTab.groupId !== undefined) {
-                        try {
-                            const group = await chrome.tabGroups.get(snoozedTab.groupId).catch(() => null);
-                            if (group) {
-                                await chrome.tabs.group({
-                                    groupId: snoozedTab.groupId,
-                                    tabIds: [newTab.id]
-                                });
-                            }
-                        } catch (e) {
-                            console.log("Could not restore tab to group:", e);
-                        }
+                    if (snoozedTab && (snoozedTab.groupId || snoozedTab.groupInfo)) {
+                        await restoreGroup(snoozedTab, newTab.id);
                     }
                     
                     // Remove from snoozed
