@@ -160,12 +160,24 @@
         let time = 0;
         
         const initCanvas = () => {
-          // Handle Retina Display Scaling
-          const dpr = window.devicePixelRatio || 1;
+          // Handle Retina Display Scaling for crisp rendering
+          const dpr = Math.min(window.devicePixelRatio || 1, 2); // Cap at 2x for performance
           const rect = canvas.getBoundingClientRect();
+          
+          // Set actual canvas size in pixels (for retina)
           canvas.width = rect.width * dpr;
           canvas.height = rect.height * dpr;
+          
+          // Set CSS size to logical size (prevents blur)
+          canvas.style.width = rect.width + 'px';
+          canvas.style.height = rect.height + 'px';
+          
+          // Scale context to match device pixel ratio
           ctx.scale(dpr, dpr);
+          
+          // Enable image smoothing for better quality
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
           
           width = rect.width;
           height = rect.height;
@@ -261,21 +273,25 @@
             
             // Draw Particle with glow effect for better visibility
             ctx.save();
-            ctx.globalAlpha = 0.8;
             
-            // Outer glow
+            // Enable anti-aliasing for smoother particles
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Outer glow with smoother gradient
             const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 3);
             gradient.addColorStop(0, p.color);
             gradient.addColorStop(0.3, p.color + 'CC');
             gradient.addColorStop(0.6, p.color + '66');
             gradient.addColorStop(1, p.color + '00');
             
+            ctx.globalAlpha = 0.9;
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
             ctx.fillStyle = gradient;
             ctx.fill();
             
-            // Core particle
+            // Core particle - sharper
             ctx.globalAlpha = 1;
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -315,7 +331,13 @@
           <canvas 
             ref={canvasRef} 
             className="w-full h-full block bg-black" 
-            style={{ width: '100%', height: '100%', backgroundColor: '#000000' }}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              backgroundColor: '#000000',
+              imageRendering: 'auto',
+              imageRendering: '-webkit-optimize-contrast'
+            }}
           />
           
           {/* Aesthetic Overlay */}
