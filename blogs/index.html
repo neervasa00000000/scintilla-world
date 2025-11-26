@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogs | Scintilla World</title>
+    <meta name="description" content="Insights, tutorials, and thoughts on web development, tools, and innovation.">
+    <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
+    <link rel="shortcut icon" href="/assets/logo/favicon.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        /* Animated Background Gradients */
+        .aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #4f46e5; animation-delay: 0s; }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: #db2777; animation-delay: -2s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: #0ea5e9; animation-delay: -4s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .glass-panel:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .neon-text {
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        const BlogCard = ({ title, description, category, date, link, color = "purple" }) => (
+            <a href={link} className="glass-panel rounded-2xl p-6 min-h-[280px] flex flex-col justify-between group cursor-pointer hover:scale-[1.02] transition-all block">
+                <div>
+                    <div className="flex items-center gap-2 mb-3">
+                        <div className={`w-2 h-2 bg-${color}-400 rounded-full`}></div>
+                        <span className="text-xs text-gray-400 uppercase tracking-wider">{category}</span>
+                        {date && <span className="text-xs text-gray-500 ml-auto">{date}</span>}
+                    </div>
+                    <h3 className={`text-xl font-display font-bold mb-2 group-hover:text-${color}-400 transition-colors`}>
+                        {title}
+                    </h3>
+                    <p className="text-sm text-gray-400 leading-relaxed">
+                        {description}
+                    </p>
+                </div>
+                <div className={`mt-4 flex items-center gap-2 text-xs text-${color}-400 group-hover:gap-3 transition-all`}>
+                    <span>Read more</span>
+                    <i data-lucide="arrow-right" className="w-4 h-4"></i>
+                </div>
+            </a>
+        );
+
+        const App = () => {
+            useEffect(() => {
+                if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                    lucide.createIcons();
+                }
+                setTimeout(() => {
+                    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                        lucide.createIcons();
+                    }
+                }, 100);
+            }, []);
+            
+            const blogPosts = [
+                {
+                    title: "Stop Waking Up Groggy: The Science Behind the Sleep Cycle Calculator",
+                    description: "Learn the science behind sleep cycles, ultradian rhythms, and how timing your sleep can help you wake up refreshed instead of groggy.",
+                    category: "Science",
+                    date: "Nov 26, 2025",
+                    link: "/blogs/sleep-cycle-calculator-science.html",
+                    color: "purple"
+                }
+            ];
+            
+            return (
+                <div className="relative min-h-screen w-full p-4 md:p-8 lg:p-12 flex flex-col items-center">
+                    
+                    {/* Background Blobs */}
+                    <div className="aurora-bg">
+                        <div className="blob blob-1"></div>
+                        <div className="blob blob-2"></div>
+                        <div className="blob blob-3"></div>
+                    </div>
+                    
+                    {/* Header */}
+                    <header className="w-full max-w-7xl flex justify-between items-center mb-12">
+                        <a href="/" className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-white text-black rounded-lg flex items-center justify-center font-bold text-xl font-display">S</div>
+                            <span className="font-display text-2xl font-bold tracking-tight neon-text">SCINTILLA WORLD</span>
+                        </a>
+                        <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-300">
+                            <a href="/#tools" className="hover:text-white transition-colors">Tools</a>
+                            <a href="/blogs" className="hover:text-white transition-colors text-white">Blogs</a>
+                            <a href="/#about" className="hover:text-white transition-colors">About</a>
+                        </nav>
+                    </header>
+                    
+                    {/* Page Title */}
+                    <div className="w-full max-w-7xl mb-12 text-center">
+                        <h1 className="font-display text-5xl md:text-6xl font-bold mb-4">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">Blogs</span>
+                        </h1>
+                        <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+                            Insights, tutorials, and thoughts on web development, tools, and innovation.
+                        </p>
+                    </div>
+                    
+                    {/* Blog Grid */}
+                    <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {blogPosts.map((post, index) => (
+                            <BlogCard key={index} {...post} />
+                        ))}
+                    </div>
+                    
+                    {/* Footer */}
+                    <footer className="w-full max-w-7xl mt-20 py-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+                        <div>&copy; 2025 Scintilla World</div>
+                        <div className="flex gap-6 mt-4 md:mt-0">
+                            <a href="/" className="hover:text-white">Home</a>
+                            <a href="/blogs" className="hover:text-white">Blogs</a>
+                            <a href="/#about" className="hover:text-white">About</a>
+                        </div>
+                    </footer>
+                    
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+

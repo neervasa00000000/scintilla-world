@@ -51,6 +51,13 @@
   status = 200
   force = false
 
+# Allow blogs folder to be accessible
+[[redirects]]
+  from = "/blogs/*"
+  to = "/blogs/:splat"
+  status = 200
+  force = false
+
 # Google Search Console verification file
 [[redirects]]
   from = "/google*.html"
