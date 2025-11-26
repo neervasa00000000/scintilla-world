@@ -51,5 +51,12 @@
   status = 200
   force = false
 
+# Google Search Console verification file
+[[redirects]]
+  from = "/google*.html"
+  to = "/google-site-verification.html"
+  status = 200
+  force = false
+
 [context.production.environment]
   NODE_ENV = "production"
