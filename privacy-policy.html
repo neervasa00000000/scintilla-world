@@ -8,175 +8,338 @@
     <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
     <link rel="shortcut icon" href="/assets/logo/favicon.png">
     <style>
+        :root {
+            --page-bg: #05070f;
+            --panel: #0d1220;
+            --panel-soft: #141a2b;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f5f7ff;
+            --muted: #9aa2be;
+            --accent: #5ba4ff;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #f5f5f5;
-            padding: 20px;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, rgba(91, 164, 255, 0.25), transparent 50%), var(--page-bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 20px;
         }
-        
-        .container {
-            max-width: 800px;
+
+        .page {
+            max-width: 920px;
             margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
-        
-        h1 {
-            color: #3b82f6;
+
+        .hero {
+            background: linear-gradient(135deg, rgba(91, 164, 255, 0.12), rgba(37, 99, 235, 0.05));
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+        }
+
+        .hero-eyebrow {
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            color: #6b7280;
             margin-bottom: 10px;
         }
-        
-        .last-updated {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 30px;
+
+        .hero h1 {
+            font-size: clamp(1.9rem, 3vw, 2.6rem);
+            line-height: 1.25;
+            margin-bottom: 12px;
         }
-        
-        h2 {
-            color: #1a1a1a;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 24px;
+
+        .hero-lede {
+            color: var(--muted);
+            max-width: 640px;
         }
-        
-        p {
-            margin-bottom: 15px;
-            color: #444;
+
+        .hero-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 24px;
         }
-        
-        ul {
-            margin-left: 20px;
-            margin-bottom: 15px;
+
+        .meta-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            display: block;
+            margin-bottom: 4px;
         }
-        
-        li {
+
+        .meta-value {
+            font-weight: 600;
+        }
+
+        .content {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .summary-card {
+            background: var(--panel-soft);
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            padding: 24px;
+        }
+
+        .summary-card h2 {
+            font-size: 1.1rem;
             margin-bottom: 8px;
-            color: #444;
         }
-        
-        .highlight {
-            background: #f0f9ff;
-            padding: 15px;
-            border-left: 4px solid #3b82f6;
-            margin: 20px 0;
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #e0e7ff;
+            color: #312e81;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 6px;
         }
-        
-        .contact {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+
+        .policy-section {
+            border-top: 1px solid var(--border);
+            padding-top: 28px;
         }
-        
+
+        .section-heading {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .section-index {
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+
+        .policy-section h3 {
+            font-size: 1.15rem;
+        }
+
+        p {
+            margin-bottom: 14px;
+            color: var(--muted);
+        }
+
+        ul {
+            margin-left: 18px;
+            color: var(--muted);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .contact-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            background: var(--panel-soft);
+        }
+
         a {
-            color: #3b82f6;
+            color: var(--accent);
             text-decoration: none;
         }
-        
+
         a:hover {
             text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .hero,
+            .content {
+                padding: 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Privacy Policy</h1>
-        <p class="last-updated">Last Updated: November 2025</p>
-        
-        <div class="highlight">
-            <strong>Summary:</strong> Scintilla World and its tools do not collect, transmit, or store any user data on external servers. All data is stored locally on your device when applicable.
-        </div>
-        
-        <h2>1. Data Collection</h2>
-        <p><strong>Scintilla World does not collect any user data.</strong></p>
-        <p>We do not collect, transmit, or store:</p>
-        <ul>
-            <li>Personal information (name, email, address, etc.)</li>
-            <li>Browsing history</li>
-            <li>Website content</li>
-            <li>Location data</li>
-            <li>Authentication credentials</li>
-            <li>Financial information</li>
-            <li>Any other personal or sensitive data</li>
-        </ul>
-        
-        <h2>2. Local Storage</h2>
-        <p>Some Scintilla World tools may use browser local storage to store information locally on your device. This includes:</p>
-        <ul>
-            <li>User preferences and settings</li>
-            <li>Tool-specific data (calculations, inputs, etc.)</li>
-            <li>Session information</li>
-        </ul>
-        <p><strong>This data never leaves your device.</strong> It is stored locally in your browser and is not transmitted to any external servers or third parties.</p>
-        
-        <h2>3. Chrome Extensions</h2>
-        <p>For Chrome extensions (such as SynapseSave), data is stored locally using Chrome's local storage API. This includes:</p>
-        <ul>
-            <li>Tab URLs and titles</li>
-            <li>Scheduled wake times</li>
-            <li>Tab group associations</li>
-            <li>Extension preferences</li>
-        </ul>
-        <p><strong>This data never leaves your device.</strong> It is stored locally in your browser and is not transmitted to any external servers or third parties.</p>
-        
-        <h2>4. Data Usage</h2>
-        <p>Any locally stored data is used solely for:</p>
-        <ul>
-            <li>Providing tool functionality</li>
-            <li>Remembering user preferences</li>
-            <li>Improving user experience</li>
-        </ul>
-        <p>This data is not used for any other purpose, including advertising, analytics, or tracking.</p>
-        
-        <h2>5. Third-Party Services</h2>
-        <p>Scintilla World tools operate entirely within your browser using standard web APIs. We do not use any third-party analytics tools, tracking services, or external APIs that collect user data.</p>
-        
-        <h2>6. Cookies</h2>
-        <p>Scintilla World does not use cookies for tracking or data collection purposes.</p>
-        
-        <h2>7. Data Security</h2>
-        <p>Since all data is stored locally on your device, data security is managed by your browser and operating system. We recommend keeping your browser and system updated for optimal security.</p>
-        
-        <h2>8. Your Rights</h2>
-        <p>Since we don't collect any data, you have full control:</p>
-        <ul>
-            <li>You can clear your browser's local storage at any time</li>
-            <li>You can disable browser extensions at any time</li>
-            <li>No data is stored on our servers, so there's nothing to delete</li>
-        </ul>
-        
-        <h2>9. Children's Privacy</h2>
-        <p>Scintilla World does not knowingly collect any information from children. Since we don't collect any data, this is not applicable.</p>
-        
-        <h2>10. Changes to This Policy</h2>
-        <p>We may update this privacy policy from time to time. Any changes will be posted on this page with an updated "Last Updated" date.</p>
-        
-        <h2>11. Compliance</h2>
-        <p>Scintilla World complies with:</p>
-        <ul>
-            <li>General Data Protection Regulation (GDPR)</li>
-            <li>California Consumer Privacy Act (CCPA)</li>
-            <li>Chrome Web Store Developer Programme Policies</li>
-        </ul>
-        <p>Since we don't collect any data, compliance is straightforward - we simply don't collect, use, or share any user data.</p>
-        
-        <div class="contact">
-            <h2>12. Contact Us</h2>
-            <p>If you have any questions about this privacy policy, please contact us at:</p>
-            <p><strong>Website:</strong> <a href="https://scintilla.world">scintilla.world</a></p>
-        </div>
+    <div class="page">
+        <header class="hero">
+            <p class="hero-eyebrow">Scintilla World</p>
+            <h1>Privacy & Data Protection Statement</h1>
+            <p class="hero-lede">
+                We build lightweight utilities that run entirely in your browser. No ad tech, no telemetry, no back-end databases—
+                just tools that stay on your device.
+            </p>
+            <div class="hero-meta">
+                <div>
+                    <span class="meta-label">Last updated</span>
+                    <span class="meta-value">November 2025</span>
+                </div>
+                <div>
+                    <span class="meta-label">Applies to</span>
+                    <span class="meta-value">scintilla.world & SynapseSave</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <section class="summary-card">
+                <h2>At-a-glance</h2>
+                <p><span class="pill">Scope</span> Applies to scintilla.world, every Labs experiment, and the SynapseSave Chrome extension (“Services”).</p>
+                <p><span class="pill">Commitment</span> <strong>We do not collect, transmit, monetize, or disclose personal data.</strong> All operational data remains local to your device and can be cleared by you at any time.</p>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">01</span>
+                    <h3>Coverage</h3>
+                </div>
+                <p>This policy covers all Scintilla World properties, including:</p>
+                <ul>
+                    <li>scintilla.world and any hosted microsites or documentation</li>
+                    <li>Crazy Ideas tools (calculators, planners, experiments)</li>
+                    <li>SynapseSave and future Chrome extensions</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">02</span>
+                    <h3>Data We Do Not Collect</h3>
+                </div>
+                <p>Scintilla World does <strong>not</strong> collect personal identifiers, telemetry, or behavioral data. Specifically:</p>
+                <ul>
+                    <li>No names, emails, payment details, or authentication tokens</li>
+                    <li>No browsing history, clipboard data, or page content</li>
+                    <li>No IP addresses, device fingerprints, or location info</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">03</span>
+                    <h3>Local Storage Only</h3>
+                </div>
+                <p>Certain utilities store strictly necessary snippets locally so features keep working:</p>
+                <ul>
+                    <li>Calculator inputs, reminders, or task lists</li>
+                    <li>SynapseSave tab titles, wake times, and preferences (via Chrome storage)</li>
+                    <li>Interface choices such as theme or language</li>
+                </ul>
+                <p><strong>Everything stays on your device.</strong> Clearing browser data or uninstalling an extension immediately and irreversibly removes the associated data.</p>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">04</span>
+                    <h3>Use of Local Data</h3>
+                </div>
+                <p>Locally cached information is used solely to deliver the feature you activated—for example, snoozing a tab or keeping a converter pre-filled. It is never repurposed for analytics, advertising, profiling, or disclosed to third parties.</p>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">05</span>
+                    <h3>Chrome Extensions</h3>
+                </div>
+                <p>SynapseSave follows the same principles:</p>
+                <ul>
+                    <li>Uses Chrome's local storage API only</li>
+                    <li>Never transmits visited URLs, content, or metadata elsewhere</li>
+                    <li>Does not request unnecessary permissions</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">06</span>
+                    <h3>Cookies & Third Parties</h3>
+                </div>
+                <p>We do not use cookies for tracking, nor do we embed analytics SDKs, fingerprinting scripts, or advertising pixels. All pages rely exclusively on first-party code.</p>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">07</span>
+                    <h3>Security & Control</h3>
+                </div>
+                <p>Because data never leaves your browser, security is handled by your operating system and browser vendor. Recommended steps:</p>
+                <ul>
+                    <li>Keep your browser up to date</li>
+                    <li>Clear local storage regularly if desired</li>
+                    <li>Disable or remove extensions you are no longer using</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">08</span>
+                    <h3>Your Rights</h3>
+                </div>
+                <ul>
+                    <li><strong>Access & deletion:</strong> You already control the sole copy; deleting local storage or uninstalling removes it.</li>
+                    <li><strong>Opt-out:</strong> You may cease using any Service at any time without notice.</li>
+                    <li><strong>Portability:</strong> Because we do not host personal data, there is nothing for us to export or transfer.</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">09</span>
+                    <h3>Children's Privacy</h3>
+                </div>
+                <p>Our Services are intended for general audiences. Because we do not collect information, no personal data relating to children is stored or processed by us.</p>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">10</span>
+                    <h3>Compliance</h3>
+                </div>
+                <p>By avoiding collection and transmission, Scintilla World aligns with the intent of GDPR, CCPA, and Chrome Web Store Developer Programme Policies. There are no processors, sub-processors, or onward transfers.</p>
+            </section>
+
+            <section class="policy-section">
+                <div class="section-heading">
+                    <span class="section-index">11</span>
+                    <h3>Changes</h3>
+                </div>
+                <p>If our approach changes, we will update this page, highlight material revisions, and timestamp the new version. Continued use of the Services after the effective date constitutes acceptance of the revised policy.</p>
+            </section>
+
+            <section class="contact-card">
+                <h3>Questions?</h3>
+                <p>We welcome security and privacy inquiries. Reach out anytime.</p>
+                <p><strong>Website:</strong> <a href="https://scintilla.world" rel="noopener">scintilla.world</a></p>
+            </section>
+        </main>
     </div>
 </body>
 </html>
+
 
 
 
