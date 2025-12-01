@@ -9,14 +9,8 @@
     content="Create free retro boarding passes, train tickets, and concert stubs. The perfect way to reveal surprise gifts and trips."
   />
 
-  <!-- React & Tailwind -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Tailwind (for utility classes) -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Fonts -->
   <link
@@ -184,89 +178,389 @@
   </style>
 </head>
 <body>
-  <div id="root"></div>
-
-  <script type="text/babel">
-    const { useState } = React;
-
-    const IconPlane = () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+  <div class="min-h-screen w-full flex items-center justify-center px-4 py-6">
+    <div class="max-w-6xl w-full flex flex-col lg:flex-row gap-8">
+      <!-- Left: Controls -->
+      <div
+        class="w-full lg:w-[360px] bg-white rounded-3xl shadow-[0_30px_80px_rgba(15,23,42,0.16)] border border-slate-200 px-6 py-6 flex flex-col gap-6"
       >
-        <path d="M2 12h20" />
-        <path d="M13 5v7" />
-        <path d="M6.17 10a3 3 0 0 1 5.66 0" />
-        <path d="M15 17h6.17a3 3 0 0 0-2.83-2H13v-7" />
-        <path d="M2 17h6" />
-      </svg>
-    );
+        <!-- Brand -->
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <div
+              class="h-7 w-7 rounded-full bg-slate-900 text-white flex items-center justify-center text-[11px] font-bold"
+            >
+              GP
+            </div>
+            <span class="text-lg font-semibold tracking-tight">
+              <span class="text-sky-600">Gift</span>Pass
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-500">
+            Retro tickets for surprise trips &amp; concerts.
+          </p>
+        </div>
 
-    const IconTrain = () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect x="4" y="3" width="16" height="18" rx="2" />
-        <path d="M4 11h16" />
-        <path d="M12 3v8" />
-        <path d="m8 19-2 3" />
-        <path d="m18 22-2-3" />
-        <circle cx="8" cy="15" r="2" />
-        <circle cx="16" cy="15" r="2" />
-      </svg>
-    );
+        <!-- Style selector -->
+        <div>
+          <p
+            class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 mb-2"
+          >
+            Select style
+          </p>
+          <div class="grid grid-cols-3 gap-3" id="theme-buttons">
+            <button
+              data-theme="aero"
+              class="theme-button flex flex-col items-center justify-center gap-1 rounded-2xl border text-[11px] font-semibold py-2.5 transition-all border-sky-600 bg-sky-50 text-sky-700 shadow-[0_10px_25px_rgba(37,99,235,0.18)]"
+            >
+              <span>✈️</span>
+              <span>Airline</span>
+            </button>
+            <button
+              data-theme="rail"
+              class="theme-button flex flex-col items-center justify-center gap-1 rounded-2xl border text-[11px] font-semibold py-2.5 transition-all border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+            >
+              <span>🚆</span>
+              <span>Railway</span>
+            </button>
+            <button
+              data-theme="gig"
+              class="theme-button flex flex-col items-center justify-center gap-1 rounded-2xl border text-[11px] font-semibold py-2.5 transition-all border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100"
+            >
+              <span>🎫</span>
+              <span>Concert</span>
+            </button>
+          </div>
+        </div>
 
-    const IconTicket = () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-      </svg>
-    );
+        <!-- Form fields -->
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label
+                class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+              >
+                Origin code
+              </label>
+              <input
+                id="origin-input"
+                type="text"
+                maxlength="3"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              />
+            </div>
+            <div>
+              <label
+                class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+              >
+                Dest code
+              </label>
+              <input
+                id="dest-input"
+                type="text"
+                maxlength="3"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              />
+            </div>
+          </div>
 
-    const IconPrint = () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M6 9V2h12v7" />
-        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-        <path d="M6 14h12v8H6z" />
-      </svg>
-    );
+          <div>
+            <label
+              class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+            >
+              Destination full name
+            </label>
+            <input
+              id="destFull-input"
+              type="text"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            />
+          </div>
 
-    function App() {
-      const [ticketData, setTicketData] = useState({
+          <div>
+            <label
+              class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+            >
+              Passenger name
+            </label>
+            <input
+              id="passenger-input"
+              type="text"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label
+                class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+              >
+                Date
+              </label>
+              <input
+                id="date-input"
+                type="text"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              />
+            </div>
+            <div>
+              <label
+                class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+              >
+                Time
+              </label>
+              <input
+                id="time-input"
+                type="text"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label
+                class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+              >
+                Seat
+              </label>
+              <input
+                id="seat-input"
+                type="text"
+                maxlength="4"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              />
+            </div>
+            <div>
+              <label
+                class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+              >
+                Class/type
+              </label>
+              <input
+                id="class-input"
+                type="text"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              />
+            </div>
+            <div>
+              <label
+                class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+              >
+                Flight/ID
+              </label>
+              <input
+                id="flightNum-input"
+                type="text"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              class="text-[11px] font-semibold text-slate-500 uppercase mb-1 block"
+            >
+              Personal message (optional)
+            </label>
+            <input
+              id="message-input"
+              type="text"
+              maxlength="40"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            />
+          </div>
+        </div>
+
+        <!-- Print button -->
+        <div class="pt-4 mt-auto">
+          <button
+            id="print-button"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 text-white py-3 text-sm font-semibold shadow-[0_14px_40px_rgba(15,23,42,0.35)] hover:bg-slate-800 transition"
+          >
+            <span>🖨️</span>
+            <span>Print / Save PDF</span>
+          </button>
+          <p class="mt-2 text-[10px] text-slate-400 text-center">
+            Tip: enable “Background graphics” in your print dialog.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Ticket preview -->
+      <div class="flex-1 flex items-center justify-center">
+        <div
+          id="ticket-container"
+          class="ticket-container relative w-full max-w-[860px] md:h-[320px] rounded-3xl shadow-[0_28px_70px_rgba(15,23,42,0.28)] flex theme-aero"
+        >
+          <div class="rip-line z-20"></div>
+          <div class="notch notch-top"></div>
+          <div class="notch notch-bottom"></div>
+
+          <!-- Main side -->
+          <div
+            class="flex-1 p-8 relative flex flex-col z-10"
+            id="ticket-main"
+          >
+            <div class="flex justify-between items-start mb-6 header">
+              <div class="flex items-center gap-3">
+                <div id="icon-aero" class="w-8 h-8">
+                  ✈️
+                </div>
+                <div id="icon-rail" class="w-8 h-8 hidden">
+                  🚆
+                </div>
+                <div id="icon-gig" class="w-8 h-8 hidden accent-text">
+                  🎫
+                </div>
+                <span
+                  id="ticket-title"
+                  class="text-2xl font-bold tracking-widest"
+                >
+                  BOARDING PASS
+                </span>
+              </div>
+              <div
+                class="text-lg font-bold opacity-60 tracking-widest"
+                id="class-display"
+              >
+                FIRST CLASS
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between mb-8 body-font">
+              <div class="text-center">
+                <div
+                  class="text-5xl font-bold value accent-text"
+                  id="origin-display"
+                >
+                  NYC
+                </div>
+                <div class="label mt-1" id="originFull-display">
+                  NEW YORK
+                </div>
+              </div>
+
+              <div
+                class="flex-1 mx-8 flex flex-col items-center opacity-40"
+                id="route-display"
+              >
+                <div
+                  class="w-full h-0.5 bg-current relative flex items-center justify-center"
+                  id="aero-line"
+                >
+                  <div
+                    class="w-5 h-5 absolute bg-white p-0.5 rounded-full rotate-90"
+                  >
+                    ✈️
+                  </div>
+                </div>
+                <div
+                  class="text-xl tracking-[0.5em] hidden"
+                  id="arrow-line"
+                >
+                  ⟶
+                </div>
+              </div>
+
+              <div class="text-center">
+                <div
+                  class="text-5xl font-bold value accent-text"
+                  id="dest-display"
+                >
+                  PAR
+                </div>
+                <div class="label mt-1" id="destFull-display">
+                  PARIS, FRANCE
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-4 mt-auto body-font">
+              <div>
+                <div class="label">Passenger</div>
+                <div
+                  class="value text-sm truncate pr-2"
+                  id="passenger-display"
+                >
+                  ALEX ANDERSON
+                </div>
+              </div>
+              <div>
+                <div class="label">Date</div>
+                <div class="value" id="date-display">24 DEC 2025</div>
+              </div>
+              <div>
+                <div class="label">Time</div>
+                <div class="value" id="time-display">14:30</div>
+              </div>
+              <div>
+                <div class="label" id="gate-label">Gate</div>
+                <div class="value" id="gate-display">B4</div>
+              </div>
+            </div>
+
+            <div
+              class="absolute bottom-2 right-8 opacity-40 text-[10px] uppercase font-mono tracking-widest"
+              id="message-display"
+            >
+              HAPPY BIRTHDAY!
+            </div>
+          </div>
+
+          <!-- Stub -->
+          <div
+            class="w-[28%] bg-black/5 bg-opacity-10 p-6 flex flex-col justify-between relative z-10 body-font"
+          >
+            <div>
+              <div class="label mb-1">Passenger</div>
+              <div
+                class="value text-sm mb-4 truncate"
+                id="passenger-stub-display"
+              >
+                ALEX ANDERSON
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 mb-4">
+                <div>
+                  <div class="label">From</div>
+                  <div class="value" id="origin-stub-display">NYC</div>
+                </div>
+                <div>
+                  <div class="label">To</div>
+                  <div class="value" id="dest-stub-display">PAR</div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <div class="label">Seat</div>
+                  <div class="value text-xl" id="seat-display">1A</div>
+                </div>
+                <div>
+                  <div class="label">Flight</div>
+                  <div class="value" id="flightNum-display">GP-2025</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-auto opacity-80">
+              <div
+                class="barcode-font text-center overflow-hidden whitespace-nowrap"
+                id="barcode-display"
+              >
+                GP-2025-1A
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const state = {
         passenger: "ALEX ANDERSON",
         origin: "NYC",
         originFull: "NEW YORK",
@@ -279,367 +573,140 @@
         flightNum: "GP-2025",
         gate: "B4",
         message: "HAPPY BIRTHDAY!",
-      });
-      const [theme, setTheme] = useState("aero");
-
-      const handleChange = (e) => {
-        setTicketData({ ...ticketData, [e.target.name]: e.target.value });
+        theme: "aero",
       };
 
-      const handlePrint = () => {
-        window.print();
-      };
+      function $(id) {
+        return document.getElementById(id);
+      }
 
-      const themes = [
-        { id: "aero", label: "Airline", icon: <IconPlane /> },
-        { id: "rail", label: "Railway", icon: <IconTrain /> },
-        { id: "gig", label: "Concert", icon: <IconTicket /> },
-      ];
+      function syncInputs() {
+        $("origin-input").value = state.origin;
+        $("dest-input").value = state.dest;
+        $("destFull-input").value = state.destFull;
+        $("passenger-input").value = state.passenger;
+        $("date-input").value = state.date;
+        $("time-input").value = state.time;
+        $("seat-input").value = state.seat;
+        $("class-input").value = state.class;
+        $("flightNum-input").value = state.flightNum;
+        $("message-input").value = state.message;
+      }
 
-      return (
-        <div className="min-h-screen w-full flex items-center justify-center px-4 py-6">
-          <div className="max-w-6xl w-full flex flex-col lg:flex-row gap-8">
-            {/* Left: Controls */}
-            <div className="w-full lg:w-[360px] bg-white rounded-3xl shadow-[0_30px_80px_rgba(15,23,42,0.16)] border border-slate-200 px-6 py-6 flex flex-col gap-6">
-              {/* Brand */}
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="h-7 w-7 rounded-full bg-slate-900 text-white flex items-center justify-center text-[11px] font-bold">
-                    GP
-                  </div>
-                  <span className="text-lg font-semibold tracking-tight">
-                    <span className="text-sky-600">Gift</span>Pass
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-500">
-                  Retro tickets for surprise trips & concerts.
-                </p>
-              </div>
+      function render() {
+        $("origin-display").textContent = state.origin;
+        $("originFull-display").textContent = state.originFull;
+        $("dest-display").textContent = state.dest;
+        $("destFull-display").textContent = state.destFull;
+        $("passenger-display").textContent = state.passenger;
+        $("passenger-stub-display").textContent = state.passenger;
+        $("origin-stub-display").textContent = state.origin;
+        $("dest-stub-display").textContent = state.dest;
+        $("date-display").textContent = state.date;
+        $("time-display").textContent = state.time;
+        $("seat-display").textContent = state.seat;
+        $("class-display").textContent = state.class + " CLASS";
+        $("flightNum-display").textContent = state.flightNum;
+        $("gate-display").textContent = state.gate;
+        $("message-display").textContent = state.message;
+        $("barcode-display").textContent = state.flightNum + "-" + state.seat;
 
-              {/* Style selector */}
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 mb-2">
-                  Select style
-                </p>
-                <div className="grid grid-cols-3 gap-3">
-                  {themes.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => setTheme(t.id)}
-                      className={
-                        "flex flex-col items-center justify-center gap-1 rounded-2xl border text-[11px] font-semibold py-2.5 transition-all " +
-                        (theme === t.id
-                          ? "border-sky-600 bg-sky-50 text-sky-700 shadow-[0_10px_25px_rgba(37,99,235,0.18)]"
-                          : "border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100")
-                      }
-                    >
-                      {t.icon}
-                      <span>{t.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+        const container = $("ticket-container");
+        container.classList.remove("theme-aero", "theme-rail", "theme-gig");
+        container.classList.add("theme-" + state.theme);
 
-              {/* Form fields */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                      Origin code
-                    </label>
-                    <input
-                      type="text"
-                      name="origin"
-                      value={ticketData.origin}
-                      onChange={handleChange}
-                      maxLength="3"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                      Dest code
-                    </label>
-                    <input
-                      type="text"
-                      name="dest"
-                      value={ticketData.dest}
-                      onChange={handleChange}
-                      maxLength="3"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                    />
-                  </div>
-                </div>
+        $("icon-aero").classList.toggle("hidden", state.theme !== "aero");
+        $("icon-rail").classList.toggle("hidden", state.theme !== "rail");
+        $("icon-gig").classList.toggle("hidden", state.theme !== "gig");
 
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                    Destination full name
-                  </label>
-                  <input
-                    type="text"
-                    name="destFull"
-                    value={ticketData.destFull}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                  />
-                </div>
+        $("aero-line").classList.toggle("hidden", state.theme !== "aero");
+        $("arrow-line").classList.toggle("hidden", state.theme === "aero");
 
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                    Passenger name
-                  </label>
-                  <input
-                    type="text"
-                    name="passenger"
-                    value={ticketData.passenger}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                  />
-                </div>
+        if (state.theme === "aero") {
+          $("ticket-title").textContent = "BOARDING PASS";
+          $("gate-label").textContent = "Gate";
+        } else if (state.theme === "rail") {
+          $("ticket-title").textContent = "TRAVEL TICKET";
+          $("gate-label").textContent = "Platform";
+        } else {
+          $("ticket-title").textContent = "ADMIT ONE";
+          $("gate-label").textContent = "Gate";
+        }
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                      Date
-                    </label>
-                    <input
-                      type="text"
-                      name="date"
-                      value={ticketData.date}
-                      onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                      Time
-                    </label>
-                    <input
-                      type="text"
-                      name="time"
-                      value={ticketData.time}
-                      onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                    />
-                  </div>
-                </div>
+        document
+          .querySelectorAll(".theme-button")
+          .forEach(function (button) {
+            const t = button.getAttribute("data-theme");
+            const isActive = t === state.theme;
+            button.className =
+              "theme-button flex flex-col items-center justify-center gap-1 rounded-2xl border text-[11px] font-semibold py-2.5 transition-all " +
+              (isActive
+                ? "border-sky-600 bg-sky-50 text-sky-700 shadow-[0_10px_25px_rgba(37,99,235,0.18)]"
+                : "border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100");
+          });
+      }
 
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                      Seat
-                    </label>
-                    <input
-                      type="text"
-                      name="seat"
-                      value={ticketData.seat}
-                      onChange={handleChange}
-                      maxLength="4"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                      Class/type
-                    </label>
-                    <input
-                      type="text"
-                      name="class"
-                      value={ticketData.class}
-                      onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                      Flight/ID
-                    </label>
-                    <input
-                      type="text"
-                      name="flightNum"
-                      value={ticketData.flightNum}
-                      onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                    />
-                  </div>
-                </div>
+      function attachEvents() {
+        $("origin-input").addEventListener("input", function (e) {
+          state.origin = e.target.value.toUpperCase();
+          render();
+        });
+        $("dest-input").addEventListener("input", function (e) {
+          state.dest = e.target.value.toUpperCase();
+          render();
+        });
+        $("destFull-input").addEventListener("input", function (e) {
+          state.destFull = e.target.value.toUpperCase();
+          render();
+        });
+        $("passenger-input").addEventListener("input", function (e) {
+          state.passenger = e.target.value.toUpperCase();
+          render();
+        });
+        $("date-input").addEventListener("input", function (e) {
+          state.date = e.target.value.toUpperCase();
+          render();
+        });
+        $("time-input").addEventListener("input", function (e) {
+          state.time = e.target.value.toUpperCase();
+          render();
+        });
+        $("seat-input").addEventListener("input", function (e) {
+          state.seat = e.target.value.toUpperCase();
+          render();
+        });
+        $("class-input").addEventListener("input", function (e) {
+          state.class = e.target.value.toUpperCase();
+          render();
+        });
+        $("flightNum-input").addEventListener("input", function (e) {
+          state.flightNum = e.target.value.toUpperCase();
+          render();
+        });
+        $("message-input").addEventListener("input", function (e) {
+          state.message = e.target.value.toUpperCase();
+          render();
+        });
 
-                <div>
-                  <label className="text-[11px] font-semibold text-slate-500 uppercase mb-1 block">
-                    Personal message (optional)
-                  </label>
-                  <input
-                    type="text"
-                    name="message"
-                    value={ticketData.message}
-                    onChange={handleChange}
-                    maxLength="40"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                  />
-                </div>
-              </div>
+        document
+          .querySelectorAll(".theme-button")
+          .forEach(function (button) {
+            button.addEventListener("click", function () {
+              state.theme = button.getAttribute("data-theme");
+              render();
+            });
+          });
 
-              {/* Print button */}
-              <div className="pt-4 mt-auto">
-                <button
-                  onClick={handlePrint}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 text-white py-3 text-sm font-semibold shadow-[0_14px_40px_rgba(15,23,42,0.35)] hover:bg-slate-800 transition"
-                >
-                  <IconPrint className="w-4 h-4" />
-                  Print / Save PDF
-                </button>
-                <p className="mt-2 text-[10px] text-slate-400 text-center">
-                  Tip: enable “Background graphics” in your print dialog.
-                </p>
-              </div>
-            </div>
+        $("print-button").addEventListener("click", function () {
+          window.print();
+        });
+      }
 
-            {/* Right: Ticket preview */}
-            <div className="flex-1 flex items-center justify-center">
-              <div
-                className={
-                  "ticket-container relative w-full max-w-[860px] md:h-[320px] rounded-3xl shadow-[0_28px_70px_rgba(15,23,42,0.28)] flex theme-" +
-                  theme
-                }
-              >
-                    <div className="rip-line z-20" />
-                    <div className="notch notch-top" />
-                    <div className="notch notch-bottom" />
-
-                    {/* Main side */}
-                    <div className="flex-1 p-8 relative flex flex-col z-10">
-                      <div className="flex justify-between items-start mb-6 header">
-                        <div className="flex items-center gap-3">
-                          {theme === "aero" && <IconPlane className="w-8 h-8" />}
-                          {theme === "rail" && <IconTrain className="w-8 h-8" />}
-                          {theme === "gig" && (
-                            <IconTicket className="w-8 h-8 accent-text" />
-                          )}
-                          <span className="text-2xl font-bold tracking-widest">
-                            {theme === "aero"
-                              ? "BOARDING PASS"
-                              : theme === "rail"
-                              ? "TRAVEL TICKET"
-                              : "ADMIT ONE"}
-                          </span>
-                        </div>
-                        <div className="text-lg font-bold opacity-60 tracking-widest">
-                          {ticketData.class} CLASS
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between mb-8 body-font">
-                        <div className="text-center">
-                          <div className="text-5xl font-bold value accent-text">
-                            {ticketData.origin}
-                          </div>
-                          <div className="label mt-1">
-                            {ticketData.originFull}
-                          </div>
-                        </div>
-
-                        <div className="flex-1 mx-8 flex flex-col items-center opacity-40">
-                          {theme === "aero" ? (
-                            <div className="w-full h-0.5 bg-current relative flex items-center justify-center">
-                              <IconPlane className="w-5 h-5 absolute bg-white p-0.5 rounded-full rotate-90" />
-                            </div>
-                          ) : (
-                            <div className="text-xl tracking-[0.5em]">⟶</div>
-                          )}
-                        </div>
-
-                        <div className="text-center">
-                          <div className="text-5xl font-bold value accent-text">
-                            {ticketData.dest}
-                          </div>
-                          <div className="label mt-1">
-                            {ticketData.destFull}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-4 gap-4 mt-auto body-font">
-                        <div>
-                          <div className="label">Passenger</div>
-                          <div className="value text-sm truncate pr-2">
-                            {ticketData.passenger}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="label">Date</div>
-                          <div className="value">{ticketData.date}</div>
-                        </div>
-                        <div>
-                          <div className="label">Time</div>
-                          <div className="value">{ticketData.time}</div>
-                        </div>
-                        <div>
-                          <div className="label">
-                            {theme === "aero" ? "Gate" : "Platform"}
-                          </div>
-                          <div className="value">{ticketData.gate}</div>
-                        </div>
-                      </div>
-
-                      <div className="absolute bottom-2 right-8 opacity-40 text-[10px] uppercase font-mono tracking-widest">
-                        {ticketData.message}
-                      </div>
-                    </div>
-
-                    {/* Stub */}
-                    <div className="w-[28%] bg-black/5 bg-opacity-10 p-6 flex flex-col justify-between relative z-10 body-font">
-                      <div>
-                        <div className="label mb-1">Passenger</div>
-                        <div className="value text-sm mb-4 truncate">
-                          {ticketData.passenger}
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2 mb-4">
-                          <div>
-                            <div className="label">From</div>
-                            <div className="value">{ticketData.origin}</div>
-                          </div>
-                          <div>
-                            <div className="label">To</div>
-                            <div className="value">{ticketData.dest}</div>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <div className="label">Seat</div>
-                            <div className="value text-xl">
-                              {ticketData.seat}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="label">Flight</div>
-                            <div className="value">
-                              {ticketData.flightNum}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-auto opacity-80">
-                        <div className="barcode-font text-center overflow-hidden whitespace-nowrap">
-                          {ticketData.flightNum}-{ticketData.seat}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<App />);
+      syncInputs();
+      attachEvents();
+      render();
+    })();
   </script>
 </body>
 </html>
-
 
