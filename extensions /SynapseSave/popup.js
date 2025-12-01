@@ -190,7 +190,7 @@ function createSnoozedItem(snoozedTab) {
     
     const time = document.createElement('div');
     time.className = 'snoozed-time';
-    time.innerHTML = `<span style="color: var(--success);">⏰</span> ${timeUntil}<br><span style="font-size: 0.6rem; opacity: 0.7;">${wakeTimeStr}</span>`;
+    time.innerHTML = `⏰ ${timeUntil}<br><span style="font-size: 0.6rem; opacity: 0.7;">${wakeTimeStr}</span>`;
     time.title = `Will wake at: ${wakeTimeStr}`;
     
     header.appendChild(title);
@@ -283,20 +283,61 @@ async function performSnooze(tabId, wakeTime, timeOption) {
 }
 
 // 3. BATCH ACTION: Clear All / Weekend
-// Crash Fixed: Now fires a message to background.js and closes the popup immediately.
-// It will no longer fail if the user clicks away.
+// This is the biggest performance fix. It does all logic first, then refreshes UI ONCE.
 async function batchSnooze(timeOption) {
-    // Send message to background.js to handle batch snooze
-    chrome.runtime.sendMessage(
-        { action: 'batchSnooze', timeOption: timeOption },
-        (response) => {
-            // Response is handled, but popup is already closed
-            // Background script handles everything
-        }
+    const tabs = await chrome.tabs.query({ currentWindow: true }); // Only snooze tabs in current window usually
+    const filteredTabs = tabs.filter(tab => 
+        !tab.url.startsWith('chrome://') && 
+        !tab.url.startsWith('edge://') && 
+        !tab.url.startsWith('chrome-extension://') &&
+        !tab.url.startsWith('about:')
     );
     
-    // Close popup immediately to prevent crash if user clicks away
-    window.close();
+    if (filteredTabs.length === 0) {
+        showToast('No tabs to snooze', 'error');
+        return;
+    }
+
+    const wakeTime = calculateWakeTime(timeOption);
+    const result = await chrome.storage.local.get(['snoozedTabs']);
+    const snoozedTabs = result.snoozedTabs || [];
+
+    // Prepare all data promises
+    const snoozePromises = filteredTabs.map(async (tab) => {
+        // Get tab group properties if tab belongs to a group
+        let groupInfo = null;
+        if (tab.groupId && tab.groupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
+            groupInfo = await getGroupProperties(tab.groupId);
+        }
+        
+        snoozedTabs.push({
+            tabId: tab.id,
+            url: tab.url,
+            title: tab.title,
+            favIconUrl: tab.favIconUrl,
+            wakeTime: wakeTime,
+            snoozedAt: Date.now(),
+            timeOption: timeOption,
+            groupId: groupInfo ? groupInfo.id : null,
+            groupInfo: groupInfo // Store full group properties for restoration
+        });
+        
+        // Create alarm
+        await chrome.alarms.create(`snooze_${tab.id}_${wakeTime}`, { when: wakeTime });
+        
+        // Close tab
+        return chrome.tabs.remove(tab.id);
+    });
+
+    // Wait for all tabs to close and alarms to set
+    await Promise.all(snoozePromises);
+    
+    // Save storage once
+    await chrome.storage.local.set({ snoozedTabs });
+
+    // Refresh UI once
+    await refreshAll();
+    showToast(`Snoozed ${filteredTabs.length} tabs!`, 'success');
 }
 
 // Helper function to restore or recreate a group

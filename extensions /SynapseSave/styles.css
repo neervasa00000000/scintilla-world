@@ -1,24 +1,22 @@
 :root {
-    --bg-primary: #000000;
+    --bg-primary: #1a1a1a;
     --bg-secondary: #1a1a1a;
-    --bg-tertiary: #2a2a2a;
-    --bg-hover: #333333;
+    --bg-tertiary: #1a1a1a;
+    --bg-hover: #2a2a2a;
     --border-color: #333333;
-    --border-hover: #444444;
+    --border-hover: #333333;
     --text-primary: #ffffff;
     --text-secondary: #cccccc;
     --text-tertiary: #999999;
-    --accent-primary: #ffffff;
-    --accent-secondary: #ffffff;
-    --accent-hover: #f0f0f0;
-    --accent-light: #2a2a2a;
+    --accent-primary: #3b82f6;
+    --accent-secondary: #3b82f6;
+    --accent-hover: #3b82f6;
+    --accent-light: #1a1a1a;
     --success: #10b981;
     --success-light: #1a1a1a;
-    --warning: #ff8c00;
-    --danger: #ff4444;
+    --warning: #f59e0b;
+    --danger: #ef4444;
     --danger-light: #1a1a1a;
-    --orange-accent: #ff8c00;
-    --badge-bg: #3a3a3a;
 }
 
 * {
@@ -63,24 +61,22 @@ body {
 
 .header-content {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 4px;
+    gap: 16px;
     position: relative;
     z-index: 1;
-    text-align: center;
 }
 
-.header-text {
-    text-align: center;
+.header-icon {
+    font-size: 1.25rem;
+    opacity: 0.9;
 }
 
 .header-text h1 {
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 2px;
-    color: var(--text-primary);
+    color: var(--accent-primary);
     letter-spacing: -0.3px;
 }
 
@@ -123,7 +119,7 @@ body {
 }
 
 .stat-card:hover {
-    border-color: var(--border-hover);
+    border-color: var(--accent-primary);
 }
 
 .stat-icon {
@@ -142,7 +138,7 @@ body {
 .stat-value {
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--accent-primary);
     line-height: 1.2;
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.5px;
@@ -193,7 +189,7 @@ body {
 }
 
 .quick-action-btn:hover {
-    border-color: var(--border-hover);
+    border-color: var(--accent-primary);
 }
 
 .quick-action-btn:active {
@@ -273,13 +269,13 @@ body {
 }
 
 .tab-count-badge {
-    background: var(--badge-bg);
-    color: var(--text-primary);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
     font-size: 0.75rem;
     font-weight: 600;
     padding: 4px 10px;
-    border-radius: 16px;
-    border: none;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
 }
 
 /* Tabs List */
@@ -302,7 +298,7 @@ body {
     padding: 10px 12px;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 6px;
     transition: border-color 0.15s ease;
     cursor: pointer;
     flex-shrink: 0;
@@ -314,8 +310,12 @@ body {
 }
 
 .tab-item:hover {
-    background: var(--bg-hover);
-    border-color: var(--border-hover);
+    border-color: var(--accent-primary);
+}
+
+.tab-item:hover {
+    background: linear-gradient(180deg, var(--bg-hover) 0%, var(--bg-tertiary) 100%);
+    border-color: var(--accent-primary);
 }
 
 .tab-info {
@@ -380,25 +380,25 @@ body {
 }
 
 .btn-primary {
-    background: var(--text-primary);
-    color: #000000;
+    background: var(--accent-primary);
+    color: white;
     border: none;
 }
 
 .btn-primary:hover {
-    background: var(--accent-hover);
-    color: #000000;
+    background: var(--accent-primary);
+    opacity: 0.9;
 }
 
 .btn-danger {
-    background: transparent;
+    background: var(--danger-light);
     color: var(--danger);
     border: 1px solid var(--danger);
 }
 
 .btn-danger:hover {
     background: var(--danger);
-    color: var(--text-primary);
+    color: white;
 }
 
 /* Snoozed List */
@@ -418,7 +418,7 @@ body {
     padding: 14px;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
-    border-left: none;
+    border-left: 3px solid var(--success);
     border-radius: 8px;
     transition: border-color 0.15s ease;
     flex-shrink: 0;
@@ -429,7 +429,7 @@ body {
 }
 
 .snoozed-item:hover {
-    border-color: var(--border-hover);
+    border-color: var(--success);
 }
 
 .snoozed-header {
@@ -472,18 +472,6 @@ body {
 .btn-small {
     padding: 6px 12px;
     font-size: 0.6875rem;
-}
-
-.btn-danger.delete-btn {
-    background: transparent;
-    color: var(--text-primary);
-    border: 1px solid var(--orange-accent);
-}
-
-.btn-danger.delete-btn:hover {
-    background: var(--orange-accent);
-    color: var(--text-primary);
-    border-color: var(--orange-accent);
 }
 
 /* Empty State */
@@ -649,7 +637,7 @@ body {
 
 .snooze-option:hover {
     background: var(--bg-hover);
-    border-color: var(--border-hover);
+    border-color: var(--accent-primary);
 }
 
 .snooze-option:hover::before {
@@ -657,8 +645,8 @@ body {
 }
 
 .snooze-option.selected {
-    background: var(--bg-hover);
-    border-color: var(--text-primary);
+    background: var(--accent-light);
+    border-color: var(--accent-primary);
 }
 
 .snooze-option.selected::before {
@@ -739,12 +727,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border-color);
+    background: var(--accent-gradient);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--border-hover);
+    background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #f472b6 100%);
 }
 
 /* Loading Animation */
