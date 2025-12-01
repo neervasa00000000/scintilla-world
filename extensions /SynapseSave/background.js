@@ -1,5 +1,113 @@
 // SynapseSave - Background Service Worker
 
+// Helper function to get group properties
+async function getGroupProperties(groupId) {
+    if (!groupId || groupId === chrome.tabs.TAB_GROUP_ID_NONE) {
+        return null;
+    }
+    try {
+        const group = await chrome.tabGroups.get(groupId);
+        return {
+            id: group.id,
+            title: group.title,
+            color: group.color,
+            collapsed: group.collapsed
+        };
+    } catch (error) {
+        return null;
+    }
+}
+
+// Helper function to calculate wake time
+function calculateWakeTime(option) {
+    const now = new Date();
+    let wakeTime = new Date();
+    
+    switch(option) {
+        case 'oneday':
+            // Add exactly 24 hours from now (not a fixed time)
+            wakeTime = new Date(now.getTime() + (24 * 60 * 60 * 1000));
+            break;
+        case 'nextweek':
+            // Add exactly 7 days from now at 9:00 AM
+            wakeTime = new Date(now);
+            wakeTime.setDate(now.getDate() + 7);
+            wakeTime.setHours(9, 0, 0, 0);
+            wakeTime.setMinutes(0);
+            wakeTime.setSeconds(0);
+            wakeTime.setMilliseconds(0);
+            break;
+    }
+    
+    return wakeTime.getTime();
+}
+
+// Batch snooze function - handles snoozing multiple tabs
+async function batchSnooze(timeOption) {
+    const tabs = await chrome.tabs.query({ currentWindow: true });
+    const filteredTabs = tabs.filter(tab => 
+        !tab.url.startsWith('chrome://') && 
+        !tab.url.startsWith('edge://') && 
+        !tab.url.startsWith('chrome-extension://') &&
+        !tab.url.startsWith('about:')
+    );
+    
+    if (filteredTabs.length === 0) {
+        return { success: false, message: 'No tabs to snooze' };
+    }
+
+    const wakeTime = calculateWakeTime(timeOption);
+    const result = await chrome.storage.local.get(['snoozedTabs']);
+    const snoozedTabs = result.snoozedTabs || [];
+
+    // Prepare all data promises
+    const snoozePromises = filteredTabs.map(async (tab) => {
+        // Get tab group properties if tab belongs to a group
+        let groupInfo = null;
+        if (tab.groupId && tab.groupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
+            groupInfo = await getGroupProperties(tab.groupId);
+        }
+        
+        snoozedTabs.push({
+            tabId: tab.id,
+            url: tab.url,
+            title: tab.title,
+            favIconUrl: tab.favIconUrl,
+            wakeTime: wakeTime,
+            snoozedAt: Date.now(),
+            timeOption: timeOption,
+            groupId: groupInfo ? groupInfo.id : null,
+            groupInfo: groupInfo // Store full group properties for restoration
+        });
+        
+        // Create alarm
+        await chrome.alarms.create(`snooze_${tab.id}_${wakeTime}`, { when: wakeTime });
+        
+        // Close tab
+        return chrome.tabs.remove(tab.id);
+    });
+
+    // Wait for all tabs to close and alarms to set
+    await Promise.all(snoozePromises);
+    
+    // Save storage once
+    await chrome.storage.local.set({ snoozedTabs });
+
+    return { success: true, count: filteredTabs.length };
+}
+
+// Message listener for batch snooze
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'batchSnooze') {
+        batchSnooze(request.timeOption).then(result => {
+            sendResponse(result);
+        }).catch(error => {
+            sendResponse({ success: false, message: error.message });
+        });
+        return true; // Indicates we will send a response asynchronously
+    }
+});
+
 // Helper function to restore or recreate a group
 async function restoreGroup(tab, newTabId) {
     // Handle old tabs that might only have groupId without groupInfo

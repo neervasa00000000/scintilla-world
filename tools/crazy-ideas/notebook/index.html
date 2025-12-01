@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoteGenie | Realistic Handwriting Synthesizer</title>
+  <meta
+    name="description"
+    content="Convert typed text into realistic, human-like handwriting. Adjust messiness, ink flow, and paper type for the perfect digital note."
+  />
+
+  <!-- React & Tailwind -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Handwriting Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Homemade+Apple&family=Indie+Flower&family=Kalam:wght@300;400;700&family=Nanum+Pen+Script&family=Nothing+You+Could+Do&family=Reenie+Beanie&family=Shadows+Into+Light&display=swap" rel="stylesheet" />
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+    :root {
+      --bg: #020617;
+      --bg-elevated: #020617;
+      --bg-panel: #020617;
+      --border-subtle: rgba(148, 163, 184, 0.25);
+    }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+      color: #e5e7eb;
+      min-height: 100vh;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+
+    /* Paper Textures via CSS Gradients */
+    .paper-plain {
+      background-color: #ffffff;
+    }
+    .paper-lined {
+      background-color: #ffffff;
+      background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+      background-size: 100% 2.5rem;
+    }
+    .paper-graph {
+      background-color: #ffffff;
+      background-image: linear-gradient(#e5e7eb 1px, transparent 1px),
+        linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .paper-dark {
+      background-color: #020617;
+      color: #e2e8f0;
+    }
+
+    /* The Sheet Shadow */
+    .sheet-shadow {
+      box-shadow:
+        0 24px 60px rgba(15, 23, 42, 0.8),
+        0 0 0 1px rgba(148, 163, 184, 0.15);
+      border-radius: 1.25rem;
+    }
+
+    /* Range Slider Styling */
+    input[type="range"] {
+      -webkit-appearance: none;
+      background: transparent;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 999px;
+      background: #4f46e5;
+      cursor: pointer;
+      margin-top: -6px;
+      box-shadow:
+        0 0 0 3px rgba(15, 23, 42, 0.95),
+        0 0 0 1px rgba(129, 140, 248, 0.6),
+        0 4px 10px rgba(15, 23, 42, 0.9);
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 4px;
+      cursor: pointer;
+      background: linear-gradient(
+        90deg,
+        rgba(129, 140, 248, 0.8),
+        rgba(244, 114, 182, 0.8)
+      );
+      border-radius: 999px;
+    }
+
+    /* Print/Export Helper */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: white;
+      }
+      .sheet-shadow {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useRef } = React;
+
+    const IconPen = () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="stroke-[2.5]"
+      >
+        <path d="M12 19l7-7 3 3-7 7-3-3z" />
+        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+        <path d="M2 2l7.586 7.586" />
+        <circle cx="11" cy="11" r="2" />
+      </svg>
+    );
+
+    const IconDownload = () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" y1="15" x2="12" y2="3" />
+      </svg>
+    );
+
+    const IconRefresh = () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M23 4v6h-6" />
+        <path d="M1 20v-6h6" />
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+      </svg>
+    );
+
+    const FONTS = [
+      { name: "Caveat", label: "Caveat (Casual)" },
+      { name: "Indie Flower", label: "Indie Flower (Bubbly)" },
+      { name: "Homemade Apple", label: "Homemade Apple (Cursive)" },
+      { name: "Kalam", label: "Kalam (Marker)" },
+      { name: "Nothing You Could Do", label: "Messy Scrawl" },
+      { name: "Reenie Beanie", label: "Quick Notes" },
+      { name: "Shadows Into Light", label: "Neat Print" },
+      { name: "Nanum Pen Script", label: "Pen Script" },
+    ];
+
+    const INK_COLORS = [
+      { name: "Midnight Blue", value: "#1e3a8a" },
+      { name: "Standard Blue", value: "#2563eb" },
+      { name: "Charcoal", value: "#374151" },
+      { name: "Black", value: "#000000" },
+      { name: "Red Pen", value: "#dc2626" },
+      { name: "Green", value: "#16a34a" },
+    ];
+
+    function App() {
+      const [text, setText] = useState(
+        "Hey!\\n\\nThis is NoteGenie. I didn't actually write this by hand, but it sure looks like I did.\\n\\nType here to test it out. Adjust the Humanizer slider to make it look messier or neater!"
+      );
+      const [font, setFont] = useState("Caveat");
+      const [fontSize, setFontSize] = useState(24);
+      const [messiness, setMessiness] = useState(45);
+      const [paperType, setPaperType] = useState("lined");
+      const [inkColor, setInkColor] = useState("#1e3a8a");
+      const [seed, setSeed] = useState(1);
+      const exportRef = useRef(null);
+
+      const getRandomStyle = (index) => {
+        const pseudoRandom =
+          Math.sin(index * 12.9898 + seed) * 43758.5453;
+        const factor = messiness / 100;
+
+        const rotate = ((pseudoRandom % 1) * 6 - 3) * factor;
+        const translateY = Math.cos(pseudoRandom) * 2 * factor;
+        const opacity =
+          0.75 + Math.abs(Math.sin(pseudoRandom)) * 0.25;
+
+        return {
+          transform: \`rotate(\${rotate}deg) translateY(\${translateY}px)\`,
+          opacity,
+          display: "inline-block",
+          marginRight: \`\${(pseudoRandom % 0.45) * factor}px\`,
+        };
+      };
+
+      const downloadImage = () => {
+        alert(
+          "To save your note as an image:\\n\\nMac: ⌘ + Shift + 4\\nWindows: Shift + Win + S\\n\\n(Export libraries like html2canvas are heavier; screenshots stay sharp and instant here.)"
+        );
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-950/60 via-slate-950 to-black">
+          {/* Top Bar */}
+          <header className="no-print border-b border-white/5 bg-black/60 backdrop-blur-xl sticky top-0 z-30">
+            <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-300">
+                  <IconPen />
+                </div>
+                <div>
+                  <h1 className="text-sm sm:text-base font-semibold text-slate-50 tracking-tight">
+                    NoteGenie
+                  </h1>
+                  <p className="hidden sm:block text-[11px] text-slate-400">
+                    Typed text in, believable handwriting out.
+                  </p>
+                </div>
+              </div>
+              <span className="hidden md:inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-400/30 px-3 py-1 text-[11px] font-medium text-emerald-300">
+                <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Lives in your browser. Nothing is sent to a server.
+              </span>
+            </div>
+          </header>
+
+          {/* Main Layout */}
+          <main className="flex-1 max-w-6xl mx-auto w-full px-3 sm:px-4 md:px-6 py-4 md:py-8 flex flex-col md:flex-row gap-5 md:gap-7">
+            {/* Controls */}
+            <aside className="no-print w-full md:w-80 bg-slate-900/80 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col gap-5 shadow-[0_18px_60px_rgba(15,23,42,0.9)]">
+              {/* Handwriting style */}
+              <section>
+                <label className="text-[11px] font-semibold text-slate-400 tracking-[0.16em] uppercase">
+                  Handwriting style
+                </label>
+                <div className="mt-2 relative">
+                  <select
+                    value={font}
+                    onChange={(e) => setFont(e.target.value)}
+                    className="w-full rounded-xl bg-slate-900/80 border border-white/10 text-slate-100 text-xs sm:text-sm px-3 py-2.5 pr-9 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 focus:border-indigo-500/80 transition"
+                  >
+                    {FONTS.map((f) => (
+                      <option key={f.name} value={f.name}>
+                        {f.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-500 text-xs">
+                    ▼
+                  </span>
+                </div>
+              </section>
+
+              {/* Sliders */}
+              <section className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-[11px] font-semibold text-slate-400 tracking-[0.16em] uppercase">
+                      Humanizer
+                    </label>
+                    <span className="text-[11px] font-semibold text-indigo-300">
+                      {messiness}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={messiness}
+                    onChange={(e) =>
+                      setMessiness(Number(e.target.value))
+                    }
+                  />
+                  <p className="mt-1 text-[11px] text-slate-500">
+                    Left for neat, right for late-night exam panic.
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-[11px] font-semibold text-slate-400 tracking-[0.16em] uppercase">
+                      Font size
+                    </label>
+                    <span className="text-[11px] text-slate-300">
+                      {fontSize}px
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="14"
+                    max="48"
+                    value={fontSize}
+                    onChange={(e) =>
+                      setFontSize(Number(e.target.value))
+                    }
+                  />
+                </div>
+              </section>
+
+              {/* Paper */}
+              <section>
+                <label className="text-[11px] font-semibold text-slate-400 tracking-[0.16em] uppercase">
+                  Paper
+                </label>
+                <div className="mt-2 grid grid-cols-4 gap-1.5">
+                  {["plain", "lined", "graph", "dark"].map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setPaperType(t)}
+                      className={
+                        "text-[11px] capitalize rounded-xl border px-2 py-1.5 transition-all " +
+                        (paperType === t
+                          ? "bg-slate-50 text-slate-900 border-slate-50 shadow-sm"
+                          : "bg-slate-900/70 text-slate-400 border-white/10 hover:bg-slate-800")
+                      }
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              {/* Ink */}
+              <section>
+                <label className="text-[11px] font-semibold text-slate-400 tracking-[0.16em] uppercase">
+                  Ink color
+                </label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {INK_COLORS.map((color) => (
+                    <button
+                      key={color.name}
+                      onClick={() => setInkColor(color.value)}
+                      className={
+                        "w-7 h-7 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none " +
+                        (inkColor === color.value
+                          ? "border-white ring-2 ring-indigo-400/70"
+                          : "border-slate-600")
+                      }
+                      style={{ backgroundColor: color.value }}
+                      title={color.name}
+                    />
+                  ))}
+                </div>
+              </section>
+
+              {/* Actions */}
+              <section className="pt-2 mt-auto flex gap-2">
+                <button
+                  onClick={() => setSeed(Math.random())}
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-900/80 px-3 py-2 text-[11px] font-semibold text-slate-100 hover:bg-slate-800 transition"
+                >
+                  <IconRefresh />
+                  <span>Re‑roll</span>
+                </button>
+                <button
+                  onClick={downloadImage}
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500 px-3 py-2 text-[11px] font-semibold text-white shadow-lg shadow-indigo-500/40 hover:bg-indigo-400 transition"
+                >
+                  <IconDownload />
+                  <span>Save note</span>
+                </button>
+              </section>
+            </aside>
+
+            {/* Notebook */}
+            <section className="flex-1 flex items-start justify-center">
+              <div
+                ref={exportRef}
+                className={
+                  "sheet-shadow w-full max-w-[840px] min-h-[780px] md:min-h-[880px] p-8 sm:p-10 md:p-14 relative paper-" +
+                  paperType
+                }
+              >
+                {/* Typing surface */}
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-text p-8 sm:p-10 md:p-14 resize-none"
+                  spellCheck="false"
+                />
+
+                {/* Rendered handwriting */}
+                <div
+                  className="w-full h-full whitespace-pre-wrap break-words relative z-0 pointer-events-none"
+                  style={{
+                    fontFamily: `"${font}", cursive`,
+                    fontSize: fontSize + "px",
+                    lineHeight:
+                      paperType === "lined" ? "2.5rem" : "1.6",
+                    color: inkColor,
+                  }}
+                >
+                  {text.split("").map((char, i) => (
+                    <span
+                      key={i}
+                      style={
+                        char === "\n"
+                          ? { display: "block", height: "1em" }
+                          : getRandomStyle(i)
+                      }
+                    >
+                      {char === " " ? "\u00A0" : char}
+                    </span>
+                  ))}
+
+                  {text.length === 0 && (
+                    <span className="opacity-40 text-slate-500 font-sans text-sm italic">
+                      Start typing to see NoteGenie write for you…
+                    </span>
+                  )}
+                </div>
+
+                {/* Binder holes */}
+                <div className="absolute left-4 top-0 bottom-0 flex flex-col justify-center gap-32 pointer-events-none opacity-20">
+                  <div className="w-4 h-4 bg-black/80 rounded-full" />
+                  <div className="w-4 h-4 bg-black/80 rounded-full" />
+                  <div className="w-4 h-4 bg-black/80 rounded-full" />
+                </div>
+              </div>
+            </section>
+          </main>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
+
+
