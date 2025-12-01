@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GiftPass | Retro Ticket Generator</title>
+  <meta
+    name="description"
+    content="Create free retro boarding passes, train tickets, and concert stubs. The perfect way to reveal surprise gifts and trips."
+  />
+
+  <!-- React & Tailwind -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;600;700&family=Libre+Barcode+39+Text&family=Abril+Fatface&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter",
+        sans-serif;
+      background: radial-gradient(circle at top, #e5e7eb 0, #cbd5f5 30%, #e5e7eb 65%);
+      color: #1f2937;
+    }
+
+    /* --- THEMES --- */
+
+    /* AERO THEME (Classic 90s Airline) */
+    .theme-aero {
+      font-family: "Space Mono", monospace;
+      background-color: #fff;
+      border-left: 12px solid #ef4444;
+      color: #334155;
+    }
+    .theme-aero .header {
+      font-family: "Oswald", sans-serif;
+      text-transform: uppercase;
+      color: #1e3a8a;
+    }
+    .theme-aero .label {
+      color: #94a3b8;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .theme-aero .value {
+      color: #1e293b;
+      font-weight: 700;
+    }
+
+    /* RAIL THEME (Vintage Train) */
+    .theme-rail {
+      font-family: "Abril Fatface", serif;
+      background-color: #fef3c7;
+      background-image: radial-gradient(#d97706 0.5px, transparent 0.5px);
+      background-size: 10px 10px;
+      color: #451a03;
+      border: 2px solid #451a03;
+    }
+    .theme-rail .body-font {
+      font-family: "Courier New", Courier, monospace;
+    }
+    .theme-rail .header {
+      color: #451a03;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-bottom: 2px solid #451a03;
+    }
+    .theme-rail .label {
+      color: #92400e;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .theme-rail .value {
+      color: #451a03;
+      font-family: "Courier New", Courier, monospace;
+      font-weight: 700;
+    }
+
+    /* GIG THEME (Dark Mode Concert) */
+    .theme-gig {
+      font-family: "Oswald", sans-serif;
+      background-color: #09090b;
+      background-image: linear-gradient(
+          45deg,
+          #18181b 25%,
+          transparent 25%,
+          transparent 75%,
+          #18181b 75%,
+          #18181b
+        ),
+        linear-gradient(
+          45deg,
+          #18181b 25%,
+          transparent 25%,
+          transparent 75%,
+          #18181b 75%,
+          #18181b
+        );
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      color: #fff;
+      border: 1px solid #333;
+    }
+    .theme-gig .accent-text {
+      color: #e879f9;
+      text-shadow: 0 0 10px rgba(232, 121, 249, 0.5);
+    }
+    .theme-gig .label {
+      color: #71717a;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .theme-gig .value {
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+
+    /* --- UTILITIES --- */
+    .barcode-font {
+      font-family: "Libre Barcode 39 Text", cursive;
+      font-size: 2.5rem;
+      line-height: 1;
+      transform: scaleY(1.5);
+    }
+
+    .rip-line {
+      position: absolute;
+      right: 28%;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      border-right: 2px dashed #cbd5e1;
+    }
+    .theme-gig .rip-line {
+      border-color: #333;
+    }
+    .theme-rail .rip-line {
+      border-color: #78350f;
+    }
+    .notch {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: #e2e8f0;
+      border-radius: 50%;
+      z-index: 10;
+    }
+    .notch-top {
+      top: -15px;
+      right: calc(28% - 14px);
+    }
+    .notch-bottom {
+      bottom: -15px;
+      right: calc(28% - 14px);
+    }
+
+    /* Print Fixes */
+    @media print {
+      body {
+        background: white;
+        -webkit-print-color-adjust: exact;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .ticket-container {
+        transform: scale(1) !important;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const IconPlane = () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M2 12h20" />
+        <path d="M13 5v7" />
+        <path d="M6.17 10a3 3 0 0 1 5.66 0" />
+        <path d="M15 17h6.17a3 3 0 0 0-2.83-2H13v-7" />
+        <path d="M2 17h6" />
+      </svg>
+    );
+
+    const IconTrain = () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <rect x="4" y="3" width="16" height="18" rx="2" />
+        <path d="M4 11h16" />
+        <path d="M12 3v8" />
+        <path d="m8 19-2 3" />
+        <path d="m18 22-2-3" />
+        <circle cx="8" cy="15" r="2" />
+        <circle cx="16" cy="15" r="2" />
+      </svg>
+    );
+
+    const IconTicket = () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+      </svg>
+    );
+
+    const IconPrint = () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M6 9V2h12v7" />
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+        <path d="M6 14h12v8H6z" />
+      </svg>
+    );
+
+    function App() {
+      const [ticketData, setTicketData] = useState({
+        passenger: "ALEX ANDERSON",
+        origin: "NYC",
+        originFull: "NEW YORK",
+        dest: "PAR",
+        destFull: "PARIS, FRANCE",
+        date: "24 DEC 2025",
+        time: "14:30",
+        seat: "1A",
+        class: "FIRST",
+        flightNum: "GP-2025",
+        gate: "B4",
+        message: "HAPPY BIRTHDAY!",
+      });
+      const [theme, setTheme] = useState("aero");
+
+      const handleChange = (e) => {
+        setTicketData({ ...ticketData, [e.target.name]: e.target.value });
+      };
+
+      const handlePrint = () => {
+        window.print();
+      };
+
+      const themes = [
+        { id: "aero", label: "Airline", icon: <IconPlane /> },
+        { id: "rail", label: "Railway", icon: <IconTrain /> },
+        { id: "gig", label: "Concert", icon: <IconTicket /> },
+      ];
+
+      return (
+        <div className="min-h-screen flex flex-col lg:flex-row font-sans text-slate-800">
+          {/* LEFT PANEL */}
+          <div className="w-full lg:w-[400px] bg-white/95 border-r border-slate-200/80 p-6 flex flex-col h-auto lg:h-screen overflow-y-auto no-print shadow-2xl z-20">
+            <div className="mb-8">
+              <h1 className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-slate-50 text-xs">
+                  GP
+                </span>
+                <span>
+                  <span className="text-blue-600">Gift</span>Pass
+                </span>
+              </h1>
+              <p className="text-xs text-slate-500 font-medium mt-1">
+                Retro tickets for surprise trips & concerts.
+              </p>
+            </div>
+
+            {/* Theme Switcher */}
+            <div className="mb-8">
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 block">
+                Select style
+              </label>
+              <div className="grid grid-cols-3 gap-3">
+                {themes.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTheme(t.id)}
+                    className={
+                      "flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all text-xs font-bold " +
+                      (theme === t.id
+                        ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm"
+                        : "border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200")
+                    }
+                  >
+                    <div className="mb-1">{t.icon}</div>
+                    <span>{t.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Inputs */}
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                    Origin code
+                  </label>
+                  <input
+                    type="text"
+                    name="origin"
+                    value={ticketData.origin}
+                    onChange={handleChange}
+                    maxLength="3"
+                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm font-mono uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                    Dest code
+                  </label>
+                  <input
+                    type="text"
+                    name="dest"
+                    value={ticketData.dest}
+                    onChange={handleChange}
+                    maxLength="3"
+                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm font-mono uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                  Destination full name
+                </label>
+                <input
+                  type="text"
+                  name="destFull"
+                  value={ticketData.destFull}
+                  onChange={handleChange}
+                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                  Passenger name
+                </label>
+                <input
+                  type="text"
+                  name="passenger"
+                  value={ticketData.passenger}
+                  onChange={handleChange}
+                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                    Date
+                  </label>
+                  <input
+                    type="text"
+                    name="date"
+                    value={ticketData.date}
+                    onChange={handleChange}
+                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                    Time
+                  </label>
+                  <input
+                    type="text"
+                    name="time"
+                    value={ticketData.time}
+                    onChange={handleChange}
+                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                    Seat
+                  </label>
+                  <input
+                    type="text"
+                    name="seat"
+                    value={ticketData.seat}
+                    onChange={handleChange}
+                    maxLength="4"
+                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                    Class/type
+                  </label>
+                  <input
+                    type="text"
+                    name="class"
+                    value={ticketData.class}
+                    onChange={handleChange}
+                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                    Flight/ID
+                  </label>
+                  <input
+                    type="text"
+                    name="flightNum"
+                    value={ticketData.flightNum}
+                    onChange={handleChange}
+                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">
+                  Personal message (optional)
+                </label>
+                <input
+                  type="text"
+                  name="message"
+                  value={ticketData.message}
+                  onChange={handleChange}
+                  maxLength="30"
+                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-sm uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Print Button */}
+            <div className="mt-8 pt-6 border-t border-slate-100">
+              <button
+                onClick={handlePrint}
+                className="w-full bg-slate-900 text-white font-semibold py-3 px-4 rounded-xl hover:bg-slate-800 transition flex items-center justify-center gap-2 text-sm shadow-lg shadow-slate-900/30"
+              >
+                <IconPrint className="w-4 h-4" /> Print / Save PDF
+              </button>
+              <p className="text-[10px] text-center text-slate-400 mt-2">
+                Tip: enable “Background graphics” in your print dialog.
+              </p>
+            </div>
+          </div>
+
+          {/* RIGHT PANEL PREVIEW */}
+          <div className="flex-1 bg-gradient-to-b from-slate-100 to-slate-300 flex items-center justify-center p-4 lg:p-10 overflow-y-auto">
+            <div
+              className={
+                "ticket-container relative w-full max-w-[850px] h-[320px] shadow-2xl rounded-2xl overflow-hidden flex theme-" +
+                theme
+              }
+            >
+              <div className="rip-line z-20" />
+              <div className="notch notch-top" />
+              <div className="notch notch-bottom" />
+
+              {/* MAIN SECTION */}
+              <div className="flex-1 p-8 relative flex flex-col z-10">
+                {/* Header */}
+                <div className="flex justify-between items-start mb-6 header">
+                  <div className="flex items-center gap-3">
+                    {theme === "aero" && <IconPlane className="w-8 h-8" />}
+                    {theme === "rail" && <IconTrain className="w-8 h-8" />}
+                    {theme === "gig" && (
+                      <IconTicket className="w-8 h-8 accent-text" />
+                    )}
+                    <span className="text-2xl font-bold tracking-widest">
+                      {theme === "aero"
+                        ? "BOARDING PASS"
+                        : theme === "rail"
+                        ? "TRAVEL TICKET"
+                        : "ADMIT ONE"}
+                    </span>
+                  </div>
+                  <div className="text-lg font-bold opacity-60 tracking-widest">
+                    {ticketData.class} CLASS
+                  </div>
+                </div>
+
+                {/* Route */}
+                <div className="flex items-center justify-between mb-8 body-font">
+                  <div className="text-center">
+                    <div className="text-5xl font-bold value accent-text">
+                      {ticketData.origin}
+                    </div>
+                    <div className="label mt-1">{ticketData.originFull}</div>
+                  </div>
+
+                  <div className="flex-1 mx-8 flex flex-col items-center opacity-40">
+                    {theme === "aero" ? (
+                      <div className="w-full h-0.5 bg-current relative flex items-center justify-center">
+                        <IconPlane className="w-5 h-5 absolute bg-white p-0.5 rounded-full rotate-90" />
+                      </div>
+                    ) : (
+                      <div className="text-xl tracking-[0.5em]">⟶</div>
+                    )}
+                  </div>
+
+                  <div className="text-center">
+                    <div className="text-5xl font-bold value accent-text">
+                      {ticketData.dest}
+                    </div>
+                    <div className="label mt-1">{ticketData.destFull}</div>
+                  </div>
+                </div>
+
+                {/* Details */}
+                <div className="grid grid-cols-4 gap-4 mt-auto body-font">
+                  <div>
+                    <div className="label">Passenger</div>
+                    <div className="value text-sm truncate pr-2">
+                      {ticketData.passenger}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="label">Date</div>
+                    <div className="value">{ticketData.date}</div>
+                  </div>
+                  <div>
+                    <div className="label">Time</div>
+                    <div className="value">{ticketData.time}</div>
+                  </div>
+                  <div>
+                    <div className="label">
+                      {theme === "aero" ? "Gate" : "Platform"}
+                    </div>
+                    <div className="value">{ticketData.gate}</div>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-2 right-8 opacity-40 text-[10px] uppercase font-mono tracking-widest">
+                  {ticketData.message}
+                </div>
+              </div>
+
+              {/* STUB */}
+              <div className="w-[28%] bg-black/5 bg-opacity-10 p-6 flex flex-col justify-between relative z-10 body-font">
+                <div>
+                  <div className="label mb-1">Passenger</div>
+                  <div className="value text-sm mb-4 truncate">
+                    {ticketData.passenger}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    <div>
+                      <div className="label">From</div>
+                      <div className="value">{ticketData.origin}</div>
+                    </div>
+                    <div>
+                      <div className="label">To</div>
+                      <div className="value">{ticketData.dest}</div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <div className="label">Seat</div>
+                      <div className="value text-xl">{ticketData.seat}</div>
+                    </div>
+                    <div>
+                      <div className="label">Flight</div>
+                      <div className="value">{ticketData.flightNum}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-auto opacity-80">
+                  <div className="barcode-font text-center overflow-hidden whitespace-nowrap">
+                    {ticketData.flightNum}-{ticketData.seat}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
+
+
