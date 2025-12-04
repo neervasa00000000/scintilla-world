@@ -390,9 +390,8 @@
                                         </button>
                                     </div>
 
-                                    {/* Container for both images - ensures same sizing */}
+                                    {/* Background: Filtered view (Right side) */}
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        {/* Simulated layer (full) - Right side */}
                                         <img
                                             src={image}
                                             alt={`${activeFilter.label} simulated view`}
@@ -406,7 +405,7 @@
                                         />
                                     </div>
                                     
-                                    {/* Normal layer (clipped) - Left side */}
+                                    {/* Foreground: Normal view (Left side, clipped) */}
                                     <div
                                         className="absolute inset-0 overflow-hidden border-r-2 border-cyan-400/50"
                                         style={{ width: `${sliderPos}%` }}
@@ -426,7 +425,7 @@
                                         </div>
                                     </div>
                                     
-                                    {/* Filter label overlay */}
+                                    {/* Filter label overlay (Right side) */}
                                     <div className="absolute right-2 top-2 sm:right-3 sm:top-3 rounded-full bg-black/80 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.18em] text-white border border-white/20 z-10">
                                         {activeFilter.label}
                                     </div>
