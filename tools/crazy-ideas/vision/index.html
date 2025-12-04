@@ -130,6 +130,27 @@
             background-size: 40px 40px;
             background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
         }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            .glass-panel {
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+            }
+            
+            /* Ensure images are centered and properly sized on mobile */
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+        
+        /* Prevent text selection during drag on mobile */
+        .touch-none {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -242,12 +263,14 @@
 
             // Touch and mouse handlers for smooth slider
             const handleStart = (e) => {
+                e.preventDefault();
                 isDraggingRef.current = true;
                 setIsDragging(true);
             };
 
             const handleMove = (e) => {
                 if (!isDraggingRef.current || !containerRef.current) return;
+                e.preventDefault();
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const rect = containerRef.current.getBoundingClientRect();
                 const x = clientX - rect.left;
@@ -255,7 +278,8 @@
                 setSliderPos(percentage);
             };
 
-            const handleEnd = () => {
+            const handleEnd = (e) => {
+                if (e) e.preventDefault();
                 isDraggingRef.current = false;
                 setIsDragging(false);
             };
@@ -279,14 +303,14 @@
                     </svg>
 
                     {/* Top Bar */}
-                    <header className="w-full h-16 flex items-center justify-between px-4 lg:px-8 z-50 border-b border-white/5 bg-black/20 backdrop-blur-md">
-                        <div className="flex items-center gap-4">
-                            <div className="w-2 h-8 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"></div>
+                    <header className="w-full h-14 sm:h-16 flex items-center justify-between px-3 sm:px-4 lg:px-8 z-50 border-b border-white/5 bg-black/20 backdrop-blur-md">
+                        <div className="flex items-center gap-2 sm:gap-4">
+                            <div className="w-1.5 sm:w-2 h-6 sm:h-8 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"></div>
                             <div>
-                                <h1 className="font-mono text-lg tracking-widest font-bold text-white">
+                                <h1 className="font-mono text-sm sm:text-lg tracking-wider sm:tracking-widest font-bold text-white">
                                     DESIGN<span className="text-cyan-400">VISION</span>
                                 </h1>
-                                <p className="text-[10px] text-gray-400 font-mono tracking-wider">ACCESSIBILITY SIMULATOR</p>
+                                <p className="text-[8px] sm:text-[10px] text-gray-400 font-mono tracking-wide sm:tracking-wider">ACCESSIBILITY SIMULATOR</p>
                             </div>
                         </div>
                         
@@ -299,9 +323,9 @@
                     </header>
 
                     {/* Main Workspace */}
-                    <main className="flex-grow flex relative overflow-hidden">
+                    <main className="flex-grow flex flex-col lg:flex-row relative overflow-hidden">
                         {/* Viewport Area (Center) */}
-                        <section className="flex-grow relative flex items-center justify-center p-4 lg:p-8 overflow-hidden">
+                        <section className="flex-grow relative flex items-center justify-center p-2 sm:p-4 lg:p-8 overflow-hidden">
                             {/* Empty State */}
                             {!image && (
                                 <div 
@@ -311,12 +335,12 @@
                                     onDragLeave={() => setIsDragging(false)}
                                     onDrop={onDrop}
                                 >
-                                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6 group-hover:bg-cyan-500/10 transition-colors">
-                                        <IconUpload className="text-2xl text-cyan-400 group-hover:scale-110 transition-transform" />
+                                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:bg-cyan-500/10 transition-colors">
+                                        <IconUpload className="text-xl sm:text-2xl text-cyan-400 group-hover:scale-110 transition-transform" />
                                     </div>
-                                    <h2 className="text-2xl font-light mb-2">Initialize Visual Data</h2>
-                                    <p className="text-gray-400 text-sm font-mono mb-8">Drop image file or click to browse system</p>
-                                    <div className="flex justify-center gap-8 text-[10px] text-gray-500 font-mono uppercase tracking-widest">
+                                    <h2 className="text-lg sm:text-2xl font-light mb-2">Initialize Visual Data</h2>
+                                    <p className="text-gray-400 text-xs sm:text-sm font-mono mb-6 sm:mb-8">Drop image file or click to browse system</p>
+                                    <div className="flex justify-center gap-6 sm:gap-8 text-[9px] sm:text-[10px] text-gray-500 font-mono uppercase tracking-widest">
                                         <span>.JPG</span>
                                         <span>.PNG</span>
                                         <span>.WEBP</span>
@@ -329,30 +353,39 @@
                             {image && (
                                 <div 
                                     ref={containerRef}
-                                    className="relative w-full max-w-5xl max-h-[80vh] aspect-video rounded-2xl border border-white/10 bg-black/90 shadow-2xl overflow-hidden flex items-center justify-center"
+                                    className="relative w-full max-w-5xl max-h-[60vh] sm:max-h-[70vh] lg:max-h-[80vh] aspect-video rounded-xl sm:rounded-2xl border border-white/10 bg-black/90 shadow-2xl overflow-hidden flex items-center justify-center touch-none"
                                     onMouseDown={handleStart}
                                     onMouseMove={handleMove}
                                     onMouseUp={handleEnd}
                                     onMouseLeave={handleEnd}
-                                    onTouchStart={handleStart}
-                                    onTouchMove={handleMove}
-                                    onTouchEnd={handleEnd}
+                                    onTouchStart={(e) => {
+                                        e.preventDefault();
+                                        handleStart(e);
+                                    }}
+                                    onTouchMove={(e) => {
+                                        e.preventDefault();
+                                        handleMove(e);
+                                    }}
+                                    onTouchEnd={(e) => {
+                                        e.preventDefault();
+                                        handleEnd();
+                                    }}
                                 >
                                     {/* Background Pattern */}
                                     <div className="absolute inset-0 check-pattern opacity-30 pointer-events-none" />
                                     
                                     {/* Top Controls */}
-                                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-                                        <div className="inline-flex items-center gap-2 rounded-full bg-black/70 border border-white/20 px-3 py-1.5 text-[11px] text-white backdrop-blur font-mono">
-                                            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-green-400 mr-1"></span>
-                                            Split comparison • Normal vs {activeFilter.label}
+                                    <div className="absolute top-2 left-2 right-2 sm:top-4 sm:left-4 sm:right-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 z-10">
+                                        <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-black/80 border border-white/20 px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[11px] text-white backdrop-blur font-mono">
+                                            <span className="inline-flex h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-green-400 mr-0.5 sm:mr-1"></span>
+                                            <span className="hidden xs:inline">Split comparison • </span>Normal vs {activeFilter.label}
                                         </div>
                                         <button
                                             type="button"
                                             onClick={handleDownload}
-                                            className="inline-flex items-center gap-2 rounded-full bg-black/70 border border-white/20 px-3 py-1.5 text-[11px] text-white hover:bg-white/10 backdrop-blur"
+                                            className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-black/80 border border-white/20 px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[11px] text-white hover:bg-white/10 backdrop-blur"
                                         >
-                                            <IconDownload />
+                                            <IconDownload className="w-3 h-3 sm:w-4 sm:h-4" />
                                             <span className="hidden sm:inline">Export</span>
                                         </button>
                                     </div>
@@ -369,7 +402,7 @@
                                                     : `url(#${filterType})`,
                                             }}
                                         />
-                                        <div className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white border border-white/20">
+                                        <div className="absolute right-2 top-2 sm:right-3 sm:top-3 rounded-full bg-black/80 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.18em] text-white border border-white/20">
                                             {activeFilter.label}
                                         </div>
                                     </div>
@@ -382,14 +415,14 @@
                                         <img
                                             src={image}
                                             alt="Normal color view"
-                                            className="w-full h-full object-contain object-left"
+                                            className="w-full h-full object-contain"
                                             style={{
-                                                width: containerRef.current?.clientWidth || "100%",
+                                                width: "100%",
                                                 height: "100%",
-                                                maxWidth: "none",
+                                                objectPosition: "left center",
                                             }}
                                         />
-                                        <div className="absolute left-3 top-3 rounded-full bg-cyan-500/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white shadow-lg">
+                                        <div className="absolute left-2 top-2 sm:left-3 sm:top-3 rounded-full bg-cyan-500/90 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.18em] text-white shadow-lg">
                                             Normal
                                         </div>
                                     </div>
@@ -402,15 +435,15 @@
                                             transform: "translateX(-50%)",
                                         }}
                                     >
-                                        <div className="flex items-center justify-center rounded-full bg-white text-slate-900 h-9 w-9 shadow-xl relative z-10">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <div className="flex items-center justify-center rounded-full bg-white text-slate-900 h-8 w-8 sm:h-9 sm:w-9 shadow-xl relative z-10 touch-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="sm:w-3.5 sm:h-3.5">
                                                 <path d="m9 18 6-6-6-6" />
                                             </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="absolute rotate-180">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="absolute rotate-180 sm:w-3.5 sm:h-3.5">
                                                 <path d="m9 18 6-6-6-6" />
                                             </svg>
                                         </div>
-                                        <div className="h-full w-px bg-cyan-400/50" />
+                                        <div className="h-full w-0.5 sm:w-px bg-cyan-400/50" />
                                     </div>
 
                                     {/* Invisible interaction layer */}
@@ -435,9 +468,9 @@
                                         setFilterType("protanopia");
                                         if (fileInputRef.current) fileInputRef.current.value = '';
                                     }}
-                                    className="absolute top-6 right-6 p-3 glass-panel rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all z-20"
+                                    className="absolute top-2 right-2 sm:top-6 sm:right-6 p-2 sm:p-3 glass-panel rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all z-20"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:w-5 sm:h-5">
                                         <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
                                         <path d="M21 3v5h-5" />
                                         <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
@@ -448,13 +481,13 @@
                         </section>
 
                         {/* Control Deck (Right Floating Panel) */}
-                        <aside className="w-80 lg:w-96 glass-panel border-l border-white/5 z-20 m-4 rounded-xl flex flex-col backdrop-blur-3xl shadow-2xl h-[calc(100vh-100px)]">
-                            <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                        <aside className="w-full lg:w-80 xl:w-96 glass-panel border-t lg:border-t-0 lg:border-l border-white/5 z-20 m-0 lg:m-4 rounded-t-2xl lg:rounded-xl flex flex-col backdrop-blur-3xl shadow-2xl max-h-[50vh] lg:max-h-[calc(100vh-100px)] lg:h-[calc(100vh-100px)]">
+                            <div className="p-4 sm:p-6 border-b border-white/5 flex justify-between items-center">
                                 <span className="font-mono text-xs text-cyan-400 tracking-widest">/// FILTERS</span>
-                                <IconEye className="text-gray-500" />
+                                <IconEye className="text-gray-500 w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
                             
-                            <div className="p-6 space-y-8 overflow-y-auto flex-grow">
+                            <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 overflow-y-auto flex-grow">
                                 {/* Spectrum Selection */}
                                 <div className="space-y-3">
                                     <label className="text-xs font-mono text-gray-400 uppercase">Spectrum Analysis</label>
@@ -464,20 +497,20 @@
                                         return (
                                             <button
                                                 key={key}
-                                                className={`mode-btn w-full p-4 rounded-lg bg-white/5 text-left flex items-center justify-between group ${active ? 'active' : ''}`}
+                                                className={`mode-btn w-full p-3 sm:p-4 rounded-lg bg-white/5 text-left flex items-center justify-between group ${active ? 'active' : ''}`}
                                                 onClick={() => setFilterType(key)}
                                             >
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`status-dot w-2 h-2 rounded-full transition-colors ${active ? 'bg-cyan-400' : 'bg-gray-600'}`}></div>
-                                                    <div>
-                                                        <span className="text-sm font-medium block">{config.label}</span>
-                                                        <span className="text-[10px] text-gray-500">{config.desc}</span>
+                                                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                                                    <div className={`status-dot w-2 h-2 rounded-full transition-colors flex-shrink-0 ${active ? 'bg-cyan-400' : 'bg-gray-600'}`}></div>
+                                                    <div className="min-w-0 flex-1">
+                                                        <span className="text-xs sm:text-sm font-medium block truncate">{config.label}</span>
+                                                        <span className="text-[9px] sm:text-[10px] text-gray-500 truncate block">{config.desc}</span>
                                                     </div>
                                                 </div>
                                                 {active ? (
-                                                    <span className="text-[10px] font-mono text-cyan-400">ACTIVE</span>
+                                                    <span className="text-[9px] sm:text-[10px] font-mono text-cyan-400 flex-shrink-0 ml-2">ACTIVE</span>
                                                 ) : (
-                                                    <span className="text-[10px] font-mono text-gray-600">—</span>
+                                                    <span className="text-[9px] sm:text-[10px] font-mono text-gray-600 flex-shrink-0 ml-2">—</span>
                                                 )}
                                             </button>
                                         );
@@ -485,10 +518,10 @@
                                 </div>
 
                                 {/* Info Box */}
-                                <div className="pt-6 border-t border-white/5">
-                                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
-                                        <p className="text-xs font-semibold text-amber-200 mb-1">About {activeFilter.label}</p>
-                                        <p className="text-[11px] leading-relaxed text-amber-100/80">
+                                <div className="pt-4 sm:pt-6 border-t border-white/5">
+                                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 sm:p-4">
+                                        <p className="text-[10px] sm:text-xs font-semibold text-amber-200 mb-1">About {activeFilter.label}</p>
+                                        <p className="text-[10px] sm:text-[11px] leading-relaxed text-amber-100/80">
                                             {activeFilter.sub} Always ensure text has strong contrast and does not rely on color alone to convey meaning.
                                         </p>
                                     </div>
@@ -496,8 +529,8 @@
                             </div>
                             
                             {/* Footer */}
-                            <div className="p-4 border-t border-white/5 bg-black/20 text-center">
-                                <p className="text-[10px] text-gray-600 font-mono">SCINTILLA LABS • BUILD 2024.9</p>
+                            <div className="p-3 sm:p-4 border-t border-white/5 bg-black/20 text-center">
+                                <p className="text-[9px] sm:text-[10px] text-gray-600 font-mono">SCINTILLA LABS • BUILD 2024.9</p>
                             </div>
                         </aside>
                     </main>
