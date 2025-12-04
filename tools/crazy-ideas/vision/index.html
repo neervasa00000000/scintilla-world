@@ -58,7 +58,7 @@
       }
     </style>
   </head>
-  <body class="antialiased">
+  <body class="antialiased overflow-x-hidden">
     <div id="root"></div>
 
     <script type="text/babel">
@@ -260,7 +260,7 @@
 
             {/* Main content */}
             <main className="flex-1 px-4 lg:px-10 py-5">
-              <div className="max-w-6xl mx-auto grid gap-5 lg:grid-cols-[minmax(0,1.4fr),minmax(0,1fr)] items-start">
+              <div className="max-w-6xl mx-auto grid gap-6 lg:grid-cols-[minmax(0,1.4fr),minmax(0,1fr)] items-start">
                 {/* Viewer column */}
                 <section className="space-y-3">
                   {/* Viewer shell */}
@@ -294,7 +294,7 @@
                     <div
                       ref={containerRef}
                       className={
-                        "relative mt-4 mb-4 mx-4 lg:mx-6 rounded-xl border border-slate-800 bg-black/90 aspect-video max-h-[70vh] overflow-hidden flex items-center justify-center" +
+                        "relative mt-4 mb-4 mx-3 sm:mx-4 lg:mx-6 rounded-xl border border-slate-800 bg-black/90 aspect-[4/3] sm:aspect-video lg:max-h-[70vh] overflow-hidden flex items-center justify-center" +
                         (isDragging
                           ? " ring-2 ring-sky-500/80 ring-offset-2 ring-offset-slate-950"
                           : "")
