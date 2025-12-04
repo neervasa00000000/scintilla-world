@@ -297,7 +297,7 @@
                   <div
                     ref={containerRef}
                     className={
-                      "relative mt-4 mb-4 mx-3 sm:mx-4 lg:mx-6 rounded-xl border border-slate-800 bg-black/90 aspect-[4/3] sm:aspect-video lg:max-h-[70vh] overflow-hidden flex items-center justify-center" +
+                      "relative mt-4 mb-4 mx-3 sm:mx-4 lg:mx-6 rounded-xl border border-slate-800 bg-black/90 aspect-[4/3] sm:aspect-video lg:max-h-[70vh] overflow-hidden flex items-center justify-center touch-none select-none" +
                       (isDragging
                         ? " ring-2 ring-sky-500/80 ring-offset-2 ring-offset-slate-950"
                         : "")
@@ -306,19 +306,32 @@
                       e.preventDefault();
                     }}
                     onDrop={onDrop}
-                    onPointerDown={(e) => {
+                    onMouseDown={(e) => {
                       e.preventDefault();
                       setIsDragging(true);
                       updateSliderFromClientX(e.clientX);
                     }}
-                    onPointerMove={(e) => {
+                    onMouseMove={(e) => {
                       if (!isDragging) return;
                       e.preventDefault();
                       updateSliderFromClientX(e.clientX);
                     }}
-                    onPointerUp={() => setIsDragging(false)}
-                    onPointerCancel={() => setIsDragging(false)}
-                    onPointerLeave={() => setIsDragging(false)}
+                    onMouseUp={() => setIsDragging(false)}
+                    onMouseLeave={() => setIsDragging(false)}
+                    onTouchStart={(e) => {
+                      const touch = e.touches[0];
+                      if (!touch) return;
+                      setIsDragging(true);
+                      updateSliderFromClientX(touch.clientX);
+                    }}
+                    onTouchMove={(e) => {
+                      if (!isDragging) return;
+                      const touch = e.touches[0];
+                      if (!touch) return;
+                      updateSliderFromClientX(touch.clientX);
+                    }}
+                    onTouchEnd={() => setIsDragging(false)}
+                    onTouchCancel={() => setIsDragging(false)}
                     aria-label="Design vision comparison viewer"
                   >
                     {!image ? (
@@ -366,7 +379,7 @@
                           <img
                             src={image}
                             alt="Normal color view"
-                            className="w-full h-full object-contain object-left"
+                            className="w-full h-full object-contain"
                             style={{
                               width:
                                 containerRef.current?.clientWidth || "100%",
