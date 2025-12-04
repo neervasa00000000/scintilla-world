@@ -19,7 +19,7 @@ async function refreshAll() {
     const scrollPosSnoozed = snoozedList ? snoozedList.scrollTop : 0;
 
     // 2. Load data
-    await Promise.all([loadStats(), loadTabs(), loadSnoozedTabs()]);
+    await Promise.all([loadStats(), loadDuplicateTabs(), loadTabs(), loadSnoozedTabs()]);
     updateStats();
 
     // 3. Restore scroll positions
@@ -34,6 +34,135 @@ async function loadStats() {
     stats.tabsSnoozed = snoozedTabs.length;
     stats.ramSaved = snoozedTabs.length * 75; // ~75MB avg
     stats.timeSaved = Math.floor(snoozedTabs.length * 0.5);
+}
+
+// --- DUPLICATE TAB DETECTION ---
+
+async function loadDuplicateTabs() {
+    const tabs = await chrome.tabs.query({});
+    const filteredTabs = tabs.filter(tab => 
+        !tab.url.startsWith('chrome://') && 
+        !tab.url.startsWith('edge://') &&
+        !tab.url.startsWith('about:') &&
+        !tab.url.startsWith('chrome-extension://')
+    );
+    
+    // Group tabs by domain (hostname) instead of full URL
+    // This way all YouTube tabs are grouped together, all Facebook tabs, etc.
+    const domainGroups = {};
+    filteredTabs.forEach(tab => {
+        try {
+            const url = new URL(tab.url);
+            // Normalize domain: remove 'www.' prefix for cleaner grouping
+            const domain = url.hostname.replace(/^www\./, '');
+            
+            if (!domainGroups[domain]) {
+                domainGroups[domain] = [];
+            }
+            domainGroups[domain].push(tab);
+        } catch (error) {
+            // Skip invalid URLs
+            console.log('Invalid URL:', tab.url);
+        }
+    });
+    
+    // Find duplicates (domains with more than 1 tab)
+    const duplicates = Object.entries(domainGroups)
+        .filter(([domain, tabs]) => tabs.length > 1)
+        .map(([domain, tabs]) => ({ domain, tabs }));
+    
+    const duplicateSection = document.getElementById('duplicateTabsSection');
+    const duplicateGroupsList = document.getElementById('duplicateGroupsList');
+    const duplicateTabCount = document.getElementById('duplicateTabCount');
+    
+    if (duplicates.length === 0) {
+        duplicateSection.style.display = 'none';
+        return;
+    }
+    
+    duplicateSection.style.display = 'block';
+    
+    // Calculate total duplicate tabs (excluding one from each group)
+    const totalDuplicates = duplicates.reduce((sum, group) => sum + (group.tabs.length - 1), 0);
+    duplicateTabCount.textContent = totalDuplicates;
+    
+    duplicateGroupsList.innerHTML = '';
+    
+    const fragment = document.createDocumentFragment();
+    duplicates.forEach(({ domain, tabs }) => {
+        fragment.appendChild(createDuplicateGroup(domain, tabs));
+    });
+    duplicateGroupsList.appendChild(fragment);
+}
+
+function createDuplicateGroup(domain, tabs) {
+    const group = document.createElement('div');
+    group.className = 'duplicate-group';
+    
+    const header = document.createElement('div');
+    header.className = 'duplicate-group-header';
+    
+    const urlInfo = document.createElement('div');
+    urlInfo.className = 'duplicate-url-info';
+    
+    // Get favicon from first tab's URL
+    const faviconEl = document.createElement('div');
+    faviconEl.className = 'tab-favicon';
+    try {
+        const firstTabUrl = tabs[0].url;
+        const faviconUrl = new URL(chrome.runtime.getURL("/_favicon/"));
+        faviconUrl.searchParams.set("pageUrl", firstTabUrl);
+        faviconUrl.searchParams.set("size", "16");
+        const img = document.createElement('img');
+        img.src = faviconUrl.toString();
+        img.alt = '';
+        img.onerror = () => {
+            faviconEl.textContent = '🌐';
+            faviconEl.style.fontSize = '8px';
+            faviconEl.style.display = 'flex';
+            faviconEl.style.alignItems = 'center';
+            faviconEl.style.justifyContent = 'center';
+        };
+        faviconEl.appendChild(img);
+    } catch (error) {
+        faviconEl.textContent = '🌐';
+        faviconEl.style.fontSize = '8px';
+        faviconEl.style.display = 'flex';
+        faviconEl.style.alignItems = 'center';
+        faviconEl.style.justifyContent = 'center';
+    }
+    
+    const urlText = document.createElement('div');
+    urlText.className = 'duplicate-url-text';
+    urlText.textContent = domain;
+    urlText.title = `${tabs.length} tabs from ${domain}`;
+    
+    urlInfo.appendChild(faviconEl);
+    urlInfo.appendChild(urlText);
+    
+    const countBadge = document.createElement('div');
+    countBadge.className = 'duplicate-count-badge';
+    countBadge.textContent = `${tabs.length}x`;
+    
+    const closeAllBtn = document.createElement('button');
+    closeAllBtn.className = 'btn btn-danger btn-small close-all-duplicates-btn';
+    closeAllBtn.textContent = 'Close All';
+    closeAllBtn.title = `Close all ${tabs.length} duplicate tabs from ${domain}`;
+    closeAllBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const tabIds = tabs.map(t => t.id);
+        await chrome.tabs.remove(tabIds);
+        await refreshAll();
+        showToast(`Closed ${tabs.length} duplicate tabs from ${domain}`, 'success');
+    });
+    
+    header.appendChild(urlInfo);
+    header.appendChild(countBadge);
+    header.appendChild(closeAllBtn);
+    
+    group.appendChild(header);
+    
+    return group;
 }
 
 // --- TAB MANAGEMENT ---
@@ -190,7 +319,7 @@ function createSnoozedItem(snoozedTab) {
     
     const time = document.createElement('div');
     time.className = 'snoozed-time';
-    time.innerHTML = `⏰ ${timeUntil}<br><span style="font-size: 0.6rem; opacity: 0.7;">${wakeTimeStr}</span>`;
+    time.innerHTML = `<span style="color: var(--success);">⏰</span> ${timeUntil}<br><span style="font-size: 0.6rem; opacity: 0.7;">${wakeTimeStr}</span>`;
     time.title = `Will wake at: ${wakeTimeStr}`;
     
     header.appendChild(title);
@@ -283,61 +412,20 @@ async function performSnooze(tabId, wakeTime, timeOption) {
 }
 
 // 3. BATCH ACTION: Clear All / Weekend
-// This is the biggest performance fix. It does all logic first, then refreshes UI ONCE.
+// Crash Fixed: Now fires a message to background.js and closes the popup immediately.
+// It will no longer fail if the user clicks away.
 async function batchSnooze(timeOption) {
-    const tabs = await chrome.tabs.query({ currentWindow: true }); // Only snooze tabs in current window usually
-    const filteredTabs = tabs.filter(tab => 
-        !tab.url.startsWith('chrome://') && 
-        !tab.url.startsWith('edge://') && 
-        !tab.url.startsWith('chrome-extension://') &&
-        !tab.url.startsWith('about:')
+    // Send message to background.js to handle batch snooze
+    chrome.runtime.sendMessage(
+        { action: 'batchSnooze', timeOption: timeOption },
+        (response) => {
+            // Response is handled, but popup is already closed
+            // Background script handles everything
+        }
     );
     
-    if (filteredTabs.length === 0) {
-        showToast('No tabs to snooze', 'error');
-        return;
-    }
-
-    const wakeTime = calculateWakeTime(timeOption);
-    const result = await chrome.storage.local.get(['snoozedTabs']);
-    const snoozedTabs = result.snoozedTabs || [];
-
-    // Prepare all data promises
-    const snoozePromises = filteredTabs.map(async (tab) => {
-        // Get tab group properties if tab belongs to a group
-        let groupInfo = null;
-        if (tab.groupId && tab.groupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
-            groupInfo = await getGroupProperties(tab.groupId);
-        }
-        
-        snoozedTabs.push({
-            tabId: tab.id,
-            url: tab.url,
-            title: tab.title,
-            favIconUrl: tab.favIconUrl,
-            wakeTime: wakeTime,
-            snoozedAt: Date.now(),
-            timeOption: timeOption,
-            groupId: groupInfo ? groupInfo.id : null,
-            groupInfo: groupInfo // Store full group properties for restoration
-        });
-        
-        // Create alarm
-        await chrome.alarms.create(`snooze_${tab.id}_${wakeTime}`, { when: wakeTime });
-        
-        // Close tab
-        return chrome.tabs.remove(tab.id);
-    });
-
-    // Wait for all tabs to close and alarms to set
-    await Promise.all(snoozePromises);
-    
-    // Save storage once
-    await chrome.storage.local.set({ snoozedTabs });
-
-    // Refresh UI once
-    await refreshAll();
-    showToast(`Snoozed ${filteredTabs.length} tabs!`, 'success');
+    // Close popup immediately to prevent crash if user clicks away
+    window.close();
 }
 
 // Helper function to restore or recreate a group

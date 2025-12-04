@@ -1,541 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Design Vision | Color Blindness &amp; Accessibility Simulator
-    </title>
-    <meta
-      name="description"
-      content="Free online color blindness simulator. Check your designs for Protanopia, Deuteranopia, Tritanopia and blurry vision with a real-time comparison slider."
-    />
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Vision | Color Blindness & Accessibility Simulator</title>
+    <meta name="description" content="Free online color blindness simulator. Check your designs for Protanopia, Deuteranopia, Tritanopia and blurry vision with a real-time comparison slider.">
+    
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/assets/logo/scintilla.png" />
-
+    
     <!-- React & Tailwind -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
-
-      body {
-        font-family: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont,
-          sans-serif;
-        background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
-        color: #e5e7eb;
-      }
-
-      /* Custom Range Slider for Split View */
-      input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        height: 24px;
-        width: 24px;
-        border-radius: 999px;
-        background: #38bdf8;
-        cursor: ew-resize;
-        border: 2px solid white;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
-        margin-top: -11px;
-      }
-      input[type="range"]::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 2px;
-        background: transparent;
-      }
-
-      .check-pattern {
-        background-image: linear-gradient(45deg, #020617 25%, transparent 25%),
-          linear-gradient(-45deg, #020617 25%, transparent 25%),
-          linear-gradient(45deg, transparent 75%, #020617 75%),
-          linear-gradient(-45deg, transparent 75%, #020617 75%);
-        background-size: 40px 40px;
-        background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
-      }
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff00ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shine: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030305;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Animated Aurora Background */
+        .aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.1), transparent 25%);
+            filter: blur(60px);
+            animation: pulse 10s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 0.8; transform: scale(1.1); }
+        }
+        
+        /* Grid Overlay */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+        
+        .glass-panel:hover {
+            border-color: var(--glass-shine);
+        }
+        
+        /* Custom Range Slider */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 999px;
+            background: var(--neon-cyan);
+            cursor: ew-resize;
+            border: 2px solid white;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+            margin-top: -11px;
+        }
+        
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Mode Selection Buttons */
+        .mode-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mode-btn.active {
+            background: rgba(0, 243, 255, 0.1);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+        
+        .mode-btn.active .status-dot {
+            background-color: var(--neon-cyan);
+            box-shadow: 0 0 8px var(--neon-cyan);
+        }
+        
+        .check-pattern {
+            background-image: linear-gradient(45deg, #020617 25%, transparent 25%),
+                linear-gradient(-45deg, #020617 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #020617 75%),
+                linear-gradient(-45deg, transparent 75%, #020617 75%);
+            background-size: 40px 40px;
+            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+        }
     </style>
-  </head>
-  <body class="antialiased overflow-x-hidden">
+</head>
+<body class="antialiased">
     <div id="root"></div>
+    
+    <!-- Background Layers -->
+    <div class="aurora-bg"></div>
+    <div class="grid-overlay"></div>
 
     <script type="text/babel">
-      const { useState, useRef } = React;
+        const { useState, useRef } = React;
 
-      const IconUpload = () => (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="17 8 12 3 7 8" />
-          <line x1="12" y1="3" x2="12" y2="15" />
-        </svg>
-      );
-
-      const IconEye = () => (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      );
-
-      const IconDownload = () => (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>
-      );
-
-      const IconAlert = () => (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-      );
-
-      function App() {
-        const [image, setImage] = useState(null);
-        const [filterType, setFilterType] = useState("protanopia");
-        const [sliderPos, setSliderPos] = useState(50);
-        const [isDragging, setIsDragging] = useState(false);
-        const fileInputRef = useRef(null);
-        const containerRef = useRef(null);
-
-        const filters = {
-          protanopia: {
-            label: "Protanopia",
-            desc: "Red-blind (common)",
-            sub: "Reds look muted / muddy. Affects ~1% of men.",
-            matrix: `0.567 0.433 0     0 0
-                     0.558 0.442 0     0 0
-                     0     0.242 0.758 0 0
-                     0     0     0     1 0`,
-          },
-          deuteranopia: {
-            label: "Deuteranopia",
-            desc: "Green-blind (most common)",
-            sub: "Greens look beige / red. Affects ~5% of men.",
-            matrix: `0.625 0.375 0     0 0
-                     0.7   0.3   0     0 0
-                     0     0.3   0.7   0 0
-                     0     0     0     1 0`,
-          },
-          tritanopia: {
-            label: "Tritanopia",
-            desc: "Blue-blind (rare)",
-            sub: "Blue / yellow confusion. Very rare overall.",
-            matrix: `0.95 0.05  0     0 0
-                     0    0.433 0.567 0 0
-                     0    0.475 0.525 0 0
-                     0    0     0     1 0`,
-          },
-          achromatopsia: {
-            label: "Achromatopsia",
-            desc: "Monochromacy",
-            sub: "Total lack of color perception.",
-            matrix: `0.299 0.587 0.114 0 0
-                     0.299 0.587 0.114 0 0
-                     0.299 0.587 0.114 0 0
-                     0     0     0     1 0`,
-          },
-          blur: {
-            label: "Blurred vision",
-            desc: "Myopia / glare",
-            sub: "Simulates not wearing glasses or screen glare.",
-            isBlur: true,
-          },
-        };
-
-        function handleFile(file) {
-          if (file && file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = (e) => setImage(e.target.result);
-            reader.readAsDataURL(file);
-          }
-        }
-
-        function onDrop(e) {
-          e.preventDefault();
-          setIsDragging(false);
-          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            handleFile(e.dataTransfer.files[0]);
-          }
-        }
-
-        function updateSliderFromClientX(clientX) {
-          if (!containerRef.current) return;
-          const rect = containerRef.current.getBoundingClientRect();
-          const raw = ((clientX - rect.left) / rect.width) * 100;
-          const clamped = Math.min(100, Math.max(0, raw));
-          setSliderPos(clamped);
-        }
-
-        function handleDownload() {
-          if (!image) return;
-          alert(
-            "In a full version, this would download a high‑res simulated image.\n\nFor now, use your OS screenshot tools after positioning the slider."
-          );
-        }
-
-        const activeFilter = filters[filterType];
-
-        return (
-          <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-            {/* Hidden SVG filter defs */}
-            <svg className="hidden" aria-hidden="true" focusable="false">
-              <defs>
-                {Object.entries(filters).map(
-                  ([key, config]) =>
-                    !config.isBlur && (
-                      <filter id={key} key={key}>
-                        <feColorMatrix type="matrix" values={config.matrix} />
-                      </filter>
-                    )
-                )}
-              </defs>
+        const IconUpload = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
-
-            {/* Top bar */}
-            <header className="border-b border-slate-800/70 bg-slate-950/90 backdrop-blur px-4 lg:px-10 py-3">
-              <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-400 flex items-center justify-center text-slate-950 shadow-lg shadow-sky-900/60">
-                    <IconEye />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h1 className="text-sm font-semibold tracking-[0.18em] uppercase text-slate-100">
-                        Design Vision
-                      </h1>
-                    </div>
-                    <p className="text-xs text-slate-400">
-                      Preview your UI through different types of color blindness
-                      and blurred vision.
-                    </p>
-                  </div>
-                </div>
-                <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-400 font-mono">
-                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Drop design → Choose profile → Drag slider</span>
-                </div>
-              </div>
-            </header>
-
-            {/* Main content */}
-            <main className="flex-1 px-4 lg:px-10 py-5">
-              <div className="max-w-6xl mx-auto flex flex-col gap-5 lg:gap-6">
-                {/* Viewer card */}
-                <section className="relative rounded-2xl border border-slate-800/80 bg-slate-950/80 shadow-[0_32px_120px_rgba(0,0,0,0.85)] overflow-hidden">
-                  {/* Background */}
-                  <div className="absolute inset-0 check-pattern opacity-30 pointer-events-none" />
-
-                  {/* Top controls */}
-                  <div className="relative z-10 flex items-center justify-between gap-3 px-4 lg:px-6 pt-4">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-slate-900/80 border border-slate-700/80 px-3 py-1.5 text-[11px] text-slate-300 backdrop-blur">
-                      <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 mr-1" />
-                      <span className="font-mono uppercase tracking-[0.16em]">
-                        Split comparison
-                      </span>
-                      <span className="hidden sm:inline text-slate-500">
-                        Normal vs {activeFilter.label}
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={handleDownload}
-                      className="inline-flex items-center gap-2 rounded-full bg-slate-900/80 border border-slate-700/80 px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-800/90 backdrop-blur focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-                    >
-                      <IconDownload />
-                      <span className="hidden sm:inline">Export view</span>
-                    </button>
-                  </div>
-
-                  {/* Canvas */}
-                  <div
-                    ref={containerRef}
-                    className={
-                      "relative mt-4 mb-4 mx-3 sm:mx-4 lg:mx-6 rounded-xl border border-slate-800 bg-black/90 aspect-[4/3] sm:aspect-video lg:max-h-[70vh] overflow-hidden flex items-center justify-center touch-none select-none" +
-                      (isDragging
-                        ? " ring-2 ring-sky-500/80 ring-offset-2 ring-offset-slate-950"
-                        : "")
-                    }
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                    }}
-                    onDrop={onDrop}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      setIsDragging(true);
-                      updateSliderFromClientX(e.clientX);
-                    }}
-                    onMouseMove={(e) => {
-                      if (!isDragging) return;
-                      e.preventDefault();
-                      updateSliderFromClientX(e.clientX);
-                    }}
-                    onMouseUp={() => setIsDragging(false)}
-                    onMouseLeave={() => setIsDragging(false)}
-                    onTouchStart={(e) => {
-                      const touch = e.touches[0];
-                      if (!touch) return;
-                      setIsDragging(true);
-                      updateSliderFromClientX(touch.clientX);
-                    }}
-                    onTouchMove={(e) => {
-                      if (!isDragging) return;
-                      const touch = e.touches[0];
-                      if (!touch) return;
-                      updateSliderFromClientX(touch.clientX);
-                    }}
-                    onTouchEnd={() => setIsDragging(false)}
-                    onTouchCancel={() => setIsDragging(false)}
-                    aria-label="Design vision comparison viewer"
-                  >
-                    {!image ? (
-                      <div className="relative z-10 text-center px-6 py-10">
-                        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-900 border border-slate-700 text-slate-400 shadow-lg">
-                          <IconUpload />
-                        </div>
-                        <h2 className="text-xl font-semibold text-slate-50 mb-2">
-                          Drop a design or screenshot
-                        </h2>
-                        <p className="text-sm text-slate-400 max-w-md mx-auto mb-4">
-                          Drag an image here or use the upload button below.
-                          Ideal for Figma exports, dashboards, marketing pages,
-                          and UI components.
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          Tip: include buttons, alerts, and charts in the same
-                          frame so you can audit them together.
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        {/* Simulated layer (full) */}
-                        <div className="absolute inset-0">
-                          <img
-                            src={image}
-                            alt={`${activeFilter.label} simulated view`}
-                            className="w-full h-full object-contain"
-                            style={{
-                              filter: activeFilter.isBlur
-                                ? "blur(4px)"
-                                : `url(#${filterType})`,
-                            }}
-                          />
-                          <div className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-100 border border-slate-700/80">
-                            {activeFilter.label}
-                          </div>
-                        </div>
-
-                        {/* Normal layer (clipped) */}
-                        <div
-                          className="absolute inset-0 overflow-hidden border-r border-white/40"
-                          style={{ width: `${sliderPos}%` }}
-                        >
-                          <img
-                            src={image}
-                            alt="Normal color view"
-                            className="w-full h-full object-contain"
-                            style={{
-                              width:
-                                containerRef.current?.clientWidth || "100%",
-                              height: "100%",
-                              maxWidth: "none",
-                            }}
-                          />
-                          <div className="absolute left-3 top-3 rounded-full bg-sky-600/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white shadow-lg">
-                            Normal
-                          </div>
-                        </div>
-
-                        {/* Slider handle */}
-                        <div
-                          className="absolute inset-y-0 flex flex-col items-center justify-center pointer-events-none"
-                          style={{
-                            left: `${sliderPos}%`,
-                            transform: "translateX(-50%)",
-                          }}
-                        >
-                          <div className="flex items-center justify-center rounded-full bg-white text-slate-900 h-9 w-9 shadow-xl relative">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="m9 18 6-6-6-6" />
-                            </svg>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="absolute rotate-180"
-                            >
-                              <path d="m9 18 6-6-6-6" />
-                            </svg>
-                          </div>
-                          <div className="h-full w-px bg-white/50" />
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {image && (
-                    <div className="px-4 lg:px-6 pb-4">
-                      <p className="text-[11px] text-slate-400 font-mono text-center">
-                        Drag to reveal differences • {activeFilter.label} simulation
-                      </p>
-                    </div>
-                  )}
-                </section>
-
-                {/* Controls card */}
-                <section className="grid gap-4 lg:gap-3 lg:grid-cols-2">
-                  {/* Upload */}
-                  <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-[0_16px_50px_rgba(0,0,0,0.7)] backdrop-blur lg:col-span-2">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-2">
-                      Step 1 · Upload
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-sky-500 text-slate-950 text-sm font-semibold py-2.5 shadow-[0_18px_40px_rgba(8,47,73,0.65)] hover:bg-sky-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
-                    >
-                      <IconUpload />
-                      <span>{image ? "Replace design" : "Upload mockup"}</span>
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleFile(e.target.files?.[0])}
-                    />
-                    <p className="mt-2 text-[11px] text-slate-500">
-                      PNG, JPG, WebP. Images never leave your browser.
-                    </p>
-                  </div>
-
-                  {/* Profiles */}
-                  <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 backdrop-blur">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-2">
-                      Step 2 · Vision profiles
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {Object.entries(filters).map(([key, config]) => {
-                        const active = filterType === key;
-                        return (
-                          <button
-                            key={key}
-                            type="button"
-                            onClick={() => setFilterType(key)}
-                            className={
-                              "px-3 py-1.5 rounded-full text-xs font-medium border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 " +
-                              (active
-                                ? "bg-sky-500 text-slate-950 border-sky-400 shadow-[0_10px_30px_rgba(8,47,73,0.7)]"
-                                : "bg-slate-800/80 text-slate-200 border-slate-700 hover:bg-slate-700/90")
-                            }
-                            aria-pressed={active}
-                          >
-                            {config.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <p className="text-[11px] text-slate-400">
-                      Currently viewing:{" "}
-                      <span className="font-semibold text-slate-100">
-                        {activeFilter.label}
-                      </span>
-                      . Drag the center handle in the preview to scrub between
-                      normal and simulated vision.
-                    </p>
-                  </div>
-
-                  {/* Explanation */}
-                  <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 backdrop-blur">
-                    <div className="flex gap-2.5">
-                      <div className="mt-0.5 text-amber-400">
-                        <IconAlert />
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-xs font-semibold text-amber-100">
-                          {activeFilter.label} in real life
-                        </p>
-                        <p className="text-[11px] leading-relaxed text-amber-50/80">
-                          {activeFilter.sub} Use this view to check that
-                          critical actions (errors, primary buttons, alerts)
-                          still stand out without relying on color alone.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              </div>
-            </main>
-          </div>
         );
-      }
 
-      const root = ReactDOM.createRoot(document.getElementById("root"));
-      root.render(<App />);
+        const IconEye = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>
+        );
+
+        const IconDownload = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+        );
+
+        function App() {
+            const [image, setImage] = useState(null);
+            const [filterType, setFilterType] = useState("protanopia");
+            const [sliderPos, setSliderPos] = useState(50);
+            const [isDragging, setIsDragging] = useState(false);
+            const fileInputRef = useRef(null);
+            const containerRef = useRef(null);
+            const isDraggingRef = useRef(false);
+
+            const filters = {
+                protanopia: {
+                    label: "Protanopia",
+                    desc: "Red-blind (common)",
+                    sub: "Reds look muted / muddy. Affects ~1% of men.",
+                    matrix: `0.567 0.433 0     0 0
+                             0.558 0.442 0     0 0
+                             0     0.242 0.758 0 0
+                             0     0     0     1 0`,
+                },
+                deuteranopia: {
+                    label: "Deuteranopia",
+                    desc: "Green-blind (most common)",
+                    sub: "Greens look beige / red. Affects ~5% of men.",
+                    matrix: `0.625 0.375 0     0 0
+                             0.7   0.3   0     0 0
+                             0     0.3   0.7   0 0
+                             0     0     0     1 0`,
+                },
+                tritanopia: {
+                    label: "Tritanopia",
+                    desc: "Blue-blind (rare)",
+                    sub: "Blue / yellow confusion. Very rare overall.",
+                    matrix: `0.95 0.05  0     0 0
+                             0    0.433 0.567 0 0
+                             0    0.475 0.525 0 0
+                             0    0     0     1 0`,
+                },
+                achromatopsia: {
+                    label: "Achromatopsia",
+                    desc: "Monochromacy",
+                    sub: "Total lack of color perception.",
+                    matrix: `0.299 0.587 0.114 0 0
+                             0.299 0.587 0.114 0 0
+                             0.299 0.587 0.114 0 0
+                             0     0     0     1 0`,
+                },
+                blur: {
+                    label: "Blurred vision",
+                    desc: "Myopia / glare",
+                    sub: "Simulates not wearing glasses or screen glare.",
+                    isBlur: true,
+                },
+            };
+
+            function handleFile(file) {
+                if (file && file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => setImage(e.target.result);
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function onDrop(e) {
+                e.preventDefault();
+                setIsDragging(false);
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            }
+
+            function handleDownload() {
+                if (!image) return;
+                alert("In a full version, this would download a high‑res simulated image.\n\nFor now, use your OS screenshot tools after positioning the slider.");
+            }
+
+            // Touch and mouse handlers for smooth slider
+            const handleStart = (e) => {
+                isDraggingRef.current = true;
+                setIsDragging(true);
+            };
+
+            const handleMove = (e) => {
+                if (!isDraggingRef.current || !containerRef.current) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const rect = containerRef.current.getBoundingClientRect();
+                const x = clientX - rect.left;
+                const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                setSliderPos(percentage);
+            };
+
+            const handleEnd = () => {
+                isDraggingRef.current = false;
+                setIsDragging(false);
+            };
+
+            const activeFilter = filters[filterType];
+
+            return (
+                <div className="min-h-screen bg-[#030305] text-white flex flex-col relative">
+                    {/* Hidden SVG filter defs */}
+                    <svg className="hidden" aria-hidden="true" focusable="false">
+                        <defs>
+                            {Object.entries(filters).map(
+                                ([key, config]) =>
+                                    !config.isBlur && (
+                                        <filter id={key} key={key}>
+                                            <feColorMatrix type="matrix" values={config.matrix} />
+                                        </filter>
+                                    )
+                            )}
+                        </defs>
+                    </svg>
+
+                    {/* Top Bar */}
+                    <header className="w-full h-16 flex items-center justify-between px-4 lg:px-8 z-50 border-b border-white/5 bg-black/20 backdrop-blur-md">
+                        <div className="flex items-center gap-4">
+                            <div className="w-2 h-8 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"></div>
+                            <div>
+                                <h1 className="font-mono text-lg tracking-widest font-bold text-white">
+                                    DESIGN<span className="text-cyan-400">VISION</span>
+                                </h1>
+                                <p className="text-[10px] text-gray-400 font-mono tracking-wider">ACCESSIBILITY SIMULATOR</p>
+                            </div>
+                        </div>
+                        
+                        <div className="hidden md:flex gap-6 text-xs font-mono text-gray-400">
+                            <div className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                SYSTEM ONLINE
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Workspace */}
+                    <main className="flex-grow flex relative overflow-hidden">
+                        {/* Viewport Area (Center) */}
+                        <section className="flex-grow relative flex items-center justify-center p-4 lg:p-8 overflow-hidden">
+                            {/* Empty State */}
+                            {!image && (
+                                <div 
+                                    className="glass-panel p-12 rounded-2xl text-center max-w-lg w-full border border-dashed border-white/10 cursor-pointer group"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                                    onDragLeave={() => setIsDragging(false)}
+                                    onDrop={onDrop}
+                                >
+                                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6 group-hover:bg-cyan-500/10 transition-colors">
+                                        <IconUpload className="text-2xl text-cyan-400 group-hover:scale-110 transition-transform" />
+                                    </div>
+                                    <h2 className="text-2xl font-light mb-2">Initialize Visual Data</h2>
+                                    <p className="text-gray-400 text-sm font-mono mb-8">Drop image file or click to browse system</p>
+                                    <div className="flex justify-center gap-8 text-[10px] text-gray-500 font-mono uppercase tracking-widest">
+                                        <span>.JPG</span>
+                                        <span>.PNG</span>
+                                        <span>.WEBP</span>
+                                    </div>
+                                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+                                </div>
+                            )}
+
+                            {/* Image Viewport with Split Comparison */}
+                            {image && (
+                                <div 
+                                    ref={containerRef}
+                                    className="relative w-full max-w-5xl max-h-[80vh] aspect-video rounded-2xl border border-white/10 bg-black/90 shadow-2xl overflow-hidden flex items-center justify-center"
+                                    onMouseDown={handleStart}
+                                    onMouseMove={handleMove}
+                                    onMouseUp={handleEnd}
+                                    onMouseLeave={handleEnd}
+                                    onTouchStart={handleStart}
+                                    onTouchMove={handleMove}
+                                    onTouchEnd={handleEnd}
+                                >
+                                    {/* Background Pattern */}
+                                    <div className="absolute inset-0 check-pattern opacity-30 pointer-events-none" />
+                                    
+                                    {/* Top Controls */}
+                                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                                        <div className="inline-flex items-center gap-2 rounded-full bg-black/70 border border-white/20 px-3 py-1.5 text-[11px] text-white backdrop-blur font-mono">
+                                            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-green-400 mr-1"></span>
+                                            Split comparison • Normal vs {activeFilter.label}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={handleDownload}
+                                            className="inline-flex items-center gap-2 rounded-full bg-black/70 border border-white/20 px-3 py-1.5 text-[11px] text-white hover:bg-white/10 backdrop-blur"
+                                        >
+                                            <IconDownload />
+                                            <span className="hidden sm:inline">Export</span>
+                                        </button>
+                                    </div>
+
+                                    {/* Simulated layer (full) */}
+                                    <div className="absolute inset-0">
+                                        <img
+                                            src={image}
+                                            alt={`${activeFilter.label} simulated view`}
+                                            className="w-full h-full object-contain"
+                                            style={{
+                                                filter: activeFilter.isBlur
+                                                    ? "blur(4px)"
+                                                    : `url(#${filterType})`,
+                                            }}
+                                        />
+                                        <div className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white border border-white/20">
+                                            {activeFilter.label}
+                                        </div>
+                                    </div>
+
+                                    {/* Normal layer (clipped) */}
+                                    <div
+                                        className="absolute inset-0 overflow-hidden border-r-2 border-cyan-400/50"
+                                        style={{ width: `${sliderPos}%` }}
+                                    >
+                                        <img
+                                            src={image}
+                                            alt="Normal color view"
+                                            className="w-full h-full object-contain object-left"
+                                            style={{
+                                                width: containerRef.current?.clientWidth || "100%",
+                                                height: "100%",
+                                                maxWidth: "none",
+                                            }}
+                                        />
+                                        <div className="absolute left-3 top-3 rounded-full bg-cyan-500/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white shadow-lg">
+                                            Normal
+                                        </div>
+                                    </div>
+
+                                    {/* Slider handle */}
+                                    <div
+                                        className="absolute inset-y-0 flex flex-col items-center justify-center pointer-events-none"
+                                        style={{
+                                            left: `${sliderPos}%`,
+                                            transform: "translateX(-50%)",
+                                        }}
+                                    >
+                                        <div className="flex items-center justify-center rounded-full bg-white text-slate-900 h-9 w-9 shadow-xl relative z-10">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="m9 18 6-6-6-6" />
+                                            </svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="absolute rotate-180">
+                                                <path d="m9 18 6-6-6-6" />
+                                            </svg>
+                                        </div>
+                                        <div className="h-full w-px bg-cyan-400/50" />
+                                    </div>
+
+                                    {/* Invisible interaction layer */}
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        value={sliderPos}
+                                        aria-label="Comparison slider"
+                                        onChange={(e) => setSliderPos(Number(e.target.value))}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Reset Button */}
+                            {image && (
+                                <button
+                                    onClick={() => {
+                                        setImage(null);
+                                        setSliderPos(50);
+                                        setFilterType("protanopia");
+                                        if (fileInputRef.current) fileInputRef.current.value = '';
+                                    }}
+                                    className="absolute top-6 right-6 p-3 glass-panel rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all z-20"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                                        <path d="M21 3v5h-5" />
+                                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                                        <path d="M3 21v-5h5" />
+                                    </svg>
+                                </button>
+                            )}
+                        </section>
+
+                        {/* Control Deck (Right Floating Panel) */}
+                        <aside className="w-80 lg:w-96 glass-panel border-l border-white/5 z-20 m-4 rounded-xl flex flex-col backdrop-blur-3xl shadow-2xl h-[calc(100vh-100px)]">
+                            <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                                <span className="font-mono text-xs text-cyan-400 tracking-widest">/// FILTERS</span>
+                                <IconEye className="text-gray-500" />
+                            </div>
+                            
+                            <div className="p-6 space-y-8 overflow-y-auto flex-grow">
+                                {/* Spectrum Selection */}
+                                <div className="space-y-3">
+                                    <label className="text-xs font-mono text-gray-400 uppercase">Spectrum Analysis</label>
+                                    
+                                    {Object.entries(filters).map(([key, config]) => {
+                                        const active = filterType === key;
+                                        return (
+                                            <button
+                                                key={key}
+                                                className={`mode-btn w-full p-4 rounded-lg bg-white/5 text-left flex items-center justify-between group ${active ? 'active' : ''}`}
+                                                onClick={() => setFilterType(key)}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`status-dot w-2 h-2 rounded-full transition-colors ${active ? 'bg-cyan-400' : 'bg-gray-600'}`}></div>
+                                                    <div>
+                                                        <span className="text-sm font-medium block">{config.label}</span>
+                                                        <span className="text-[10px] text-gray-500">{config.desc}</span>
+                                                    </div>
+                                                </div>
+                                                {active ? (
+                                                    <span className="text-[10px] font-mono text-cyan-400">ACTIVE</span>
+                                                ) : (
+                                                    <span className="text-[10px] font-mono text-gray-600">—</span>
+                                                )}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Info Box */}
+                                <div className="pt-6 border-t border-white/5">
+                                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+                                        <p className="text-xs font-semibold text-amber-200 mb-1">About {activeFilter.label}</p>
+                                        <p className="text-[11px] leading-relaxed text-amber-100/80">
+                                            {activeFilter.sub} Always ensure text has strong contrast and does not rely on color alone to convey meaning.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Footer */}
+                            <div className="p-4 border-t border-white/5 bg-black/20 text-center">
+                                <p className="text-[10px] text-gray-600 font-mono">SCINTILLA LABS • BUILD 2024.9</p>
+                            </div>
+                        </aside>
+                    </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<App />);
     </script>
-  </body>
+</body>
 </html>
-
-
