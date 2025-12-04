@@ -390,41 +390,45 @@
                                         </button>
                                     </div>
 
-                                    {/* Simulated layer (full) */}
-                                    <div className="absolute inset-0">
+                                    {/* Container for both images - ensures same sizing */}
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        {/* Simulated layer (full) - Right side */}
                                         <img
                                             src={image}
                                             alt={`${activeFilter.label} simulated view`}
-                                            className="w-full h-full object-contain"
+                                            className="max-w-full max-h-full w-auto h-auto"
                                             style={{
+                                                objectFit: "contain",
                                                 filter: activeFilter.isBlur
                                                     ? "blur(4px)"
                                                     : `url(#${filterType})`,
                                             }}
                                         />
-                                        <div className="absolute right-2 top-2 sm:right-3 sm:top-3 rounded-full bg-black/80 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.18em] text-white border border-white/20">
-                                            {activeFilter.label}
-                                        </div>
                                     </div>
-
-                                    {/* Normal layer (clipped) */}
+                                    
+                                    {/* Normal layer (clipped) - Left side */}
                                     <div
                                         className="absolute inset-0 overflow-hidden border-r-2 border-cyan-400/50"
                                         style={{ width: `${sliderPos}%` }}
                                     >
-                                        <img
-                                            src={image}
-                                            alt="Normal color view"
-                                            className="w-full h-full object-contain"
-                                            style={{
-                                                width: "100%",
-                                                height: "100%",
-                                                objectPosition: "left center",
-                                            }}
-                                        />
-                                        <div className="absolute left-2 top-2 sm:left-3 sm:top-3 rounded-full bg-cyan-500/90 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.18em] text-white shadow-lg">
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <img
+                                                src={image}
+                                                alt="Normal color view"
+                                                className="max-w-full max-h-full w-auto h-auto"
+                                                style={{
+                                                    objectFit: "contain",
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="absolute left-2 top-2 sm:left-3 sm:top-3 rounded-full bg-cyan-500/90 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.18em] text-white shadow-lg z-10">
                                             Normal
                                         </div>
+                                    </div>
+                                    
+                                    {/* Filter label overlay */}
+                                    <div className="absolute right-2 top-2 sm:right-3 sm:top-3 rounded-full bg-black/80 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.18em] text-white border border-white/20 z-10">
+                                        {activeFilter.label}
                                     </div>
 
                                     {/* Slider handle */}
