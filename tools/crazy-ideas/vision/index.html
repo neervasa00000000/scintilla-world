@@ -204,6 +204,14 @@
           }
         }
 
+        function updateSliderFromClientX(clientX) {
+          if (!containerRef.current) return;
+          const rect = containerRef.current.getBoundingClientRect();
+          const raw = ((clientX - rect.left) / rect.width) * 100;
+          const clamped = Math.min(100, Math.max(0, raw));
+          setSliderPos(clamped);
+        }
+
         function handleDownload() {
           if (!image) return;
           alert(
@@ -296,10 +304,21 @@
                     }
                     onDragOver={(e) => {
                       e.preventDefault();
-                      setIsDragging(true);
                     }}
-                    onDragLeave={() => setIsDragging(false)}
                     onDrop={onDrop}
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      setIsDragging(true);
+                      updateSliderFromClientX(e.clientX);
+                    }}
+                    onPointerMove={(e) => {
+                      if (!isDragging) return;
+                      e.preventDefault();
+                      updateSliderFromClientX(e.clientX);
+                    }}
+                    onPointerUp={() => setIsDragging(false)}
+                    onPointerCancel={() => setIsDragging(false)}
+                    onPointerLeave={() => setIsDragging(false)}
                     aria-label="Design vision comparison viewer"
                   >
                     {!image ? (
@@ -399,17 +418,6 @@
                           </div>
                           <div className="h-full w-px bg-white/50" />
                         </div>
-
-                        {/* Interaction layer */}
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={sliderPos}
-                          aria-label="Comparison slider"
-                          onChange={(e) => setSliderPos(Number(e.target.value))}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
-                        />
                       </>
                     )}
                   </div>
