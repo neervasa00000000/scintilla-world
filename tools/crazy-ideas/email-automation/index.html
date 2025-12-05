@@ -585,17 +585,34 @@
 
             const handleSaveTemplate = (e) => {
                 e.preventDefault();
-                const updatedTemplate = {
-                    id: editingTemplate ? editingTemplate.id : Date.now(),
-                    name: editingTemplate.name || '',
-                    subject: editingTemplate.subject || '',
-                    body: editingTemplate.body || '',
-                };
-                if (editingTemplate && editingTemplate.id) {
-                    setTemplates(templates.map(t => t.id === updatedTemplate.id ? updatedTemplate : t));
-                } else {
-                    setTemplates([...templates, updatedTemplate]);
+                
+                // Validate that required fields are filled
+                if (!editingTemplate || !editingTemplate.name || !editingTemplate.subject || !editingTemplate.body) {
+                    alert('Please fill in all fields: Template Name, Subject Line, and Body');
+                    return;
                 }
+                
+                const updatedTemplate = {
+                    id: editingTemplate.id && editingTemplate.id !== null ? editingTemplate.id : Date.now(),
+                    name: editingTemplate.name.trim(),
+                    subject: editingTemplate.subject.trim(),
+                    body: editingTemplate.body.trim(),
+                };
+                
+                // Use functional state update to ensure we have the latest templates
+                setTemplates(prevTemplates => {
+                    // Check if this is an update (template with existing ID) or new template
+                    const existingIndex = prevTemplates.findIndex(t => t.id === updatedTemplate.id);
+                    
+                    if (existingIndex >= 0) {
+                        // Update existing template
+                        return prevTemplates.map(t => t.id === updatedTemplate.id ? updatedTemplate : t);
+                    } else {
+                        // Add new template
+                        return [...prevTemplates, updatedTemplate];
+                    }
+                });
+                
                 setEditingTemplate(null);
             };
 
