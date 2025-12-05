@@ -1,24 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "ExtractFlow - Data Extractor",
+  "name": "ExtractFlow // Soft UI",
   "version": "1.0.0",
-  "description": "Extract emails, phones, and names from text with beautiful Soft UI design",
-  "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+  "description": "Extract emails, phones and names from pasted text, then export as CSV.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ExtractFlow"
   },
   "permissions": [
     "storage"
   ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_title": "ExtractFlow",
-    "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
-    }
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   }
 }
-
