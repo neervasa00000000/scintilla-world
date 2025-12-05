@@ -327,7 +327,6 @@
       const [activeTab, setActiveTab] = useState('templates');
       const [selectedFrame, setSelectedFrame] = useState(FRAMES[0]);
       const [currentTemplateId, setCurrentTemplateId] = useState('normal');
-      const [sidebarOpen, setSidebarOpen] = useState(false);
       
       const fileInputRef = useRef(null);
 
@@ -477,7 +476,7 @@
       );
 
       return (
-        <div className="h-screen bg-neutral-950 text-gray-100 font-sans flex flex-col overflow-hidden selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-neutral-950 text-gray-100 font-sans flex flex-col selection:bg-indigo-500/30">
           
           {/* --- Modern Header --- */}
           <header className="h-14 md:h-16 px-4 md:px-6 flex items-center justify-between border-b border-white/5 bg-neutral-950/50 backdrop-blur-md z-30 sticky top-0">
@@ -491,15 +490,6 @@
             </div>
             <div className="flex items-center gap-2 md:gap-3">
               <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
-              
-              {/* Mobile Menu Toggle */}
-              <button 
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="md:hidden p-2 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 transition-all"
-                aria-label="Toggle menu"
-              >
-                <Sliders size={20} />
-              </button>
               
               <button 
                 onClick={() => fileInputRef.current?.click()}
@@ -527,8 +517,8 @@
           {/* --- Main Workspace --- */}
           <main className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
             
-            {/* Left: Immersive Canvas */}
-            <div className="flex-1 relative flex items-center justify-center p-4 md:p-8 bg-neutral-950 overflow-hidden">
+            {/* Image Preview Section */}
+            <div className="w-full md:flex-1 relative flex items-center justify-center p-4 md:p-8 bg-neutral-950 min-h-[40vh] md:min-h-0 md:h-auto">
               {/* Subtle Grid Pattern Background */}
               <div className="absolute inset-0 opacity-[0.03]" 
                    style={{ 
@@ -561,19 +551,19 @@
                   </div>
                 </div>
               ) : (
-                <div className="relative z-10 transition-all duration-300 ease-out max-h-full max-w-full flex items-center justify-center w-full">
+                <div className="relative z-10 transition-all duration-300 ease-out w-full flex items-center justify-center">
                   <div 
                     style={{
                       padding: `${selectedFrame.id !== 'none' ? '12px' : '0px'}`,
                       backgroundColor: selectedFrame.color,
                     }}
-                    className="transition-all duration-300 ease-in-out shadow-2xl shadow-black/50 rounded-sm"
+                    className="transition-all duration-300 ease-in-out shadow-2xl shadow-black/50 rounded-sm w-full"
                   >
-                    <div className="relative overflow-hidden group">
+                    <div className="relative overflow-hidden group w-full">
                       <img 
                         src={image} 
                         alt="Preview" 
-                        className="max-h-[calc(100vh-200px)] md:max-h-[80vh] max-w-full object-contain block transition-all duration-200"
+                        className="w-full h-auto max-h-[40vh] md:max-h-[80vh] object-contain block transition-all duration-200"
                         style={{
                           filter: getFilterString(),
                         }}
@@ -610,36 +600,11 @@
               )}
             </div>
 
-            {/* Right: Modern Floating Sidebar */}
-            {/* Mobile Overlay - lighter so image is visible */}
-            {sidebarOpen && (
-              <div 
-                className="fixed inset-0 bg-black/20 z-40 md:hidden pointer-events-none"
-              />
-            )}
-            <aside className={`fixed md:relative inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:w-80 h-[75vh] md:h-auto max-h-[75vh] md:max-h-none bg-neutral-900/98 md:bg-neutral-900/80 backdrop-blur-xl border-t md:border-l border-white/5 flex flex-col shrink-0 z-50 md:z-20 transform transition-transform duration-300 ease-in-out rounded-t-3xl md:rounded-none shadow-2xl md:shadow-none ${
-              sidebarOpen ? 'translate-y-0' : 'translate-y-full md:translate-y-0 md:translate-x-0'
-            }`}>
+            {/* Controls Section - Below image on mobile, side on desktop */}
+            <aside className="w-full md:w-80 bg-neutral-900/95 md:bg-neutral-900/80 backdrop-blur-xl border-t md:border-l border-white/5 flex flex-col shrink-0 md:h-auto max-h-[60vh] md:max-h-none overflow-hidden">
               
               {/* Segmented Control Tabs */}
-              <div className="p-3 md:p-4 border-b border-white/5">
-                {/* Mobile Drag Handle */}
-                <div className="flex items-center justify-center mb-3 md:hidden">
-                  <div className="w-12 h-1 bg-neutral-600 rounded-full"></div>
-                </div>
-                <div className="flex items-center justify-between mb-3 md:mb-0">
-                  <h3 className="text-sm md:text-xs font-bold text-white md:text-transparent md:hidden">Edit Image</h3>
-                  <button 
-                    onClick={() => setSidebarOpen(false)}
-                    className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 md:hidden"
-                    aria-label="Close menu"
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
-                </div>
+              <div className="p-3 md:p-4 border-b border-white/5 sticky top-14 md:top-0 bg-neutral-900/95 md:bg-transparent backdrop-blur-xl z-10">
                 <div className="flex bg-neutral-950/50 p-1 rounded-lg border border-white/5">
                   {[
                     { id: 'templates', icon: Wand2, label: 'Filters' },
@@ -663,7 +628,7 @@
               </div>
 
               {/* Tools Area */}
-              <div className="flex-1 overflow-y-auto px-4 md:px-5 py-3 md:py-6 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
+              <div className="flex-1 overflow-y-auto px-4 md:px-5 py-4 md:py-6 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
                 
                 {activeTab === 'templates' && (
                   <div className="space-y-4 md:space-y-6">
@@ -815,7 +780,7 @@
                 )}
               </div>
 
-              <div className="p-2 md:p-4 border-t border-white/5 text-[10px] text-neutral-600 text-center font-medium hidden md:block">
+              <div className="p-3 md:p-4 border-t border-white/5 text-[10px] text-neutral-600 text-center font-medium">
                 LUMINA STUDIO v2.0
               </div>
             </aside>
