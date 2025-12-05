@@ -122,6 +122,13 @@
                 <polyline points="9 12 11 14 15 10"></polyline>
             </Icon>
         );
+        
+        const Settings = ({ size = 24, className = "" }) => (
+            <Icon size={size} className={className}>
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
+            </Icon>
+        );
 
         // --- Global Helpers & Constants (Moved outside App) ---
         const spamTriggers = ['free', 'urgent', 'winner', 'cash', '$$$', 'guarantee', 'click here', 'buy now', '100%'];
@@ -132,14 +139,23 @@
             return foundTriggers;
         };
 
-        const generateMailto = (contact, template) => {
-            if (!template) return `mailto:${contact.email}`;
+        const generateMailto = (contact, template, emailClient = 'apple') => {
+            if (!template) {
+                if (emailClient === 'gmail') {
+                    return `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(contact.email)}`;
+                }
+                return `mailto:${contact.email}`;
+            }
             let subject = template.subject
                 .replace(/{name}/g, contact.name || '')
                 .replace(/{company}/g, contact.company || '');
             let body = template.body
                 .replace(/{name}/g, contact.name || '')
                 .replace(/{company}/g, contact.company || '');
+            
+            if (emailClient === 'gmail') {
+                return `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(contact.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            }
             return `mailto:${contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         };
 
@@ -153,7 +169,8 @@
             handleAddContact, 
             handleDeleteContact, 
             handleFileUpload,
-            templates 
+            templates,
+            emailClient
         }) => (
             <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
@@ -220,7 +237,7 @@
                             </div>
                             <div className="flex gap-2">
                                 <a
-                                    href={generateMailto(contact, templates[0])}
+                                    href={generateMailto(contact, templates[0], emailClient)}
                                     title="Quick Draft"
                                     className="p-2 text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors opacity-0 group-hover:opacity-100"
                                 >
@@ -367,7 +384,7 @@
             );
         };
 
-        const AutomationHub = ({ templates, contacts }) => {
+        const AutomationHub = ({ templates, contacts, emailClient }) => {
             const [selectedTemplateId, setSelectedTemplateId] = useState(templates[0]?.id);
             const [currentIndex, setCurrentIndex] = useState(0);
             const [isCampaignActive, setIsCampaignActive] = useState(false);
@@ -443,7 +460,7 @@
                             </div>
                             <div className="flex gap-4">
                                 <a 
-                                    href={generateMailto(activeContact, selectedTemplate)}
+                                    href={generateMailto(activeContact, selectedTemplate, emailClient)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={nextContact}
@@ -460,7 +477,7 @@
                                 </button>
                             </div>
                             <p className="text-center text-xs text-slate-400 mt-4">
-                                Clicking "Open Draft" opens your default email app. Press Send there, then come back here for the next one.
+                                Clicking "Open Draft" opens {emailClient === 'gmail' ? 'Gmail' : 'Apple Mail'}. Press Send there, then come back here for the next one.
                             </p>
                         </div>
                     )}
@@ -477,6 +494,8 @@
         // --- Main App Component ---
         function App() {
             const [activeTab, setActiveTab] = useState('contacts');
+            const [emailClient, setEmailClient] = useState('apple'); // 'apple' or 'gmail'
+            const [showSettings, setShowSettings] = useState(false);
             const [contacts, setContacts] = useState([
                 { id: 1, name: "Sarah Connor", email: "sarah@example.com", company: "Cyberdyne", status: "New" },
                 { id: 2, name: "John Smith", email: "john@example.com", company: "Tech Corp", status: "Contacted" },
@@ -604,8 +623,43 @@
                             >
                                 <Send size={18} /> Automation
                             </button>
+                            <button 
+                                onClick={() => setShowSettings(!showSettings)}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${showSettings ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}`}
+                            >
+                                <Settings size={18} /> Settings
+                            </button>
                         </nav>
-                        <div className="p-4 border-t border-slate-100">
+                        <div className="p-4 border-t border-slate-100 space-y-2">
+                            {showSettings && (
+                                <div className="bg-white rounded-lg p-4 border border-slate-200 shadow-sm mb-2">
+                                    <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Email Client</p>
+                                    <div className="space-y-2">
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="emailClient"
+                                                value="apple"
+                                                checked={emailClient === 'apple'}
+                                                onChange={(e) => setEmailClient(e.target.value)}
+                                                className="text-indigo-600"
+                                            />
+                                            <span className="text-sm text-slate-700">Apple Mail</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="emailClient"
+                                                value="gmail"
+                                                checked={emailClient === 'gmail'}
+                                                onChange={(e) => setEmailClient(e.target.value)}
+                                                className="text-indigo-600"
+                                            />
+                                            <span className="text-sm text-slate-700">Gmail</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            )}
                             <div className="bg-indigo-900 rounded-lg p-4 text-white">
                                 <p className="text-xs font-medium opacity-70 mb-1">Pro Tip</p>
                                 <p className="text-xs leading-relaxed">Use <span className="font-mono bg-indigo-800 px-1 rounded">{`{company}`}</span> in templates to auto-personalize your emails.</p>
@@ -635,6 +689,7 @@
                                     handleDeleteContact={handleDeleteContact}
                                     handleFileUpload={handleFileUpload}
                                     templates={templates}
+                                    emailClient={emailClient}
                                 />
                             )}
                             {activeTab === 'templates' && (
@@ -650,6 +705,7 @@
                                 <AutomationHub 
                                     templates={templates}
                                     contacts={contacts}
+                                    emailClient={emailClient}
                                 />
                             )}
                         </div>
