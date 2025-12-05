@@ -13,7 +13,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo, useCallback } = React;
         
         // Icon Components
         const Icon = ({ children, size = 24, className = "" }) => (
@@ -327,9 +327,10 @@
             );
 
             const TemplateManager = () => {
-                const spamIssues = editingTemplate 
-                    ? checkSpamScore(editingTemplate.subject || '', editingTemplate.body || '') 
-                    : [];
+                const spamIssues = useMemo(() => {
+                    if (!editingTemplate) return [];
+                    return checkSpamScore(editingTemplate.subject || '', editingTemplate.body || '');
+                }, [editingTemplate?.subject, editingTemplate?.body]);
 
                 return (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
@@ -382,8 +383,12 @@
                                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Template Name</label>
                                         <input 
                                             name="name" 
+                                            key={`name-${editingTemplate.id || 'new'}`}
                                             value={editingTemplate.name || ''} 
-                                            onChange={(e) => setEditingTemplate({...editingTemplate, name: e.target.value})}
+                                            onChange={(e) => {
+                                                const newValue = e.target.value;
+                                                setEditingTemplate(prev => ({...prev, name: newValue}));
+                                            }}
                                             required 
                                             onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
                                             className="w-full border-b border-slate-200 p-2 focus:border-indigo-500 outline-none font-medium" 
@@ -395,8 +400,12 @@
                                         <input 
                                             name="subject" 
                                             type="text"
+                                            key={`subject-${editingTemplate.id || 'new'}`}
                                             value={editingTemplate.subject || ''} 
-                                            onChange={(e) => setEditingTemplate({...editingTemplate, subject: e.target.value})}
+                                            onChange={(e) => {
+                                                const newValue = e.target.value;
+                                                setEditingTemplate(prev => ({...prev, subject: newValue}));
+                                            }}
                                             onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
                                             required 
                                             className="w-full border p-2 rounded bg-slate-50 focus:bg-white transition-colors outline-none focus:ring-2 focus:ring-indigo-100" 
@@ -407,8 +416,12 @@
                                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Body</label>
                                         <textarea 
                                             name="body" 
+                                            key={`body-${editingTemplate.id || 'new'}`}
                                             value={editingTemplate.body || ''} 
-                                            onChange={(e) => setEditingTemplate({...editingTemplate, body: e.target.value})}
+                                            onChange={(e) => {
+                                                const newValue = e.target.value;
+                                                setEditingTemplate(prev => ({...prev, body: newValue}));
+                                            }}
                                             onKeyDown={(e) => { 
                                                 if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                                                     e.preventDefault();
