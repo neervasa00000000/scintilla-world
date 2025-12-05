@@ -219,15 +219,15 @@
             };
 
             const handleSaveTemplate = (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
+                if (e) e.preventDefault();
+                // Use editingTemplate state directly instead of FormData
                 const updatedTemplate = {
                     id: editingTemplate ? editingTemplate.id : Date.now(),
-                    name: formData.get('name'),
-                    subject: formData.get('subject'),
-                    body: formData.get('body'),
+                    name: editingTemplate.name || '',
+                    subject: editingTemplate.subject || '',
+                    body: editingTemplate.body || '',
                 };
-                if (editingTemplate) {
+                if (editingTemplate && editingTemplate.id) {
                     setTemplates(templates.map(t => t.id === updatedTemplate.id ? updatedTemplate : t));
                 } else {
                     setTemplates([...templates, updatedTemplate]);
@@ -382,7 +382,8 @@
                                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Template Name</label>
                                         <input 
                                             name="name" 
-                                            defaultValue={editingTemplate.name} 
+                                            value={editingTemplate.name || ''} 
+                                            onChange={(e) => setEditingTemplate({...editingTemplate, name: e.target.value})}
                                             required 
                                             onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
                                             className="w-full border-b border-slate-200 p-2 focus:border-indigo-500 outline-none font-medium" 
@@ -394,7 +395,7 @@
                                         <input 
                                             name="subject" 
                                             type="text"
-                                            defaultValue={editingTemplate.subject} 
+                                            value={editingTemplate.subject || ''} 
                                             onChange={(e) => setEditingTemplate({...editingTemplate, subject: e.target.value})}
                                             onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
                                             required 
@@ -406,7 +407,7 @@
                                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Body</label>
                                         <textarea 
                                             name="body" 
-                                            defaultValue={editingTemplate.body} 
+                                            value={editingTemplate.body || ''} 
                                             onChange={(e) => setEditingTemplate({...editingTemplate, body: e.target.value})}
                                             onKeyDown={(e) => { 
                                                 if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
