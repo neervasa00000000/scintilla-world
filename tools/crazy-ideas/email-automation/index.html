@@ -384,7 +384,7 @@
             );
         };
 
-        const AutomationHub = ({ templates, contacts, emailClient }) => {
+        const AutomationHub = ({ templates, contacts, emailClient, userEmail }) => {
             const [selectedTemplateId, setSelectedTemplateId] = useState(templates[0]?.id);
             const [currentIndex, setCurrentIndex] = useState(0);
             const [isCampaignActive, setIsCampaignActive] = useState(false);
