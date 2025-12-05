@@ -38,6 +38,36 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Main Content - 2 Column Grid */
+.main-content {
+    display: grid;
+    grid-template-columns: 1.4fr 1.6fr;
+    gap: 10px;
+    padding: 10px 12px;
+    height: calc(100vh - 57px);
+    overflow: hidden;
+}
+
+.main-content > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.records-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 12px;
+}
+
+.records-card .card-header {
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
 /* Header */
 .header {
     background: var(--bg);
@@ -151,6 +181,11 @@ body {
     border-radius: var(--radius-lg);
     padding: 16px;
     transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.card:hover {
+    box-shadow: var(--shadow);
 }
 
 .card-header {
@@ -177,15 +212,15 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-bottom: 12px;
 }
 
 .stat-card {
     background: var(--bg-secondary);
-    border: 1px solid var(--border-light);
+    border: none;
     border-radius: var(--radius);
     padding: 10px;
     text-align: center;
+    box-shadow: var(--shadow-sm);
 }
 
 .stat-value {
@@ -349,23 +384,24 @@ body {
 .records-container {
     flex: 1;
     overflow-y: auto;
-    padding: 8px;
+    padding: 0;
+    min-height: 0;
 }
 
 .record-item {
     background: var(--bg-secondary);
-    border: 1px solid var(--border-light);
+    border: none;
     border-radius: var(--radius);
     padding: 12px;
     margin-bottom: 8px;
     animation: recordSlideIn 0.3s ease;
     transition: all 0.15s ease;
+    box-shadow: var(--shadow-sm);
 }
 
 .record-item:hover {
     background: var(--bg-tertiary);
-    border-color: var(--border);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow);
 }
 
 .record-header {

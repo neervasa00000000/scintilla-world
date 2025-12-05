@@ -116,6 +116,11 @@ function scanText(text) {
     if (added > 0) {
         renderChips();
         updateStats();
+        const emailCount = state.currentEmails.size;
+        const phoneCount = state.currentPhones.size;
+        if (emailCount > 0 || phoneCount > 0) {
+            showToast(`Found ${emailCount} email${emailCount !== 1 ? 's' : ''}, ${phoneCount} phone${phoneCount !== 1 ? 's' : ''}`, 'info');
+        }
     }
 }
 
@@ -241,13 +246,15 @@ function renderRecords() {
         
         record.innerHTML = `
             <div class="record-header">
-                <div class="record-name">${r.f || 'Unknown'} ${r.l || ''}</div>
+                <div>
+                    <div class="record-name">${r.f || 'Unknown'} ${r.l || ''}</div>
+                    <div class="record-chips">
+                        ${eChips} ${pChips}
+                    </div>
+                </div>
                 <button onclick="deleteRec(${r.id})" class="btn btn-secondary btn-icon" style="width: 24px; height: 24px; padding: 0;" title="Delete">
                     <i class="fa-solid fa-trash" style="font-size: 11px;"></i>
                 </button>
-            </div>
-            <div class="record-chips">
-                ${eChips} ${pChips}
             </div>
         `;
         
