@@ -3,178 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExtractFlow // Soft UI</title>
+    <title>ExtractFlow</title>
     <link rel="stylesheet" href="popup.css">
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="gradient-bg flex flex-col">
+<body>
     <!-- Toast Container -->
-    <div id="toastContainer" class="fixed top-4 right-4 z-50 pointer-events-none space-y-2"></div>
+    <div id="toastContainer" class="toast-container"></div>
 
     <!-- Header -->
-    <div class="px-4 py-3.5 border-b border-white/5 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-lg neon-glow">
-                <i class="fa-solid fa-sparkles text-sm"></i>
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fa-solid fa-sparkles"></i>
             </div>
             <div>
-                <h1 class="text-base font-bold text-white">ExtractFlow</h1>
-                <p class="text-[10px] text-zinc-400 font-medium">AI-Powered Extraction</p>
+                <div class="header-title">ExtractFlow</div>
+                <div class="header-subtitle">Data Extractor</div>
             </div>
         </div>
-        <div class="flex items-center gap-2">
-            <button onclick="clearAll()" class="w-8 h-8 rounded-lg btn-secondary btn flex items-center justify-center text-zinc-400 hover:text-white" title="Reset">
-                <i class="fa-solid fa-arrow-rotate-right text-xs"></i>
+        <div class="header-actions">
+            <button onclick="clearAll()" class="btn btn-secondary btn-icon" title="Reset All">
+                <i class="fa-solid fa-arrow-rotate-right"></i>
             </button>
-            <button onclick="downloadCSV()" class="px-3 h-8 rounded-lg btn-primary btn text-xs font-semibold flex items-center gap-1.5">
-                <i class="fa-solid fa-download text-[10px]"></i>
+            <button onclick="downloadCSV()" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-download"></i>
                 <span>Export</span>
             </button>
         </div>
-    </div>
+    </header>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col p-3 gap-3 overflow-hidden">
-        <!-- Quick Stats -->
-        <div class="flex gap-2">
-            <div class="flex-1 glass-card px-3 py-2.5 rounded-xl">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                        <i class="fa-solid fa-envelope text-purple-400 text-xs"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-zinc-400">Emails</div>
-                        <div class="text-sm font-bold text-white" id="emailCount">0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex-1 glass-card px-3 py-2.5 rounded-xl">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                        <i class="fa-solid fa-phone text-emerald-400 text-xs"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-zinc-400">Phones</div>
-                        <div class="text-sm font-bold text-white" id="phoneCount">0</div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex-1 glass-card px-3 py-2.5 rounded-xl">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                        <i class="fa-solid fa-database text-blue-400 text-xs"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-zinc-400">Records</div>
-                        <div class="text-sm font-bold text-white" id="count">0</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input Section -->
-        <div class="glass-card p-3.5 rounded-xl flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-paste text-purple-400 text-xs"></i>
-                    <span class="text-xs font-semibold text-zinc-300">Text Input</span>
-                </div>
-                <button onclick="loadSampleData()" class="px-2.5 py-1 rounded-lg btn-secondary text-[10px] font-medium btn">
-                    Sample
-                </button>
-            </div>
-            <div class="relative">
-                <div id="pasteArea" 
-                     contenteditable="true" 
-                     class="input-modern rounded-lg p-3 min-h-[100px] max-h-[100px] overflow-y-auto scrollbar-modern text-sm resize-none"
-                     data-placeholder="Paste or type text here..."></div>
-            </div>
-        </div>
-
-        <!-- Extracted Data -->
-        <div class="glass-card p-3.5 rounded-xl flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-xs font-bold text-white">Extracted Data</h3>
-                    <p class="text-[10px] text-zinc-400 mt-0.5">Review and add</p>
-                </div>
-                <div class="flex gap-1.5">
-                    <button onclick="clearInputs()" class="w-7 h-7 rounded-lg btn-secondary btn flex items-center justify-center text-zinc-400 hover:text-white" title="Clear">
-                        <i class="fa-solid fa-eraser text-[10px]"></i>
-                    </button>
-                    <button onclick="addRecord()" id="addBtn" class="px-3 h-7 rounded-lg btn-primary btn text-xs font-semibold flex items-center gap-1.5 glow-effect">
-                        <i class="fa-solid fa-plus text-[10px]"></i>
-                        <span>Add</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Name Inputs -->
-            <div class="grid grid-cols-2 gap-2">
-                <div class="relative">
-                    <label class="absolute -top-2 left-2 bg-[#0a0a0f] px-1.5 text-[10px] font-semibold text-zinc-400">First Name</label>
-                    <input type="text" id="firstName" class="input-modern w-full rounded-lg p-2.5 text-sm" placeholder="John">
-                </div>
-                <div class="relative">
-                    <label class="absolute -top-2 left-2 bg-[#0a0a0f] px-1.5 text-[10px] font-semibold text-zinc-400">Last Name</label>
-                    <input type="text" id="lastName" class="input-modern w-full rounded-lg p-2.5 text-sm" placeholder="Doe">
-                </div>
-            </div>
-
-            <!-- Email Chips -->
-            <div class="relative">
-                <div class="absolute -top-2 left-2 bg-[#0a0a0f] px-1.5 flex items-center gap-1.5 z-10">
-                    <i class="fa-solid fa-envelope text-purple-400 text-[10px]"></i>
-                    <span class="text-[10px] font-semibold text-zinc-400">Emails</span>
-                </div>
-                <div id="emailList" class="input-modern rounded-lg p-2.5 min-h-[60px] flex flex-wrap gap-2">
-                    <span class="text-xs text-zinc-500 italic w-full">No emails detected...</span>
-                </div>
-            </div>
-
-            <!-- Phone Chips -->
-            <div class="relative">
-                <div class="absolute -top-2 left-2 bg-[#0a0a0f] px-1.5 flex items-center gap-1.5 z-10">
-                    <i class="fa-solid fa-phone text-emerald-400 text-[10px]"></i>
-                    <span class="text-[10px] font-semibold text-zinc-400">Phones</span>
-                </div>
-                <div id="phoneList" class="input-modern rounded-lg p-2.5 min-h-[60px] flex flex-wrap gap-2">
-                    <span class="text-xs text-zinc-500 italic w-full">No phones detected...</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Records List -->
-        <div class="glass-card flex-1 flex flex-col overflow-hidden rounded-xl min-h-0">
-            <div class="px-3.5 py-2.5 flex items-center justify-between border-b border-white/5">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-list text-zinc-400 text-xs"></i>
-                    <span class="text-xs font-semibold text-zinc-300">Saved Records</span>
-                </div>
-                <div class="px-2.5 py-1 rounded-full stat-badge text-white text-[10px] font-bold" id="countDisplay">0</div>
-            </div>
+    <main class="flex flex-col" style="height: calc(100vh - 57px); overflow: hidden;">
+        <div class="flex flex-col" style="padding: 12px; gap: 12px; overflow-y: auto; flex: 1;" class="scrollbar">
             
-            <div class="flex-1 overflow-y-auto scrollbar-modern p-2.5">
-                <div id="emptyState" class="h-full flex flex-col items-center justify-center text-zinc-500 p-6">
-                    <div class="w-16 h-16 rounded-full bg-zinc-800/50 flex items-center justify-center mb-3 border border-white/5">
-                        <i class="fa-solid fa-inbox text-2xl text-zinc-600"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-zinc-400 mb-1">No records yet</p>
-                    <p class="text-[10px] text-zinc-500 text-center max-w-[200px]">Extract data and add your first record</p>
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="emailCount">0</div>
+                    <div class="stat-label">Emails</div>
                 </div>
-                <div id="recordsList" class="space-y-2"></div>
+                <div class="stat-card">
+                    <div class="stat-value" id="phoneCount">0</div>
+                    <div class="stat-label">Phones</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="count">0</div>
+                    <div class="stat-label">Records</div>
+                </div>
             </div>
+
+            <!-- Input Section -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Text Input</div>
+                        <div class="card-subtitle">Paste or type your text</div>
+                    </div>
+                    <button onclick="loadSampleData()" class="btn btn-secondary btn-sm">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span>Sample</span>
+                    </button>
+                </div>
+                <div class="input-group">
+                    <div id="pasteArea" 
+                         contenteditable="true" 
+                         class="input textarea scrollbar"
+                         data-placeholder="Paste your text here..."></div>
+                </div>
+            </div>
+
+            <!-- Extracted Data -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Extracted Data</div>
+                        <div class="card-subtitle">Review and add to records</div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="clearInputs()" class="btn btn-secondary btn-icon" title="Clear">
+                            <i class="fa-solid fa-eraser"></i>
+                        </button>
+                        <button onclick="addRecord()" id="addBtn" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Name Inputs -->
+                <div class="input-grid mb-2">
+                    <div class="input-group">
+                        <label class="input-label">First Name</label>
+                        <input type="text" id="firstName" class="input" placeholder="John">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Last Name</label>
+                        <input type="text" id="lastName" class="input" placeholder="Doe">
+                    </div>
+                </div>
+
+                <!-- Email Chips -->
+                <div class="input-group">
+                    <div class="section-label">
+                        <i class="fa-solid fa-envelope section-label-icon" style="color: var(--primary);"></i>
+                        <span>Email Addresses</span>
+                    </div>
+                    <div id="emailList" class="chips-container">
+                        <span class="empty-state">No emails detected...</span>
+                    </div>
+                </div>
+
+                <!-- Phone Chips -->
+                <div class="input-group" style="margin-bottom: 0;">
+                    <div class="section-label">
+                        <i class="fa-solid fa-phone section-label-icon" style="color: var(--success);"></i>
+                        <span>Phone Numbers</span>
+                    </div>
+                    <div id="phoneList" class="chips-container">
+                        <span class="empty-state">No phones detected...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Records List -->
+            <div class="card" style="flex: 1; display: flex; flex-direction: column; min-h: 0; padding: 12px;">
+                <div class="card-header" style="margin-bottom: 8px;">
+                    <div>
+                        <div class="card-title">Saved Records</div>
+                        <div class="card-subtitle">Your extracted data</div>
+                    </div>
+                    <div class="badge" id="countDisplay">0</div>
+                </div>
+                
+                <div id="recordsList" class="records-container scrollbar">
+                    <div id="emptyState" class="empty-records">
+                        <div class="empty-records-icon">
+                            <i class="fa-solid fa-inbox"></i>
+                        </div>
+                        <div class="empty-records-title">No records yet</div>
+                        <div class="empty-records-text">Extract data and add your first record</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </main>
 
     <!-- Context Menu -->
-    <div id="floatMenu" class="fixed hidden glass-card rounded-xl shadow-2xl p-2 z-50 border border-white/10">
-        <button onclick="assignName()" class="px-4 py-2 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 text-xs font-semibold btn flex items-center gap-2 border border-purple-500/30">
-            <i class="fa-solid fa-user-check text-[10px]"></i>
+    <div id="floatMenu" class="context-menu">
+        <div onclick="assignName()" class="context-menu-item">
+            <i class="fa-solid fa-user-check"></i>
             <span>Assign Name</span>
-        </button>
+        </div>
     </div>
 
     <script src="popup.js"></script>
