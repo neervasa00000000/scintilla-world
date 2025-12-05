@@ -35,6 +35,34 @@ const patterns = {
     phone: /(?:(?:\+?61|0)[2-478](?:[ -]?[0-9]){8})|(?:\+?61|0)4(?:[ -]?[0-9]){8}|(?:\(0[2-478]\)(?:[ -]?[0-9]){8})|\b\d{4}[ -]?\d{3}[ -]?\d{3}\b/g
 };
 
+// Filter out common UI elements and invalid data
+const filterInvalid = {
+    emails: (email) => {
+        const lower = email.toLowerCase();
+        // Filter out common UI/placeholder emails
+        const invalid = [
+            'example.com', 'test.com', 'sample.com', 'placeholder.com',
+            'your-email', 'email@', '@example', 'noreply', 'no-reply',
+            'mailto:', 'http', 'www.', 'localhost'
+        ];
+        return !invalid.some(inv => lower.includes(inv)) && 
+               email.length > 5 && 
+               email.includes('@') && 
+               email.split('@')[1] && 
+               email.split('@')[1].includes('.');
+    },
+    phones: (phone) => {
+        // Remove all non-digits for validation
+        const digits = phone.replace(/\D/g, '');
+        // Must be between 8-15 digits and not all same number
+        return digits.length >= 8 && 
+               digits.length <= 15 && 
+               !/^(\d)\1+$/.test(digits) &&
+               !phone.includes('http') &&
+               !phone.includes('www');
+    }
+};
+
 // Toast Notification
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
@@ -93,13 +121,23 @@ el.pasteArea.addEventListener('input', () => {
 function scanText(text) {
     if (!text) return;
     
-    const emails = text.match(patterns.email) || [];
-    const phones = text.match(patterns.phone) || [];
+    // Clean text - remove common UI elements and noise
+    let cleanText = text
+        .replace(/https?:\/\/[^\s]+/gi, ' ') // Remove URLs
+        .replace(/www\.[^\s]+/gi, ' ') // Remove www links
+        .replace(/mailto:[^\s]+/gi, ' ') // Remove mailto links
+        .replace(/[A-Z]{3,}\s+[A-Z]{3,}/g, ' ') // Remove multiple all-caps words (UI labels)
+        .replace(/\b(CLICK|BUTTON|MENU|NAV|SEARCH|FILTER|SORT|EXPORT|IMPORT|DELETE|EDIT|SAVE|CANCEL|SUBMIT|RESET|CLEAR|ADD|REMOVE|UPDATE|CREATE|VIEW|DETAILS|SHOW|HIDE|TOGGLE|NEXT|PREVIOUS|BACK|FORWARD|HOME|ABOUT|CONTACT|HELP|SUPPORT|SETTINGS|PROFILE|ACCOUNT|LOGOUT|DASHBOARD|PAGE|TAB|PANEL|MODAL|POPUP|DROPDOWN|SELECT|OPTION|INPUT|TEXTAREA|FORM|LABEL|PLACEHOLDER|ERROR|SUCCESS|WARNING|INFO|NOTIFICATION|ALERT|MESSAGE|TITLE|SUBTITLE|HEADING|DESCRIPTION|CONTENT|BODY|DIV|SPAN|IMG|A|BUTTON|NAV|HEADER|FOOTER|SECTION|ARTICLE|ASIDE|MAIN)\b/gi, ' ') // Remove common UI terms
+        .replace(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, ' ') // Remove IP addresses
+        .replace(/\b\d{4,5}\b/g, ' '); // Remove standalone 4-5 digit numbers (likely not phones)
+    
+    const emails = cleanText.match(patterns.email) || [];
+    const phones = cleanText.match(patterns.phone) || [];
     let added = 0;
     
     emails.forEach(e => {
-        const trimmed = e.trim();
-        if (!state.currentEmails.has(trimmed)) {
+        const trimmed = e.trim().toLowerCase();
+        if (filterInvalid.emails(trimmed) && !state.currentEmails.has(trimmed)) {
             state.currentEmails.add(trimmed);
             added++;
         }
@@ -107,7 +145,7 @@ function scanText(text) {
     
     phones.forEach(p => {
         const clean = p.trim();
-        if (clean.length > 6 && !state.currentPhones.has(clean)) {
+        if (filterInvalid.phones(clean) && !state.currentPhones.has(clean)) {
             state.currentPhones.add(clean);
             added++;
         }
