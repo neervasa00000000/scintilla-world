@@ -3,258 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExtractFlow // Soft UI</title>
+    <title>ExtractFlow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #e0e5ec;
-            --text-main: #4d5b7c;
-            --text-light: #a3b1c6;
-            --shadow-light: #ffffff;
-            --shadow-dark: #a3b1c6;
-            --accent: #6d5dfc;
-        }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Nunito', sans-serif;
-            width: 900px;
-            height: 700px;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            width: 500px;
+            height: 600px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             overflow: hidden;
         }
-        /* Neumorphic Utilities */
-        .neu-flat {
-            border-radius: 20px;
-            background: var(--bg-color);
-            box-shadow: 8px 8px 16px var(--shadow-dark), 
-                       -8px -8px 16px var(--shadow-light);
-            border: 1px solid rgba(255,255,255,0.2);
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        .neu-pressed {
-            border-radius: 15px;
-            background: var(--bg-color);
-            box-shadow: inset 6px 6px 12px var(--shadow-dark), 
-                       inset -6px -6px 12px var(--shadow-light);
-            border: none;
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .neu-btn {
-            border-radius: 50px;
-            background: var(--bg-color);
-            box-shadow: 6px 6px 10px var(--shadow-dark), 
-                       -6px -6px 10px var(--shadow-light);
-            color: var(--text-main);
-            font-weight: 700;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .neu-btn:hover {
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
-            color: var(--accent);
         }
-        
-        .neu-btn:active {
-            box-shadow: inset 4px 4px 8px var(--shadow-dark), 
-                       inset -4px -4px 8px var(--shadow-light);
-            transform: translateY(0);
-        }
-        .neu-btn.primary {
-            color: var(--accent);
-        }
-        .neu-btn.primary:hover {
-            box-shadow: 6px 6px 10px var(--shadow-dark), 
-                       -6px -6px 10px var(--shadow-light),
-                       inset 0 0 0 1px var(--accent);
-        }
-        /* Input Styling */
-        .neu-input {
-            width: 100%;
-            padding: 12px 20px;
-            outline: none;
-            color: var(--text-main);
+        .btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 600;
         }
-        .neu-input::placeholder { color: var(--text-light); }
-        .neu-input:focus {
-            color: var(--accent);
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
-        /* Scrollbar */
-        .custom-scroll::-webkit-scrollbar { width: 8px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { 
-            background-color: var(--bg-color);
-            border-radius: 20px;
-            border: 2px solid var(--bg-color);
-            box-shadow: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+        .btn:active {
+            transform: translateY(0);
         }
-        /* Chips */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        .input-field {
+            transition: all 0.2s ease;
+            border: 2px solid #e5e7eb;
+        }
+        .input-field:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
         .chip {
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.2s ease;
         }
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        .chip:hover {
+            transform: scale(1.05);
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollbar-hide::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .scrollbar-hide::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .scrollbar-hide::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
         [contenteditable]:empty:before {
             content: attr(data-placeholder);
-            color: var(--text-light);
-            display: block;
+            color: #94a3b8;
         }
-        /* Float Menu */
-        .float-menu {
-            border-radius: 50px;
-            background: var(--bg-color);
-            box-shadow: 10px 10px 20px var(--shadow-dark), 
-                       -10px -10px 20px var(--shadow-light);
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="flex flex-col">
     <!-- Header -->
-    <header class="h-24 flex-none px-8 flex justify-between items-center z-10">
-        <div class="flex items-center gap-4">
-            <div class="neu-flat w-12 h-12 flex items-center justify-center rounded-full text-indigo-500 text-xl">
-                <i class="fa-solid fa-soap"></i>
+    <div class="glass px-4 py-3 flex items-center justify-between border-b border-white/20">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
             </div>
             <div>
-                <h1 class="text-2xl font-extrabold text-[#4d5b7c] tracking-tight">Extract<span class="text-[#6d5dfc]">Flow</span></h1>
-                <p class="text-xs font-bold text-[#a3b1c6] uppercase tracking-wider">Soft UI v5.0</p>
+                <h1 class="text-sm font-bold text-gray-800">ExtractFlow</h1>
+                <p class="text-[10px] text-gray-500">Data Extractor</p>
             </div>
         </div>
-        
-        <div class="flex gap-6">
-            <button onclick="clearAll()" class="neu-btn w-12 h-12 rounded-full text-slate-400 hover:text-red-400" title="Reset">
-                <i class="fa-solid fa-power-off"></i>
+        <div class="flex items-center gap-2">
+            <button onclick="clearAll()" class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 text-xs btn" title="Reset">
+                <i class="fa-solid fa-rotate-right"></i>
             </button>
-            <button onclick="downloadCSV()" class="neu-btn primary px-8 h-12 gap-3">
-                <i class="fa-solid fa-file-export"></i> Export CSV
+            <button onclick="downloadCSV()" class="px-3 h-7 rounded-lg btn-primary text-xs btn flex items-center gap-1.5">
+                <i class="fa-solid fa-download text-[10px]"></i>
+                <span>Export</span>
             </button>
         </div>
-    </header>
-    <!-- Main Workspace -->
-    <main class="flex-1 flex overflow-hidden p-8 pt-2 gap-10 max-w-[1600px] mx-auto w-full">
-        
-        <!-- Left: Input -->
-        <section class="w-5/12 flex flex-col neu-flat p-6 rounded-[30px] relative">
-            <div class="flex justify-between items-center mb-4 px-2">
-                <div class="flex items-center gap-2 text-[#a3b1c6]">
-                    <i class="fa-solid fa-align-left"></i>
-                    <span class="text-xs font-bold uppercase tracking-widest">Raw Input</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col p-3 gap-3 overflow-hidden">
+        <!-- Input Section -->
+        <div class="card p-3 flex flex-col gap-2 flex-shrink-0">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-paste text-purple-500 text-xs"></i>
+                    <span class="text-xs font-semibold text-gray-700">Paste Text</span>
                 </div>
-                <button onclick="loadSampleData()" class="neu-btn px-4 h-8 text-xs text-[#6d5dfc]">
-                    Load Sample
+                <button onclick="loadSampleData()" class="text-[10px] px-2 py-1 rounded-md bg-purple-50 text-purple-600 hover:bg-purple-100 font-medium btn">
+                    Sample
                 </button>
             </div>
-            
-            <div class="flex-1 relative neu-pressed overflow-hidden">
+            <div class="relative">
                 <div id="pasteArea" 
                      contenteditable="true" 
-                     class="absolute inset-0 p-6 outline-none overflow-y-auto custom-scroll text-sm leading-7 font-medium text-[#4d5b7c] whitespace-pre-wrap"
-                     data-placeholder="Paste text here..."></div>
+                     class="input-field rounded-lg p-3 min-h-[80px] max-h-[80px] overflow-y-auto scrollbar-hide text-sm text-gray-700 bg-gray-50 focus:bg-white outline-none"
+                     data-placeholder="Paste your text here..."></div>
             </div>
-        </section>
-        <!-- Right: Processing -->
-        <section class="w-7/12 flex flex-col gap-8">
+        </div>
+
+        <!-- Extracted Data Section -->
+        <div class="card p-3 flex flex-col gap-3 flex-shrink-0">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xs font-bold text-gray-800">Detected Data</h3>
+                    <p class="text-[10px] text-gray-500">Ready to extract</p>
+                </div>
+                <div class="flex gap-1.5">
+                    <button onclick="clearInputs()" class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 text-xs btn" title="Clear">
+                        <i class="fa-solid fa-eraser text-[10px]"></i>
+                    </button>
+                    <button onclick="addRecord()" class="px-3 h-7 rounded-lg btn-primary text-xs btn flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus text-[10px]"></i>
+                        <span>Add</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Name Inputs -->
+            <div class="grid grid-cols-2 gap-2">
+                <div class="relative">
+                    <label class="absolute -top-2 left-2 bg-white px-1.5 text-[10px] font-semibold text-gray-500">First Name</label>
+                    <input type="text" id="firstName" class="input-field w-full rounded-lg p-2 text-sm bg-gray-50 focus:bg-white outline-none" placeholder="John">
+                </div>
+                <div class="relative">
+                    <label class="absolute -top-2 left-2 bg-white px-1.5 text-[10px] font-semibold text-gray-500">Last Name</label>
+                    <input type="text" id="lastName" class="input-field w-full rounded-lg p-2 text-sm bg-gray-50 focus:bg-white outline-none" placeholder="Doe">
+                </div>
+            </div>
+
+            <!-- Email Chips -->
+            <div class="relative">
+                <div class="absolute -top-2 left-2 bg-white px-1.5 flex items-center gap-1.5">
+                    <i class="fa-solid fa-envelope text-purple-500 text-[10px]"></i>
+                    <span class="text-[10px] font-semibold text-gray-500">Emails</span>
+                    <span id="emailCount" class="text-[10px] font-bold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-full">0</span>
+                </div>
+                <div id="emailList" class="input-field rounded-lg p-2 min-h-[50px] flex flex-wrap gap-1.5 bg-gray-50">
+                    <span class="text-xs text-gray-400 italic">No emails found...</span>
+                </div>
+            </div>
+
+            <!-- Phone Chips -->
+            <div class="relative">
+                <div class="absolute -top-2 left-2 bg-white px-1.5 flex items-center gap-1.5">
+                    <i class="fa-solid fa-phone text-emerald-500 text-[10px]"></i>
+                    <span class="text-[10px] font-semibold text-gray-500">Phones</span>
+                    <span id="phoneCount" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">0</span>
+                </div>
+                <div id="phoneList" class="input-field rounded-lg p-2 min-h-[50px] flex flex-wrap gap-1.5 bg-gray-50">
+                    <span class="text-xs text-gray-400 italic">No phones found...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Records List -->
+        <div class="card flex-1 flex flex-col overflow-hidden">
+            <div class="px-3 py-2 flex items-center justify-between border-b border-gray-100">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-database text-gray-400 text-xs"></i>
+                    <span class="text-xs font-semibold text-gray-600">Records</span>
+                </div>
+                <div class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-600 text-[10px] font-bold" id="count">0</div>
+            </div>
             
-            <!-- Active Record -->
-            <div id="stagingCard" class="neu-flat p-8 rounded-[30px] transition-all duration-300">
-                <div class="flex justify-between items-start mb-8">
-                    <div>
-                        <h2 class="text-lg font-bold text-[#4d5b7c]">Detected Data</h2>
-                        <p class="text-xs font-bold text-[#a3b1c6] mt-1">Ready for extraction</p>
-                    </div>
-                    <div class="flex gap-4">
-                        <button onclick="clearInputs()" class="neu-btn w-10 h-10 text-[#a3b1c6] hover:text-[#4d5b7c]" title="Clear Form">
-                            <i class="fa-solid fa-eraser"></i>
-                        </button>
-                        <button onclick="addRecord()" id="addBtn" class="neu-btn primary px-8 h-10 gap-2 text-sm">
-                            <i class="fa-solid fa-check"></i> Add to List
-                        </button>
-                    </div>
+            <div class="flex-1 overflow-y-auto scrollbar-hide p-2">
+                <div id="emptyState" class="h-full flex flex-col items-center justify-center text-gray-400 p-4">
+                    <i class="fa-solid fa-inbox text-2xl mb-2 opacity-50"></i>
+                    <p class="text-xs font-medium">No records yet</p>
+                    <p class="text-[10px] mt-1 opacity-75">Add your first record above</p>
                 </div>
-                <div class="grid grid-cols-12 gap-8">
-                    <!-- Names -->
-                    <div class="col-span-5 space-y-6">
-                        <div class="relative">
-                            <label class="absolute -top-3 left-4 bg-[#e0e5ec] px-2 text-[10px] font-extrabold text-[#a3b1c6] uppercase tracking-wider">First Name</label>
-                            <input type="text" id="firstName" class="neu-pressed neu-input" placeholder="Name">
-                        </div>
-                        <div class="relative">
-                            <label class="absolute -top-3 left-4 bg-[#e0e5ec] px-2 text-[10px] font-extrabold text-[#a3b1c6] uppercase tracking-wider">Last Name</label>
-                            <input type="text" id="lastName" class="neu-pressed neu-input" placeholder="Surname">
-                        </div>
-                    </div>
-                    <!-- Lists -->
-                    <div class="col-span-7 space-y-4">
-                        <!-- Email -->
-                        <div class="neu-pressed p-2 min-h-[60px] flex items-center relative">
-                            <div class="absolute -top-3 left-4 bg-[#e0e5ec] px-2 flex items-center gap-2">
-                                <i class="fa-solid fa-at text-[#6d5dfc] text-xs"></i>
-                                <span class="text-[10px] font-extrabold text-[#a3b1c6] uppercase tracking-wider">Emails</span>
-                                <span id="emailCount" class="text-[10px] font-bold text-[#4d5b7c]">0</span>
-                            </div>
-                            <div id="emailList" class="flex flex-wrap gap-3 px-2 pt-2 w-full">
-                                <span class="text-xs font-bold text-[#a3b1c6] opacity-50 px-2">No data...</span>
-                            </div>
-                        </div>
-                        <!-- Phone -->
-                        <div class="neu-pressed p-2 min-h-[60px] flex items-center relative mt-6">
-                            <div class="absolute -top-3 left-4 bg-[#e0e5ec] px-2 flex items-center gap-2">
-                                <i class="fa-solid fa-phone text-emerald-500 text-xs"></i>
-                                <span class="text-[10px] font-extrabold text-[#a3b1c6] uppercase tracking-wider">Phones</span>
-                                <span id="phoneCount" class="text-[10px] font-bold text-[#4d5b7c]">0</span>
-                            </div>
-                            <div id="phoneList" class="flex flex-wrap gap-3 px-2 pt-2 w-full">
-                                <span class="text-xs font-bold text-[#a3b1c6] opacity-50 px-2">No data...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="recordsList" class="space-y-2"></div>
             </div>
-            <!-- List -->
-            <div class="flex-1 neu-flat flex flex-col overflow-hidden rounded-[30px] p-1">
-                <div class="px-8 py-4 flex justify-between items-center">
-                    <h3 class="text-xs font-extrabold text-[#a3b1c6] uppercase tracking-widest">Records Database</h3>
-                    <div class="neu-pressed px-3 py-1 rounded-full text-xs font-bold text-[#6d5dfc]" id="count">0</div>
-                </div>
-                
-                <div class="flex-1 overflow-y-auto custom-scroll px-2 pb-2">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="sticky top-0 bg-[#e0e5ec] z-10 text-[10px] font-extrabold text-[#a3b1c6] uppercase tracking-wider">
-                            <tr>
-                                <th class="px-6 py-3 pl-8">Identity</th>
-                                <th class="px-6 py-3">Communication</th>
-                                <th class="px-6 py-3 text-right pr-8">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="text-sm font-medium text-[#4d5b7c]">
-                            <!-- Rows -->
-                        </tbody>
-                    </table>
-                    
-                    <div id="emptyState" class="h-full flex flex-col items-center justify-center text-[#a3b1c6] p-8 min-h-[150px] opacity-50">
-                        <i class="fa-solid fa-folder-open text-4xl mb-2"></i>
-                        <p class="font-bold">No Records</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    <!-- Context Menu -->
-    <div id="floatMenu" class="fixed hidden float-menu px-2 py-2 z-50 transform -translate-x-1/2 -translate-y-full mt-[-20px]">
-        <button onclick="assignName()" class="neu-btn primary px-6 h-10 gap-2 text-xs uppercase tracking-wide">
-            <i class="fa-solid fa-user-check"></i> Assign Name
-        </button>
-        <!-- Arrow -->
-        <div class="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 w-4 h-4 bg-[#e0e5ec] rotate-45 z-[-1] shadow-lg"></div>
+        </div>
     </div>
+
+    <!-- Context Menu -->
+    <div id="floatMenu" class="fixed hidden bg-white rounded-lg shadow-xl border border-gray-200 p-2 z-50">
+        <button onclick="assignName()" class="px-3 py-1.5 rounded-md bg-purple-50 hover:bg-purple-100 text-purple-600 text-xs font-semibold btn flex items-center gap-2">
+            <i class="fa-solid fa-user-check text-[10px]"></i>
+            <span>Assign Name</span>
+        </button>
+    </div>
+
     <script>
         // State
         const state = {
@@ -268,13 +254,12 @@
         const el = {
             pasteArea: document.getElementById('pasteArea'),
             floatMenu: document.getElementById('floatMenu'),
-            tableBody: document.getElementById('tableBody'),
+            recordsList: document.getElementById('recordsList'),
             emptyState: document.getElementById('emptyState'),
             countSpan: document.getElementById('count'),
             inputs: { first: document.getElementById('firstName'), last: document.getElementById('lastName') },
             lists: { email: document.getElementById('emailList'), phone: document.getElementById('phoneList') },
-            counts: { email: document.getElementById('emailCount'), phone: document.getElementById('phoneCount') },
-            stagingCard: document.getElementById('stagingCard')
+            counts: { email: document.getElementById('emailCount'), phone: document.getElementById('phoneCount') }
         };
 
         const patterns = {
@@ -282,27 +267,25 @@
             phone: /(?:(?:\+?61|0)[2-478](?:[ -]?[0-9]){8})|(?:\+?61|0)4(?:[ -]?[0-9]){8}|(?:\(0[2-478]\)(?:[ -]?[0-9]){8})|\b\d{4}[ -]?\d{3}[ -]?\d{3}\b/g
         };
 
-        // Load saved data from storage
+        // Load saved data
         chrome.storage.local.get(['extractflow_records'], (result) => {
             if (result.extractflow_records) {
                 state.records = result.extractflow_records;
-                renderTable();
+                renderRecords();
             }
         });
 
-        // Logic
+        // Functions
         function loadSampleData() {
             const sample = `INVOICE #001
-------------------
-To:      Elon Musk
+To: Elon Musk
 Contact: elon@mars.x
-Secure:  0499 123 456
+Phone: 0499 123 456
 
 INVOICE #002
-------------------
-To:      Jeff Bezos
-Email:   jeff@amazon.prime
-Direct:  (02) 9911 2233`;
+To: Jeff Bezos
+Email: jeff@amazon.prime
+Direct: (02) 9911 2233`;
             el.pasteArea.innerText = sample;
             scanText(sample);
         }
@@ -321,18 +304,24 @@ Direct:  (02) 9911 2233`;
             const emails = text.match(patterns.email) || [];
             const phones = text.match(patterns.phone) || [];
             let added = 0;
+            
             emails.forEach(e => {
-                if(!state.currentEmails.has(e.trim())) { state.currentEmails.add(e.trim()); added++; }
+                if(!state.currentEmails.has(e.trim())) { 
+                    state.currentEmails.add(e.trim()); 
+                    added++; 
+                }
             });
+            
             phones.forEach(p => {
                 const clean = p.trim();
-                if(clean.length > 6 && !state.currentPhones.has(clean)) { state.currentPhones.add(clean); added++; }
+                if(clean.length > 6 && !state.currentPhones.has(clean)) { 
+                    state.currentPhones.add(clean); 
+                    added++; 
+                }
             });
+            
             if(added > 0) {
                 renderChips();
-                // Press Animation
-                el.stagingCard.style.transform = "scale(0.98)";
-                setTimeout(() => el.stagingCard.style.transform = "scale(1)", 200);
             }
         }
 
@@ -343,27 +332,25 @@ Direct:  (02) 9911 2233`;
                 state.selection = text;
                 const rect = sel.getRangeAt(0).getBoundingClientRect();
                 el.floatMenu.style.display = 'block';
-                el.floatMenu.style.left = `${rect.left + (rect.width/2)}px`;
-                el.floatMenu.style.top = `${rect.top}px`;
+                el.floatMenu.style.left = `${rect.left + (rect.width/2) - 60}px`;
+                el.floatMenu.style.top = `${rect.top - 40}px`;
             } else if (!el.floatMenu.contains(e.target)) {
                 el.floatMenu.style.display = 'none';
             }
         });
 
-        el.pasteArea.addEventListener('scroll', () => { el.floatMenu.style.display = 'none'; });
-
         function assignName() {
             const parts = state.selection.split(' ');
-            el.inputs.first.value = parts[0];
-            el.inputs.last.value = parts.slice(1).join(' ');
+            el.inputs.first.value = parts[0] || '';
+            el.inputs.last.value = parts.slice(1).join(' ') || '';
             el.floatMenu.style.display = 'none';
             window.getSelection().removeAllRanges();
             el.inputs.first.focus();
         }
 
         function renderChips() {
-            renderList(el.lists.email, state.currentEmails, 'text-[#6d5dfc]');
-            renderList(el.lists.phone, state.currentPhones, 'text-emerald-500');
+            renderList(el.lists.email, state.currentEmails, 'bg-purple-50 text-purple-600 border-purple-200');
+            renderList(el.lists.phone, state.currentPhones, 'bg-emerald-50 text-emerald-600 border-emerald-200');
             el.counts.email.innerText = state.currentEmails.size;
             el.counts.phone.innerText = state.currentPhones.size;
         }
@@ -371,16 +358,20 @@ Direct:  (02) 9911 2233`;
         function renderList(container, set, colorClass) {
             container.innerHTML = '';
             if(set.size === 0) {
-                container.innerHTML = `<span class="text-xs font-bold text-[#a3b1c6] opacity-50 px-2">No data...</span>`;
+                container.innerHTML = '<span class="text-xs text-gray-400 italic">No data...</span>';
                 return;
             }
             set.forEach(item => {
                 const div = document.createElement('div');
-                div.className = `chip neu-flat px-3 py-1.5 rounded-full text-xs font-bold ${colorClass} flex items-center gap-2 cursor-pointer hover:text-red-400 transition-colors`;
+                div.className = `chip px-2 py-1 rounded-md text-xs font-medium border ${colorClass} flex items-center gap-1.5 cursor-pointer hover:opacity-80`;
                 div.innerHTML = `
-                    ${item} <i class="fa-solid fa-xmark text-[10px] opacity-50"></i>
+                    <span>${item}</span>
+                    <i class="fa-solid fa-xmark text-[10px] opacity-60"></i>
                 `;
-                div.onclick = () => { set.delete(item); renderChips(); };
+                div.onclick = () => { 
+                    set.delete(item); 
+                    renderChips(); 
+                };
                 container.appendChild(div);
             });
         }
@@ -388,85 +379,98 @@ Direct:  (02) 9911 2233`;
         function addRecord() {
             const f = el.inputs.first.value.trim();
             const l = el.inputs.last.value.trim();
-            if(!f && state.currentEmails.size === 0) {
+            if(!f && state.currentEmails.size === 0 && state.currentPhones.size === 0) {
                 return;
             }
+            
             state.records.push({
                 id: Date.now(),
                 f, l, 
                 emails: Array.from(state.currentEmails),
                 phones: Array.from(state.currentPhones)
             });
-            renderTable();
+            
+            renderRecords();
             clearInputs();
-            // Save to storage
             chrome.storage.local.set({ extractflow_records: state.records });
         }
 
-        function renderTable() {
-            el.tableBody.innerHTML = '';
+        function renderRecords() {
+            el.recordsList.innerHTML = '';
             el.countSpan.innerText = state.records.length;
             el.emptyState.style.display = state.records.length ? 'none' : 'flex';
-            state.records.forEach(r => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-[#e0e5ec] last:border-0 hover:bg-[#dbe0e9] transition-colors';
-                
-                const eChips = r.emails.map(e => `<span class="inline-block px-2 py-0.5 rounded-md bg-[#e0e5ec] text-[#6d5dfc] text-[10px] font-bold shadow-sm mr-1 mb-1 border border-white/50">${e}</span>`).join('');
-                const pChips = r.phones.map(p => `<span class="inline-block px-2 py-0.5 rounded-md bg-[#e0e5ec] text-emerald-600 text-[10px] font-bold shadow-sm mr-1 mb-1 border border-white/50">${p}</span>`).join('');
-
-                tr.innerHTML = `
-                    <td class="px-6 py-4 pl-8 align-top">
-                        <div class="font-extrabold text-[#4d5b7c]">${r.f} ${r.l}</div>
-                    </td>
-                    <td class="px-6 py-4 align-top">
-                        ${eChips} ${pChips}
-                    </td>
-                    <td class="px-6 py-4 text-right pr-8 align-top">
-                        <button onclick="deleteRec(${r.id})" class="neu-btn w-8 h-8 text-[#a3b1c6] hover:text-red-400 text-xs">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                el.tableBody.appendChild(tr);
-            });
             
-            const container = document.querySelector('.overflow-y-auto');
-            if(container) container.scrollTop = container.scrollHeight;
-            // Save to storage
-            chrome.storage.local.set({ extractflow_records: state.records });
+            state.records.forEach(r => {
+                const div = document.createElement('div');
+                div.className = 'fade-in card p-3 hover:shadow-md transition-all';
+                
+                const eChips = r.emails.map(e => 
+                    `<span class="inline-block px-2 py-0.5 rounded-md bg-purple-50 text-purple-600 text-[10px] font-medium border border-purple-200 mr-1 mb-1">${e}</span>`
+                ).join('');
+                
+                const pChips = r.phones.map(p => 
+                    `<span class="inline-block px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-medium border border-emerald-200 mr-1 mb-1">${p}</span>`
+                ).join('');
+
+                div.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex-1 min-w-0">
+                            <div class="font-semibold text-sm text-gray-800 mb-1.5">${r.f || 'Unknown'} ${r.l || ''}</div>
+                            <div class="flex flex-wrap gap-1">
+                                ${eChips} ${pChips}
+                            </div>
+                        </div>
+                        <button onclick="deleteRec(${r.id})" class="w-6 h-6 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center text-xs btn flex-shrink-0">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
+                    </div>
+                `;
+                el.recordsList.appendChild(div);
+            });
         }
 
         function deleteRec(id) {
             state.records = state.records.filter(r => r.id !== id);
-            renderTable();
+            renderRecords();
+            chrome.storage.local.set({ extractflow_records: state.records });
         }
 
         function clearInputs() {
-            el.inputs.first.value = ''; el.inputs.last.value = '';
-            state.currentEmails.clear(); state.currentPhones.clear();
+            el.inputs.first.value = '';
+            el.inputs.last.value = '';
+            state.currentEmails.clear();
+            state.currentPhones.clear();
             renderChips();
         }
 
         function clearAll() {
-            if(confirm("Start fresh?")) {
-                state.records = []; 
-                renderTable(); 
-                clearInputs(); 
+            if(confirm("Clear all data?")) {
+                state.records = [];
+                renderRecords();
+                clearInputs();
                 el.pasteArea.innerText = '';
                 chrome.storage.local.remove('extractflow_records');
             }
         }
 
         function downloadCSV() {
-            if(!state.records.length) return;
-            const csv = ['First Name,Last Name,Emails,Phones', ...state.records.map(r => `"${r.f}","${r.l}","${r.emails.join('; ')}","${r.phones.join('; ')}"` )].join('\n');
+            if(!state.records.length) {
+                alert('No records to export');
+                return;
+            }
+            const csv = [
+                'First Name,Last Name,Emails,Phones',
+                ...state.records.map(r => 
+                    `"${r.f}","${r.l}","${r.emails.join('; ')}","${r.phones.join('; ')}"`
+                )
+            ].join('\n');
+            
             const blob = new Blob([csv], { type: 'text/csv' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'extractflow_data.csv';
+            link.download = `extractflow_${Date.now()}.csv`;
             link.click();
         }
     </script>
 </body>
 </html>
-
