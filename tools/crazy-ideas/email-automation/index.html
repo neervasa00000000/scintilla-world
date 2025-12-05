@@ -422,6 +422,13 @@
                             >
                                 {templates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                             </select>
+                            {userEmail && (
+                                <div className="mt-3 pt-3 border-t border-slate-200">
+                                    <p className="text-xs text-slate-500 mb-1">Sending from:</p>
+                                    <p className="text-sm font-semibold text-indigo-600">{userEmail}</p>
+                                    <p className="text-xs text-slate-400 mt-1">via {emailClient === 'gmail' ? 'Gmail' : 'Apple Mail'}</p>
+                                </div>
+                            )}
                         </div>
                         <div className="flex-1 bg-white p-6 rounded-lg border shadow-sm flex items-end">
                             <button 
@@ -495,6 +502,7 @@
         function App() {
             const [activeTab, setActiveTab] = useState('contacts');
             const [emailClient, setEmailClient] = useState('apple'); // 'apple' or 'gmail'
+            const [userEmail, setUserEmail] = useState(''); // User's email address
             const [showSettings, setShowSettings] = useState(false);
             const [contacts, setContacts] = useState([
                 { id: 1, name: "Sarah Connor", email: "sarah@example.com", company: "Cyberdyne", status: "New" },
@@ -602,6 +610,12 @@
                                 </div>
                                 <span className="font-bold text-xl tracking-tight">AutoReach</span>
                             </div>
+                            {userEmail && (
+                                <div className="mt-3 pt-3 border-t border-slate-200">
+                                    <p className="text-xs text-slate-500 mb-1">Your Email:</p>
+                                    <p className="text-sm font-semibold text-slate-700 truncate" title={userEmail}>{userEmail}</p>
+                                </div>
+                            )}
                         </div>
                         
                         <nav className="flex-1 p-4 space-y-2">
@@ -632,31 +646,62 @@
                         </nav>
                         <div className="p-4 border-t border-slate-100 space-y-2">
                             {showSettings && (
-                                <div className="bg-white rounded-lg p-4 border border-slate-200 shadow-sm mb-2">
-                                    <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Email Client</p>
-                                    <div className="space-y-2">
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input
-                                                type="radio"
-                                                name="emailClient"
-                                                value="apple"
-                                                checked={emailClient === 'apple'}
-                                                onChange={(e) => setEmailClient(e.target.value)}
-                                                className="text-indigo-600"
-                                            />
-                                            <span className="text-sm text-slate-700">Apple Mail</span>
+                                <div className="bg-white rounded-lg p-4 border border-slate-200 shadow-sm mb-2 space-y-4">
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Email Client</p>
+                                        <div className="space-y-2">
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="radio"
+                                                    name="emailClient"
+                                                    value="apple"
+                                                    checked={emailClient === 'apple'}
+                                                    onChange={(e) => setEmailClient(e.target.value)}
+                                                    className="text-indigo-600"
+                                                />
+                                                <span className="text-sm text-slate-700">Apple Mail</span>
+                                            </label>
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="radio"
+                                                    name="emailClient"
+                                                    value="gmail"
+                                                    checked={emailClient === 'gmail'}
+                                                    onChange={(e) => setEmailClient(e.target.value)}
+                                                    className="text-indigo-600"
+                                                />
+                                                <span className="text-sm text-slate-700">Gmail</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
+                                            Your Email Address
                                         </label>
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input
-                                                type="radio"
-                                                name="emailClient"
-                                                value="gmail"
-                                                checked={emailClient === 'gmail'}
-                                                onChange={(e) => setEmailClient(e.target.value)}
-                                                className="text-indigo-600"
-                                            />
-                                            <span className="text-sm text-slate-700">Gmail</span>
-                                        </label>
+                                        <input
+                                            type="email"
+                                            placeholder="your.email@example.com"
+                                            value={userEmail}
+                                            onChange={(e) => setUserEmail(e.target.value)}
+                                            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                        />
+                                        <p className="text-xs text-slate-500 mt-1">
+                                            {userEmail ? (
+                                                <span className="text-green-600">✓ Emails will be sent from: <strong>{userEmail}</strong></span>
+                                            ) : (
+                                                <span>Enter your email to track which account you're using</span>
+                                            )}
+                                        </p>
+                                        {emailClient === 'apple' && (
+                                            <p className="text-xs text-slate-400 mt-1">
+                                                Note: Apple Mail will use your default account configured in Mail app
+                                            </p>
+                                        )}
+                                        {emailClient === 'gmail' && (
+                                            <p className="text-xs text-slate-400 mt-1">
+                                                Note: Gmail will use the account you're logged into in your browser
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             )}
@@ -706,6 +751,7 @@
                                     templates={templates}
                                     contacts={contacts}
                                     emailClient={emailClient}
+                                    userEmail={userEmail}
                                 />
                             )}
                         </div>
