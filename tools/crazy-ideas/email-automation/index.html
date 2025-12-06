@@ -7,10 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --blue-light: #9CC6DB;
-            --cream: #FCF6D9;
-            --orange: #CF4B00;
-            --tan: #DDBA7D;
+            --blue-light: #C2E2FA;
+            --cream: #FFF1CB;
+            --orange: #FF8F8F;
+            --tan: #B7A3E3;
         }
         body { background-color: var(--cream) !important; }
         .bg-blue-light { background-color: var(--blue-light) !important; }
@@ -233,9 +233,9 @@
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-6 rounded-3xl border-4 border-orange transform -rotate-1">
                     <div>
                         <h2 className="text-2xl font-black text-orange transform rotate-1">Add Contacts</h2>
-                        <p className="text-base font-bold mt-2" style={{color: '#CF4B00'}}>Upload a CSV or add manually.</p>
+                        <p className="text-base font-bold mt-2" style={{color: '#FF8F8F'}}>Upload a CSV or add manually.</p>
                     </div>
-                    <label className="flex items-center gap-2 text-white px-6 py-3 rounded-2xl cursor-pointer transition-all text-sm font-black active:scale-95 transform duration-200 hover:scale-110" style={{backgroundColor: '#CF4B00'}}>
+                    <label className="flex items-center gap-2 text-white px-6 py-3 rounded-2xl cursor-pointer transition-all text-sm font-black active:scale-95 transform duration-200 hover:scale-110" style={{backgroundColor: '#FF8F8F'}}>
                         <Upload size={20} />
                         <span>Import CSV</span>
                         <input 
@@ -270,13 +270,13 @@
                     />
                     <button 
                         type="submit"
-                        className="text-white p-4 rounded-2xl flex items-center justify-center min-w-[60px] transition-all duration-200 transform hover:scale-110 font-black text-xl" style={{backgroundColor: '#CF4B00'}}
+                        className="text-white p-4 rounded-2xl flex items-center justify-center min-w-[60px] transition-all duration-200 transform hover:scale-110 font-black text-xl" style={{backgroundColor: '#FF8F8F'}}
                     >
                         <Plus size={24} />
                     </button>
                 </form>
                 <div className="flex items-center bg-white border-4 border-blue-light rounded-2xl px-5 py-4 mb-4 mt-6 transform rotate-1">
-                    <Search size={20} className="mr-3" style={{color: '#CF4B00'}} />
+                    <Search size={20} className="mr-3" style={{color: '#FF8F8F'}} />
                     <input 
                         type="text" 
                         placeholder="Search contacts..." 
@@ -288,10 +288,10 @@
                 <div className="grid gap-4">
                     {contacts.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase())).map((contact, idx) => {
                         const statusColors = {
-                            'New': {bg: '#9CC6DB', text: '#CF4B00'},
-                            'Sent': {bg: '#DDBA7D', text: '#CF4B00'},
-                            'Replied': {bg: '#CF4B00', text: '#FCF6D9'},
-                            'No Response': {bg: '#DDBA7D', text: '#CF4B00'}
+                            'New': {bg: '#C2E2FA', text: '#FF8F8F'},
+                            'Sent': {bg: '#B7A3E3', text: '#FF8F8F'},
+                            'Replied': {bg: '#FF8F8F', text: '#FFF1CB'},
+                            'No Response': {bg: '#B7A3E3', text: '#FF8F8F'}
                         };
                         const statusIcons = {
                             'New': <Clock size={16} />,
@@ -310,22 +310,22 @@
                                             {contact.status}
                                         </span>
                                     </div>
-                                <p className="text-base font-bold" style={{color: '#CF4B00'}}>{contact.email} • {contact.company}</p>
+                                <p className="text-base font-bold" style={{color: '#FF8F8F'}}>{contact.email} • {contact.company}</p>
                                     {contact.lastSent && (
-                                        <p className="text-sm font-bold mt-2" style={{color: '#CF4B00'}}>Sent: {new Date(contact.lastSent).toLocaleDateString()}</p>
+                                        <p className="text-sm font-bold mt-2" style={{color: '#FF8F8F'}}>Sent: {new Date(contact.lastSent).toLocaleDateString()}</p>
                                     )}
                             </div>
                             <div className="flex gap-2">
                                 <a
                                     href={generateMailto(contact, templates[0], emailClient)}
                                     title="Quick Draft"
-                                    className="p-3 text-white rounded-2xl transition-all opacity-0 group-hover:opacity-100 transform hover:scale-125" style={{backgroundColor: '#CF4B00'}}
+                                    className="p-3 text-white rounded-2xl transition-all opacity-0 group-hover:opacity-100 transform hover:scale-125" style={{backgroundColor: '#FF8F8F'}}
                                 >
                                     <Send size={20} />
                                 </a>
                                 <button 
                                     onClick={() => handleDeleteContact(contact.id)}
-                                    className="p-3 rounded-2xl transition-all hover:scale-125" style={{color: '#CF4B00', backgroundColor: '#9CC6DB'}}
+                                    className="p-3 rounded-2xl transition-all hover:scale-125" style={{color: '#FF8F8F', backgroundColor: '#C2E2FA'}}
                                 >
                                     <Trash2 size={20} />
                                 </button>
@@ -333,7 +333,7 @@
                         </div>
                         );
                     })}
-                    {contacts.length === 0 && <p className="text-center py-12 text-2xl font-black" style={{color: '#CF4B00'}}>No contacts found.</p>}
+                    {contacts.length === 0 && <p className="text-center py-12 text-2xl font-black" style={{color: '#FF8F8F'}}>No contacts found.</p>}
                 </div>
             </div>
         );
@@ -358,7 +358,7 @@
                             <h3 className="font-black text-2xl text-orange transform rotate-1">Saved Templates</h3>
                             <button 
                                 onClick={() => setEditingTemplate({ id: null, name: '', subject: '', body: '' })}
-                                className="text-sm text-white px-5 py-3 rounded-2xl font-black transition-all duration-200 transform hover:scale-110 -rotate-1" style={{backgroundColor: '#CF4B00'}}
+                                className="text-sm text-white px-5 py-3 rounded-2xl font-black transition-all duration-200 transform hover:scale-110 -rotate-1" style={{backgroundColor: '#FF8F8F'}}
                             >
                                 + New Template
                             </button>
@@ -368,12 +368,12 @@
                                 key={t.id} 
                                 onClick={() => setEditingTemplate(t)}
                                 className={`p-5 rounded-3xl border-4 cursor-pointer transition-all group transform ${editingTemplate?.id === t.id ? 'border-orange bg-orange' : 'border-blue-light bg-white hover:border-orange'} ${idx % 2 === 0 ? 'rotate-1' : '-rotate-1'} hover:scale-105`}
-                                style={editingTemplate?.id === t.id ? {color: '#FCF6D9'} : {color: '#CF4B00'}}
+                                style={editingTemplate?.id === t.id ? {color: '#FFF1CB'} : {color: '#FF8F8F'}}
                             >
                                 <div className="flex justify-between items-start">
                                     <h4 className={`font-black text-lg ${editingTemplate?.id === t.id ? 'text-white' : 'text-orange'}`}>{t.name}</h4>
                                     <div className="flex items-center gap-2">
-                                        <FileText size={18} style={{color: editingTemplate?.id === t.id ? '#FCF6D9' : '#CF4B00'}} />
+                                        <FileText size={18} style={{color: editingTemplate?.id === t.id ? '#FFF1CB' : '#FF8F8F'}} />
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -382,7 +382,7 @@
                                                 }
                                             }}
                                             className="p-2 rounded-xl transition-all opacity-0 group-hover:opacity-100 transform hover:scale-125"
-                                            style={{color: '#CF4B00', backgroundColor: '#9CC6DB'}}
+                                            style={{color: '#FF8F8F', backgroundColor: '#C2E2FA'}}
                                             title="Delete template"
                                         >
                                             <Trash2 size={18} />
@@ -400,14 +400,14 @@
                             <form onSubmit={handleSaveTemplate} className="flex flex-col h-full space-y-4">
                                 {/* Spam Warning */}
                                 {spamIssues.length > 0 ? (
-                                    <div className="text-white text-sm p-4 rounded-2xl flex items-start gap-2 border-4 border-orange font-bold" style={{backgroundColor: '#CF4B00'}}>
+                                    <div className="text-white text-sm p-4 rounded-2xl flex items-start gap-2 border-4 border-orange font-bold" style={{backgroundColor: '#FF8F8F'}}>
                                         <AlertTriangle size={18} className="shrink-0 mt-0.5" />
                                         <div>
                                             <span className="font-black">Spam Risk Detected:</span> Avoid using words like <span className="font-black underline">{spamIssues.join(", ")}</span> to prevent landing in the Spam folder.
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="text-orange text-sm p-4 rounded-2xl flex items-center gap-2 border-4 border-blue-light font-black" style={{backgroundColor: '#9CC6DB'}}>
+                                    <div className="text-orange text-sm p-4 rounded-2xl flex items-center gap-2 border-4 border-blue-light font-black" style={{backgroundColor: '#C2E2FA'}}>
                                         <ShieldCheck size={18} />
                                         <span>Content looks clean! Good deliverability expected.</span>
                                     </div>
@@ -446,20 +446,20 @@
                                         placeholder="Hi {name}..." 
                                     />
                                 </div>
-                                <div className="text-sm font-black p-4 rounded-2xl border-4 border-blue-light" style={{backgroundColor: '#9CC6DB', color: '#CF4B00'}}>
+                                <div className="text-sm font-black p-4 rounded-2xl border-4 border-blue-light" style={{backgroundColor: '#C2E2FA', color: '#FF8F8F'}}>
                                     Variables: <span className="font-mono text-orange font-black">{`{name}`}</span>, <span className="font-mono text-orange font-black">{`{company}`}</span>
                                 </div>
                                 <div className="flex justify-end gap-3 pt-2">
-                                    <button type="button" onClick={() => setEditingTemplate(null)} className="px-6 py-3 text-orange font-black rounded-2xl transition-all transform hover:scale-110" style={{backgroundColor: '#9CC6DB'}}>Cancel</button>
-                                    <button type="submit" className="text-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all duration-200 transform hover:scale-110 font-black" style={{backgroundColor: '#CF4B00'}}>
+                                    <button type="button" onClick={() => setEditingTemplate(null)} className="px-6 py-3 text-orange font-black rounded-2xl transition-all transform hover:scale-110" style={{backgroundColor: '#C2E2FA'}}>Cancel</button>
+                                    <button type="submit" className="text-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all duration-200 transform hover:scale-110 font-black" style={{backgroundColor: '#FF8F8F'}}>
                                         <Save size={18} /> Save Template
                                     </button>
                                 </div>
                             </form>
                         ) : (
                             <div className="h-full flex flex-col items-center justify-center transform rotate-12">
-                                <Edit2 size={64} className="mb-4" style={{color: '#9CC6DB'}} />
-                                <p className="text-xl font-black" style={{color: '#CF4B00'}}>Select a template to edit or create a new one.</p>
+                                <Edit2 size={64} className="mb-4" style={{color: '#C2E2FA'}} />
+                                <p className="text-xl font-black" style={{color: '#FF8F8F'}}>Select a template to edit or create a new one.</p>
                             </div>
                         )}
                     </div>
@@ -492,7 +492,7 @@
 
             return (
                 <div className="space-y-6">
-                    <div className="rounded-3xl p-8 text-white border-4 border-white transform rotate-1" style={{backgroundColor: '#CF4B00'}}>
+                    <div className="rounded-3xl p-8 text-white border-4 border-white transform rotate-1" style={{backgroundColor: '#FF8F8F'}}>
                         <h2 className="text-4xl font-black mb-3 transform -rotate-1">Campaign Runner</h2>
                         <p className="text-lg font-bold max-w-xl">
                             This mode queues your contacts one by one. It prevents "tab overload" and ensures you can customize each email slightly before sending.
@@ -516,7 +516,7 @@
                                 onClick={() => setIsCampaignActive(true)}
                                 disabled={isCampaignActive}
                                 className={`w-full py-4 rounded-2xl font-black text-xl transition-all duration-200 ${isCampaignActive ? 'bg-blue-light text-orange cursor-not-allowed' : 'text-white hover:scale-110'}`}
-                                style={!isCampaignActive ? {backgroundColor: '#CF4B00'} : {}}
+                                style={!isCampaignActive ? {backgroundColor: '#FF8F8F'} : {}}
                             >
                                 {isCampaignActive ? 'Campaign Active below...' : 'Start Campaign'}
                             </button>
@@ -526,23 +526,23 @@
                     {/* Active Campaign Mode */}
                     {isCampaignActive && activeContact && (
                         <div className="bg-white border-4 border-orange rounded-3xl p-8 relative overflow-hidden transform rotate-1">
-                            <div className="absolute top-0 left-0 w-full h-4" style={{backgroundColor: '#9CC6DB'}}>
+                            <div className="absolute top-0 left-0 w-full h-4" style={{backgroundColor: '#C2E2FA'}}>
                                 <div 
                                     className="h-full transition-all duration-500" 
-                                    style={{width: `${((currentIndex + 1) / contacts.length) * 100}%`, backgroundColor: '#CF4B00'}}
+                                    style={{width: `${((currentIndex + 1) / contacts.length) * 100}%`, backgroundColor: '#FF8F8F'}}
                                 ></div>
                             </div>
                             <div className="flex justify-between items-start mb-8 mt-6">
                                 <div>
-                                    <span className="text-sm font-black text-white uppercase tracking-widest px-4 py-2 rounded-full transform -rotate-2" style={{backgroundColor: '#CF4B00'}}>
+                                    <span className="text-sm font-black text-white uppercase tracking-widest px-4 py-2 rounded-full transform -rotate-2" style={{backgroundColor: '#FF8F8F'}}>
                                         Contact {currentIndex + 1} of {contacts.length}
                                     </span>
                                     <h2 className="text-5xl font-black text-orange mt-4 transform rotate-1">{activeContact.name}</h2>
-                                    <p className="text-2xl font-bold mt-2" style={{color: '#CF4B00'}}>{activeContact.company} • {activeContact.email}</p>
+                                    <p className="text-2xl font-bold mt-2" style={{color: '#FF8F8F'}}>{activeContact.company} • {activeContact.email}</p>
                                 </div>
                                 <div className="text-right transform -rotate-1">
-                                    <div className="text-base font-bold" style={{color: '#CF4B00'}}>Next up:</div>
-                                    <div className="font-black text-lg" style={{color: '#CF4B00'}}>
+                                    <div className="text-base font-bold" style={{color: '#FF8F8F'}}>Next up:</div>
+                                    <div className="font-black text-lg" style={{color: '#FF8F8F'}}>
                                         {contacts[currentIndex + 1]?.name || "End of list"}
                                     </div>
                                 </div>
@@ -554,7 +554,7 @@
                                     rel="noopener noreferrer"
                                     onClick={nextContact}
                                     className="flex-1 text-white text-center py-5 rounded-2xl font-black text-xl transition-all duration-200 flex items-center justify-center gap-2 group transform hover:scale-110"
-                                    style={{backgroundColor: '#CF4B00'}}
+                                    style={{backgroundColor: '#FF8F8F'}}
                                 >
                                     <Send className="group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" size={22} />
                                     Open {emailClient === 'gmail' ? 'Gmail' : 'Email'} & Next
@@ -562,12 +562,12 @@
                                 <button 
                                     onClick={nextContact}
                                     className="px-8 py-5 rounded-2xl border-4 border-blue-light text-orange font-black hover:bg-blue-light transition-all duration-200 transform hover:scale-110"
-                                    style={{backgroundColor: '#9CC6DB'}}
+                                    style={{backgroundColor: '#C2E2FA'}}
                                 >
                                     Skip
                                 </button>
                             </div>
-                            <p className="text-center text-base font-bold mt-6" style={{color: '#CF4B00'}}>
+                            <p className="text-center text-base font-bold mt-6" style={{color: '#FF8F8F'}}>
                                 Clicking "Open {emailClient === 'gmail' ? 'Gmail' : 'Email'}" opens {emailClient === 'gmail' ? 'Gmail' : 'your default email app'} with the message ready. Press Send there, then come back here for the next one.
                             </p>
                         </div>
@@ -575,7 +575,7 @@
 
                     {!isCampaignActive && (
                         <div className="text-center py-16 bg-white rounded-3xl border-4 border-dashed border-blue-light transform rotate-1">
-                            <p className="text-2xl font-black" style={{color: '#CF4B00'}}>Ready to start? Select a template and click "Start Campaign".</p>
+                            <p className="text-2xl font-black" style={{color: '#FF8F8F'}}>Ready to start? Select a template and click "Start Campaign".</p>
                         </div>
                     )}
                 </div>
@@ -597,7 +597,7 @@
 
             return (
                 <div className="space-y-6">
-                    <div className="rounded-3xl p-8 text-white border-4 border-white transform rotate-1" style={{backgroundColor: '#CF4B00'}}>
+                    <div className="rounded-3xl p-8 text-white border-4 border-white transform rotate-1" style={{backgroundColor: '#FF8F8F'}}>
                         <h2 className="text-4xl font-black mb-3 transform -rotate-1">Email Dashboard</h2>
                         <p className="text-lg font-bold max-w-xl">
                             Track your email campaigns, see who replied, and monitor your outreach performance.
@@ -609,44 +609,44 @@
                         <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform rotate-1">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-black mb-1" style={{color: '#CF4B00'}}>Total Contacts</p>
-                                    <p className="text-4xl font-black" style={{color: '#CF4B00'}}>{stats.total}</p>
+                                    <p className="text-sm font-black mb-1" style={{color: '#FF8F8F'}}>Total Contacts</p>
+                                    <p className="text-4xl font-black" style={{color: '#FF8F8F'}}>{stats.total}</p>
                                 </div>
-                                <div className="p-3 rounded-full" style={{backgroundColor: '#9CC6DB'}}>
-                                    <Users size={24} style={{color: '#CF4B00'}} />
+                                <div className="p-3 rounded-full" style={{backgroundColor: '#C2E2FA'}}>
+                                    <Users size={24} style={{color: '#FF8F8F'}} />
                                 </div>
                             </div>
                         </div>
                         <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform -rotate-1">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-black mb-1" style={{color: '#CF4B00'}}>Emails Sent</p>
-                                    <p className="text-4xl font-black" style={{color: '#CF4B00'}}>{stats.sent}</p>
+                                    <p className="text-sm font-black mb-1" style={{color: '#FF8F8F'}}>Emails Sent</p>
+                                    <p className="text-4xl font-black" style={{color: '#FF8F8F'}}>{stats.sent}</p>
                                 </div>
-                                <div className="p-3 rounded-full" style={{backgroundColor: '#9CC6DB'}}>
-                                    <Send size={24} style={{color: '#CF4B00'}} />
+                                <div className="p-3 rounded-full" style={{backgroundColor: '#C2E2FA'}}>
+                                    <Send size={24} style={{color: '#FF8F8F'}} />
                                 </div>
                             </div>
                         </div>
                         <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform rotate-1">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-black mb-1" style={{color: '#CF4B00'}}>Replied</p>
-                                    <p className="text-4xl font-black" style={{color: '#CF4B00'}}>{stats.replied}</p>
+                                    <p className="text-sm font-black mb-1" style={{color: '#FF8F8F'}}>Replied</p>
+                                    <p className="text-4xl font-black" style={{color: '#FF8F8F'}}>{stats.replied}</p>
                                 </div>
-                                <div className="p-3 rounded-full" style={{backgroundColor: '#9CC6DB'}}>
-                                    <CheckCircle size={24} style={{color: '#CF4B00'}} />
+                                <div className="p-3 rounded-full" style={{backgroundColor: '#C2E2FA'}}>
+                                    <CheckCircle size={24} style={{color: '#FF8F8F'}} />
                                 </div>
                             </div>
                         </div>
                         <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform -rotate-1">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-black mb-1" style={{color: '#CF4B00'}}>Reply Rate</p>
-                                    <p className="text-4xl font-black" style={{color: '#CF4B00'}}>{stats.replyRate}%</p>
+                                    <p className="text-sm font-black mb-1" style={{color: '#FF8F8F'}}>Reply Rate</p>
+                                    <p className="text-4xl font-black" style={{color: '#FF8F8F'}}>{stats.replyRate}%</p>
                                 </div>
-                                <div className="p-3 rounded-full" style={{backgroundColor: '#9CC6DB'}}>
-                                    <BarChart size={24} style={{color: '#CF4B00'}} />
+                                <div className="p-3 rounded-full" style={{backgroundColor: '#C2E2FA'}}>
+                                    <BarChart size={24} style={{color: '#FF8F8F'}} />
                                 </div>
                             </div>
                         </div>
@@ -656,14 +656,14 @@
                     <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform rotate-1">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="font-black text-xl mb-1" style={{color: '#CF4B00'}}>Check for Replies</h3>
-                                <p className="text-base font-bold" style={{color: '#CF4B00'}}>Scan your Gmail inbox for replies from contacts</p>
+                                <h3 className="font-black text-xl mb-1" style={{color: '#FF8F8F'}}>Check for Replies</h3>
+                                <p className="text-base font-bold" style={{color: '#FF8F8F'}}>Scan your Gmail inbox for replies from contacts</p>
                             </div>
                             <button
                                 onClick={onCheckReplies}
                                 disabled={checkingReplies}
                                 className="text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-110 transition-all"
-                                style={{backgroundColor: '#CF4B00'}}
+                                style={{backgroundColor: '#FF8F8F'}}
                             >
                                 {checkingReplies ? (
                                     <>
@@ -682,35 +682,35 @@
 
                     {/* Contact Status Breakdown */}
                     <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform -rotate-1">
-                        <h3 className="font-black text-2xl mb-4 transform rotate-1" style={{color: '#CF4B00'}}>Status Breakdown</h3>
+                        <h3 className="font-black text-2xl mb-4 transform rotate-1" style={{color: '#FF8F8F'}}>Status Breakdown</h3>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform rotate-1" style={{backgroundColor: '#9CC6DB'}}>
+                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform rotate-1" style={{backgroundColor: '#C2E2FA'}}>
                                 <div className="flex items-center gap-3">
-                                    <CheckCircle size={22} style={{color: '#CF4B00'}} />
-                                    <span className="font-black text-lg" style={{color: '#CF4B00'}}>Replied</span>
+                                    <CheckCircle size={22} style={{color: '#FF8F8F'}} />
+                                    <span className="font-black text-lg" style={{color: '#FF8F8F'}}>Replied</span>
                                 </div>
-                                <span className="font-black text-xl" style={{color: '#CF4B00'}}>{stats.replied}</span>
+                                <span className="font-black text-xl" style={{color: '#FF8F8F'}}>{stats.replied}</span>
                             </div>
-                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform -rotate-1" style={{backgroundColor: '#DDBA7D'}}>
+                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform -rotate-1" style={{backgroundColor: '#B7A3E3'}}>
                                 <div className="flex items-center gap-3">
-                                    <XCircle size={22} style={{color: '#CF4B00'}} />
-                                    <span className="font-black text-lg" style={{color: '#CF4B00'}}>No Response</span>
+                                    <XCircle size={22} style={{color: '#FF8F8F'}} />
+                                    <span className="font-black text-lg" style={{color: '#FF8F8F'}}>No Response</span>
                                 </div>
-                                <span className="font-black text-xl" style={{color: '#CF4B00'}}>{stats.noResponse}</span>
+                                <span className="font-black text-xl" style={{color: '#FF8F8F'}}>{stats.noResponse}</span>
                             </div>
-                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform rotate-1" style={{backgroundColor: '#9CC6DB'}}>
+                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform rotate-1" style={{backgroundColor: '#C2E2FA'}}>
                                 <div className="flex items-center gap-3">
-                                    <Send size={22} style={{color: '#CF4B00'}} />
-                                    <span className="font-black text-lg" style={{color: '#CF4B00'}}>Sent (Pending)</span>
+                                    <Send size={22} style={{color: '#FF8F8F'}} />
+                                    <span className="font-black text-lg" style={{color: '#FF8F8F'}}>Sent (Pending)</span>
                                 </div>
-                                <span className="font-black text-xl" style={{color: '#CF4B00'}}>{stats.sent - stats.replied - stats.noResponse}</span>
+                                <span className="font-black text-xl" style={{color: '#FF8F8F'}}>{stats.sent - stats.replied - stats.noResponse}</span>
                             </div>
-                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform -rotate-1" style={{backgroundColor: '#DDBA7D'}}>
+                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform -rotate-1" style={{backgroundColor: '#B7A3E3'}}>
                                 <div className="flex items-center gap-3">
-                                    <Clock size={22} style={{color: '#CF4B00'}} />
-                                    <span className="font-black text-lg" style={{color: '#CF4B00'}}>Not Contacted</span>
+                                    <Clock size={22} style={{color: '#FF8F8F'}} />
+                                    <span className="font-black text-lg" style={{color: '#FF8F8F'}}>Not Contacted</span>
                                 </div>
-                                <span className="font-black text-xl" style={{color: '#CF4B00'}}>{stats.newContacts}</span>
+                                <span className="font-black text-xl" style={{color: '#FF8F8F'}}>{stats.newContacts}</span>
                             </div>
                         </div>
                     </div>
@@ -892,7 +892,7 @@
                                     <div>
                                         <p className="text-xs font-black text-orange mb-2 uppercase tracking-widest">Email Client</p>
                                         <div className="space-y-2">
-                                            <label className="flex items-center gap-2 cursor-pointer p-3 rounded-xl hover:bg-blue-light transition-all transform hover:scale-105" style={{backgroundColor: emailClient === 'apple' ? '#9CC6DB' : 'transparent'}}>
+                                            <label className="flex items-center gap-2 cursor-pointer p-3 rounded-xl hover:bg-blue-light transition-all transform hover:scale-105" style={{backgroundColor: emailClient === 'apple' ? '#C2E2FA' : 'transparent'}}>
                                                 <input
                                                     type="radio"
                                                     name="emailClient"
@@ -903,7 +903,7 @@
                                                 />
                                                 <span className="text-sm font-bold text-orange">Apple Mail</span>
                                             </label>
-                                            <label className="flex items-center gap-2 cursor-pointer p-3 rounded-xl hover:bg-blue-light transition-all transform hover:scale-105" style={{backgroundColor: emailClient === 'gmail' ? '#9CC6DB' : 'transparent'}}>
+                                            <label className="flex items-center gap-2 cursor-pointer p-3 rounded-xl hover:bg-blue-light transition-all transform hover:scale-105" style={{backgroundColor: emailClient === 'gmail' ? '#C2E2FA' : 'transparent'}}>
                                                 <input
                                                     type="radio"
                                                     name="emailClient"
@@ -918,7 +918,7 @@
                                     </div>
                                 </div>
                             )}
-                            <div className="rounded-2xl p-4 text-white border-4 border-orange" style={{backgroundColor: '#CF4B00'}}>
+                            <div className="rounded-2xl p-4 text-white border-4 border-orange" style={{backgroundColor: '#FF8F8F'}}>
                                 <p className="text-xs font-black mb-1">💡 Pro Tip</p>
                                 <p className="text-xs leading-relaxed font-bold">Use <span className="font-mono bg-white text-orange px-2 py-1 rounded-lg">{`{company}`}</span> in templates to auto-personalize your emails.</p>
                             </div>
@@ -929,8 +929,8 @@
                     <div className="flex-1 overflow-y-auto">
                         <div className="max-w-4xl mx-auto p-6 md:p-12">
                             <div className="mb-8">
-                                <h1 className="text-5xl font-black capitalize mb-3 transform rotate-1" style={{color: '#CF4B00'}}>{activeTab}</h1>
-                                <p className="text-lg font-bold" style={{color: '#CF4B00'}}>
+                                <h1 className="text-5xl font-black capitalize mb-3 transform rotate-1" style={{color: '#FF8F8F'}}>{activeTab}</h1>
+                                <p className="text-lg font-bold" style={{color: '#FF8F8F'}}>
                                     {activeTab === 'contacts' && "Manage your outreach list."}
                                     {activeTab === 'templates' && "Design reusable email blueprints."}
                                     {activeTab === 'automation' && "Generate personalized drafts instantly."}
