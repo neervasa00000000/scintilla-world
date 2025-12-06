@@ -172,7 +172,7 @@
             return foundTriggers;
         };
 
-        const generateMailto = (contact, template, emailClient = 'apple') => {
+        const generateMailto = (contact, template, emailClient = 'mailto') => {
             if (!template) {
                 if (emailClient === 'gmail') {
                     return `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(contact.email)}`;
@@ -1084,7 +1084,8 @@ Reply to: {{reply_to}}`;
         // --- Main App Component ---
         function App() {
             const [activeTab, setActiveTab] = useState('contacts');
-            const [emailClient, setEmailClient] = useState('emailjs'); // 'apple', 'gmail', or 'emailjs'
+            const [emailClient, setEmailClient] = useState('mailto'); // 'mailto', 'emailjs', 'gmail', or 'apple'
+            const [showAdvanced, setShowAdvanced] = useState(false);
             const [userEmail, setUserEmail] = useState(''); // User's email address
             const [userName, setUserName] = useState(''); // User's name
             const [showSettings, setShowSettings] = useState(false);
@@ -1173,7 +1174,7 @@ Reply to: {{reply_to}}`;
                     if (error.error === 'popup_closed_by_user') {
                         errorMessage += 'You closed the authentication window. Please try again.';
                     } else if (error.error === 'access_denied') {
-                        errorMessage += 'Access was denied. Please grant permissions when prompted.';
+                        errorMessage += 'Access denied! Your app is in "Testing" mode.\n\n🔧 Fix: Go to Google Cloud Console → OAuth consent screen → Test users → Add your email address (' + (userEmail || 'your-email@gmail.com') + ')\n\nThen try again!';
                     } else if (error.error === 'invalid_client') {
                         errorMessage += 'Invalid Client ID. Please check your Client ID in Google Cloud Console.';
                     } else if (error.error === 'redirect_uri_mismatch') {
@@ -1184,6 +1185,9 @@ Reply to: {{reply_to}}`;
                         errorMessage += error.message;
                     } else if (error.error) {
                         errorMessage += `Error: ${error.error}. ${error.error_description || ''}`;
+                        if (error.error === 'access_denied' || (error.error_description && error.error_description.includes('test'))) {
+                            errorMessage += '\n\n💡 Your app needs test users added in OAuth consent screen!';
+                        }
                     } else {
                         errorMessage += 'Please check:\n1. OAuth consent screen is configured\n2. You added yourself as a test user\n3. Gmail API is enabled\n4. Authorized JavaScript origins include this domain';
                     }
@@ -1392,83 +1396,122 @@ Reply to: {{reply_to}}`;
                             {showSettings && (
                                 <div className="bg-white rounded-lg p-4 border border-slate-200 shadow-sm mb-2 space-y-4">
                                     <div>
-                                        <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Email Client</p>
+                                        <p className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">How to Send Emails</p>
                                         <div className="space-y-2">
-                                            <label className="flex items-center gap-2 cursor-pointer">
+                                            <label className="flex items-center gap-2 cursor-pointer p-3 bg-green-50 border-2 border-green-200 rounded-lg">
                                                 <input
                                                     type="radio"
                                                     name="emailClient"
-                                                    value="emailjs"
-                                                    checked={emailClient === 'emailjs'}
+                                                    value="mailto"
+                                                    checked={emailClient === 'mailto'}
                                                     onChange={(e) => setEmailClient(e.target.value)}
                                                     className="text-indigo-600"
                                                 />
                                                 <div className="flex-1">
-                                                    <span className="text-sm text-slate-700 font-medium">EmailJS (Recommended)</span>
-                                                    <span className="text-xs text-green-600 ml-2">✓ Easy Setup</span>
+                                                    <span className="text-sm text-slate-700 font-bold">✨ Simple (No Setup)</span>
+                                                    <p className="text-xs text-slate-500 mt-0.5">Opens your email app - ready to use!</p>
                                                 </div>
                                             </label>
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input
-                                                    type="radio"
-                                                    name="emailClient"
-                                                    value="gmail"
-                                                    checked={emailClient === 'gmail'}
-                                                    onChange={(e) => setEmailClient(e.target.value)}
-                                                    className="text-indigo-600"
-                                                />
-                                                <div className="flex-1">
-                                                    <span className="text-sm text-slate-700 font-medium">Gmail API</span>
-                                                    <span className="text-xs text-slate-400 ml-2">Advanced</span>
-                                                </div>
-                                            </label>
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input
-                                                    type="radio"
-                                                    name="emailClient"
-                                                    value="apple"
-                                                    checked={emailClient === 'apple'}
-                                                    onChange={(e) => setEmailClient(e.target.value)}
-                                                    className="text-indigo-600"
-                                                />
-                                                <span className="text-sm text-slate-700">Apple Mail</span>
-                                            </label>
+                                            <div className="border-t border-slate-200 pt-2">
+                                                <button
+                                                    onClick={() => setShowAdvanced(!showAdvanced)}
+                                                    className="w-full text-left text-xs text-slate-500 hover:text-slate-700 flex items-center justify-between"
+                                                >
+                                                    <span>⚙️ Advanced Options (Auto-send emails)</span>
+                                                    <span>{showAdvanced ? '▼' : '▶'}</span>
+                                                </button>
+                                                {showAdvanced && (
+                                                    <div className="mt-2 space-y-2 pl-4 border-l-2 border-slate-200">
+                                                        <label className="flex items-center gap-2 cursor-pointer">
+                                                            <input
+                                                                type="radio"
+                                                                name="emailClient"
+                                                                value="emailjs"
+                                                                checked={emailClient === 'emailjs'}
+                                                                onChange={(e) => setEmailClient(e.target.value)}
+                                                                className="text-indigo-600"
+                                                            />
+                                                            <div className="flex-1">
+                                                                <span className="text-sm text-slate-700 font-medium">EmailJS</span>
+                                                                <span className="text-xs text-blue-600 ml-2">2 min setup</span>
+                                                            </div>
+                                                        </label>
+                                                        <label className="flex items-center gap-2 cursor-pointer">
+                                                            <input
+                                                                type="radio"
+                                                                name="emailClient"
+                                                                value="gmail"
+                                                                checked={emailClient === 'gmail'}
+                                                                onChange={(e) => setEmailClient(e.target.value)}
+                                                                className="text-indigo-600"
+                                                            />
+                                                            <div className="flex-1">
+                                                                <span className="text-sm text-slate-700 font-medium">Gmail API</span>
+                                                                <span className="text-xs text-slate-400 ml-2">Complex</span>
+                                                            </div>
+                                                        </label>
+                                                        <label className="flex items-center gap-2 cursor-pointer">
+                                                            <input
+                                                                type="radio"
+                                                                name="emailClient"
+                                                                value="apple"
+                                                                checked={emailClient === 'apple'}
+                                                                onChange={(e) => setEmailClient(e.target.value)}
+                                                                className="text-indigo-600"
+                                                            />
+                                                            <span className="text-sm text-slate-700">Apple Mail</span>
+                                                        </label>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
-                                            Your Email Address
-                                        </label>
-                                        <input
-                                            type="email"
-                                            placeholder="your.email@example.com"
-                                            value={userEmail}
-                                            onChange={(e) => setUserEmail(e.target.value)}
-                                            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                        />
-                                        <p className="text-xs text-slate-500 mt-1">
-                                            {userEmail ? (
-                                                <span className="text-green-600">✓ Emails will be sent from: <strong>{userEmail}</strong></span>
-                                            ) : (
-                                                <span>Enter your email to track which account you're using</span>
-                                            )}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
-                                            Your Name (Optional)
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Your Name"
-                                            value={userName}
-                                            onChange={(e) => setUserName(e.target.value)}
-                                            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                        />
-                                            <p className="text-xs text-slate-400 mt-1">
-                                            This will appear as the sender name in emails
-                                        </p>
-                                    </div>
+                                    {emailClient !== 'mailto' && (
+                                        <>
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
+                                                    Your Email Address
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    placeholder="your.email@example.com"
+                                                    value={userEmail}
+                                                    onChange={(e) => setUserEmail(e.target.value)}
+                                                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                                />
+                                                <p className="text-xs text-slate-500 mt-1">
+                                                    {userEmail ? (
+                                                        <span className="text-green-600">✓ Emails will be sent from: <strong>{userEmail}</strong></span>
+                                                    ) : (
+                                                        <span>Enter your email to track which account you're using</span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
+                                                    Your Name (Optional)
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Your Name"
+                                                    value={userName}
+                                                    onChange={(e) => setUserName(e.target.value)}
+                                                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                                />
+                                                <p className="text-xs text-slate-400 mt-1">
+                                                    This will appear as the sender name in emails
+                                                </p>
+                                            </div>
+                                        </>
+                                    )}
+                                    {emailClient === 'mailto' && (
+                                        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                                            <p className="text-sm text-green-800 font-semibold mb-2">✨ You're all set!</p>
+                                            <p className="text-xs text-green-700">
+                                                Just click "Send" in the Automation tab. It will open your default email app with the message ready to send.
+                                            </p>
+                                        </div>
+                                    )}
                                     {emailClient === 'emailjs' && (
                                         <>
                                             {!emailjsConfigured ? (
@@ -1517,13 +1560,17 @@ Reply to: {{reply_to}}`;
                                                     Get your Client ID from <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline">Google Cloud Console</a>
                                                 </p>
                                                 <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs">
-                                                    <p className="font-semibold text-blue-900 mb-2">🚀 Super Quick Setup (3 steps):</p>
+                                                    <p className="font-semibold text-blue-900 mb-2">🚀 Super Quick Setup (4 steps):</p>
                                                     <ol className="list-decimal list-inside space-y-1.5 text-blue-800 ml-1">
                                                         <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" className="underline font-medium">Google Cloud Console</a></li>
                                                         <li>Create OAuth client → Add origin: <code className="bg-blue-100 px-1 rounded font-mono text-xs">{typeof window !== 'undefined' ? window.location.origin : 'your-domain.com'}</code></li>
+                                                        <li><strong>IMPORTANT:</strong> Go to "OAuth consent screen" → "Test users" → <strong>Add your email</strong> ({userEmail || 'your-email@gmail.com'})</li>
                                                         <li>Paste Client ID above → Click "Sign in with Google"</li>
                                                     </ol>
-                                                    <p className="text-blue-700 mt-2 text-xs">💡 Tip: Add yourself as a test user in OAuth consent screen</p>
+                                                    <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded">
+                                                        <p className="text-amber-800 font-semibold text-xs">⚠️ Getting "Access blocked" error?</p>
+                                                        <p className="text-amber-700 text-xs mt-1">Your email must be added as a test user in OAuth consent screen!</p>
+                                                    </div>
                                                 </div>
                                                 <p className="text-xs text-slate-400 mt-1">
                                                     Need help? See <a href="GMAIL-SETUP.md" target="_blank" rel="noopener noreferrer" className="text-indigo-500 underline">Gmail Setup Guide</a>
