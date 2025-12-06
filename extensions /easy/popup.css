@@ -29,31 +29,32 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', sans-serif;
-    width: 550px; /* Slightly wider for better dual column */
+    width: 550px;
     height: 600px;
     background: var(--bg);
     color: var(--text-primary);
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Main Content - 2 Column Grid */
+/* Main Content - Vertical Scrollable */
 .main-content {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 12px;
-    padding: 12px;
-    height: calc(100vh - 57px);
-    overflow: hidden;
-}
-
-.main-content > div {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    overflow-y: hidden; /* Prevent double scrollbars */
-    min-height: 0;
+    padding: 12px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.content-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 /* Header */
@@ -276,6 +277,8 @@ body {
     position: relative;
     outline: none;
     border: 1px solid var(--border);
+    min-height: 150px;
+    max-height: 200px;
 }
 
 [contenteditable].textarea {
@@ -346,14 +349,14 @@ body {
 
 /* Records List */
 .records-card {
-    flex: 1;
-    min-height: 0; /* Important for flex child scrolling */
     display: flex;
     flex-direction: column;
+    min-height: 200px;
 }
 
 .records-container {
-    flex: 1;
+    min-height: 200px;
+    max-height: 300px;
     overflow-y: auto;
     padding-right: 4px;
 }

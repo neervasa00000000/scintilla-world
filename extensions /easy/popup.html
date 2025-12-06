@@ -36,10 +36,10 @@
         </div>
     </header>
 
-    <!-- Main Content - 2 Column Grid -->
+    <!-- Main Content - Vertical Scrollable -->
     <main class="main-content">
-        <!-- Left Column -->
-        <div>
+        <!-- First Half: Stats and Paste Text -->
+        <div class="content-section">
             <!-- Stats Card -->
             <section class="card">
                 <div class="card-header">
@@ -65,7 +65,7 @@
             </section>
 
             <!-- Paste Text Card -->
-            <section class="card" style="flex: 1; display: flex; flex-direction: column;">
+            <section class="card">
                 <div class="section-label">
                     <i class="fa-solid fa-paste section-label-icon"></i>
                     <span>Paste text</span>
@@ -73,13 +73,12 @@
                 <div id="pasteArea" 
                      contenteditable="true" 
                      class="input textarea scrollbar"
-                     style="flex: 1; max-height: none;"
                      data-placeholder="Paste your text here..."></div>
             </section>
         </div>
 
-        <!-- Right Column -->
-        <div>
+        <!-- Second Half: Review and Saved Contacts -->
+        <div class="content-section">
             <!-- Review & Tag Card -->
             <section class="card">
                 <div class="card-header">
