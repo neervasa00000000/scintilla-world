@@ -689,7 +689,6 @@
             const [activeTab, setActiveTab] = useState('contacts');
             const [emailClient, setEmailClient] = useState('apple'); // 'apple' or 'gmail'
             const [showSettings, setShowSettings] = useState(false);
-            const [checkingReplies, setCheckingReplies] = useState(false);
             const [contacts, setContacts] = useState([
                 { id: 1, name: "Sarah Connor", email: "sarah@example.com", company: "Cyberdyne", status: "New" },
                 { id: 2, name: "John Smith", email: "john@example.com", company: "Tech Corp", status: "Sent", lastSent: new Date().toISOString() },
@@ -724,9 +723,6 @@
                 );
             };
 
-            const handleCheckReplies = async () => {
-                alert('Reply tracking requires email API setup. For now, you can manually update contact statuses.');
-            };
 
             const handleFileUpload = (event) => {
                 const file = event.target.files[0];
@@ -850,12 +846,6 @@
                                 <Send size={18} /> Automation
                             </button>
                             <button 
-                                onClick={() => setActiveTab('dashboard')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'dashboard' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}`}
-                            >
-                                <BarChart size={18} /> Dashboard
-                            </button>
-                            <button 
                                 onClick={() => setShowSettings(!showSettings)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${showSettings ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}`}
                             >
@@ -910,7 +900,6 @@
                                     {activeTab === 'contacts' && "Manage your outreach list."}
                                     {activeTab === 'templates' && "Design reusable email blueprints."}
                                     {activeTab === 'automation' && "Generate personalized drafts instantly."}
-                                    {activeTab === 'dashboard' && "Track email performance and replies."}
                                 </p>
                             </div>
                             {activeTab === 'contacts' && (
@@ -942,13 +931,6 @@
                                     contacts={contacts}
                                     onSendEmail={handleSendEmail}
                                     emailClient={emailClient}
-                                />
-                            )}
-                            {activeTab === 'dashboard' && (
-                                <EmailDashboard 
-                                    contacts={contacts}
-                                    onCheckReplies={handleCheckReplies}
-                                    checkingReplies={checkingReplies}
                                 />
                             )}
                         </div>
