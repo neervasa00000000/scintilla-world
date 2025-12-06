@@ -186,6 +186,13 @@
                 <line x1="6" y1="20" x2="6" y2="16"></line>
             </Icon>
         );
+        
+        const Link = ({ size = 24, className = "" }) => (
+            <Icon size={size} className={className}>
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </Icon>
+        );
 
         // --- Global Helpers & Constants (Moved outside App) ---
         const spamTriggers = ['free', 'urgent', 'winner', 'cash', '$$$', 'guarantee', 'click here', 'buy now', '100%'];
@@ -436,7 +443,35 @@
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <label className="block text-xs font-black text-orange uppercase tracking-widest mb-3">Body</label>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <label className="block text-xs font-black text-orange uppercase tracking-widest">Body</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const url = prompt('Enter the URL (e.g., https://example.com):');
+                                                if (url) {
+                                                    const linkText = prompt('Enter link text (optional, leave empty to use URL):', url);
+                                                    const textarea = document.querySelector('textarea[name="body"]');
+                                                    const start = textarea.selectionStart;
+                                                    const end = textarea.selectionEnd;
+                                                    const text = editingTemplate.body || '';
+                                                    const link = linkText && linkText !== url ? `${linkText} (${url})` : url;
+                                                    const newText = text.substring(0, start) + link + text.substring(end);
+                                                    setEditingTemplate({...editingTemplate, body: newText});
+                                                    setTimeout(() => {
+                                                        textarea.focus();
+                                                        textarea.setSelectionRange(start + link.length, start + link.length);
+                                                    }, 0);
+                                                }
+                                            }}
+                                            className="flex items-center gap-2 px-3 py-1.5 rounded-xl font-black text-xs transition-all transform hover:scale-110"
+                                            style={{backgroundColor: '#B7A3E3', color: '#FFF1CB'}}
+                                            title="Insert Link"
+                                        >
+                                            <Link size={16} />
+                                            Add Link
+                                        </button>
+                                    </div>
                                     <textarea 
                                         name="body" 
                                         value={editingTemplate.body || ''} 
@@ -447,7 +482,12 @@
                                     />
                                 </div>
                                 <div className="text-sm font-black p-4 rounded-2xl border-4 border-blue-light" style={{backgroundColor: '#C2E2FA', color: '#FF8F8F'}}>
-                                    Variables: <span className="font-mono text-orange font-black">{`{name}`}</span>, <span className="font-mono text-orange font-black">{`{company}`}</span>
+                                    <div className="mb-2">
+                                        <span className="font-black">Variables:</span> <span className="font-mono text-orange font-black">{`{name}`}</span>, <span className="font-mono text-orange font-black">{`{company}`}</span>
+                                    </div>
+                                    <div className="text-xs mt-2 opacity-90">
+                                        💡 <span className="font-black">Links:</span> Click "Add Link" button or just paste URLs directly - most email clients will auto-link them!
+                                    </div>
                                 </div>
                                 <div className="flex justify-end gap-3 pt-2">
                                     <button type="button" onClick={() => setEditingTemplate(null)} className="px-6 py-3 text-orange font-black rounded-2xl transition-all transform hover:scale-110" style={{backgroundColor: '#C2E2FA'}}>Cancel</button>
