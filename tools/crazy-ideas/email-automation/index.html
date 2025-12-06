@@ -312,6 +312,218 @@
             }
         };
 
+        // EmailJS Setup Wizard Component
+        const EmailJSWizard = ({ emailjsConfig, setEmailjsConfig, setEmailjsConfigured }) => {
+            const [currentStep, setCurrentStep] = useState(1);
+            const emailTemplate = `Subject: {{subject}}
+
+From: {{from_name}} <{{from_email}}>
+To: {{to_email}}
+
+{{message}}
+
+---
+Reply to: {{reply_to}}`;
+
+            const copyToClipboard = (text) => {
+                navigator.clipboard.writeText(text);
+                alert('Copied to clipboard!');
+            };
+
+            const handleConfigChange = (field, value) => {
+                const newConfig = { ...emailjsConfig, [field]: value };
+                setEmailjsConfig(newConfig);
+                localStorage.setItem('emailjsConfig', JSON.stringify(newConfig));
+                if (newConfig.serviceId && newConfig.templateId && newConfig.publicKey) {
+                    setEmailjsConfigured(true);
+                }
+            };
+
+            return (
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 space-y-4">
+                    <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-lg font-bold text-blue-900">🚀 Quick Setup Wizard</h4>
+                        <div className="flex gap-1">
+                            {[1, 2, 3, 4].map(step => (
+                                <div
+                                    key={step}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                                        step === currentStep
+                                            ? 'bg-blue-600 text-white'
+                                            : step < currentStep
+                                            ? 'bg-green-500 text-white'
+                                            : 'bg-slate-200 text-slate-500'
+                                    }`}
+                                >
+                                    {step < currentStep ? '✓' : step}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Step 1: Sign Up */}
+                    {currentStep === 1 && (
+                        <div className="space-y-4">
+                            <h5 className="font-bold text-blue-900">Step 1: Sign Up (30 seconds)</h5>
+                            <div className="bg-white rounded-lg p-4 space-y-3">
+                                <p className="text-sm text-slate-700">1. Click the button below to open EmailJS</p>
+                                <a
+                                    href="https://www.emailjs.com/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-lg font-medium"
+                                >
+                                    Open EmailJS.com →
+                                </a>
+                                <p className="text-sm text-slate-700">2. Click "Sign Up Free" (or use Google/GitHub)</p>
+                                <p className="text-sm text-slate-700">3. Create your account</p>
+                            </div>
+                            <button
+                                onClick={() => setCurrentStep(2)}
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium"
+                            >
+                                Next: Connect Email →
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Step 2: Connect Email */}
+                    {currentStep === 2 && (
+                        <div className="space-y-4">
+                            <h5 className="font-bold text-blue-900">Step 2: Connect Your Email (1 minute)</h5>
+                            <div className="bg-white rounded-lg p-4 space-y-3">
+                                <p className="text-sm text-slate-700">1. In EmailJS dashboard, go to <strong>"Email Services"</strong></p>
+                                <p className="text-sm text-slate-700">2. Click <strong>"Add New Service"</strong></p>
+                                <p className="text-sm text-slate-700">3. Choose your email:</p>
+                                <div className="bg-slate-50 p-3 rounded space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm">📧 <strong>Gmail:</strong> Click "Connect Account" → Authorize</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm">📧 <strong>Outlook:</strong> Click "Connect Account" → Authorize</span>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-slate-700">4. Give it a name (e.g., "My Gmail")</p>
+                                <p className="text-sm text-slate-700">5. <strong>Copy the Service ID</strong> (looks like <code className="bg-slate-100 px-1 rounded">service_xxxxx</code>)</p>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Paste Service ID here"
+                                        value={emailjsConfig.serviceId}
+                                        onChange={(e) => handleConfigChange('serviceId', e.target.value)}
+                                        className="flex-1 border border-slate-300 rounded px-3 py-2 text-sm"
+                                    />
+                                    {emailjsConfig.serviceId && (
+                                        <span className="text-green-600 font-bold text-xl">✓</span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setCurrentStep(1)}
+                                    className="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-medium"
+                                >
+                                    ← Back
+                                </button>
+                                <button
+                                    onClick={() => setCurrentStep(3)}
+                                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium"
+                                >
+                                    Next: Create Template →
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Step 3: Create Template */}
+                    {currentStep === 3 && (
+                        <div className="space-y-4">
+                            <h5 className="font-bold text-blue-900">Step 3: Create Email Template (1 minute)</h5>
+                            <div className="bg-white rounded-lg p-4 space-y-3">
+                                <p className="text-sm text-slate-700">1. Go to <strong>"Email Templates"</strong> in EmailJS</p>
+                                <p className="text-sm text-slate-700">2. Click <strong>"Create New Template"</strong></p>
+                                <p className="text-sm text-slate-700">3. Copy this template and paste it:</p>
+                                <div className="bg-slate-900 text-green-400 p-3 rounded font-mono text-xs relative">
+                                    <button
+                                        onClick={() => copyToClipboard(emailTemplate)}
+                                        className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded hover:bg-blue-700"
+                                    >
+                                        Copy
+                                    </button>
+                                    <pre className="whitespace-pre-wrap">{emailTemplate}</pre>
+                                </div>
+                                <p className="text-xs text-slate-500">4. Click <strong>"Save"</strong></p>
+                                <p className="text-sm text-slate-700">5. <strong>Copy the Template ID</strong> (looks like <code className="bg-slate-100 px-1 rounded">template_xxxxx</code>)</p>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Paste Template ID here"
+                                        value={emailjsConfig.templateId}
+                                        onChange={(e) => handleConfigChange('templateId', e.target.value)}
+                                        className="flex-1 border border-slate-300 rounded px-3 py-2 text-sm"
+                                    />
+                                    {emailjsConfig.templateId && (
+                                        <span className="text-green-600 font-bold text-xl">✓</span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setCurrentStep(2)}
+                                    className="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-medium"
+                                >
+                                    ← Back
+                                </button>
+                                <button
+                                    onClick={() => setCurrentStep(4)}
+                                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium"
+                                >
+                                    Next: Get Public Key →
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Step 4: Get Public Key */}
+                    {currentStep === 4 && (
+                        <div className="space-y-4">
+                            <h5 className="font-bold text-blue-900">Step 4: Get Public Key (30 seconds)</h5>
+                            <div className="bg-white rounded-lg p-4 space-y-3">
+                                <p className="text-sm text-slate-700">1. Go to <strong>"Account"</strong> → <strong>"General"</strong> in EmailJS</p>
+                                <p className="text-sm text-slate-700">2. Find <strong>"Public Key"</strong></p>
+                                <p className="text-sm text-slate-700">3. <strong>Copy it</strong> and paste below:</p>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Paste Public Key here"
+                                        value={emailjsConfig.publicKey}
+                                        onChange={(e) => handleConfigChange('publicKey', e.target.value)}
+                                        className="flex-1 border border-slate-300 rounded px-3 py-2 text-sm"
+                                    />
+                                    {emailjsConfig.publicKey && (
+                                        <span className="text-green-600 font-bold text-xl">✓</span>
+                                    )}
+                                </div>
+                                {emailjsConfig.serviceId && emailjsConfig.templateId && emailjsConfig.publicKey && (
+                                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                                        <p className="text-sm text-green-700 font-semibold">🎉 All set! You're ready to send emails!</p>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setCurrentStep(3)}
+                                    className="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg font-medium"
+                                >
+                                    ← Back
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
         // --- Sub-Components (Defined OUTSIDE App to fix focus issues) ---
         const ContactList = ({ 
             contacts, 
@@ -1259,74 +1471,28 @@
                                     </div>
                                     {emailClient === 'emailjs' && (
                                         <>
-                                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                                <h4 className="text-sm font-bold text-blue-900 mb-2">📧 EmailJS Setup (2 Minutes)</h4>
-                                                <ol className="text-xs text-blue-800 space-y-1 list-decimal list-inside mb-3">
-                                                    <li>Sign up at <a href="https://www.emailjs.com/" target="_blank" rel="noopener noreferrer" className="underline font-medium">emailjs.com</a> (free)</li>
-                                                    <li>Connect your email (Gmail, Outlook, etc.)</li>
-                                                    <li>Create an email service</li>
-                                                    <li>Create an email template</li>
-                                                    <li>Copy your Service ID, Template ID, and Public Key below</li>
-                                                </ol>
-                                                <a href="EMAILJS-SETUP.md" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 underline font-medium">📖 View Complete Setup Guide →</a>
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
-                                                    Service ID
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="service_xxxxx"
-                                                    value={emailjsConfig.serviceId}
-                                                    onChange={(e) => {
-                                                        const newConfig = { ...emailjsConfig, serviceId: e.target.value };
-                                                        setEmailjsConfig(newConfig);
-                                                        localStorage.setItem('emailjsConfig', JSON.stringify(newConfig));
-                                                        setEmailjsConfigured(newConfig.serviceId && newConfig.templateId && newConfig.publicKey);
-                                                    }}
-                                                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                            {!emailjsConfigured ? (
+                                                <EmailJSWizard 
+                                                    emailjsConfig={emailjsConfig}
+                                                    setEmailjsConfig={setEmailjsConfig}
+                                                    setEmailjsConfigured={setEmailjsConfigured}
                                                 />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
-                                                    Template ID
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="template_xxxxx"
-                                                    value={emailjsConfig.templateId}
-                                                    onChange={(e) => {
-                                                        const newConfig = { ...emailjsConfig, templateId: e.target.value };
-                                                        setEmailjsConfig(newConfig);
-                                                        localStorage.setItem('emailjsConfig', JSON.stringify(newConfig));
-                                                        setEmailjsConfigured(newConfig.serviceId && newConfig.templateId && newConfig.publicKey);
-                                                    }}
-                                                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">
-                                                    Public Key
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="xxxxx"
-                                                    value={emailjsConfig.publicKey}
-                                                    onChange={(e) => {
-                                                        const newConfig = { ...emailjsConfig, publicKey: e.target.value };
-                                                        setEmailjsConfig(newConfig);
-                                                        localStorage.setItem('emailjsConfig', JSON.stringify(newConfig));
-                                                        setEmailjsConfigured(newConfig.serviceId && newConfig.templateId && newConfig.publicKey);
-                                                    }}
-                                                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                                />
-                                            </div>
-                                            {emailjsConfigured && (
-                                                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                                                    <p className="text-xs text-green-700 flex items-center gap-2">
-                                                        <span className="text-green-600 font-bold">✓</span>
-                                                        <span>EmailJS is configured! You can now send emails directly.</span>
+                                            ) : (
+                                                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                                                    <p className="text-sm text-green-700 flex items-center gap-2 mb-3">
+                                                        <span className="text-green-600 font-bold text-lg">✓</span>
+                                                        <span className="font-semibold">EmailJS is configured! You can now send emails directly.</span>
                                                     </p>
+                                                    <button
+                                                        onClick={() => {
+                                                            setEmailjsConfigured(false);
+                                                            setEmailjsConfig({ serviceId: '', templateId: '', publicKey: '' });
+                                                            localStorage.removeItem('emailjsConfig');
+                                                        }}
+                                                        className="text-xs text-slate-600 hover:text-slate-700 underline"
+                                                    >
+                                                        Reconfigure EmailJS
+                                                    </button>
                                                 </div>
                                             )}
                                         </>
