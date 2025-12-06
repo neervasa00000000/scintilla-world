@@ -10,10 +10,10 @@
             theme: {
                 extend: {
                     colors: {
-                        'purple-dark': '#6B3F69',
-                        'purple-medium': '#8D5F8C',
-                        'purple-light': '#A376A2',
-                        'pink-light': '#DDC3C3',
+                        'blue-light': '#9CC6DB',
+                        'cream': '#FCF6D9',
+                        'orange': '#CF4B00',
+                        'tan': '#DDBA7D',
                     }
                 }
             }
@@ -217,12 +217,12 @@
             emailClient
         }) => (
             <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-5 rounded-xl border border-pink-light shadow-lg">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-5 rounded-xl border border-blue-light shadow-lg">
                     <div>
-                        <h2 className="text-xl font-bold text-purple-dark">Add Contacts</h2>
-                        <p className="text-sm text-purple-medium mt-1">Upload a CSV or add manually.</p>
+                        <h2 className="text-xl font-bold text-orange">Add Contacts</h2>
+                        <p className="text-sm text-orange/80 mt-1">Upload a CSV or add manually.</p>
                     </div>
-                    <label className="flex items-center gap-2 bg-gradient-to-r from-purple-medium to-purple-light text-white px-5 py-2.5 rounded-xl hover:from-purple-dark hover:to-purple-medium cursor-pointer transition-all shadow-md text-sm font-medium active:scale-95 transform duration-200">
+                    <label className="flex items-center gap-2 bg-gradient-to-r from-orange to-tan text-white px-5 py-2.5 rounded-xl hover:from-orange hover:to-tan/90 cursor-pointer transition-all shadow-md text-sm font-medium active:scale-95 transform duration-200">
                         <Upload size={18} />
                         <span>Import CSV</span>
                         <input 
@@ -237,37 +237,37 @@
                     <input 
                         type="text" 
                         placeholder="Name" 
-                        className="border-2 border-pink-light p-3 rounded-xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-purple-light focus:border-purple-medium text-purple-dark placeholder-purple-medium/50"
+                        className="border-2 border-blue-light p-3 rounded-xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange placeholder-orange/50"
                         value={newContact.name}
                         onChange={(e) => setNewContact({...newContact, name: e.target.value})}
                     />
                     <input 
                         type="text" 
                         placeholder="Email" 
-                        className="border-2 border-pink-light p-3 rounded-xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-purple-light focus:border-purple-medium text-purple-dark placeholder-purple-medium/50"
+                        className="border-2 border-blue-light p-3 rounded-xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange placeholder-orange/50"
                         value={newContact.email}
                         onChange={(e) => setNewContact({...newContact, email: e.target.value})}
                     />
                     <input 
                         type="text" 
                         placeholder="Company" 
-                        className="border-2 border-pink-light p-3 rounded-xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-purple-light focus:border-purple-medium text-purple-dark placeholder-purple-medium/50"
+                        className="border-2 border-blue-light p-3 rounded-xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange placeholder-orange/50"
                         value={newContact.company}
                         onChange={(e) => setNewContact({...newContact, company: e.target.value})}
                     />
                     <button 
                         type="submit"
-                        className="bg-gradient-to-r from-purple-medium to-purple-light text-white p-3 rounded-xl hover:from-purple-dark hover:to-purple-medium flex items-center justify-center min-w-[50px] shadow-md transition-all duration-200 transform hover:scale-105"
+                        className="bg-gradient-to-r from-orange to-tan text-white p-3 rounded-xl hover:from-orange hover:to-tan/90 flex items-center justify-center min-w-[50px] shadow-md transition-all duration-200 transform hover:scale-105"
                     >
                         <Plus size={20} />
                     </button>
                 </form>
-                <div className="flex items-center bg-white border-2 border-pink-light rounded-xl px-4 py-3 mb-4 shadow-md mt-6">
-                    <Search size={18} className="text-purple-medium mr-3" />
+                <div className="flex items-center bg-white border-2 border-blue-light rounded-xl px-4 py-3 mb-4 shadow-md mt-6">
+                    <Search size={18} className="text-orange/70 mr-3" />
                     <input 
                         type="text" 
                         placeholder="Search contacts..." 
-                        className="outline-none flex-1 text-purple-dark placeholder-purple-medium/50"
+                        className="outline-none flex-1 text-orange placeholder-orange/50"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -275,10 +275,10 @@
                 <div className="grid gap-3">
                     {contacts.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase())).map(contact => {
                         const statusColors = {
-                            'New': 'bg-pink-light text-purple-dark',
-                            'Sent': 'bg-purple-light/30 text-purple-dark',
-                            'Replied': 'bg-purple-medium/20 text-purple-dark',
-                            'No Response': 'bg-purple-light/20 text-purple-medium'
+                            'New': 'bg-blue-light text-orange',
+                            'Sent': 'bg-tan/50 text-orange',
+                            'Replied': 'bg-orange/20 text-orange',
+                            'No Response': 'bg-tan/30 text-orange/80'
                         };
                         const statusIcons = {
                             'New': <Clock size={14} />,
@@ -287,31 +287,31 @@
                             'No Response': <XCircle size={14} />
                         };
                         return (
-                        <div key={contact.id} className="bg-white p-5 rounded-xl shadow-md border border-pink-light flex justify-between items-center hover:shadow-lg transition-all duration-200 group hover:border-purple-light">
+                        <div key={contact.id} className="bg-white p-5 rounded-xl shadow-md border border-blue-light flex justify-between items-center hover:shadow-lg transition-all duration-200 group hover:border-orange">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-semibold text-purple-dark text-lg">{contact.name}</h3>
+                                <h3 className="font-semibold text-orange text-lg">{contact.name}</h3>
                                         <span className={`text-xs px-2.5 py-1 rounded-full flex items-center gap-1 font-medium ${statusColors[contact.status] || statusColors['New']}`}>
                                             {statusIcons[contact.status] || statusIcons['New']}
                                             {contact.status}
                                         </span>
                                     </div>
-                                <p className="text-sm text-purple-medium">{contact.email} • {contact.company}</p>
+                                <p className="text-sm text-orange/80">{contact.email} • {contact.company}</p>
                                     {contact.lastSent && (
-                                        <p className="text-xs text-purple-medium/70 mt-1">Sent: {new Date(contact.lastSent).toLocaleDateString()}</p>
+                                        <p className="text-xs text-orange/60 mt-1">Sent: {new Date(contact.lastSent).toLocaleDateString()}</p>
                                     )}
                             </div>
                             <div className="flex gap-2">
                                 <a
                                     href={generateMailto(contact, templates[0], emailClient)}
                                     title="Quick Draft"
-                                    className="p-2.5 text-purple-medium hover:text-purple-dark hover:bg-pink-light rounded-xl transition-all opacity-0 group-hover:opacity-100 transform hover:scale-110"
+                                    className="p-2.5 text-orange hover:text-orange hover:bg-blue-light rounded-xl transition-all opacity-0 group-hover:opacity-100 transform hover:scale-110"
                                 >
                                     <Send size={18} />
                                 </a>
                                 <button 
                                     onClick={() => handleDeleteContact(contact.id)}
-                                    className="p-2.5 text-purple-medium/60 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                    className="p-2.5 text-orange/60 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                                 >
                                     <Trash2 size={18} />
                                 </button>
@@ -319,7 +319,7 @@
                         </div>
                         );
                     })}
-                    {contacts.length === 0 && <p className="text-center text-purple-medium/60 py-12 text-lg">No contacts found.</p>}
+                    {contacts.length === 0 && <p className="text-center text-orange/60 py-12 text-lg">No contacts found.</p>}
                 </div>
             </div>
         );
@@ -341,10 +341,10 @@
                     {/* List */}
                     <div className="space-y-3">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-bold text-xl text-purple-dark">Saved Templates</h3>
+                            <h3 className="font-bold text-xl text-orange">Saved Templates</h3>
                             <button 
                                 onClick={() => setEditingTemplate({ id: null, name: '', subject: '', body: '' })}
-                                className="text-sm bg-gradient-to-r from-purple-medium to-purple-light text-white px-4 py-2 rounded-xl font-medium hover:from-purple-dark hover:to-purple-medium shadow-md transition-all duration-200"
+                                className="text-sm bg-gradient-to-r from-orange to-tan text-white px-4 py-2 rounded-xl font-medium hover:from-orange hover:to-tan/90 shadow-md transition-all duration-200"
                             >
                                 + New Template
                             </button>
@@ -353,12 +353,12 @@
                             <div 
                                 key={t.id} 
                                 onClick={() => setEditingTemplate(t)}
-                                className={`p-4 rounded-xl border-2 cursor-pointer transition-all group ${editingTemplate?.id === t.id ? 'border-purple-medium bg-gradient-to-r from-purple-light/30 to-pink-light ring-2 ring-purple-light shadow-lg' : 'border-pink-light bg-white hover:border-purple-light hover:shadow-md'}`}
+                                className={`p-4 rounded-xl border-2 cursor-pointer transition-all group ${editingTemplate?.id === t.id ? 'border-orange bg-gradient-to-r from-tan/30 to-blue-light ring-2 ring-orange shadow-lg' : 'border-blue-light bg-white hover:border-orange hover:shadow-md'}`}
                             >
                                 <div className="flex justify-between items-start">
-                                    <h4 className="font-semibold text-purple-dark">{t.name}</h4>
+                                    <h4 className="font-semibold text-orange">{t.name}</h4>
                                     <div className="flex items-center gap-2">
-                                        <FileText size={16} className="text-purple-medium" />
+                                        <FileText size={16} className="text-orange/80" />
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -366,20 +366,20 @@
                                                     handleDeleteTemplate(t.id);
                                                 }
                                             }}
-                                            className="p-1.5 text-purple-medium/60 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                            className="p-1.5 text-orange/60 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                             title="Delete template"
                                         >
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
                                 </div>
-                                <p className="text-xs text-purple-medium mt-1 truncate">{t.subject}</p>
+                                <p className="text-xs text-orange/80 mt-1 truncate">{t.subject}</p>
                             </div>
                         ))}
                     </div>
 
                     {/* Editor */}
-                    <div className="bg-white rounded-xl shadow-lg border-2 border-pink-light p-6 flex flex-col">
+                    <div className="bg-white rounded-xl shadow-lg border-2 border-blue-light p-6 flex flex-col">
                         {editingTemplate !== null ? (
                             <form onSubmit={handleSaveTemplate} className="flex flex-col h-full space-y-4">
                                 {/* Spam Warning */}
@@ -391,59 +391,59 @@
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="bg-purple-light/20 text-purple-dark text-xs p-3 rounded-xl flex items-center gap-2 border border-purple-light">
+                                    <div className="bg-blue-light/30 text-orange text-xs p-3 rounded-xl flex items-center gap-2 border border-blue-light">
                                         <ShieldCheck size={16} />
                                         <span>Content looks clean! Good deliverability expected.</span>
                                     </div>
                                 )}
 
                                 <div>
-                                    <label className="block text-xs font-bold text-purple-dark uppercase tracking-wide mb-2">Template Name</label>
+                                    <label className="block text-xs font-bold text-orange uppercase tracking-wide mb-2">Template Name</label>
                                     <input 
                                         name="name" 
                                         value={editingTemplate.name || ''} 
                                         onChange={(e) => setEditingTemplate({...editingTemplate, name: e.target.value})}
                                         required 
-                                        className="w-full border-b-2 border-pink-light p-2 focus:border-purple-medium outline-none font-medium text-purple-dark" 
+                                        className="w-full border-b-2 border-blue-light p-2 focus:border-orange outline-none font-medium text-orange" 
                                         placeholder="e.g. First Follow Up" 
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-purple-dark uppercase tracking-wide mb-2">Subject Line</label>
+                                    <label className="block text-xs font-bold text-orange uppercase tracking-wide mb-2">Subject Line</label>
                                     <input 
                                         name="subject" 
                                         value={editingTemplate.subject || ''} 
                                         onChange={(e) => setEditingTemplate({...editingTemplate, subject: e.target.value})}
                                         required 
-                                        className="w-full border-2 border-pink-light p-3 rounded-xl bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-purple-light focus:border-purple-medium text-purple-dark" 
+                                        className="w-full border-2 border-blue-light p-3 rounded-xl bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange" 
                                         placeholder="Subject..." 
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <label className="block text-xs font-bold text-purple-dark uppercase tracking-wide mb-2">Body</label>
+                                    <label className="block text-xs font-bold text-orange uppercase tracking-wide mb-2">Body</label>
                                     <textarea 
                                         name="body" 
                                         value={editingTemplate.body || ''} 
                                         onChange={(e) => setEditingTemplate({...editingTemplate, body: e.target.value})}
                                         required 
-                                        className="w-full h-48 md:h-full border-2 border-pink-light p-3 rounded-xl bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-purple-light focus:border-purple-medium resize-none font-mono text-sm text-purple-dark" 
+                                        className="w-full h-48 md:h-full border-2 border-blue-light p-3 rounded-xl bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange resize-none font-mono text-sm text-orange" 
                                         placeholder="Hi {name}..." 
                                     />
                                 </div>
-                                <div className="text-xs text-purple-medium bg-pink-light p-3 rounded-xl">
-                                    Variables: <span className="font-mono text-purple-dark font-bold">{`{name}`}</span>, <span className="font-mono text-purple-dark font-bold">{`{company}`}</span>
+                                <div className="text-xs text-orange/80 bg-blue-light/30 p-3 rounded-xl">
+                                    Variables: <span className="font-mono text-orange font-bold">{`{name}`}</span>, <span className="font-mono text-orange font-bold">{`{company}`}</span>
                                 </div>
                                 <div className="flex justify-end gap-2 pt-2">
-                                    <button type="button" onClick={() => setEditingTemplate(null)} className="px-5 py-2.5 text-purple-medium hover:bg-pink-light rounded-xl transition-all">Cancel</button>
-                                    <button type="submit" className="bg-gradient-to-r from-purple-medium to-purple-light text-white px-6 py-2.5 rounded-xl hover:from-purple-dark hover:to-purple-medium flex items-center gap-2 shadow-md transition-all duration-200 transform hover:scale-105">
+                                    <button type="button" onClick={() => setEditingTemplate(null)} className="px-5 py-2.5 text-orange/80 hover:bg-blue-light rounded-xl transition-all">Cancel</button>
+                                    <button type="submit" className="bg-gradient-to-r from-orange to-tan text-white px-6 py-2.5 rounded-xl hover:from-orange hover:to-tan/90 flex items-center gap-2 shadow-md transition-all duration-200 transform hover:scale-105">
                                         <Save size={16} /> Save Template
                                     </button>
                                 </div>
                             </form>
                         ) : (
-                            <div className="h-full flex flex-col items-center justify-center text-purple-medium/50">
+                            <div className="h-full flex flex-col items-center justify-center text-orange/50">
                                 <Edit2 size={48} className="mb-4 opacity-30" />
-                                <p className="text-purple-medium">Select a template to edit or create a new one.</p>
+                                <p className="text-orange/70">Select a template to edit or create a new one.</p>
                             </div>
                         )}
                     </div>
@@ -476,7 +476,7 @@
 
             return (
                 <div className="space-y-6">
-                    <div className="bg-gradient-to-r from-purple-dark via-purple-medium to-purple-light rounded-2xl p-8 text-white shadow-2xl">
+                    <div className="bg-gradient-to-r from-orange via-tan to-orange/80 rounded-2xl p-8 text-white shadow-2xl">
                         <h2 className="text-3xl font-bold mb-2">Campaign Runner</h2>
                         <p className="opacity-95 max-w-xl text-white/90">
                             This mode queues your contacts one by one. It prevents "tab overload" and ensures you can customize each email slightly before sending.
@@ -485,21 +485,21 @@
 
                     {/* Campaign Settings */}
                     <div className="flex flex-col md:flex-row gap-4">
-                        <div className="flex-1 bg-white p-6 rounded-xl border-2 border-pink-light shadow-lg">
-                            <label className="block text-sm font-bold text-purple-dark mb-2">1. Select Template</label>
+                        <div className="flex-1 bg-white p-6 rounded-xl border-2 border-blue-light shadow-lg">
+                            <label className="block text-sm font-bold text-orange mb-2">1. Select Template</label>
                             <select 
-                                className="w-full border-2 border-pink-light p-3 rounded-xl bg-white outline-none focus:ring-2 focus:ring-purple-light focus:border-purple-medium text-purple-dark"
+                                className="w-full border-2 border-blue-light p-3 rounded-xl bg-white outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange"
                                 value={selectedTemplateId}
                                 onChange={(e) => setSelectedTemplateId(e.target.value)}
                             >
                                 {templates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                             </select>
                         </div>
-                        <div className="flex-1 bg-white p-6 rounded-xl border-2 border-pink-light shadow-lg flex items-end">
+                        <div className="flex-1 bg-white p-6 rounded-xl border-2 border-blue-light shadow-lg flex items-end">
                             <button 
                                 onClick={() => setIsCampaignActive(true)}
                                 disabled={isCampaignActive}
-                                className={`w-full py-3 rounded-xl font-bold text-lg shadow-md transition-all duration-200 ${isCampaignActive ? 'bg-pink-light text-purple-medium cursor-not-allowed' : 'bg-gradient-to-r from-purple-medium to-purple-light text-white hover:from-purple-dark hover:to-purple-medium hover:scale-[1.02]'}`}
+                                className={`w-full py-3 rounded-xl font-bold text-lg shadow-md transition-all duration-200 ${isCampaignActive ? 'bg-blue-light text-orange cursor-not-allowed' : 'bg-gradient-to-r from-orange to-tan text-white hover:from-orange hover:to-tan/90 hover:scale-[1.02]'}`}
                             >
                                 {isCampaignActive ? 'Campaign Active below...' : 'Start Campaign'}
                             </button>
@@ -508,24 +508,24 @@
 
                     {/* Active Campaign Mode */}
                     {isCampaignActive && activeContact && (
-                        <div className="bg-white border-2 border-purple-light rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-2 bg-pink-light">
+                        <div className="bg-white border-2 border-orange rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-2 bg-blue-light">
                                 <div 
-                                    className="h-full bg-gradient-to-r from-purple-medium to-purple-light transition-all duration-500" 
+                                    className="h-full bg-gradient-to-r from-orange to-tan transition-all duration-500" 
                                     style={{ width: `${((currentIndex + 1) / contacts.length) * 100}%` }}
                                 ></div>
                             </div>
                             <div className="flex justify-between items-start mb-8 mt-4">
                                 <div>
-                                    <span className="text-xs font-bold text-purple-dark uppercase tracking-widest bg-pink-light px-3 py-1.5 rounded-full">
+                                    <span className="text-xs font-bold text-orange uppercase tracking-widest bg-blue-light px-3 py-1.5 rounded-full">
                                         Contact {currentIndex + 1} of {contacts.length}
                                     </span>
-                                    <h2 className="text-4xl font-bold text-purple-dark mt-3">{activeContact.name}</h2>
-                                    <p className="text-xl text-purple-medium mt-1">{activeContact.company} • {activeContact.email}</p>
+                                    <h2 className="text-4xl font-bold text-orange mt-3">{activeContact.name}</h2>
+                                    <p className="text-xl text-orange/80 mt-1">{activeContact.company} • {activeContact.email}</p>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-sm text-purple-medium/70">Next up:</div>
-                                    <div className="font-medium text-purple-dark">
+                                    <div className="text-sm text-orange/70">Next up:</div>
+                                    <div className="font-medium text-orange">
                                         {contacts[currentIndex + 1]?.name || "End of list"}
                                     </div>
                                 </div>
@@ -536,27 +536,27 @@
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={nextContact}
-                                    className="flex-1 bg-gradient-to-r from-purple-medium to-purple-light hover:from-purple-dark hover:to-purple-medium text-white text-center py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-purple-light/50 transition-all duration-200 flex items-center justify-center gap-2 group transform hover:scale-[1.02]"
+                                    className="flex-1 bg-gradient-to-r from-orange to-tan hover:from-orange hover:to-tan/90 text-white text-center py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-orange/30 transition-all duration-200 flex items-center justify-center gap-2 group transform hover:scale-[1.02]"
                                 >
                                     <Send className="group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
                                     Open {emailClient === 'gmail' ? 'Gmail' : 'Email'} & Next
                                 </a>
                                 <button 
                                     onClick={nextContact}
-                                    className="px-6 py-4 rounded-xl border-2 border-pink-light text-purple-medium font-bold hover:bg-pink-light hover:text-purple-dark transition-all duration-200"
+                                    className="px-6 py-4 rounded-xl border-2 border-blue-light text-orange font-bold hover:bg-blue-light hover:text-orange transition-all duration-200"
                                 >
                                     Skip
                                 </button>
                             </div>
-                            <p className="text-center text-xs text-purple-medium/70 mt-4">
+                            <p className="text-center text-xs text-orange/70 mt-4">
                                 Clicking "Open {emailClient === 'gmail' ? 'Gmail' : 'Email'}" opens {emailClient === 'gmail' ? 'Gmail' : 'your default email app'} with the message ready. Press Send there, then come back here for the next one.
                             </p>
                         </div>
                     )}
 
                     {!isCampaignActive && (
-                        <div className="text-center py-12 bg-white rounded-xl border-2 border-dashed border-pink-light">
-                            <p className="text-purple-medium">Ready to start? Select a template and click "Start Campaign".</p>
+                        <div className="text-center py-12 bg-white rounded-xl border-2 border-dashed border-blue-light">
+                            <p className="text-orange/80">Ready to start? Select a template and click "Start Campaign".</p>
                         </div>
                     )}
                 </div>
@@ -828,10 +828,10 @@
             };
 
             return (
-                <div className="min-h-screen bg-pink-light font-sans text-purple-dark flex flex-col md:flex-row">
+                <div className="min-h-screen bg-cream font-sans text-orange flex flex-col md:flex-row">
                     {/* Sidebar */}
-                    <div className="md:w-64 bg-white border-r border-pink-light flex flex-col shadow-lg">
-                        <div className="p-6 border-b border-pink-light bg-gradient-to-r from-purple-dark to-purple-medium">
+                    <div className="md:w-64 bg-white border-r border-blue-light flex flex-col shadow-lg">
+                        <div className="p-6 border-b border-blue-light bg-gradient-to-r from-orange to-tan">
                             <div className="flex items-center gap-3 text-white">
                                 <div className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-xl shadow-lg">
                                     <Mail size={22} />
@@ -843,62 +843,62 @@
                         <nav className="flex-1 p-4 space-y-2">
                             <button 
                                 onClick={() => setActiveTab('contacts')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'contacts' ? 'bg-gradient-to-r from-purple-medium to-purple-light text-white shadow-lg transform scale-[1.02]' : 'text-purple-dark hover:bg-pink-light hover:text-purple-medium'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'contacts' ? 'bg-gradient-to-r from-orange to-tan text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
                             >
                                 <Users size={18} /> Contacts
                             </button>
                             <button 
                                 onClick={() => setActiveTab('templates')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'templates' ? 'bg-gradient-to-r from-purple-medium to-purple-light text-white shadow-lg transform scale-[1.02]' : 'text-purple-dark hover:bg-pink-light hover:text-purple-medium'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'templates' ? 'bg-gradient-to-r from-orange to-tan text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
                             >
                                 <Copy size={18} /> Templates
                             </button>
                             <button 
                                 onClick={() => setActiveTab('automation')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'automation' ? 'bg-gradient-to-r from-purple-medium to-purple-light text-white shadow-lg transform scale-[1.02]' : 'text-purple-dark hover:bg-pink-light hover:text-purple-medium'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'automation' ? 'bg-gradient-to-r from-orange to-tan text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
                             >
                                 <Send size={18} /> Automation
                             </button>
                             <button 
                                 onClick={() => setShowSettings(!showSettings)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${showSettings ? 'bg-gradient-to-r from-purple-medium to-purple-light text-white shadow-lg transform scale-[1.02]' : 'text-purple-dark hover:bg-pink-light hover:text-purple-medium'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${showSettings ? 'bg-gradient-to-r from-orange to-tan text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
                             >
                                 <Settings size={18} /> Settings
                             </button>
                         </nav>
-                        <div className="p-4 border-t border-pink-light space-y-2">
+                        <div className="p-4 border-t border-blue-light space-y-2">
                             {showSettings && (
-                                <div className="bg-white rounded-xl p-4 border border-pink-light shadow-md mb-2 space-y-4">
+                                <div className="bg-white rounded-xl p-4 border border-blue-light shadow-md mb-2 space-y-4">
                                     <div>
-                                        <p className="text-xs font-bold text-purple-dark mb-2 uppercase tracking-wide">Email Client</p>
+                                        <p className="text-xs font-bold text-orange mb-2 uppercase tracking-wide">Email Client</p>
                                         <div className="space-y-2">
-                                            <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-pink-light transition-colors">
+                                            <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-blue-light transition-colors">
                                                 <input
                                                     type="radio"
                                                     name="emailClient"
                                                     value="apple"
                                                     checked={emailClient === 'apple'}
                                                     onChange={(e) => setEmailClient(e.target.value)}
-                                                    className="text-purple-medium accent-purple-medium"
+                                                    className="text-orange accent-orange"
                                                 />
-                                                <span className="text-sm text-purple-dark">Apple Mail</span>
+                                                <span className="text-sm text-orange">Apple Mail</span>
                                             </label>
-                                            <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-pink-light transition-colors">
+                                            <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-blue-light transition-colors">
                                                 <input
                                                     type="radio"
                                                     name="emailClient"
                                                     value="gmail"
                                                     checked={emailClient === 'gmail'}
                                                     onChange={(e) => setEmailClient(e.target.value)}
-                                                    className="text-purple-medium accent-purple-medium"
+                                                    className="text-orange accent-orange"
                                                 />
-                                                <span className="text-sm text-purple-dark">Gmail</span>
+                                                <span className="text-sm text-orange">Gmail</span>
                                             </label>
                                         </div>
                                     </div>
                                 </div>
                             )}
-                            <div className="bg-gradient-to-br from-purple-dark to-purple-medium rounded-xl p-4 text-white shadow-lg">
+                            <div className="bg-gradient-to-br from-orange to-tan rounded-xl p-4 text-white shadow-lg">
                                 <p className="text-xs font-medium opacity-90 mb-1">💡 Pro Tip</p>
                                 <p className="text-xs leading-relaxed">Use <span className="font-mono bg-white/20 px-1.5 py-0.5 rounded">{`{company}`}</span> in templates to auto-personalize your emails.</p>
                             </div>
@@ -909,8 +909,8 @@
                     <div className="flex-1 overflow-y-auto">
                         <div className="max-w-4xl mx-auto p-6 md:p-12">
                             <div className="mb-8">
-                                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-dark to-purple-medium bg-clip-text text-transparent capitalize mb-2">{activeTab}</h1>
-                                <p className="text-purple-medium">
+                                <h1 className="text-3xl font-bold bg-gradient-to-r from-orange to-tan bg-clip-text text-transparent capitalize mb-2">{activeTab}</h1>
+                                <p className="text-orange/80">
                                     {activeTab === 'contacts' && "Manage your outreach list."}
                                     {activeTab === 'templates' && "Design reusable email blueprints."}
                                     {activeTab === 'automation' && "Generate personalized drafts instantly."}
