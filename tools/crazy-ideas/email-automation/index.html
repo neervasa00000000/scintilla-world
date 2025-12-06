@@ -29,11 +29,8 @@
         .hover\:text-orange:hover { color: var(--orange) !important; }
         .hover\:border-orange:hover { border-color: var(--orange) !important; }
         .focus\:border-orange:focus { border-color: var(--orange) !important; }
-        .focus\:ring-blue-light:focus { --tw-ring-color: var(--blue-light) !important; box-shadow: 0 0 0 2px var(--blue-light) !important; }
+        .focus\:ring-blue-light:focus { --tw-ring-color: var(--blue-light) !important; }
         input[type="radio"].accent-orange { accent-color: var(--orange) !important; }
-        .from-orange { --tw-gradient-from: var(--orange) !important; }
-        .to-tan { --tw-gradient-to: var(--tan) !important; }
-        .via-tan { --tw-gradient-stops: var(--orange), var(--tan), var(--tan) !important; }
     </style>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -233,13 +230,13 @@
             emailClient
         }) => (
             <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-5 rounded-xl border border-blue-light shadow-lg">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-6 rounded-3xl border-4 border-orange transform -rotate-1">
                     <div>
-                        <h2 className="text-xl font-bold text-orange">Add Contacts</h2>
-                        <p className="text-sm text-orange/80 mt-1">Upload a CSV or add manually.</p>
+                        <h2 className="text-2xl font-black text-orange transform rotate-1">Add Contacts</h2>
+                        <p className="text-base font-bold mt-2" style={{color: '#CF4B00'}}>Upload a CSV or add manually.</p>
                     </div>
-                    <label className="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl cursor-pointer transition-all shadow-md text-sm font-medium active:scale-95 transform duration-200" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}>
-                        <Upload size={18} />
+                    <label className="flex items-center gap-2 text-white px-6 py-3 rounded-2xl cursor-pointer transition-all text-sm font-black active:scale-95 transform duration-200 hover:scale-110" style={{backgroundColor: '#CF4B00'}}>
+                        <Upload size={20} />
                         <span>Import CSV</span>
                         <input 
                             type="file" 
@@ -253,89 +250,90 @@
                     <input 
                         type="text" 
                         placeholder="Name" 
-                        className="border-2 border-blue-light p-3 rounded-xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange placeholder-orange/50"
+                        className="border-4 border-blue-light p-4 rounded-2xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:border-orange text-orange placeholder-orange/50 font-bold text-lg transform hover:scale-105"
                         value={newContact.name}
                         onChange={(e) => setNewContact({...newContact, name: e.target.value})}
                     />
                     <input 
                         type="text" 
                         placeholder="Email" 
-                        className="border-2 border-blue-light p-3 rounded-xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange placeholder-orange/50"
+                        className="border-4 border-blue-light p-4 rounded-2xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:border-orange text-orange placeholder-orange/50 font-bold text-lg transform hover:scale-105"
                         value={newContact.email}
                         onChange={(e) => setNewContact({...newContact, email: e.target.value})}
                     />
                     <input 
                         type="text" 
                         placeholder="Company" 
-                        className="border-2 border-blue-light p-3 rounded-xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange placeholder-orange/50"
+                        className="border-4 border-blue-light p-4 rounded-2xl w-1/3 bg-white focus:bg-white transition-all outline-none focus:border-orange text-orange placeholder-orange/50 font-bold text-lg transform hover:scale-105"
                         value={newContact.company}
                         onChange={(e) => setNewContact({...newContact, company: e.target.value})}
                     />
                     <button 
                         type="submit"
-                        className="text-white p-3 rounded-xl flex items-center justify-center min-w-[50px] shadow-md transition-all duration-200 transform hover:scale-105" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}
+                        className="text-white p-4 rounded-2xl flex items-center justify-center min-w-[60px] transition-all duration-200 transform hover:scale-110 font-black text-xl" style={{backgroundColor: '#CF4B00'}}
                     >
-                        <Plus size={20} />
+                        <Plus size={24} />
                     </button>
                 </form>
-                <div className="flex items-center bg-white border-2 border-blue-light rounded-xl px-4 py-3 mb-4 shadow-md mt-6">
-                    <Search size={18} className="text-orange/70 mr-3" />
+                <div className="flex items-center bg-white border-4 border-blue-light rounded-2xl px-5 py-4 mb-4 mt-6 transform rotate-1">
+                    <Search size={20} className="mr-3" style={{color: '#CF4B00'}} />
                     <input 
                         type="text" 
                         placeholder="Search contacts..." 
-                        className="outline-none flex-1 text-orange placeholder-orange/50"
+                        className="outline-none flex-1 text-orange placeholder-orange/50 font-bold text-lg"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="grid gap-3">
-                    {contacts.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase())).map(contact => {
+                <div className="grid gap-4">
+                    {contacts.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase())).map((contact, idx) => {
                         const statusColors = {
-                            'New': 'bg-blue-light text-orange',
-                            'Sent': 'bg-tan/50 text-orange',
-                            'Replied': 'bg-orange/20 text-orange',
-                            'No Response': 'bg-tan/30 text-orange/80'
+                            'New': {bg: '#9CC6DB', text: '#CF4B00'},
+                            'Sent': {bg: '#DDBA7D', text: '#CF4B00'},
+                            'Replied': {bg: '#CF4B00', text: '#FCF6D9'},
+                            'No Response': {bg: '#DDBA7D', text: '#CF4B00'}
                         };
                         const statusIcons = {
-                            'New': <Clock size={14} />,
-                            'Sent': <Send size={14} />,
-                            'Replied': <CheckCircle size={14} />,
-                            'No Response': <XCircle size={14} />
+                            'New': <Clock size={16} />,
+                            'Sent': <Send size={16} />,
+                            'Replied': <CheckCircle size={16} />,
+                            'No Response': <XCircle size={16} />
                         };
+                        const rotation = idx % 2 === 0 ? 'rotate-1' : '-rotate-1';
                         return (
-                        <div key={contact.id} className="bg-white p-5 rounded-xl shadow-md border border-blue-light flex justify-between items-center hover:shadow-lg transition-all duration-200 group hover:border-orange">
+                        <div key={contact.id} className={`bg-white p-6 rounded-3xl border-4 border-blue-light flex justify-between items-center transition-all duration-200 group hover:border-orange transform ${rotation} hover:scale-105`}>
                                 <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-semibold text-orange text-lg">{contact.name}</h3>
-                                        <span className={`text-xs px-2.5 py-1 rounded-full flex items-center gap-1 font-medium ${statusColors[contact.status] || statusColors['New']}`}>
+                                    <div className="flex items-center gap-3 mb-2">
+                                <h3 className="font-black text-orange text-xl">{contact.name}</h3>
+                                        <span className="text-xs px-3 py-1.5 rounded-full flex items-center gap-1 font-black" style={{backgroundColor: statusColors[contact.status]?.bg || statusColors['New'].bg, color: statusColors[contact.status]?.text || statusColors['New'].text}}>
                                             {statusIcons[contact.status] || statusIcons['New']}
                                             {contact.status}
                                         </span>
                                     </div>
-                                <p className="text-sm text-orange/80">{contact.email} • {contact.company}</p>
+                                <p className="text-base font-bold" style={{color: '#CF4B00'}}>{contact.email} • {contact.company}</p>
                                     {contact.lastSent && (
-                                        <p className="text-xs text-orange/60 mt-1">Sent: {new Date(contact.lastSent).toLocaleDateString()}</p>
+                                        <p className="text-sm font-bold mt-2" style={{color: '#CF4B00'}}>Sent: {new Date(contact.lastSent).toLocaleDateString()}</p>
                                     )}
                             </div>
                             <div className="flex gap-2">
                                 <a
                                     href={generateMailto(contact, templates[0], emailClient)}
                                     title="Quick Draft"
-                                    className="p-2.5 text-orange hover:text-orange hover:bg-blue-light rounded-xl transition-all opacity-0 group-hover:opacity-100 transform hover:scale-110"
+                                    className="p-3 text-white rounded-2xl transition-all opacity-0 group-hover:opacity-100 transform hover:scale-125" style={{backgroundColor: '#CF4B00'}}
                                 >
-                                    <Send size={18} />
+                                    <Send size={20} />
                                 </a>
                                 <button 
                                     onClick={() => handleDeleteContact(contact.id)}
-                                    className="p-2.5 text-orange/60 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                    className="p-3 rounded-2xl transition-all hover:scale-125" style={{color: '#CF4B00', backgroundColor: '#9CC6DB'}}
                                 >
-                                    <Trash2 size={18} />
+                                    <Trash2 size={20} />
                                 </button>
                             </div>
                         </div>
                         );
                     })}
-                    {contacts.length === 0 && <p className="text-center text-orange/60 py-12 text-lg">No contacts found.</p>}
+                    {contacts.length === 0 && <p className="text-center py-12 text-2xl font-black" style={{color: '#CF4B00'}}>No contacts found.</p>}
                 </div>
             </div>
         );
@@ -355,26 +353,27 @@
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
                     {/* List */}
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-bold text-xl text-orange">Saved Templates</h3>
+                            <h3 className="font-black text-2xl text-orange transform rotate-1">Saved Templates</h3>
                             <button 
                                 onClick={() => setEditingTemplate({ id: null, name: '', subject: '', body: '' })}
-                                className="text-sm text-white px-4 py-2 rounded-xl font-medium shadow-md transition-all duration-200" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}
+                                className="text-sm text-white px-5 py-3 rounded-2xl font-black transition-all duration-200 transform hover:scale-110 -rotate-1" style={{backgroundColor: '#CF4B00'}}
                             >
                                 + New Template
                             </button>
                         </div>
-                        {templates.map(t => (
+                        {templates.map((t, idx) => (
                             <div 
                                 key={t.id} 
                                 onClick={() => setEditingTemplate(t)}
-                                className={`p-4 rounded-xl border-2 cursor-pointer transition-all group ${editingTemplate?.id === t.id ? 'border-orange bg-gradient-to-r from-tan/30 to-blue-light ring-2 ring-orange shadow-lg' : 'border-blue-light bg-white hover:border-orange hover:shadow-md'}`}
+                                className={`p-5 rounded-3xl border-4 cursor-pointer transition-all group transform ${editingTemplate?.id === t.id ? 'border-orange bg-orange' : 'border-blue-light bg-white hover:border-orange'} ${idx % 2 === 0 ? 'rotate-1' : '-rotate-1'} hover:scale-105`}
+                                style={editingTemplate?.id === t.id ? {color: '#FCF6D9'} : {color: '#CF4B00'}}
                             >
                                 <div className="flex justify-between items-start">
-                                    <h4 className="font-semibold text-orange">{t.name}</h4>
+                                    <h4 className={`font-black text-lg ${editingTemplate?.id === t.id ? 'text-white' : 'text-orange'}`}>{t.name}</h4>
                                     <div className="flex items-center gap-2">
-                                        <FileText size={16} className="text-orange/80" />
+                                        <FileText size={18} style={{color: editingTemplate?.id === t.id ? '#FCF6D9' : '#CF4B00'}} />
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -382,84 +381,85 @@
                                                     handleDeleteTemplate(t.id);
                                                 }
                                             }}
-                                            className="p-1.5 text-orange/60 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                            className="p-2 rounded-xl transition-all opacity-0 group-hover:opacity-100 transform hover:scale-125"
+                                            style={{color: '#CF4B00', backgroundColor: '#9CC6DB'}}
                                             title="Delete template"
                                         >
-                                            <Trash2 size={16} />
+                                            <Trash2 size={18} />
                                         </button>
                                     </div>
                                 </div>
-                                <p className="text-xs text-orange/80 mt-1 truncate">{t.subject}</p>
+                                <p className={`text-sm font-bold mt-2 truncate ${editingTemplate?.id === t.id ? 'text-white' : 'text-orange'}`}>{t.subject}</p>
                             </div>
                         ))}
                     </div>
 
                     {/* Editor */}
-                    <div className="bg-white rounded-xl shadow-lg border-2 border-blue-light p-6 flex flex-col">
+                    <div className="bg-white rounded-3xl border-4 border-orange p-6 flex flex-col transform rotate-1">
                         {editingTemplate !== null ? (
                             <form onSubmit={handleSaveTemplate} className="flex flex-col h-full space-y-4">
                                 {/* Spam Warning */}
                                 {spamIssues.length > 0 ? (
-                                    <div className="bg-amber-50 text-amber-800 text-xs p-3 rounded-xl flex items-start gap-2 animate-pulse border border-amber-200">
-                                        <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+                                    <div className="text-white text-sm p-4 rounded-2xl flex items-start gap-2 border-4 border-orange font-bold" style={{backgroundColor: '#CF4B00'}}>
+                                        <AlertTriangle size={18} className="shrink-0 mt-0.5" />
                                         <div>
-                                            <span className="font-bold">Spam Risk Detected:</span> Avoid using words like <span className="font-bold underline">{spamIssues.join(", ")}</span> to prevent landing in the Spam folder.
+                                            <span className="font-black">Spam Risk Detected:</span> Avoid using words like <span className="font-black underline">{spamIssues.join(", ")}</span> to prevent landing in the Spam folder.
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="bg-blue-light/30 text-orange text-xs p-3 rounded-xl flex items-center gap-2 border border-blue-light">
-                                        <ShieldCheck size={16} />
+                                    <div className="text-orange text-sm p-4 rounded-2xl flex items-center gap-2 border-4 border-blue-light font-black" style={{backgroundColor: '#9CC6DB'}}>
+                                        <ShieldCheck size={18} />
                                         <span>Content looks clean! Good deliverability expected.</span>
                                     </div>
                                 )}
 
                                 <div>
-                                    <label className="block text-xs font-bold text-orange uppercase tracking-wide mb-2">Template Name</label>
+                                    <label className="block text-xs font-black text-orange uppercase tracking-widest mb-3">Template Name</label>
                                     <input 
                                         name="name" 
                                         value={editingTemplate.name || ''} 
                                         onChange={(e) => setEditingTemplate({...editingTemplate, name: e.target.value})}
                                         required 
-                                        className="w-full border-b-2 border-blue-light p-2 focus:border-orange outline-none font-medium text-orange" 
+                                        className="w-full border-b-4 border-blue-light p-3 focus:border-orange outline-none font-black text-lg text-orange" 
                                         placeholder="e.g. First Follow Up" 
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-orange uppercase tracking-wide mb-2">Subject Line</label>
+                                    <label className="block text-xs font-black text-orange uppercase tracking-widest mb-3">Subject Line</label>
                                     <input 
                                         name="subject" 
                                         value={editingTemplate.subject || ''} 
                                         onChange={(e) => setEditingTemplate({...editingTemplate, subject: e.target.value})}
                                         required 
-                                        className="w-full border-2 border-blue-light p-3 rounded-xl bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange" 
+                                        className="w-full border-4 border-blue-light p-4 rounded-2xl bg-white focus:bg-white transition-all outline-none focus:border-orange text-orange font-bold text-lg" 
                                         placeholder="Subject..." 
                                     />
                                 </div>
                                 <div className="flex-1">
-                                    <label className="block text-xs font-bold text-orange uppercase tracking-wide mb-2">Body</label>
+                                    <label className="block text-xs font-black text-orange uppercase tracking-widest mb-3">Body</label>
                                     <textarea 
                                         name="body" 
                                         value={editingTemplate.body || ''} 
                                         onChange={(e) => setEditingTemplate({...editingTemplate, body: e.target.value})}
                                         required 
-                                        className="w-full h-48 md:h-full border-2 border-blue-light p-3 rounded-xl bg-white focus:bg-white transition-all outline-none focus:ring-2 focus:ring-blue-light focus:border-orange resize-none font-mono text-sm text-orange" 
+                                        className="w-full h-48 md:h-full border-4 border-blue-light p-4 rounded-2xl bg-white focus:bg-white transition-all outline-none focus:border-orange resize-none font-mono text-base text-orange font-bold" 
                                         placeholder="Hi {name}..." 
                                     />
                                 </div>
-                                <div className="text-xs text-orange/80 bg-blue-light/30 p-3 rounded-xl">
-                                    Variables: <span className="font-mono text-orange font-bold">{`{name}`}</span>, <span className="font-mono text-orange font-bold">{`{company}`}</span>
+                                <div className="text-sm font-black p-4 rounded-2xl border-4 border-blue-light" style={{backgroundColor: '#9CC6DB', color: '#CF4B00'}}>
+                                    Variables: <span className="font-mono text-orange font-black">{`{name}`}</span>, <span className="font-mono text-orange font-black">{`{company}`}</span>
                                 </div>
-                                <div className="flex justify-end gap-2 pt-2">
-                                    <button type="button" onClick={() => setEditingTemplate(null)} className="px-5 py-2.5 text-orange/80 hover:bg-blue-light rounded-xl transition-all">Cancel</button>
-                                    <button type="submit" className="text-white px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-md transition-all duration-200 transform hover:scale-105" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}>
-                                        <Save size={16} /> Save Template
+                                <div className="flex justify-end gap-3 pt-2">
+                                    <button type="button" onClick={() => setEditingTemplate(null)} className="px-6 py-3 text-orange font-black rounded-2xl transition-all transform hover:scale-110" style={{backgroundColor: '#9CC6DB'}}>Cancel</button>
+                                    <button type="submit" className="text-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all duration-200 transform hover:scale-110 font-black" style={{backgroundColor: '#CF4B00'}}>
+                                        <Save size={18} /> Save Template
                                     </button>
                                 </div>
                             </form>
                         ) : (
-                            <div className="h-full flex flex-col items-center justify-center text-orange/50">
-                                <Edit2 size={48} className="mb-4 opacity-30" />
-                                <p className="text-orange/70">Select a template to edit or create a new one.</p>
+                            <div className="h-full flex flex-col items-center justify-center transform rotate-12">
+                                <Edit2 size={64} className="mb-4" style={{color: '#9CC6DB'}} />
+                                <p className="text-xl font-black" style={{color: '#CF4B00'}}>Select a template to edit or create a new one.</p>
                             </div>
                         )}
                     </div>
@@ -492,31 +492,31 @@
 
             return (
                 <div className="space-y-6">
-                    <div className="rounded-2xl p-8 text-white shadow-2xl" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D, #CF4B00CC)'}}>
-                        <h2 className="text-3xl font-bold mb-2">Campaign Runner</h2>
-                        <p className="opacity-95 max-w-xl text-white/90">
+                    <div className="rounded-3xl p-8 text-white border-4 border-white transform rotate-1" style={{backgroundColor: '#CF4B00'}}>
+                        <h2 className="text-4xl font-black mb-3 transform -rotate-1">Campaign Runner</h2>
+                        <p className="text-lg font-bold max-w-xl">
                             This mode queues your contacts one by one. It prevents "tab overload" and ensures you can customize each email slightly before sending.
                         </p>
                     </div>
 
                     {/* Campaign Settings */}
                     <div className="flex flex-col md:flex-row gap-4">
-                        <div className="flex-1 bg-white p-6 rounded-xl border-2 border-blue-light shadow-lg">
-                            <label className="block text-sm font-bold text-orange mb-2">1. Select Template</label>
+                        <div className="flex-1 bg-white p-6 rounded-3xl border-4 border-blue-light transform -rotate-1">
+                            <label className="block text-base font-black text-orange mb-3">1. Select Template</label>
                             <select 
-                                className="w-full border-2 border-blue-light p-3 rounded-xl bg-white outline-none focus:ring-2 focus:ring-blue-light focus:border-orange text-orange"
+                                className="w-full border-4 border-blue-light p-4 rounded-2xl bg-white outline-none focus:border-orange text-orange font-bold text-lg"
                                 value={selectedTemplateId}
                                 onChange={(e) => setSelectedTemplateId(e.target.value)}
                             >
                                 {templates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                             </select>
                         </div>
-                        <div className="flex-1 bg-white p-6 rounded-xl border-2 border-blue-light shadow-lg flex items-end">
+                        <div className="flex-1 bg-white p-6 rounded-3xl border-4 border-blue-light flex items-end transform rotate-1">
                             <button 
                                 onClick={() => setIsCampaignActive(true)}
                                 disabled={isCampaignActive}
-                                className={`w-full py-3 rounded-xl font-bold text-lg shadow-md transition-all duration-200 ${isCampaignActive ? 'bg-blue-light text-orange cursor-not-allowed' : 'text-white hover:scale-[1.02]'}`}
-                                style={!isCampaignActive ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
+                                className={`w-full py-4 rounded-2xl font-black text-xl transition-all duration-200 ${isCampaignActive ? 'bg-blue-light text-orange cursor-not-allowed' : 'text-white hover:scale-110'}`}
+                                style={!isCampaignActive ? {backgroundColor: '#CF4B00'} : {}}
                             >
                                 {isCampaignActive ? 'Campaign Active below...' : 'Start Campaign'}
                             </button>
@@ -525,25 +525,24 @@
 
                     {/* Active Campaign Mode */}
                     {isCampaignActive && activeContact && (
-                        <div className="bg-white border-2 border-orange rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-2 bg-blue-light">
+                        <div className="bg-white border-4 border-orange rounded-3xl p-8 relative overflow-hidden transform rotate-1">
+                            <div className="absolute top-0 left-0 w-full h-4" style={{backgroundColor: '#9CC6DB'}}>
                                 <div 
-                                    className="h-full transition-all duration-500"
-                                    style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}} 
-                                    style={{ width: `${((currentIndex + 1) / contacts.length) * 100}%` }}
+                                    className="h-full transition-all duration-500" 
+                                    style={{width: `${((currentIndex + 1) / contacts.length) * 100}%`, backgroundColor: '#CF4B00'}}
                                 ></div>
                             </div>
-                            <div className="flex justify-between items-start mb-8 mt-4">
+                            <div className="flex justify-between items-start mb-8 mt-6">
                                 <div>
-                                    <span className="text-xs font-bold text-orange uppercase tracking-widest bg-blue-light px-3 py-1.5 rounded-full">
+                                    <span className="text-sm font-black text-white uppercase tracking-widest px-4 py-2 rounded-full transform -rotate-2" style={{backgroundColor: '#CF4B00'}}>
                                         Contact {currentIndex + 1} of {contacts.length}
                                     </span>
-                                    <h2 className="text-4xl font-bold text-orange mt-3">{activeContact.name}</h2>
-                                    <p className="text-xl text-orange/80 mt-1">{activeContact.company} • {activeContact.email}</p>
+                                    <h2 className="text-5xl font-black text-orange mt-4 transform rotate-1">{activeContact.name}</h2>
+                                    <p className="text-2xl font-bold mt-2" style={{color: '#CF4B00'}}>{activeContact.company} • {activeContact.email}</p>
                                 </div>
-                                <div className="text-right">
-                                    <div className="text-sm text-orange/70">Next up:</div>
-                                    <div className="font-medium text-orange">
+                                <div className="text-right transform -rotate-1">
+                                    <div className="text-base font-bold" style={{color: '#CF4B00'}}>Next up:</div>
+                                    <div className="font-black text-lg" style={{color: '#CF4B00'}}>
                                         {contacts[currentIndex + 1]?.name || "End of list"}
                                     </div>
                                 </div>
@@ -554,28 +553,29 @@
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={nextContact}
-                                    className="flex-1 text-white text-center py-4 rounded-xl font-bold text-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 group transform hover:scale-[1.02]"
-                                    style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}
+                                    className="flex-1 text-white text-center py-5 rounded-2xl font-black text-xl transition-all duration-200 flex items-center justify-center gap-2 group transform hover:scale-110"
+                                    style={{backgroundColor: '#CF4B00'}}
                                 >
-                                    <Send className="group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
+                                    <Send className="group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" size={22} />
                                     Open {emailClient === 'gmail' ? 'Gmail' : 'Email'} & Next
                                 </a>
                                 <button 
                                     onClick={nextContact}
-                                    className="px-6 py-4 rounded-xl border-2 border-blue-light text-orange font-bold hover:bg-blue-light hover:text-orange transition-all duration-200"
+                                    className="px-8 py-5 rounded-2xl border-4 border-blue-light text-orange font-black hover:bg-blue-light transition-all duration-200 transform hover:scale-110"
+                                    style={{backgroundColor: '#9CC6DB'}}
                                 >
                                     Skip
                                 </button>
                             </div>
-                            <p className="text-center text-xs text-orange/70 mt-4">
+                            <p className="text-center text-base font-bold mt-6" style={{color: '#CF4B00'}}>
                                 Clicking "Open {emailClient === 'gmail' ? 'Gmail' : 'Email'}" opens {emailClient === 'gmail' ? 'Gmail' : 'your default email app'} with the message ready. Press Send there, then come back here for the next one.
                             </p>
                         </div>
                     )}
 
                     {!isCampaignActive && (
-                        <div className="text-center py-12 bg-white rounded-xl border-2 border-dashed border-blue-light">
-                            <p className="text-orange/80">Ready to start? Select a template and click "Start Campaign".</p>
+                        <div className="text-center py-16 bg-white rounded-3xl border-4 border-dashed border-blue-light transform rotate-1">
+                            <p className="text-2xl font-black" style={{color: '#CF4B00'}}>Ready to start? Select a template and click "Start Campaign".</p>
                         </div>
                     )}
                 </div>
@@ -597,72 +597,73 @@
 
             return (
                 <div className="space-y-6">
-                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-8 text-white shadow-xl">
-                        <h2 className="text-3xl font-bold mb-2">Email Dashboard</h2>
-                        <p className="opacity-90 max-w-xl">
+                    <div className="rounded-3xl p-8 text-white border-4 border-white transform rotate-1" style={{backgroundColor: '#CF4B00'}}>
+                        <h2 className="text-4xl font-black mb-3 transform -rotate-1">Email Dashboard</h2>
+                        <p className="text-lg font-bold max-w-xl">
                             Track your email campaigns, see who replied, and monitor your outreach performance.
                         </p>
                     </div>
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div className="bg-white p-6 rounded-lg border shadow-sm">
+                        <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform rotate-1">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-slate-500 mb-1">Total Contacts</p>
-                                    <p className="text-3xl font-bold text-slate-800">{stats.total}</p>
+                                    <p className="text-sm font-black mb-1" style={{color: '#CF4B00'}}>Total Contacts</p>
+                                    <p className="text-4xl font-black" style={{color: '#CF4B00'}}>{stats.total}</p>
                                 </div>
-                                <div className="bg-indigo-100 p-3 rounded-full">
-                                    <Users size={24} className="text-indigo-600" />
+                                <div className="p-3 rounded-full" style={{backgroundColor: '#9CC6DB'}}>
+                                    <Users size={24} style={{color: '#CF4B00'}} />
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white p-6 rounded-lg border shadow-sm">
+                        <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform -rotate-1">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-slate-500 mb-1">Emails Sent</p>
-                                    <p className="text-3xl font-bold text-blue-600">{stats.sent}</p>
+                                    <p className="text-sm font-black mb-1" style={{color: '#CF4B00'}}>Emails Sent</p>
+                                    <p className="text-4xl font-black" style={{color: '#CF4B00'}}>{stats.sent}</p>
                                 </div>
-                                <div className="bg-blue-100 p-3 rounded-full">
-                                    <Send size={24} className="text-blue-600" />
+                                <div className="p-3 rounded-full" style={{backgroundColor: '#9CC6DB'}}>
+                                    <Send size={24} style={{color: '#CF4B00'}} />
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white p-6 rounded-lg border shadow-sm">
+                        <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform rotate-1">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-slate-500 mb-1">Replied</p>
-                                    <p className="text-3xl font-bold text-green-600">{stats.replied}</p>
+                                    <p className="text-sm font-black mb-1" style={{color: '#CF4B00'}}>Replied</p>
+                                    <p className="text-4xl font-black" style={{color: '#CF4B00'}}>{stats.replied}</p>
                                 </div>
-                                <div className="bg-green-100 p-3 rounded-full">
-                                    <CheckCircle size={24} className="text-green-600" />
+                                <div className="p-3 rounded-full" style={{backgroundColor: '#9CC6DB'}}>
+                                    <CheckCircle size={24} style={{color: '#CF4B00'}} />
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white p-6 rounded-lg border shadow-sm">
+                        <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform -rotate-1">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-slate-500 mb-1">Reply Rate</p>
-                                    <p className="text-3xl font-bold text-purple-600">{stats.replyRate}%</p>
+                                    <p className="text-sm font-black mb-1" style={{color: '#CF4B00'}}>Reply Rate</p>
+                                    <p className="text-4xl font-black" style={{color: '#CF4B00'}}>{stats.replyRate}%</p>
                                 </div>
-                                <div className="bg-purple-100 p-3 rounded-full">
-                                    <BarChart size={24} className="text-purple-600" />
+                                <div className="p-3 rounded-full" style={{backgroundColor: '#9CC6DB'}}>
+                                    <BarChart size={24} style={{color: '#CF4B00'}} />
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Action Button */}
-                    <div className="bg-white p-6 rounded-lg border shadow-sm">
+                    <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform rotate-1">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="font-bold text-lg text-slate-800 mb-1">Check for Replies</h3>
-                                <p className="text-sm text-slate-500">Scan your Gmail inbox for replies from contacts</p>
+                                <h3 className="font-black text-xl mb-1" style={{color: '#CF4B00'}}>Check for Replies</h3>
+                                <p className="text-base font-bold" style={{color: '#CF4B00'}}>Scan your Gmail inbox for replies from contacts</p>
                             </div>
                             <button
                                 onClick={onCheckReplies}
                                 disabled={checkingReplies}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-110 transition-all"
+                                style={{backgroundColor: '#CF4B00'}}
                             >
                                 {checkingReplies ? (
                                     <>
@@ -680,36 +681,36 @@
                     </div>
 
                     {/* Contact Status Breakdown */}
-                    <div className="bg-white p-6 rounded-lg border shadow-sm">
-                        <h3 className="font-bold text-lg text-slate-800 mb-4">Status Breakdown</h3>
+                    <div className="bg-white p-6 rounded-3xl border-4 border-blue-light transform -rotate-1">
+                        <h3 className="font-black text-2xl mb-4 transform rotate-1" style={{color: '#CF4B00'}}>Status Breakdown</h3>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform rotate-1" style={{backgroundColor: '#9CC6DB'}}>
                                 <div className="flex items-center gap-3">
-                                    <CheckCircle size={20} className="text-green-600" />
-                                    <span className="font-medium text-slate-700">Replied</span>
+                                    <CheckCircle size={22} style={{color: '#CF4B00'}} />
+                                    <span className="font-black text-lg" style={{color: '#CF4B00'}}>Replied</span>
                                 </div>
-                                <span className="font-bold text-green-600">{stats.replied}</span>
+                                <span className="font-black text-xl" style={{color: '#CF4B00'}}>{stats.replied}</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
+                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform -rotate-1" style={{backgroundColor: '#DDBA7D'}}>
                                 <div className="flex items-center gap-3">
-                                    <XCircle size={20} className="text-amber-600" />
-                                    <span className="font-medium text-slate-700">No Response</span>
+                                    <XCircle size={22} style={{color: '#CF4B00'}} />
+                                    <span className="font-black text-lg" style={{color: '#CF4B00'}}>No Response</span>
                                 </div>
-                                <span className="font-bold text-amber-600">{stats.noResponse}</span>
+                                <span className="font-black text-xl" style={{color: '#CF4B00'}}>{stats.noResponse}</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform rotate-1" style={{backgroundColor: '#9CC6DB'}}>
                                 <div className="flex items-center gap-3">
-                                    <Send size={20} className="text-blue-600" />
-                                    <span className="font-medium text-slate-700">Sent (Pending)</span>
+                                    <Send size={22} style={{color: '#CF4B00'}} />
+                                    <span className="font-black text-lg" style={{color: '#CF4B00'}}>Sent (Pending)</span>
                                 </div>
-                                <span className="font-bold text-blue-600">{stats.sent - stats.replied - stats.noResponse}</span>
+                                <span className="font-black text-xl" style={{color: '#CF4B00'}}>{stats.sent - stats.replied - stats.noResponse}</span>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                            <div className="flex items-center justify-between p-4 rounded-2xl border-4 border-blue-light transform -rotate-1" style={{backgroundColor: '#DDBA7D'}}>
                                 <div className="flex items-center gap-3">
-                                    <Clock size={20} className="text-slate-600" />
-                                    <span className="font-medium text-slate-700">Not Contacted</span>
+                                    <Clock size={22} style={{color: '#CF4B00'}} />
+                                    <span className="font-black text-lg" style={{color: '#CF4B00'}}>Not Contacted</span>
                                 </div>
-                                <span className="font-bold text-slate-600">{stats.newContacts}</span>
+                                <span className="font-black text-xl" style={{color: '#CF4B00'}}>{stats.newContacts}</span>
                             </div>
                         </div>
                     </div>
@@ -849,53 +850,49 @@
             return (
                 <div className="min-h-screen bg-cream font-sans text-orange flex flex-col md:flex-row">
                     {/* Sidebar */}
-                    <div className="md:w-64 bg-white border-r border-blue-light flex flex-col shadow-lg">
-                        <div className="p-6 border-b border-blue-light" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}>
+                    <div className="md:w-64 bg-tan flex flex-col border-r-4 border-orange">
+                        <div className="p-6 border-b-4 border-orange bg-orange">
                             <div className="flex items-center gap-3 text-white">
-                                <div className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-xl shadow-lg">
+                                <div className="bg-white text-orange p-2 rounded-2xl transform rotate-12">
                                     <Mail size={22} />
                                 </div>
-                                <span className="font-bold text-xl tracking-tight">AutoReach</span>
+                                <span className="font-black text-2xl tracking-tight">AutoReach</span>
                             </div>
                         </div>
                         
-                        <nav className="flex-1 p-4 space-y-2">
+                        <nav className="flex-1 p-4 space-y-3">
                             <button 
                                 onClick={() => setActiveTab('contacts')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'contacts' ? 'text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
-                                style={activeTab === 'contacts' ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
+                                className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl text-sm font-black transition-all duration-200 transform ${activeTab === 'contacts' ? 'bg-orange text-white scale-105 rotate-1' : 'bg-blue-light text-orange hover:scale-105'}`}
                             >
-                                <Users size={18} /> Contacts
+                                <Users size={20} /> Contacts
                             </button>
                             <button 
                                 onClick={() => setActiveTab('templates')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'templates' ? 'text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
-                                style={activeTab === 'templates' ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
+                                className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl text-sm font-black transition-all duration-200 transform ${activeTab === 'templates' ? 'bg-orange text-white scale-105 -rotate-1' : 'bg-blue-light text-orange hover:scale-105'}`}
                             >
-                                <Copy size={18} /> Templates
+                                <Copy size={20} /> Templates
                             </button>
                             <button 
                                 onClick={() => setActiveTab('automation')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'automation' ? 'text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
-                                style={activeTab === 'automation' ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
+                                className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl text-sm font-black transition-all duration-200 transform ${activeTab === 'automation' ? 'bg-orange text-white scale-105 rotate-1' : 'bg-blue-light text-orange hover:scale-105'}`}
                             >
-                                <Send size={18} /> Automation
+                                <Send size={20} /> Automation
                             </button>
                             <button 
                                 onClick={() => setShowSettings(!showSettings)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${showSettings ? 'text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
-                                style={showSettings ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
+                                className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl text-sm font-black transition-all duration-200 transform ${showSettings ? 'bg-orange text-white scale-105 -rotate-1' : 'bg-blue-light text-orange hover:scale-105'}`}
                             >
-                                <Settings size={18} /> Settings
+                                <Settings size={20} /> Settings
                             </button>
                         </nav>
-                        <div className="p-4 border-t border-blue-light space-y-2">
+                        <div className="p-4 border-t-4 border-orange space-y-2">
                             {showSettings && (
-                                <div className="bg-white rounded-xl p-4 border border-blue-light shadow-md mb-2 space-y-4">
+                                <div className="bg-white rounded-2xl p-4 border-4 border-orange mb-2 space-y-4">
                                     <div>
-                                        <p className="text-xs font-bold text-orange mb-2 uppercase tracking-wide">Email Client</p>
+                                        <p className="text-xs font-black text-orange mb-2 uppercase tracking-widest">Email Client</p>
                                         <div className="space-y-2">
-                                            <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-blue-light transition-colors">
+                                            <label className="flex items-center gap-2 cursor-pointer p-3 rounded-xl hover:bg-blue-light transition-all transform hover:scale-105" style={{backgroundColor: emailClient === 'apple' ? '#9CC6DB' : 'transparent'}}>
                                                 <input
                                                     type="radio"
                                                     name="emailClient"
@@ -904,9 +901,9 @@
                                                     onChange={(e) => setEmailClient(e.target.value)}
                                                     className="text-orange accent-orange"
                                                 />
-                                                <span className="text-sm text-orange">Apple Mail</span>
+                                                <span className="text-sm font-bold text-orange">Apple Mail</span>
                                             </label>
-                                            <label className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-blue-light transition-colors">
+                                            <label className="flex items-center gap-2 cursor-pointer p-3 rounded-xl hover:bg-blue-light transition-all transform hover:scale-105" style={{backgroundColor: emailClient === 'gmail' ? '#9CC6DB' : 'transparent'}}>
                                                 <input
                                                     type="radio"
                                                     name="emailClient"
@@ -915,15 +912,15 @@
                                                     onChange={(e) => setEmailClient(e.target.value)}
                                                     className="text-orange accent-orange"
                                                 />
-                                                <span className="text-sm text-orange">Gmail</span>
+                                                <span className="text-sm font-bold text-orange">Gmail</span>
                                             </label>
                                         </div>
                                     </div>
                                 </div>
                             )}
-                            <div className="rounded-xl p-4 text-white shadow-lg" style={{background: 'linear-gradient(to bottom right, #CF4B00, #DDBA7D)'}}>
-                                <p className="text-xs font-medium opacity-90 mb-1">💡 Pro Tip</p>
-                                <p className="text-xs leading-relaxed">Use <span className="font-mono bg-white/20 px-1.5 py-0.5 rounded">{`{company}`}</span> in templates to auto-personalize your emails.</p>
+                            <div className="rounded-2xl p-4 text-white border-4 border-orange" style={{backgroundColor: '#CF4B00'}}>
+                                <p className="text-xs font-black mb-1">💡 Pro Tip</p>
+                                <p className="text-xs leading-relaxed font-bold">Use <span className="font-mono bg-white text-orange px-2 py-1 rounded-lg">{`{company}`}</span> in templates to auto-personalize your emails.</p>
                             </div>
                         </div>
                     </div>
@@ -932,8 +929,8 @@
                     <div className="flex-1 overflow-y-auto">
                         <div className="max-w-4xl mx-auto p-6 md:p-12">
                             <div className="mb-8">
-                                <h1 className="text-3xl font-bold capitalize mb-2" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>{activeTab}</h1>
-                                <p className="text-orange/80">
+                                <h1 className="text-5xl font-black capitalize mb-3 transform rotate-1" style={{color: '#CF4B00'}}>{activeTab}</h1>
+                                <p className="text-lg font-bold" style={{color: '#CF4B00'}}>
                                     {activeTab === 'contacts' && "Manage your outreach list."}
                                     {activeTab === 'templates' && "Design reusable email blueprints."}
                                     {activeTab === 'automation' && "Generate personalized drafts instantly."}
