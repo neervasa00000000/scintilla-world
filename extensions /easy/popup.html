@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ExtractFlow</title>
     <link rel="stylesheet" href="popup.css">
+    <!-- Note: For production, download font-awesome and reference locally to avoid CSP issues -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -15,7 +16,7 @@
     <header class="header">
         <div class="header-left">
             <div class="logo">
-                <img src="icon16.png" alt="S" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
+                <img src="icon48.png" alt="COPY" style="width: 28px; height: 28px;">
             </div>
             <div>
                 <div class="header-title">ExtractFlow</div>
@@ -23,10 +24,12 @@
             </div>
         </div>
         <div class="header-actions">
-            <button onclick="loadSampleData()" class="btn btn-secondary btn-sm">
-                <span>Sample</span>
+            <!-- Added ID for JS listener -->
+            <button id="resetBtn" class="btn btn-secondary btn-icon" title="Reset">
+                <i class="fa-solid fa-rotate"></i>
             </button>
-            <button onclick="downloadCSV()" class="btn btn-primary btn-sm">
+            <!-- Added ID for JS listener -->
+            <button id="exportBtn" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-download"></i>
                 <span>Export CSV</span>
             </button>
@@ -35,14 +38,14 @@
 
     <!-- Main Content - 2 Column Grid -->
     <main class="main-content">
-        <!-- Left Column: Input & Stats -->
-        <div class="flex flex-col gap-2">
+        <!-- Left Column -->
+        <div>
             <!-- Stats Card -->
-            <div class="card">
+            <section class="card">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Current selection</div>
-                        <div class="card-subtitle">What ExtractFlow has found in this text</div>
+                        <div class="card-subtitle">What ExtractFlow found</div>
                     </div>
                 </div>
                 <div class="stats-grid">
@@ -59,10 +62,10 @@
                         <div class="stat-label">Records</div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Text Input Card -->
-            <div class="card">
+            <!-- Paste Text Card -->
+            <section class="card" style="flex: 1; display: flex; flex-direction: column;">
                 <div class="section-label">
                     <i class="fa-solid fa-paste section-label-icon"></i>
                     <span>Paste text</span>
@@ -70,24 +73,27 @@
                 <div id="pasteArea" 
                      contenteditable="true" 
                      class="input textarea scrollbar"
+                     style="flex: 1; max-height: none;"
                      data-placeholder="Paste your text here..."></div>
-            </div>
+            </section>
         </div>
 
-        <!-- Right Column: Detected & Records -->
-        <div class="flex flex-col gap-2">
-            <!-- Extracted Data Card -->
-            <div class="card">
+        <!-- Right Column -->
+        <div>
+            <!-- Review & Tag Card -->
+            <section class="card">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Review & tag contact</div>
-                        <div class="card-subtitle">Edit and save to records</div>
+                        <div class="card-subtitle">Edit before saving</div>
                     </div>
                     <div class="flex gap-1">
-                        <button onclick="clearInputs()" class="btn btn-secondary btn-icon" title="Clear">
+                        <!-- Added ID for JS listener -->
+                        <button id="clearInputsBtn" class="btn btn-secondary btn-icon" title="Clear">
                             <i class="fa-solid fa-eraser"></i>
                         </button>
-                        <button onclick="addRecord()" id="addBtn" class="btn btn-primary btn-sm">
+                        <!-- Added ID for JS listener -->
+                        <button id="addBtn" class="btn btn-primary btn-sm">
                             <i class="fa-solid fa-plus"></i>
                             <span>Add</span>
                         </button>
@@ -97,11 +103,11 @@
                 <!-- Name Inputs -->
                 <div class="input-grid mb-2">
                     <div class="input-group">
-                        <label class="input-label">First Name</label>
+                        <label class="input-label">First name</label>
                         <input type="text" id="firstName" class="input" placeholder="John">
                     </div>
                     <div class="input-group">
-                        <label class="input-label">Last Name</label>
+                        <label class="input-label">Last name</label>
                         <input type="text" id="lastName" class="input" placeholder="Doe">
                     </div>
                 </div>
@@ -109,28 +115,24 @@
                 <!-- Email Chips -->
                 <div class="input-group">
                     <div class="section-label">
-                        <i class="fa-solid fa-envelope section-label-icon" style="color: var(--primary);"></i>
-                        <span>Email Addresses</span>
+                        <i class="fa-solid fa-envelope section-label-icon"></i>
+                        <span>Email addresses</span>
                     </div>
-                    <div id="emailList" class="chips-container">
-                        <span class="empty-state">No emails detected...</span>
-                    </div>
+                    <div id="emailList" class="chips-container scrollbar"></div>
                 </div>
 
                 <!-- Phone Chips -->
-                <div class="input-group" style="margin-bottom: 0;">
+                <div class="input-group">
                     <div class="section-label">
-                        <i class="fa-solid fa-phone section-label-icon" style="color: var(--success);"></i>
-                        <span>Phone Numbers</span>
+                        <i class="fa-solid fa-phone section-label-icon"></i>
+                        <span>Phone numbers</span>
                     </div>
-                    <div id="phoneList" class="chips-container">
-                        <span class="empty-state">No phones detected...</span>
-                    </div>
+                    <div id="phoneList" class="chips-container scrollbar"></div>
                 </div>
-            </div>
+            </section>
 
             <!-- Records Card -->
-            <div class="card records-card">
+            <section class="card records-card">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Saved contacts</div>
@@ -147,13 +149,14 @@
                         <div class="empty-records-text">Extract data and add your first record</div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     </main>
 
     <!-- Context Menu -->
     <div id="floatMenu" class="context-menu">
-        <div onclick="assignName()" class="context-menu-item">
+        <!-- Added ID for JS listener -->
+        <div id="assignNameBtn" class="context-menu-item">
             <i class="fa-solid fa-user-check"></i>
             <span>Use as name</span>
         </div>
