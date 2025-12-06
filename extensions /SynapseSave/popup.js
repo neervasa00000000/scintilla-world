@@ -505,6 +505,30 @@ async function restoreGroup(tab, newTabId) {
             }
         }
 
+        // IMPORTANT: Before creating a new group, check if a group with the same title already exists
+        // This prevents duplicate groups when reopening tabs after long periods (6+ days)
+        if (groupInfo.title) {
+            try {
+                const allGroups = await chrome.tabGroups.query({});
+                const existingGroup = allGroups.find(g => g.title === groupInfo.title);
+                
+                if (existingGroup) {
+                    // Group with same title exists, add tab to it instead of creating duplicate
+                    await chrome.tabs.group({
+                        groupId: existingGroup.id,
+                        tabIds: [newTabId]
+                    });
+                    // Update the recreatedGroups mapping so future tabs use this existing group
+                    recreatedGroups[groupKey] = existingGroup.id;
+                    await chrome.storage.local.set({ recreatedGroups });
+                    return;
+                }
+            } catch (e) {
+                // If query fails, continue to create new group below
+                console.log('Could not query existing groups:', e);
+            }
+        }
+
         // Create a new group with the stored properties
         const newGroupId = await chrome.tabs.group({ tabIds: [newTabId] });
         
