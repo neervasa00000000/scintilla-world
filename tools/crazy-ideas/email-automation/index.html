@@ -5,20 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoReach - Email Automation</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'blue-light': '#9CC6DB',
-                        'cream': '#FCF6D9',
-                        'orange': '#CF4B00',
-                        'tan': '#DDBA7D',
-                    }
-                }
-            }
+    <style>
+        :root {
+            --blue-light: #9CC6DB;
+            --cream: #FCF6D9;
+            --orange: #CF4B00;
+            --tan: #DDBA7D;
         }
-    </script>
+        body { background-color: var(--cream) !important; }
+        .bg-blue-light { background-color: var(--blue-light) !important; }
+        .bg-cream { background-color: var(--cream) !important; }
+        .bg-orange { background-color: var(--orange) !important; }
+        .bg-tan { background-color: var(--tan) !important; }
+        .text-blue-light { color: var(--blue-light) !important; }
+        .text-cream { color: var(--cream) !important; }
+        .text-orange { color: var(--orange) !important; }
+        .text-tan { color: var(--tan) !important; }
+        .border-blue-light { border-color: var(--blue-light) !important; }
+        .border-cream { border-color: var(--cream) !important; }
+        .border-orange { border-color: var(--orange) !important; }
+        .border-tan { border-color: var(--tan) !important; }
+        .hover\:bg-blue-light:hover { background-color: var(--blue-light) !important; }
+        .hover\:text-orange:hover { color: var(--orange) !important; }
+        .hover\:border-orange:hover { border-color: var(--orange) !important; }
+        .focus\:border-orange:focus { border-color: var(--orange) !important; }
+        .focus\:ring-blue-light:focus { --tw-ring-color: var(--blue-light) !important; box-shadow: 0 0 0 2px var(--blue-light) !important; }
+        input[type="radio"].accent-orange { accent-color: var(--orange) !important; }
+        .from-orange { --tw-gradient-from: var(--orange) !important; }
+        .to-tan { --tw-gradient-to: var(--tan) !important; }
+        .via-tan { --tw-gradient-stops: var(--orange), var(--tan), var(--tan) !important; }
+    </style>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -222,7 +238,7 @@
                         <h2 className="text-xl font-bold text-orange">Add Contacts</h2>
                         <p className="text-sm text-orange/80 mt-1">Upload a CSV or add manually.</p>
                     </div>
-                    <label className="flex items-center gap-2 bg-gradient-to-r from-orange to-tan text-white px-5 py-2.5 rounded-xl hover:from-orange hover:to-tan/90 cursor-pointer transition-all shadow-md text-sm font-medium active:scale-95 transform duration-200">
+                    <label className="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl cursor-pointer transition-all shadow-md text-sm font-medium active:scale-95 transform duration-200" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}>
                         <Upload size={18} />
                         <span>Import CSV</span>
                         <input 
@@ -257,7 +273,7 @@
                     />
                     <button 
                         type="submit"
-                        className="bg-gradient-to-r from-orange to-tan text-white p-3 rounded-xl hover:from-orange hover:to-tan/90 flex items-center justify-center min-w-[50px] shadow-md transition-all duration-200 transform hover:scale-105"
+                        className="text-white p-3 rounded-xl flex items-center justify-center min-w-[50px] shadow-md transition-all duration-200 transform hover:scale-105" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}
                     >
                         <Plus size={20} />
                     </button>
@@ -344,7 +360,7 @@
                             <h3 className="font-bold text-xl text-orange">Saved Templates</h3>
                             <button 
                                 onClick={() => setEditingTemplate({ id: null, name: '', subject: '', body: '' })}
-                                className="text-sm bg-gradient-to-r from-orange to-tan text-white px-4 py-2 rounded-xl font-medium hover:from-orange hover:to-tan/90 shadow-md transition-all duration-200"
+                                className="text-sm text-white px-4 py-2 rounded-xl font-medium shadow-md transition-all duration-200" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}
                             >
                                 + New Template
                             </button>
@@ -435,7 +451,7 @@
                                 </div>
                                 <div className="flex justify-end gap-2 pt-2">
                                     <button type="button" onClick={() => setEditingTemplate(null)} className="px-5 py-2.5 text-orange/80 hover:bg-blue-light rounded-xl transition-all">Cancel</button>
-                                    <button type="submit" className="bg-gradient-to-r from-orange to-tan text-white px-6 py-2.5 rounded-xl hover:from-orange hover:to-tan/90 flex items-center gap-2 shadow-md transition-all duration-200 transform hover:scale-105">
+                                    <button type="submit" className="text-white px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-md transition-all duration-200 transform hover:scale-105" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}>
                                         <Save size={16} /> Save Template
                                     </button>
                                 </div>
@@ -476,7 +492,7 @@
 
             return (
                 <div className="space-y-6">
-                    <div className="bg-gradient-to-r from-orange via-tan to-orange/80 rounded-2xl p-8 text-white shadow-2xl">
+                    <div className="rounded-2xl p-8 text-white shadow-2xl" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D, #CF4B00CC)'}}>
                         <h2 className="text-3xl font-bold mb-2">Campaign Runner</h2>
                         <p className="opacity-95 max-w-xl text-white/90">
                             This mode queues your contacts one by one. It prevents "tab overload" and ensures you can customize each email slightly before sending.
@@ -499,7 +515,8 @@
                             <button 
                                 onClick={() => setIsCampaignActive(true)}
                                 disabled={isCampaignActive}
-                                className={`w-full py-3 rounded-xl font-bold text-lg shadow-md transition-all duration-200 ${isCampaignActive ? 'bg-blue-light text-orange cursor-not-allowed' : 'bg-gradient-to-r from-orange to-tan text-white hover:from-orange hover:to-tan/90 hover:scale-[1.02]'}`}
+                                className={`w-full py-3 rounded-xl font-bold text-lg shadow-md transition-all duration-200 ${isCampaignActive ? 'bg-blue-light text-orange cursor-not-allowed' : 'text-white hover:scale-[1.02]'}`}
+                                style={!isCampaignActive ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
                             >
                                 {isCampaignActive ? 'Campaign Active below...' : 'Start Campaign'}
                             </button>
@@ -511,7 +528,8 @@
                         <div className="bg-white border-2 border-orange rounded-2xl p-8 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-2 bg-blue-light">
                                 <div 
-                                    className="h-full bg-gradient-to-r from-orange to-tan transition-all duration-500" 
+                                    className="h-full transition-all duration-500"
+                                    style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}} 
                                     style={{ width: `${((currentIndex + 1) / contacts.length) * 100}%` }}
                                 ></div>
                             </div>
@@ -536,7 +554,8 @@
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={nextContact}
-                                    className="flex-1 bg-gradient-to-r from-orange to-tan hover:from-orange hover:to-tan/90 text-white text-center py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-orange/30 transition-all duration-200 flex items-center justify-center gap-2 group transform hover:scale-[1.02]"
+                                    className="flex-1 text-white text-center py-4 rounded-xl font-bold text-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 group transform hover:scale-[1.02]"
+                                    style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}
                                 >
                                     <Send className="group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform" />
                                     Open {emailClient === 'gmail' ? 'Gmail' : 'Email'} & Next
@@ -831,7 +850,7 @@
                 <div className="min-h-screen bg-cream font-sans text-orange flex flex-col md:flex-row">
                     {/* Sidebar */}
                     <div className="md:w-64 bg-white border-r border-blue-light flex flex-col shadow-lg">
-                        <div className="p-6 border-b border-blue-light bg-gradient-to-r from-orange to-tan">
+                        <div className="p-6 border-b border-blue-light" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'}}>
                             <div className="flex items-center gap-3 text-white">
                                 <div className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-xl shadow-lg">
                                     <Mail size={22} />
@@ -843,25 +862,29 @@
                         <nav className="flex-1 p-4 space-y-2">
                             <button 
                                 onClick={() => setActiveTab('contacts')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'contacts' ? 'bg-gradient-to-r from-orange to-tan text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'contacts' ? 'text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
+                                style={activeTab === 'contacts' ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
                             >
                                 <Users size={18} /> Contacts
                             </button>
                             <button 
                                 onClick={() => setActiveTab('templates')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'templates' ? 'bg-gradient-to-r from-orange to-tan text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'templates' ? 'text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
+                                style={activeTab === 'templates' ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
                             >
                                 <Copy size={18} /> Templates
                             </button>
                             <button 
                                 onClick={() => setActiveTab('automation')}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'automation' ? 'bg-gradient-to-r from-orange to-tan text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === 'automation' ? 'text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
+                                style={activeTab === 'automation' ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
                             >
                                 <Send size={18} /> Automation
                             </button>
                             <button 
                                 onClick={() => setShowSettings(!showSettings)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${showSettings ? 'bg-gradient-to-r from-orange to-tan text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${showSettings ? 'text-white shadow-lg transform scale-[1.02]' : 'text-orange hover:bg-blue-light hover:text-orange'}`}
+                                style={showSettings ? {background: 'linear-gradient(to right, #CF4B00, #DDBA7D)'} : {}}
                             >
                                 <Settings size={18} /> Settings
                             </button>
@@ -898,7 +921,7 @@
                                     </div>
                                 </div>
                             )}
-                            <div className="bg-gradient-to-br from-orange to-tan rounded-xl p-4 text-white shadow-lg">
+                            <div className="rounded-xl p-4 text-white shadow-lg" style={{background: 'linear-gradient(to bottom right, #CF4B00, #DDBA7D)'}}>
                                 <p className="text-xs font-medium opacity-90 mb-1">💡 Pro Tip</p>
                                 <p className="text-xs leading-relaxed">Use <span className="font-mono bg-white/20 px-1.5 py-0.5 rounded">{`{company}`}</span> in templates to auto-personalize your emails.</p>
                             </div>
@@ -909,7 +932,7 @@
                     <div className="flex-1 overflow-y-auto">
                         <div className="max-w-4xl mx-auto p-6 md:p-12">
                             <div className="mb-8">
-                                <h1 className="text-3xl font-bold bg-gradient-to-r from-orange to-tan bg-clip-text text-transparent capitalize mb-2">{activeTab}</h1>
+                                <h1 className="text-3xl font-bold capitalize mb-2" style={{background: 'linear-gradient(to right, #CF4B00, #DDBA7D)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>{activeTab}</h1>
                                 <p className="text-orange/80">
                                     {activeTab === 'contacts' && "Manage your outreach list."}
                                     {activeTab === 'templates' && "Design reusable email blueprints."}
