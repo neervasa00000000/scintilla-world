@@ -20,15 +20,14 @@
             </div>
             <div>
                 <div class="header-title">ExtractFlow</div>
-                <div class="header-subtitle">Data Extractor</div>
+                <div class="header-subtitle">Data Extractor & Automation</div>
             </div>
         </div>
-        <div class="header-actions">
-            <!-- Added ID for JS listener -->
+        <div class="header-actions" id="headerActions">
+            <!-- Actions will be shown based on active tab -->
             <button id="resetBtn" class="btn btn-secondary btn-icon" title="Reset">
                 <i class="fa-solid fa-rotate"></i>
             </button>
-            <!-- Added ID for JS listener -->
             <button id="exportBtn" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-download"></i>
                 <span>Export CSV</span>
@@ -36,8 +35,22 @@
         </div>
     </header>
 
+    <!-- Tab Navigation -->
+    <nav class="tabs">
+        <button class="tab-btn active" data-tab="extract">
+            <i class="fa-solid fa-scissors"></i>
+            <span>Extract</span>
+        </button>
+        <button class="tab-btn" data-tab="automation">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Automation</span>
+        </button>
+    </nav>
+
     <!-- Main Content - Vertical Scrollable -->
     <main class="main-content">
+        <!-- Extract Tab Content -->
+        <div id="extractTab" class="tab-content active">
         <!-- First Half: Stats and Paste Text -->
         <div class="content-section">
             <!-- Stats Card -->
@@ -149,6 +162,160 @@
                     </div>
                 </div>
             </section>
+        </div>
+        </div>
+
+        <!-- Automation Tab Content -->
+        <div id="automationTab" class="tab-content">
+            <div class="content-section">
+                <!-- CSV Import/Export -->
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Import & Export</div>
+                            <div class="card-subtitle">Manage your contacts with CSV files</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-1" style="margin-bottom: 8px;">
+                        <label class="btn btn-secondary btn-sm" style="cursor: pointer; flex: 1; justify-content: center;">
+                            <i class="fa-solid fa-upload"></i>
+                            <span>Import CSV</span>
+                            <input 
+                                type="file" 
+                                id="csvImportInput"
+                                accept=".csv"
+                                style="display: none;"
+                            />
+                        </label>
+                        <button id="csvExportBtn" class="btn btn-primary btn-sm" style="flex: 1;">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Export CSV</span>
+                        </button>
+                    </div>
+                    <div id="csvImportStatus" style="margin-top: 8px; font-size: 11px; color: var(--text-secondary); display: none;"></div>
+                </section>
+
+                <!-- Email Client Settings -->
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Email Client</div>
+                            <div class="card-subtitle">Choose your email provider</div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Select Email Client</label>
+                        <select id="emailClientSelect" class="input">
+                            <option value="default">Apple Mail (Default)</option>
+                            <option value="gmail">Gmail</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Template Selection -->
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Email Template</div>
+                            <div class="card-subtitle">Select template for automation</div>
+                        </div>
+                    </div>
+                    <select id="templateSelect" class="input mb-2">
+                        <option value="">Loading templates...</option>
+                    </select>
+                    <button id="editTemplateBtn" class="btn btn-secondary btn-sm">
+                        <i class="fa-solid fa-edit"></i>
+                        <span>Edit Template</span>
+                    </button>
+                </section>
+
+                <!-- Template Editor (Hidden by default) -->
+                <section id="templateEditor" class="card" style="display: none;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Edit Template</div>
+                            <div class="card-subtitle">Use {name} and {company} as variables</div>
+                        </div>
+                        <button id="closeEditorBtn" class="btn btn-secondary btn-icon" title="Close">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Template Name</label>
+                        <input type="text" id="templateName" class="input" placeholder="My Template">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Subject Line</label>
+                        <input type="text" id="templateSubject" class="input" placeholder="Hello {name}">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Email Body</label>
+                        <textarea id="templateBody" class="input textarea" rows="6" placeholder="Hi {name},&#10;&#10;I noticed your work at {company}..."></textarea>
+                    </div>
+                    <div class="flex gap-1">
+                        <button id="saveTemplateBtn" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-save"></i>
+                            <span>Save</span>
+                        </button>
+                        <button id="newTemplateBtn" class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>New</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Campaign Runner -->
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Campaign Runner</div>
+                            <div class="card-subtitle" id="campaignStatus">Ready to start</div>
+                        </div>
+                        <button id="startCampaignBtn" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Start</span>
+                        </button>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div id="progressBar" class="progress-bar" style="display: none;">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+
+                    <!-- Current Contact Card -->
+                    <div id="currentContactCard" class="card" style="display: none; margin-top: 12px;">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title" id="currentContactName">Contact Name</div>
+                                <div class="card-subtitle" id="currentContactEmail">email@example.com</div>
+                            </div>
+                            <span class="status-badge" id="currentContactStatus">New</span>
+                        </div>
+                        <div class="preview-body" id="previewBody">
+                            Email preview will appear here...
+                        </div>
+                        <div class="flex gap-1" style="margin-top: 12px;">
+                            <a id="openEmailLink" href="#" target="_blank" class="btn btn-primary btn-sm" style="flex: 1; text-decoration: none;">
+                                <i class="fa-solid fa-envelope"></i>
+                                <span>Open Email & Next</span>
+                            </a>
+                            <button id="skipContactBtn" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-forward"></i>
+                                <span>Skip</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="campaignEmptyState" class="empty-records">
+                        <div class="empty-records-icon">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </div>
+                        <div class="empty-records-title">No campaign active</div>
+                        <div class="empty-records-text">Select a template and click Start to begin</div>
+                    </div>
+                </section>
+            </div>
         </div>
     </main>
 

@@ -91,16 +91,21 @@
             width: 24px;
             border-radius: 999px;
             background: var(--neon-cyan);
-            cursor: ew-resize;
+            cursor: ns-resize;
             border: 2px solid white;
             box-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
-            margin-top: -11px;
+            margin-left: -11px;
         }
         
         input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 2px;
+            width: 2px;
+            height: 100%;
             background: rgba(255, 255, 255, 0.1);
+        }
+        
+        input[type="range"][style*="vertical-lr"] {
+            transform: rotate(90deg);
+            transform-origin: center;
         }
         
         /* Mode Selection Buttons */
@@ -271,10 +276,10 @@
             const handleMove = (e) => {
                 if (!isDraggingRef.current || !containerRef.current) return;
                 e.preventDefault();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                 const rect = containerRef.current.getBoundingClientRect();
-                const x = clientX - rect.left;
-                const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                const y = clientY - rect.top;
+                const percentage = Math.max(0, Math.min(100, (y / rect.height) * 100));
                 setSliderPos(percentage);
             };
 
@@ -353,7 +358,7 @@
                             {image && (
                                 <div 
                                     ref={containerRef}
-                                    className="relative w-full max-w-5xl max-h-[60vh] sm:max-h-[70vh] lg:max-h-[80vh] aspect-video rounded-xl sm:rounded-2xl border border-white/10 bg-black/90 shadow-2xl overflow-hidden flex items-center justify-center touch-none"
+                                    className="relative w-full max-w-3xl max-h-[60vh] sm:max-h-[70vh] lg:max-h-[80vh] aspect-[3/4] rounded-xl sm:rounded-2xl border border-white/10 bg-black/90 shadow-2xl overflow-hidden flex items-center justify-center touch-none mx-auto"
                                     onMouseDown={handleStart}
                                     onMouseMove={handleMove}
                                     onMouseUp={handleEnd}
@@ -378,7 +383,7 @@
                                     <div className="absolute top-2 left-2 right-2 sm:top-4 sm:left-4 sm:right-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 z-10">
                                         <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-black/80 border border-white/20 px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-[11px] text-white backdrop-blur font-mono">
                                             <span className="inline-flex h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-green-400 mr-0.5 sm:mr-1"></span>
-                                            <span className="hidden xs:inline">Split comparison • </span>Normal vs {activeFilter.label}
+                                            <span className="hidden xs:inline">Split comparison • </span>Normal (top) vs {activeFilter.label} (bottom)
                                         </div>
                                         <button
                                             type="button"
@@ -390,25 +395,10 @@
                                         </button>
                                     </div>
 
-                                    {/* Background: Filtered view (Right side) */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <img
-                                            src={image}
-                                            alt={`${activeFilter.label} simulated view`}
-                                            className="max-w-full max-h-full w-auto h-auto"
-                                            style={{
-                                                objectFit: "contain",
-                                                filter: activeFilter.isBlur
-                                                    ? "blur(4px)"
-                                                    : `url(#${filterType})`,
-                                            }}
-                                        />
-                                    </div>
-                                    
-                                    {/* Foreground: Normal view (Left side, clipped) */}
+                                    {/* Top: Normal view (clipped from bottom) */}
                                     <div
-                                        className="absolute inset-0 overflow-hidden border-r-2 border-cyan-400/50"
-                                        style={{ width: `${sliderPos}%` }}
+                                        className="absolute inset-x-0 top-0 overflow-hidden border-b-2 border-cyan-400/50"
+                                        style={{ height: `${sliderPos}%` }}
                                     >
                                         <div className="absolute inset-0 flex items-center justify-center">
                                             <img
@@ -425,28 +415,45 @@
                                         </div>
                                     </div>
                                     
-                                    {/* Filter label overlay (Right side) */}
-                                    <div className="absolute right-2 top-2 sm:right-3 sm:top-3 rounded-full bg-black/80 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.18em] text-white border border-white/20 z-10">
+                                    {/* Bottom: Filtered view */}
+                                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-center"
+                                        style={{ height: `${100 - sliderPos}%` }}
+                                    >
+                                        <img
+                                            src={image}
+                                            alt={`${activeFilter.label} simulated view`}
+                                            className="max-w-full max-h-full w-auto h-auto"
+                                            style={{
+                                                objectFit: "contain",
+                                                filter: activeFilter.isBlur
+                                                    ? "blur(4px)"
+                                                    : `url(#${filterType})`,
+                                            }}
+                                        />
+                                    </div>
+                                    
+                                    {/* Filter label overlay (Bottom side) */}
+                                    <div className="absolute right-2 bottom-2 sm:right-3 sm:bottom-3 rounded-full bg-black/80 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.18em] text-white border border-white/20 z-10">
                                         {activeFilter.label}
                                     </div>
 
-                                    {/* Slider handle */}
+                                    {/* Slider handle - horizontal divider */}
                                     <div
-                                        className="absolute inset-y-0 flex flex-col items-center justify-center pointer-events-none"
+                                        className="absolute inset-x-0 flex items-center justify-center pointer-events-none"
                                         style={{
-                                            left: `${sliderPos}%`,
-                                            transform: "translateX(-50%)",
+                                            top: `${sliderPos}%`,
+                                            transform: "translateY(-50%)",
                                         }}
                                     >
                                         <div className="flex items-center justify-center rounded-full bg-white text-slate-900 h-8 w-8 sm:h-9 sm:w-9 shadow-xl relative z-10 touch-none">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="sm:w-3.5 sm:h-3.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="sm:w-3.5 sm:h-3.5 rotate-90">
                                                 <path d="m9 18 6-6-6-6" />
                                             </svg>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="absolute rotate-180 sm:w-3.5 sm:h-3.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="absolute rotate-[-90deg] sm:w-3.5 sm:h-3.5">
                                                 <path d="m9 18 6-6-6-6" />
                                             </svg>
                                         </div>
-                                        <div className="h-full w-0.5 sm:w-px bg-cyan-400/50" />
+                                        <div className="w-full h-0.5 sm:h-px bg-cyan-400/50 absolute" />
                                     </div>
 
                                     {/* Invisible interaction layer */}
@@ -457,7 +464,8 @@
                                         value={sliderPos}
                                         aria-label="Comparison slider"
                                         onChange={(e) => setSliderPos(Number(e.target.value))}
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-ns-resize z-20"
+                                        style={{ writingMode: 'vertical-lr' }}
                                     />
                                 </div>
                             )}

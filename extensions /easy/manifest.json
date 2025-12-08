@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "ExtractFlow // Soft UI",
-  "version": "1.0.1",
-  "description": "Extract emails, phones and names from pasted text, then export as CSV.",
+  "name": "ExtractFlow // All-in-One",
+  "version": "2.0.0",
+  "description": "Extract emails, phones and names from text, then automate your outreach with email templates.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "ExtractFlow"

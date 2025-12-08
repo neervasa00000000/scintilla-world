@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelPet - Virtual Pet Game</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    #root {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <!-- Firebase Config (set these before loading the app) -->
+  <script>
+    // Set your Firebase config here or load from environment
+    // @ts-ignore
+    window.__firebase_config = JSON.stringify({
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    });
+    
+    // @ts-ignore
+    window.__app_id = 'pixel-panda-v2';
+    
+    // @ts-ignore
+    window.__initial_auth_token = null; // Set if you have a custom token
+  </script>
+  
+  <!-- React and dependencies will be loaded here -->
+  <!-- For development, you'll need to bundle this with a build tool like Vite, Webpack, or Parcel -->
+</body>
+</html>
+
+

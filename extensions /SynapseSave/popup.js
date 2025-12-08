@@ -1,10 +1,15 @@
 // SynapseSave - Optimized Popup Script
 
 let currentTabId = null;
+let currentWindowId = null; // Store current window ID
 let stats = { tabsSnoozed: 0, ramSaved: 0, timeSaved: 0 };
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
+    // Get current window ID for batch operations
+    const win = await chrome.windows.getCurrent();
+    currentWindowId = win.id;
+    
     await refreshAll();
     setupEventListeners();
 });
@@ -39,7 +44,8 @@ async function loadStats() {
 // --- DUPLICATE TAB DETECTION ---
 
 async function loadDuplicateTabs() {
-    const tabs = await chrome.tabs.query({});
+    // Limit duplicates to current window only
+    const tabs = await chrome.tabs.query({ currentWindow: true });
     const filteredTabs = tabs.filter(tab => 
         !tab.url.startsWith('chrome://') && 
         !tab.url.startsWith('edge://') &&
@@ -144,21 +150,54 @@ function createDuplicateGroup(domain, tabs) {
     countBadge.className = 'duplicate-count-badge';
     countBadge.textContent = `${tabs.length}x`;
     
-    const closeAllBtn = document.createElement('button');
-    closeAllBtn.className = 'btn btn-danger btn-small close-all-duplicates-btn';
-    closeAllBtn.textContent = 'Close All';
-    closeAllBtn.title = `Close all ${tabs.length} duplicate tabs from ${domain}`;
-    closeAllBtn.addEventListener('click', async (e) => {
+    // Action buttons container
+    const actionsContainer = document.createElement('div');
+    actionsContainer.className = 'duplicate-actions';
+    actionsContainer.style.display = 'flex';
+    actionsContainer.style.gap = '8px';
+    
+    // Snooze button - snooze ALL duplicates (all tabs from this domain)
+    const snoozeBtn = document.createElement('button');
+    snoozeBtn.className = 'btn btn-primary btn-small';
+    snoozeBtn.textContent = 'Snooze';
+    snoozeBtn.title = `Snooze all ${tabs.length} tab${tabs.length > 1 ? 's' : ''} from ${domain}`;
+    snoozeBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        const tabIds = tabs.map(t => t.id);
-        await chrome.tabs.remove(tabIds);
-        await refreshAll();
-        showToast(`Closed ${tabs.length} duplicate tabs from ${domain}`, 'success');
+        // Snooze ALL tabs from this domain
+        if (tabs.length > 0) {
+            // Use default 1 day snooze
+            const wakeTime = calculateWakeTime('oneday');
+            for (const tab of tabs) {
+                await performSnooze(tab.id, wakeTime, 'oneday');
+            }
+            await refreshAll();
+            showToast(`Snoozed ${tabs.length} tab${tabs.length > 1 ? 's' : ''}`, 'success');
+        }
     });
+    
+    // Cleanup button - close all duplicates (keep first, close rest)
+    const cleanupBtn = document.createElement('button');
+    cleanupBtn.className = 'btn btn-danger btn-small close-all-duplicates-btn';
+    cleanupBtn.textContent = 'Cleanup';
+    cleanupBtn.title = `Close ${tabs.length - 1} duplicate tab${tabs.length > 2 ? 's' : ''} from ${domain} (keeping 1 open)`;
+    cleanupBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        // Keep the first tab open, close the rest (duplicates)
+        const tabsToClose = tabs.slice(1); // Skip first tab
+        const tabIds = tabsToClose.map(t => t.id);
+        if (tabIds.length > 0) {
+            await chrome.tabs.remove(tabIds);
+            await refreshAll();
+            showToast(`Closed ${tabIds.length} duplicates`, 'success');
+        }
+    });
+    
+    actionsContainer.appendChild(snoozeBtn);
+    actionsContainer.appendChild(cleanupBtn);
     
     header.appendChild(urlInfo);
     header.appendChild(countBadge);
-    header.appendChild(closeAllBtn);
+    header.appendChild(actionsContainer);
     
     group.appendChild(header);
     
@@ -168,7 +207,8 @@ function createDuplicateGroup(domain, tabs) {
 // --- TAB MANAGEMENT ---
 
 async function loadTabs() {
-    const tabs = await chrome.tabs.query({});
+    // FIX: Only query tabs for the CURRENT WINDOW to avoid confusion
+    const tabs = await chrome.tabs.query({ currentWindow: true });
     const openTabsList = document.getElementById('openTabsList');
     const openTabCount = document.getElementById('openTabCount');
     
@@ -256,16 +296,7 @@ function createTabItem(tab) {
         snoozeTab(tab.id);
     });
     
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'btn btn-danger close-btn';
-    closeBtn.textContent = 'Close';
-    closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeTab(tab.id);
-    });
-    
     actions.appendChild(snoozeBtn);
-    actions.appendChild(closeBtn);
     
     tabItem.appendChild(tabInfo);
     tabItem.appendChild(actions);
@@ -294,33 +325,20 @@ async function loadSnoozedTabs() {
     snoozedList.appendChild(fragment);
 }
 
-function createSnoozedItem(snoozedTab) {
+function createSnoozedItem(tab) {
     const item = document.createElement('div');
     item.className = 'snoozed-item';
-    item.dataset.tabId = snoozedTab.tabId;
-    
-    const timeUntil = formatTimeUntil(snoozedTab.wakeTime);
-    const wakeDate = new Date(snoozedTab.wakeTime);
-    const wakeTimeStr = wakeDate.toLocaleString('en-US', { 
-        month: 'short', 
-        day: 'numeric', 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-    });
     
     const header = document.createElement('div');
     header.className = 'snoozed-header';
     
     const title = document.createElement('div');
     title.className = 'snoozed-title';
-    title.textContent = snoozedTab.title || 'Untitled';
-    title.title = snoozedTab.title || 'Untitled';
+    title.textContent = tab.title;
     
     const time = document.createElement('div');
     time.className = 'snoozed-time';
-    time.innerHTML = `<span style="color: var(--success);">⏰</span> ${timeUntil}<br><span style="font-size: 0.6rem; opacity: 0.7;">${wakeTimeStr}</span>`;
-    time.title = `Will wake at: ${wakeTimeStr}`;
+    time.innerHTML = formatTimeUntil(tab.wakeTime);
     
     header.appendChild(title);
     header.appendChild(time);
@@ -328,18 +346,18 @@ function createSnoozedItem(snoozedTab) {
     const actions = document.createElement('div');
     actions.className = 'snoozed-actions';
     
-    const reopenBtn = document.createElement('button');
-    reopenBtn.className = 'btn btn-primary btn-small reopen-btn';
-    reopenBtn.textContent = 'Open Now';
-    reopenBtn.addEventListener('click', () => reopenTab(snoozedTab.tabId));
+    const openBtn = document.createElement('button');
+    openBtn.className = 'btn btn-primary btn-small';
+    openBtn.textContent = 'Open Now';
+    openBtn.addEventListener('click', () => reopenTab(tab.tabId));
     
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn btn-danger btn-small delete-btn';
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.addEventListener('click', () => deleteSnooze(snoozedTab.tabId));
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn btn-danger btn-small delete-btn';
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => deleteSnooze(tab.tabId));
     
-    actions.appendChild(reopenBtn);
-    actions.appendChild(deleteBtn);
+    actions.appendChild(openBtn);
+    actions.appendChild(delBtn);
     
     item.appendChild(header);
     item.appendChild(actions);
@@ -415,9 +433,9 @@ async function performSnooze(tabId, wakeTime, timeOption) {
 // Crash Fixed: Now fires a message to background.js and closes the popup immediately.
 // It will no longer fail if the user clicks away.
 async function batchSnooze(timeOption) {
-    // Send message to background.js to handle batch snooze
+    // FIX: Send the Window ID so background script knows which window to target
     chrome.runtime.sendMessage(
-        { action: 'batchSnooze', timeOption: timeOption },
+        { action: 'batchSnooze', timeOption: timeOption, windowId: currentWindowId },
         (response) => {
             // Response is handled, but popup is already closed
             // Background script handles everything
@@ -428,133 +446,46 @@ async function batchSnooze(timeOption) {
     window.close();
 }
 
-// Helper function to restore or recreate a group
-async function restoreGroup(tab, newTabId) {
-    // Handle old tabs that might only have groupId without groupInfo
-    if (!tab.groupInfo && !tab.groupId) {
-        return; // No group info to restore
-    }
-
+// --- LOGIC FIX: Always find group by NAME first ---
+async function restoreGroupFromPopup(tabData, newTabId) {
+    if (!tabData.groupInfo && !tabData.groupId) return;
     try {
-        // Small delay to ensure tab is fully initialized before grouping
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 300));
+        let newTab;
+        try { newTab = await chrome.tabs.get(newTabId); } catch(e) { return; }
         
-        // Verify tab still exists before grouping
-        try {
-            await chrome.tabs.get(newTabId);
-        } catch (e) {
-            console.log('Tab no longer exists, cannot group');
-            return;
-        }
-
-        // First, check if the original group still exists
-        let targetGroupId = tab.groupId;
-        if (targetGroupId && targetGroupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
-            try {
-                const existingGroup = await chrome.tabGroups.get(targetGroupId);
-                if (existingGroup) {
-                    // Group exists, add tab back to it
-                    await chrome.tabs.group({
-                        groupId: targetGroupId,
-                        tabIds: [newTabId]
-                    });
-                    return;
-                }
-            } catch (e) {
-                // Group doesn't exist, will recreate below
-            }
-        }
-
-        // Group doesn't exist, need to recreate it
-        // For old tabs without groupInfo, try to get group info from storage or use groupId as key
-        let groupInfo = tab.groupInfo;
-        if (!groupInfo && tab.groupId) {
-            // Try to get group info if available, otherwise use minimal info
-            groupInfo = {
-                id: tab.groupId,
-                title: '',
-                color: 'grey'
-            };
-        }
-
-        if (!groupInfo) {
-            return; // Can't restore without group info
-        }
-
-        // Check if we've already recreated this group for another tab
-        const storage = await chrome.storage.local.get(['recreatedGroups']);
-        const recreatedGroups = storage.recreatedGroups || {};
+        let groupInfo = tabData.groupInfo || { title: '', color: 'grey' };
+        let foundGroup = null;
         
-        // Create a unique key: use original groupId if available, otherwise use title+color
-        // This ensures tabs from the same original group go to the same recreated group
-        const groupKey = tab.groupId 
-            ? `group_${tab.groupId}` 
-            : `${groupInfo.title || 'Untitled'}_${groupInfo.color || 'grey'}`;
-        
-        if (recreatedGroups[groupKey]) {
-            // We've already recreated this group, add tab to it
-            try {
-                await chrome.tabs.group({
-                    groupId: recreatedGroups[groupKey],
-                    tabIds: [newTabId]
-                });
-                return;
-            } catch (e) {
-                // Recreated group might have been deleted, create new one below
-                delete recreatedGroups[groupKey];
-            }
-        }
-
-        // IMPORTANT: Before creating a new group, check if a group with the same title already exists
-        // This prevents duplicate groups when reopening tabs after long periods (6+ days)
+        // 1. SEARCH BY NAME ("Group B") in the CURRENT WINDOW
         if (groupInfo.title) {
-            try {
-                const allGroups = await chrome.tabGroups.query({});
-                const existingGroup = allGroups.find(g => g.title === groupInfo.title);
-                
-                if (existingGroup) {
-                    // Group with same title exists, add tab to it instead of creating duplicate
-                    await chrome.tabs.group({
-                        groupId: existingGroup.id,
-                        tabIds: [newTabId]
-                    });
-                    // Update the recreatedGroups mapping so future tabs use this existing group
-                    recreatedGroups[groupKey] = existingGroup.id;
-                    await chrome.storage.local.set({ recreatedGroups });
-                    return;
+            const windowGroups = await chrome.tabGroups.query({ windowId: newTab.windowId });
+            foundGroup = windowGroups.find(g => g.title === groupInfo.title);
+        }
+        
+        // 2. Fallback to ID
+        if (!foundGroup && tabData.groupId) {
+             try {
+                const groupById = await chrome.tabGroups.get(tabData.groupId);
+                if (groupById && groupById.windowId === newTab.windowId) {
+                    foundGroup = groupById;
                 }
-            } catch (e) {
-                // If query fails, continue to create new group below
-                console.log('Could not query existing groups:', e);
+            } catch (e) {}
+        }
+        
+        // 3. ACTION
+        if (foundGroup) {
+            await chrome.tabs.group({ groupId: foundGroup.id, tabIds: [newTabId] });
+        } else {
+            const newGroupId = await chrome.tabs.group({ tabIds: [newTabId] });
+            const updateData = {};
+            if (groupInfo.title) updateData.title = groupInfo.title;
+            if (groupInfo.color) updateData.color = groupInfo.color;
+            if (Object.keys(updateData).length > 0) {
+                await chrome.tabGroups.update(newGroupId, updateData);
             }
         }
-
-        // Create a new group with the stored properties
-        const newGroupId = await chrome.tabs.group({ tabIds: [newTabId] });
-        
-        // Update the group with stored properties
-        const updateData = {};
-        if (groupInfo.title) {
-            updateData.title = groupInfo.title;
-        }
-        if (groupInfo.color) {
-            updateData.color = groupInfo.color;
-        }
-        if (groupInfo.collapsed !== undefined) {
-            updateData.collapsed = groupInfo.collapsed;
-        }
-        
-        if (Object.keys(updateData).length > 0) {
-            await chrome.tabGroups.update(newGroupId, updateData);
-        }
-        
-        // Store the mapping so other tabs from the same group can use it
-        recreatedGroups[groupKey] = newGroupId;
-        await chrome.storage.local.set({ recreatedGroups });
-    } catch (error) {
-        // If grouping fails, tab will just open normally (not grouped)
-        console.log('Could not restore tab to group:', error);
-    }
+    } catch(e) { console.log('Popup Restore Group Error', e); }
 }
 
 async function reopenTab(tabId) {
@@ -569,10 +500,9 @@ async function reopenTab(tabId) {
             active: false 
         });
         
-        // Wait a bit for tab to be fully created, then restore group
-        // Restore to original group if it had one
         if (targetTab.groupId || targetTab.groupInfo) {
-            await restoreGroup(targetTab, newTab.id);
+             // Local restore logic
+             await restoreGroupFromPopup(targetTab, newTab.id);
         }
         
         // Cleanup
