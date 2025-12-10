@@ -441,45 +441,80 @@
       };
 
       // --- UI Components ---
-      const Slider = ({ label, icon: Icon, value, min, max, onChange, unit = '', step = 1 }) => (
-        <div className="mb-4 md:mb-5 group">
-          <div className="flex justify-between items-center mb-2">
-            <div className="flex items-center text-gray-400 group-hover:text-white transition-colors">
-              {Icon && <Icon size={16} className="md:w-3.5 md:h-3.5 mr-2" />}
-              <span className="text-xs font-semibold tracking-wide uppercase">{label}</span>
-            </div>
-            <span className="text-xs text-gray-500 font-mono bg-neutral-800 px-2 py-0.5 rounded text-[10px]">{value}{unit}</span>
-          </div>
-          <div className="relative h-7 md:h-6 flex items-center">
-            <div className="absolute w-full h-1.5 md:h-1 bg-neutral-800 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-indigo-500 transition-all duration-75 ease-out" 
-                style={{ width: `${((value - min) / (max - min)) * 100}%` }}
+      const Slider = ({ label, icon: Icon, value, min, max, onChange, unit = '', step = 1 }) => {
+        const [inputValue, setInputValue] = useState(value);
+        
+        useEffect(() => {
+          setInputValue(value);
+        }, [value]);
+        
+        const handleInputChange = (e) => {
+          const newValue = Number(e.target.value);
+          if (!isNaN(newValue) && newValue >= min && newValue <= max) {
+            setInputValue(newValue);
+            onChange(newValue);
+          }
+        };
+        
+        const handleInputBlur = () => {
+          if (inputValue < min) {
+            setInputValue(min);
+            onChange(min);
+          } else if (inputValue > max) {
+            setInputValue(max);
+            onChange(max);
+          }
+        };
+        
+        return (
+          <div className="mb-4 md:mb-5 group">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center text-gray-400 group-hover:text-white transition-colors">
+                {Icon && <Icon size={16} className="md:w-3.5 md:h-3.5 mr-2" />}
+                <span className="text-xs font-semibold tracking-wide uppercase">{label}</span>
+              </div>
+              <input
+                type="number"
+                min={min}
+                max={max}
+                step={step}
+                value={inputValue}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                className="text-xs text-white font-mono bg-neutral-800 border border-white/20 px-2 py-0.5 rounded text-[10px] w-16 text-right focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               />
             </div>
-            <input
-              type="range"
-              min={min}
-              max={max}
-              step={step}
-              value={value}
-              onChange={(e) => onChange(Number(e.target.value))}
-              className="absolute w-full h-full opacity-0 cursor-pointer touch-none"
-              style={{ WebkitTapHighlightColor: 'transparent' }}
-            />
-            <div 
-              className="absolute w-5 h-5 md:w-4 md:h-4 bg-white rounded-full shadow-lg border-2 border-indigo-500 pointer-events-none transition-all duration-75 ease-out"
-              style={{ left: `calc(${((value - min) / (max - min)) * 100}% - 10px)` }}
-            />
+            <div className="relative h-7 md:h-6 flex items-center">
+              <div className="absolute w-full h-1.5 md:h-1 bg-neutral-800 rounded-full overflow-hidden border border-white/10">
+                <div 
+                  className="h-full bg-indigo-500 transition-all duration-75 ease-out" 
+                  style={{ width: `${((value - min) / (max - min)) * 100}%` }}
+                />
+              </div>
+              <input
+                type="range"
+                min={min}
+                max={max}
+                step={step}
+                value={value}
+                onChange={(e) => onChange(Number(e.target.value))}
+                className="absolute w-full h-full opacity-0 cursor-pointer touch-none z-10"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+              />
+              <div 
+                className="absolute w-5 h-5 md:w-4 md:h-4 bg-white rounded-full shadow-lg border-2 border-indigo-500 pointer-events-none transition-all duration-75 ease-out"
+                style={{ left: `calc(${((value - min) / (max - min)) * 100}% - 10px)` }}
+              />
+            </div>
           </div>
-        </div>
-      );
+        );
+      };
 
       return (
-        <div className="min-h-screen bg-neutral-950 text-gray-100 font-sans flex flex-col selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-neutral-950 text-gray-100 font-sans flex flex-col selection:bg-indigo-500/30" style={{ backgroundColor: '#0a0a0a' }}>
           
           {/* --- Modern Header --- */}
-          <header className="h-14 md:h-16 px-4 md:px-6 flex items-center justify-between border-b border-white/5 bg-neutral-950/50 backdrop-blur-md z-30 sticky top-0">
+          <header className="h-14 md:h-16 px-4 md:px-6 flex items-center justify-between border-b border-white/10 bg-neutral-950/50 backdrop-blur-md z-30 sticky top-0" style={{ borderColor: 'rgba(255, 255, 255, 0.15)', backgroundColor: '#0a0a0a' }}>
             <div className="flex items-center space-x-2 md:space-x-3">
               <div className="w-8 h-8 md:w-9 md:h-9 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
                 <Aperture size={18} className="md:w-5 md:h-5 text-white" />
@@ -518,16 +553,17 @@
           <main className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
             
             {/* Image Preview Section */}
-            <div className="w-full md:flex-1 relative flex items-center justify-center p-4 md:p-8 bg-neutral-950 min-h-[40vh] md:min-h-0 md:h-auto">
+            <div className="w-full md:flex-1 relative flex items-center justify-center p-4 md:p-8 min-h-[40vh] md:min-h-0 md:h-auto" style={{ backgroundColor: '#0a0a0a' }}>
               {/* Subtle Grid Pattern Background */}
               <div className="absolute inset-0 opacity-[0.03]" 
                    style={{ 
                      backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', 
-                     backgroundSize: '24px 24px' 
+                     backgroundSize: '24px 24px',
+                     backgroundColor: '#0a0a0a'
                    }}>
               </div>
               {!image ? (
-                <div className="relative z-10 flex flex-col items-center justify-center p-8 md:p-12 border border-white/5 bg-white/5 rounded-2xl md:rounded-3xl backdrop-blur-sm animate-in fade-in zoom-in duration-500">
+                  <div className="relative z-10 flex flex-col items-center justify-center p-8 md:p-12 border border-white/10 bg-white/5 rounded-2xl md:rounded-3xl backdrop-blur-sm animate-in fade-in zoom-in duration-500" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                   <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-full flex items-center justify-center mb-4 md:mb-6 shadow-inner border border-white/5">
                     <ImageIcon size={28} className="md:w-8 md:h-8 text-neutral-500" />
                   </div>
@@ -601,11 +637,11 @@
             </div>
 
             {/* Controls Section - Below image on mobile, side on desktop */}
-            <aside className="w-full md:w-80 bg-neutral-900/95 md:bg-neutral-900/80 backdrop-blur-xl border-t md:border-l border-white/5 flex flex-col shrink-0 md:h-auto max-h-[60vh] md:max-h-none overflow-hidden">
+            <aside className="w-full md:w-80 bg-neutral-900/95 md:bg-neutral-900/80 backdrop-blur-xl border-t md:border-l border-white/10 flex flex-col shrink-0 md:h-auto max-h-[60vh] md:max-h-none overflow-hidden" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
               
               {/* Segmented Control Tabs */}
-              <div className="p-3 md:p-4 border-b border-white/5 sticky top-14 md:top-0 bg-neutral-900/95 md:bg-transparent backdrop-blur-xl z-10">
-                <div className="flex bg-neutral-950/50 p-1 rounded-lg border border-white/5">
+              <div className="p-3 md:p-4 border-b border-white/10 sticky top-14 md:top-0 bg-neutral-900/95 md:bg-transparent backdrop-blur-xl z-10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+                <div className="flex bg-neutral-950/50 p-1 rounded-lg border border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                   {[
                     { id: 'templates', icon: Wand2, label: 'Filters' },
                     { id: 'adjust', icon: Sliders, label: 'Adjust' },
@@ -649,8 +685,9 @@
                             className={`group relative h-20 md:h-24 rounded-xl md:rounded-2xl overflow-hidden transition-all duration-300 border ${
                               isActive 
                                 ? 'border-indigo-500 ring-2 ring-indigo-500/20 shadow-lg shadow-indigo-500/10 scale-[1.02]' 
-                                : 'border-white/5 hover:border-white/20 active:scale-[1.02]'
+                                : 'border-white/10 hover:border-white/30 active:scale-[1.02]'
                             }`}
+                            style={!isActive ? { borderColor: 'rgba(255, 255, 255, 0.15)' } : {}}
                           >
                             {/* Gradient Preview */}
                             <div className={`absolute inset-0 transition-opacity bg-gradient-to-br ${
@@ -715,12 +752,12 @@
                       </div>
                     </div>
 
-                    {/* Color Balance Section */}
+                      {/* Color Balance Section */}
                     <div>
                       <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3 md:mb-4">
                         <Palette size={14} className="md:w-3 md:h-3 mr-2" /> Color Balance
                       </h4>
-                      <div className="p-3 md:p-4 bg-neutral-950/30 rounded-xl border border-white/5 space-y-3 md:space-y-4">
+                      <div className="p-3 md:p-4 bg-neutral-950/30 rounded-xl border border-white/10 space-y-3 md:space-y-4" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                         <div className="flex items-center justify-between text-[9px] md:text-[10px] text-neutral-500 font-mono mb-2">
                           <span className="text-center flex-1">CYAN/RED</span>
                           <span className="text-center flex-1">MAGENTA/GREEN</span>
@@ -728,17 +765,49 @@
                         </div>
                         
                         {/* RGB Sliders with custom gradients */}
-                        <div className="relative h-3 md:h-2 rounded-full overflow-hidden bg-gradient-to-r from-cyan-500 via-neutral-600 to-red-500 mb-3 md:mb-4">
-                          <input type="range" min="-50" max="50" value={settings.red} onChange={(e) => updateSetting('red', Number(e.target.value))} className="w-full h-full opacity-0 cursor-pointer absolute z-10 touch-none" style={{ WebkitTapHighlightColor: 'transparent' }} />
-                          <div className="absolute top-0 bottom-0 w-1.5 md:w-1 bg-white shadow-sm pointer-events-none" style={{ left: `${((settings.red + 50) / 100) * 100}%` }}></div>
-                        </div>
-                        <div className="relative h-3 md:h-2 rounded-full overflow-hidden bg-gradient-to-r from-fuchsia-500 via-neutral-600 to-green-500 mb-3 md:mb-4">
-                          <input type="range" min="-50" max="50" value={settings.green} onChange={(e) => updateSetting('green', Number(e.target.value))} className="w-full h-full opacity-0 cursor-pointer absolute z-10 touch-none" style={{ WebkitTapHighlightColor: 'transparent' }} />
-                          <div className="absolute top-0 bottom-0 w-1.5 md:w-1 bg-white shadow-sm pointer-events-none" style={{ left: `${((settings.green + 50) / 100) * 100}%` }}></div>
-                        </div>
-                        <div className="relative h-3 md:h-2 rounded-full overflow-hidden bg-gradient-to-r from-yellow-400 via-neutral-600 to-blue-600">
-                          <input type="range" min="-50" max="50" value={settings.blue} onChange={(e) => updateSetting('blue', Number(e.target.value))} className="w-full h-full opacity-0 cursor-pointer absolute z-10 touch-none" style={{ WebkitTapHighlightColor: 'transparent' }} />
-                          <div className="absolute top-0 bottom-0 w-1.5 md:w-1 bg-white shadow-sm pointer-events-none" style={{ left: `${((settings.blue + 50) / 100) * 100}%` }}></div>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <div className="relative h-3 md:h-2 rounded-full overflow-hidden bg-gradient-to-r from-cyan-500 via-neutral-600 to-red-500 flex-1 border border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+                              <input type="range" min="-50" max="50" value={settings.red} onChange={(e) => updateSetting('red', Number(e.target.value))} className="w-full h-full opacity-0 cursor-pointer absolute z-10 touch-none" style={{ WebkitTapHighlightColor: 'transparent' }} />
+                              <div className="absolute top-0 bottom-0 w-1.5 md:w-1 bg-white shadow-sm pointer-events-none" style={{ left: `${((settings.red + 50) / 100) * 100}%` }}></div>
+                            </div>
+                            <input
+                              type="number"
+                              min="-50"
+                              max="50"
+                              value={settings.red}
+                              onChange={(e) => updateSetting('red', Number(e.target.value))}
+                              className="text-xs text-white font-mono bg-neutral-800 border border-white/20 px-2 py-1 rounded text-[10px] w-14 text-center focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="relative h-3 md:h-2 rounded-full overflow-hidden bg-gradient-to-r from-fuchsia-500 via-neutral-600 to-green-500 flex-1 border border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+                              <input type="range" min="-50" max="50" value={settings.green} onChange={(e) => updateSetting('green', Number(e.target.value))} className="w-full h-full opacity-0 cursor-pointer absolute z-10 touch-none" style={{ WebkitTapHighlightColor: 'transparent' }} />
+                              <div className="absolute top-0 bottom-0 w-1.5 md:w-1 bg-white shadow-sm pointer-events-none" style={{ left: `${((settings.green + 50) / 100) * 100}%` }}></div>
+                            </div>
+                            <input
+                              type="number"
+                              min="-50"
+                              max="50"
+                              value={settings.green}
+                              onChange={(e) => updateSetting('green', Number(e.target.value))}
+                              className="text-xs text-white font-mono bg-neutral-800 border border-white/20 px-2 py-1 rounded text-[10px] w-14 text-center focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="relative h-3 md:h-2 rounded-full overflow-hidden bg-gradient-to-r from-yellow-400 via-neutral-600 to-blue-600 flex-1 border border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+                              <input type="range" min="-50" max="50" value={settings.blue} onChange={(e) => updateSetting('blue', Number(e.target.value))} className="w-full h-full opacity-0 cursor-pointer absolute z-10 touch-none" style={{ WebkitTapHighlightColor: 'transparent' }} />
+                              <div className="absolute top-0 bottom-0 w-1.5 md:w-1 bg-white shadow-sm pointer-events-none" style={{ left: `${((settings.blue + 50) / 100) * 100}%` }}></div>
+                            </div>
+                            <input
+                              type="number"
+                              min="-50"
+                              max="50"
+                              value={settings.blue}
+                              onChange={(e) => updateSetting('blue', Number(e.target.value))}
+                              className="text-xs text-white font-mono bg-neutral-800 border border-white/20 px-2 py-1 rounded text-[10px] w-14 text-center focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                            />
+                          </div>
                         </div>
                         
                         <div className="pt-2">
@@ -762,8 +831,9 @@
                           className={`h-20 md:h-24 rounded-lg md:rounded-xl border flex flex-col items-center justify-center transition-all active:scale-95 ${
                             selectedFrame.id === f.id 
                               ? 'border-indigo-500 bg-neutral-800' 
-                              : 'border-white/10 active:border-white/20 bg-neutral-900'
+                              : 'border-white/15 active:border-white/30 bg-neutral-900'
                           }`}
+                          style={selectedFrame.id !== f.id ? { borderColor: 'rgba(255, 255, 255, 0.2)' } : {}}
                         >
                           <div 
                             className="w-8 h-8 md:w-10 md:h-10 mb-2 shadow-sm"
@@ -780,7 +850,7 @@
                 )}
               </div>
 
-              <div className="p-3 md:p-4 border-t border-white/5 text-[10px] text-neutral-600 text-center font-medium">
+              <div className="p-3 md:p-4 border-t border-white/10 text-[10px] text-neutral-600 text-center font-medium" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                 LUMINA STUDIO v2.0
               </div>
             </aside>
