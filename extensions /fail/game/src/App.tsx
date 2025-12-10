@@ -178,6 +178,8 @@ export default function PandaApp() {
   const [connectId, setConnectId] = useState('');
 
   const [players, setPlayers] = useState<PlayerData[]>([]);
+  const [visitingPlayer, setVisitingPlayer] = useState<PlayerData | null>(null);
+  const [isVisiting, setIsVisiting] = useState(false);
 
   const particlesRef = useRef<Particle[]>([]);
 
@@ -287,17 +289,57 @@ export default function PandaApp() {
 
   }, []);
 
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   const handleLogin = async () => {
 
-    if (isOffline) { alert("Offline"); return; }
+    if (isOffline) { 
+      setLoginError("⚠️ Firebase not configured. Please add your Firebase credentials to enable login. Check src/config.js or popup.html");
+      setTimeout(() => setLoginError(null), 8000);
+      return; 
+    }
+
+    if (!auth) {
+      setLoginError("Authentication not initialized. Please check your Firebase configuration.");
+      setTimeout(() => setLoginError(null), 5000);
+      return;
+    }
+
+    setIsLoggingIn(true);
+    setLoginError(null);
 
     try {
 
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
 
-      await signInWithPopup(auth!, provider);
+      await signInWithPopup(auth, provider);
 
-    } catch (e) { console.error(e); }
+    } catch (e: any) { 
+      console.error("Login error:", e);
+      
+      let errorMessage = "Failed to sign in. Please try again.";
+      
+      if (e.code === 'auth/popup-closed-by-user') {
+        errorMessage = "Sign-in popup was closed. Please try again.";
+      } else if (e.code === 'auth/cancelled-popup-request') {
+        errorMessage = "Sign-in was cancelled. Please try again.";
+      } else if (e.code === 'auth/popup-blocked') {
+        errorMessage = "Popup was blocked. Please allow popups and try again.";
+      } else if (e.code === 'auth/network-request-failed') {
+        errorMessage = "Network error. Please check your connection.";
+      } else if (e.message) {
+        errorMessage = e.message;
+      }
+      
+      setLoginError(errorMessage);
+      setTimeout(() => setLoginError(null), 5000);
+    } finally {
+      setIsLoggingIn(false);
+    }
 
   };
 
@@ -319,7 +361,11 @@ export default function PandaApp() {
 
   const searchForPlayer = async () => {
 
-    if (isOffline || !db || !connectId) { alert("Offline"); return; }
+    if (isOffline || !db || !connectId) { 
+      setLoginError("Cannot search in offline mode.");
+      setTimeout(() => setLoginError(null), 3000);
+      return; 
+    }
 
     try {
 
@@ -334,11 +380,67 @@ export default function PandaApp() {
         if (!players.find(pl => pl.uid === p.uid)) setPlayers(prev => [p, ...prev]);
 
         spawnParticles('star', 10, 50, 50); 
+        
+        setConnectId(''); // Clear input after successful add
 
-      } else { alert("Not found"); }
+      } else { 
+        setLoginError("Player not found. Please check the ID.");
+        setTimeout(() => setLoginError(null), 3000);
+      }
 
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error(e);
+      setLoginError("Error searching for player. Please try again.");
+      setTimeout(() => setLoginError(null), 3000);
+    }
 
+  };
+
+  // Visit another player's panda
+  const visitPlayer = (player: PlayerData) => {
+    if (isVisiting) return;
+    
+    setIsVisiting(true);
+    setVisitingPlayer(player);
+    
+    // Move panda to player's position
+    targetRef.current.x = player.pet.x;
+    targetRef.current.y = player.pet.y;
+    actionRef.current = 'walking';
+    
+    // After reaching, make panda disappear
+    const checkArrival = setInterval(() => {
+      const dx = targetRef.current.x - posRef.current.x;
+      const dy = targetRef.current.y - posRef.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      if (dist < 2) {
+        clearInterval(checkArrival);
+        
+        // Make panda disappear
+        if (pandaRef.current) {
+          pandaRef.current.style.opacity = '0';
+          pandaRef.current.style.transition = 'opacity 1s ease-out';
+        }
+        
+        // Show visiting message
+        setTimeout(() => {
+          setLoginError(`Visiting ${player.name}'s panda!`);
+          
+          // Return after 3 seconds
+          setTimeout(() => {
+            if (pandaRef.current) {
+              pandaRef.current.style.opacity = '1';
+              pandaRef.current.style.transition = 'opacity 1s ease-in';
+            }
+            setIsVisiting(false);
+            setVisitingPlayer(null);
+            setLoginError(null);
+            actionRef.current = 'idle';
+          }, 3000);
+        }, 1000);
+      }
+    }, 100);
   };
 
   useEffect(() => {
@@ -377,13 +479,13 @@ export default function PandaApp() {
 
   useEffect(() => {
 
-    if (isOffline || !user || !db) return;
+    if (isOffline || !user || !db || isVisiting) return;
 
     const interval = setInterval(() => {
 
         try {
 
-          if (db && user) {
+          if (db && user && !isVisiting) {
 
             setDoc(doc(db, 'artifacts', appId, 'public', 'players', user.uid), {
 
@@ -411,7 +513,7 @@ export default function PandaApp() {
 
     return () => clearInterval(interval);
 
-  }, [user, level, isOffline]);
+  }, [user, level, isOffline, isVisiting]);
 
   // 6. GAME LOOP (The Fix)
 
@@ -493,7 +595,7 @@ export default function PandaApp() {
 
       }
 
-      if (pandaRef.current) {
+      if (pandaRef.current && !isVisiting) {
 
         pandaRef.current.style.left = `${p.x}%`;
 
@@ -582,9 +684,16 @@ export default function PandaApp() {
 
                  <div className="text-[10px] text-slate-400 flex gap-2 items-center">
 
-                   <span className="text-yellow-400 font-bold">Lvl {level}</span>
-
-                   <span>• {xp}/{maxXp} XP</span>
+                   {user?.isAnonymous ? (
+                     <span className="text-orange-400 font-bold">Guest Mode</span>
+                   ) : user ? (
+                     <>
+                       <span className="text-yellow-400 font-bold">Lvl {level}</span>
+                       <span>• {xp}/{maxXp} XP</span>
+                     </>
+                   ) : (
+                     <span className="text-slate-400">Not signed in</span>
+                   )}
 
                  </div>
 
@@ -592,7 +701,16 @@ export default function PandaApp() {
 
             </div>
 
-            {/* Close button removed - popup should always show UI */}
+            {(!user || user.isAnonymous) && (
+              <button 
+                onClick={handleLogin}
+                disabled={isLoggingIn}
+                className={`${isOffline ? 'bg-slate-600 hover:bg-slate-700' : 'bg-blue-600 hover:bg-blue-700'} disabled:bg-slate-400 px-3 py-1 rounded text-[10px] font-bold flex items-center gap-1 transition disabled:cursor-not-allowed text-white`}
+                title={isOffline ? "Configure Firebase to enable login" : "Sign in with Google"}
+              >
+                {isLoggingIn ? 'Signing in...' : 'Sign in'} <User size={12}/>
+              </button>
+            )}
 
           </div>
 
@@ -682,10 +800,33 @@ export default function PandaApp() {
 
                       {isOffline ? (
 
-                        <div className="text-center py-4 text-xs text-red-400 italic bg-red-50 rounded border border-red-100">
+                        <div className="space-y-3">
+                          <div className="text-center py-3 text-xs text-red-400 italic bg-red-50 rounded border border-red-100">
 
-                           Social features disabled (Offline Mode)
+                             Social features disabled (Offline Mode)
 
+                          </div>
+                          
+                          <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 space-y-3">
+                            <div className="text-xs font-bold text-blue-900 text-center">🔐 Sign in Required</div>
+                            <div className="text-[10px] text-blue-800 text-center">
+                              To connect with friends and use social features, you need to sign in with Google.
+                            </div>
+                            <button 
+                              onClick={handleLogin}
+                              disabled={isLoggingIn}
+                              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2.5 rounded text-xs font-bold flex items-center justify-center gap-2 transition disabled:cursor-not-allowed shadow-md"
+                              title="Configure Firebase to enable login"
+                            >
+                              {isLoggingIn ? 'Signing in...' : 'Sign in with Google'} <User size={14}/>
+                            </button>
+                            <div className="bg-yellow-50 border border-yellow-200 rounded p-2">
+                              <div className="text-[9px] font-semibold text-yellow-900 mb-1">⚙️ Setup Required:</div>
+                              <div className="text-[8px] text-yellow-800">
+                                Configure Firebase credentials in <code className="bg-yellow-100 px-1 rounded">src/config.js</code> or <code className="bg-yellow-100 px-1 rounded">popup.html</code>
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
                       ) : players.length === 0 ? (
@@ -696,7 +837,12 @@ export default function PandaApp() {
 
                          players.map(p => (
 
-                            <div key={p.uid} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100 transition group">
+                            <div 
+                              key={p.uid} 
+                              onClick={() => visitPlayer(p)}
+                              className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100 transition group cursor-pointer active:scale-95"
+                              title="Click to visit this panda"
+                            >
 
                                 <div className="flex items-center gap-2">
 
@@ -712,7 +858,12 @@ export default function PandaApp() {
 
                                 </div>
 
-                                <div className="text-[10px] font-bold text-purple-600 bg-purple-50 px-1 rounded">Lv {p.pet.level}</div>
+                                <div className="flex items-center gap-2">
+                                  <div className="text-[10px] font-bold text-purple-600 bg-purple-50 px-1 rounded">Lv {p.pet.level}</div>
+                                  {isVisiting && visitingPlayer?.uid === p.uid && (
+                                    <div className="text-[8px] text-emerald-600 font-bold animate-pulse">Visiting...</div>
+                                  )}
+                                </div>
 
                             </div>
 
@@ -730,31 +881,58 @@ export default function PandaApp() {
 
           
 
-          <div className="px-3 py-2 bg-slate-50 border-t border-slate-100 flex justify-between items-center text-[9px] text-slate-400">
+          <div className="px-3 py-2 bg-slate-50 border-t border-slate-100 space-y-2">
 
-             <div onClick={copyId} className="flex items-center gap-1 cursor-pointer hover:text-slate-600" title="Click to copy ID">
+             {/* Error/Status Messages */}
+             {loginError && (
+               <div className="text-[9px] text-center px-2 py-1 rounded bg-red-50 text-red-600 border border-red-200 animate-pulse">
+                 {loginError}
+               </div>
+             )}
 
-                <span>UID: {user?.uid.slice(0,8)}...</span>
+             <div className="flex justify-between items-center text-[9px] text-slate-400">
 
-                {copied ? <Check size={10} className="text-green-500"/> : <Copy size={10}/>}
+                <div onClick={copyId} className="flex items-center gap-1 cursor-pointer hover:text-slate-600" title="Click to copy ID">
+
+                   <span>UID: {user?.uid.slice(0,8)}...</span>
+
+                   {copied ? <Check size={10} className="text-green-500"/> : <Copy size={10}/>}
+
+                </div>
+
+                
+
+                {user?.isAnonymous ? (
+                  <button 
+                    onClick={handleLogin} 
+                    disabled={isLoggingIn || isOffline}
+                    className={`${isOffline ? 'text-slate-400' : 'text-blue-500 hover:text-blue-600'} font-bold flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title={isOffline ? "Configure Firebase to enable login" : "Sign in with Google"}
+                  >
+                    {isLoggingIn ? 'Signing in...' : 'Sign in with Google'} <User size={10}/>
+                  </button>
+                ) : user ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-[8px] text-slate-500">{user?.displayName || user?.email}</span>
+                    <button 
+                      onClick={() => auth && signOut(auth)} 
+                      className="hover:text-red-500 flex items-center gap-1"
+                    >
+                      <LogOut size={10}/> Logout
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={handleLogin}
+                    disabled={isLoggingIn || isOffline}
+                    className={`${isOffline ? 'text-slate-400' : 'text-blue-500 hover:text-blue-600'} font-bold flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title={isOffline ? "Configure Firebase to enable login" : "Sign in with Google"}
+                  >
+                    {isLoggingIn ? 'Signing in...' : 'Sign in'} <User size={10}/>
+                  </button>
+                )}
 
              </div>
-
-             
-
-             {!isOffline && user?.isAnonymous && (
-
-                <button onClick={handleLogin} className="text-blue-500 hover:text-blue-600 font-bold flex items-center gap-1">Connect <User size={10}/></button>
-
-             )}
-
-             
-
-             {!isOffline && !user?.isAnonymous && (
-
-                <button onClick={() => auth && signOut(auth)} className="hover:text-red-500 flex items-center gap-1"><LogOut size={10}/> Logout</button>
-
-             )}
 
           </div>
 
