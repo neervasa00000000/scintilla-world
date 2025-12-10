@@ -322,7 +322,51 @@
     ];
 
     function LuminaEditor() {
+      const defaultMeta = { name: 'lumina-edit', type: 'image/png', extension: 'png' };
+      
+      const getMimeFromFile = (file) => {
+        if (file?.type) return file.type;
+        const ext = file?.name?.split('.').pop()?.toLowerCase();
+        switch (ext) {
+          case 'jpg':
+          case 'jpeg':
+            return 'image/jpeg';
+          case 'webp':
+            return 'image/webp';
+          case 'gif':
+            return 'image/gif';
+          case 'bmp':
+            return 'image/bmp';
+          case 'tif':
+          case 'tiff':
+            return 'image/tiff';
+          case 'png':
+            return 'image/png';
+          default:
+            return 'image/png';
+        }
+      };
+
+      const getExtensionFromMime = (mime) => {
+        switch (mime) {
+          case 'image/jpeg':
+            return 'jpg';
+          case 'image/webp':
+            return 'webp';
+          case 'image/gif':
+            return 'gif';
+          case 'image/bmp':
+            return 'bmp';
+          case 'image/tiff':
+            return 'tiff';
+          case 'image/png':
+          default:
+            return 'png';
+        }
+      };
+
       const [image, setImage] = useState(null);
+      const [imageMeta, setImageMeta] = useState(defaultMeta);
       const [settings, setSettings] = useState(DEFAULT_SETTINGS);
       const [activeTab, setActiveTab] = useState('templates');
       const [selectedFrame, setSelectedFrame] = useState(FRAMES[0]);
@@ -334,6 +378,11 @@
       const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+          const mimeType = getMimeFromFile(file);
+          const extension = getExtensionFromMime(mimeType);
+          const baseName = file.name?.replace(/\.[^/.]+$/, '') || defaultMeta.name;
+          setImageMeta({ name: baseName, type: mimeType, extension });
+
           const reader = new FileReader();
           reader.onload = (event) => setImage(event.target.result);
           reader.readAsDataURL(file);
@@ -342,6 +391,7 @@
 
       const loadDemoImage = () => {
         setImage("https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=2070&auto=format&fit=crop");
+        setImageMeta(defaultMeta);
       };
 
       const updateSetting = (key, value) => {
@@ -434,8 +484,12 @@
           }
 
           const link = document.createElement('a');
-          link.download = 'lumina-edit.png';
-          link.href = canvas.toDataURL('image/png');
+          const downloadMime = imageMeta.type || defaultMeta.type;
+          const downloadExt = imageMeta.extension || getExtensionFromMime(downloadMime);
+          const quality = downloadMime === 'image/jpeg' ? 0.92 : undefined;
+
+          link.download = `${imageMeta.name || defaultMeta.name}.${downloadExt}`;
+          link.href = canvas.toDataURL(downloadMime, quality);
           link.click();
         };
       };
