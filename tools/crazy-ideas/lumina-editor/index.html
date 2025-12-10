@@ -590,12 +590,13 @@
                 <div className="relative z-10 transition-all duration-300 ease-out w-full flex items-center justify-center">
                   <div 
                     style={{
-                      padding: `${selectedFrame.id !== 'none' ? '12px' : '0px'}`,
-                      backgroundColor: selectedFrame.color,
+                      border: selectedFrame.id !== 'none' 
+                        ? `${selectedFrame.width || 12}px ${selectedFrame.style || 'solid'} ${selectedFrame.color}` 
+                        : 'none',
                     }}
-                    className="transition-all duration-300 ease-in-out shadow-2xl shadow-black/50 rounded-sm w-full"
+                    className="transition-all duration-300 ease-in-out shadow-2xl shadow-black/50 rounded-sm w-full bg-neutral-950"
                   >
-                    <div className="relative overflow-hidden group w-full">
+                    <div className="relative overflow-hidden group w-full max-w-full inline-block">
                       <img 
                         src={image} 
                         alt="Preview" 
@@ -836,10 +837,10 @@
                           style={selectedFrame.id !== f.id ? { borderColor: 'rgba(255, 255, 255, 0.2)' } : {}}
                         >
                           <div 
-                            className="w-8 h-8 md:w-10 md:h-10 mb-2 shadow-sm"
+                            className="w-8 h-8 md:w-10 md:h-10 mb-2 shadow-sm rounded-md flex items-center justify-center"
                             style={{ 
-                              border: f.id !== 'none' ? `3px md:4px ${f.style || 'solid'} ${f.color}` : '1px dashed #555',
-                              backgroundColor: '#222'
+                              backgroundColor: f.id !== 'none' ? f.color : '#111',
+                              border: f.id !== 'none' ? `3px ${f.style || 'solid'} ${f.color}` : '1px dashed #555'
                             }}
                           />
                           <span className="text-xs text-neutral-400 font-medium">{f.name}</span>
