@@ -851,15 +851,36 @@
 
                 if (!originalFile) return;
 
+                const canvas = document.createElement('canvas');
+                canvas.width = 600;
+                canvas.height = 840;
+                const ctx = canvas.getContext('2d');
+                drawCard(ctx, 600, 840, 0.55);
+
+                const nameParts = originalFile.name ? originalFile.name.split('.') : [];
+                const baseName = nameParts.length > 1 ? nameParts.slice(0, -1).join('.') : 'pocket-card';
+
+                const mime = originalFile.type && originalFile.type.startsWith('image/')
+                    ? originalFile.type
+                    : 'image/png';
+
+                const extFromMime = (m) => {
+                    if (m === 'image/jpeg') return 'jpg';
+                    if (m === 'image/webp') return 'webp';
+                    if (m === 'image/gif') return 'gif';
+                    if (m === 'image/bmp') return 'bmp';
+                    if (m === 'image/tiff') return 'tiff';
+                    if (m === 'image/png') return 'png';
+                    return 'png';
+                };
+
+                const extension = nameParts.length > 1 ? nameParts.pop() : extFromMime(mime);
+                const quality = mime === 'image/jpeg' ? 0.92 : undefined;
+
                 const link = document.createElement('a');
-
-                link.download = originalFile.name;
-
-                link.href = URL.createObjectURL(originalFile);
-
+                link.download = `${baseName}-card.${extension}`;
+                link.href = canvas.toDataURL(mime, quality);
                 link.click();
-
-                URL.revokeObjectURL(link.href);
 
             };
 
