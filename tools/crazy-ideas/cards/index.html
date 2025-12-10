@@ -6,9 +6,12 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
     <title>PocketCard | Artisan Card Studio</title>
+    <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
+    <link rel="shortcut icon" href="/assets/logo/favicon.png">
 
     <meta name="description" content="Create premium, collectible trading cards with a luxury aesthetic. Features gold foil effects and high-resolution export.">
 
@@ -198,6 +201,30 @@
 
                 0 18px 36px -18px rgba(0, 0, 0, 0.8);
 
+        }
+
+        /* Mobile tweaks */
+        @media (max-width: 768px) {
+            body {
+                background-position: center;
+            }
+            .mobile-stack {
+                flex-direction: column;
+            }
+            .mobile-scroll {
+                max-height: none;
+                height: auto;
+            }
+            .card-shell {
+                width: 320px;
+                height: 450px;
+            }
+            .controls-padding {
+                padding: 1.25rem !important;
+            }
+            .cta-grid {
+                grid-template-columns: 1fr !important;
+            }
         }
 
     </style>
@@ -840,7 +867,7 @@
 
                     {/* Left Controls */}
 
-                    <div className="w-full lg:w-[480px] h-auto lg:h-screen flex flex-col border-r border-white/5 bg-black/60 backdrop-blur-xl relative z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] overflow-hidden">
+                    <div className="w-full lg:w-[480px] h-auto lg:h-screen flex flex-col border-r border-white/5 bg-black/60 backdrop-blur-xl relative z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] overflow-hidden mobile-scroll">
 
                         <div className="p-8 border-b border-white/5">
 
@@ -850,9 +877,9 @@
 
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-8 space-y-8">
+                        <div className="flex-1 overflow-y-auto p-8 space-y-8 controls-padding">
 
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
 
                                 {Object.entries(Elements).map(([key, config]) => (
 
@@ -940,7 +967,7 @@
 
                         <div className="p-6 border-t border-white/5 bg-black/40 backdrop-blur-md">
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 cta-grid">
 
                                 <button onClick={downloadImage} className="py-3 px-4 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all hover:text-white"><Icons.Download /> Save PNG</button>
 
@@ -956,13 +983,13 @@
 
                     {/* Right Preview */}
 
-                    <div className="flex-1 relative flex items-center justify-center p-8 bg-[#050505] overflow-hidden">
+                    <div className="flex-1 relative flex items-center justify-center p-6 md:p-8 bg-[#050505] overflow-hidden">
 
                         <div className="absolute w-[800px] h-[800px] bg-[#bf953f] opacity-[0.03] blur-[100px] rounded-full pointer-events-none"></div>
 
                         <div className="relative group perspective-[1000px]">
 
-                            <div className={`relative w-[400px] h-[560px] rounded-xl overflow-hidden card-preview bg-gray-900 transition-transform duration-500`}>
+                            <div className={`relative w-[320px] h-[450px] md:w-[400px] md:h-[560px] rounded-xl overflow-hidden card-preview card-shell bg-gray-900 transition-transform duration-500`}>
 
                                 <div className="absolute inset-0 z-0 opacity-100" style={{ background: `linear-gradient(135deg, ${Elements[card.type].gradient[0]}, ${Elements[card.type].gradient[1]})` }}></div>
 
