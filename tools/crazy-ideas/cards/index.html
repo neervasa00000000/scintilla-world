@@ -311,6 +311,10 @@
 
                 image: null,
 
+                imageScale: 1,
+                imageOffsetX: 0,
+                imageOffsetY: 0,
+
                 move1Name: "Royal Decree",
 
                 move1Dmg: "120",
@@ -465,11 +469,16 @@
 
                     const img = imageRef.current;
 
-                    const scale = Math.max(imgW/img.width, imgH/img.height);
+                    const userScale = Number(card.imageScale || 1);
+                    const offsetX = Number(card.imageOffsetX || 0);
+                    const offsetY = Number(card.imageOffsetY || 0);
 
-                    const xx = (imgW - img.width * scale) / 2;
+                    const baseScale = Math.max(imgW / img.width, imgH / img.height);
+                    const scale = baseScale * userScale;
 
-                    const yy = (imgH - img.height * scale) / 2;
+                    const xx = (imgW - img.width * scale) / 2 + offsetX;
+
+                    const yy = (imgH - img.height * scale) / 2 + offsetY;
 
                     ctx.save();
 
@@ -911,6 +920,22 @@
 
                             </div>
 
+                            <div className="p-4 rounded border border-white/10 bg-white/[0.02] space-y-3">
+                                <div className="text-[10px] uppercase text-[#bf953f] tracking-widest font-bold">Portrait Adjust</div>
+                                <div className="space-y-2">
+                                    <label className="text-[11px] text-gray-400 flex justify-between"><span>Zoom</span><span className="text-gray-300">{(card.imageScale || 1).toFixed(2)}x</span></label>
+                                    <input type="range" min="0.5" max="2" step="0.05" value={card.imageScale} onChange={(e) => setCard({ ...card, imageScale: parseFloat(e.target.value) })} className="w-full accent-[#bf953f]" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[11px] text-gray-400 flex justify-between"><span>Horizontal</span><span className="text-gray-300">{card.imageOffsetX}px</span></label>
+                                    <input type="range" min="-200" max="200" step="2" value={card.imageOffsetX} onChange={(e) => setCard({ ...card, imageOffsetX: parseFloat(e.target.value) })} className="w-full accent-[#bf953f]" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[11px] text-gray-400 flex justify-between"><span>Vertical</span><span className="text-gray-300">{card.imageOffsetY}px</span></label>
+                                    <input type="range" min="-200" max="200" step="2" value={card.imageOffsetY} onChange={(e) => setCard({ ...card, imageOffsetY: parseFloat(e.target.value) })} className="w-full accent-[#bf953f]" />
+                                </div>
+                            </div>
+
                             {/* Inputs ... */}
 
                             <div className="space-y-5">
@@ -1011,7 +1036,7 @@
 
                                     <div className="relative w-full h-[240px] mb-6 border-[2px] border-[#bf953f] bg-black shadow-inner overflow-hidden group-hover:shadow-[0_0_30px_rgba(191,149,63,0.2)] transition-shadow duration-500">
 
-                                        {card.image ? <img src={card.image} className="w-full h-full object-cover" alt="Card Art" /> : <div className="w-full h-full flex flex-col items-center justify-center text-gray-700 bg-[#0a0a0a]"><div className="text-4xl mb-2 opacity-50">{Elements[card.type].icon}</div></div>}
+                                        {card.image ? <img src={card.image} className="w-full h-full object-cover" alt="Card Art" style={{ transform: `translate(${card.imageOffsetX || 0}px, ${card.imageOffsetY || 0}px) scale(${card.imageScale || 1})`, transformOrigin: 'center' }} /> : <div className="w-full h-full flex flex-col items-center justify-center text-gray-700 bg-[#0a0a0a]"><div className="text-4xl mb-2 opacity-50">{Elements[card.type].icon}</div></div>}
 
                                         <div className="absolute top-0 left-0 w-2 h-2 bg-[#bf953f]"></div><div className="absolute top-0 right-0 w-2 h-2 bg-[#bf953f]"></div><div className="absolute bottom-0 left-0 w-2 h-2 bg-[#bf953f]"></div><div className="absolute bottom-0 right-0 w-2 h-2 bg-[#bf953f]"></div>
 
