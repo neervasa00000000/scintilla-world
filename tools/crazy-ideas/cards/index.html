@@ -299,6 +299,10 @@
 
 
 
+        const EXPORT_WIDTH = 600;
+        const EXPORT_HEIGHT = 840;
+        const EXPORT_HD_SCALE = 2;
+
         function App() {
 
             const [card, setCard] = useState({
@@ -769,13 +773,13 @@
 
                 const canvas = document.createElement('canvas');
 
-                canvas.width = 600;
+                canvas.width = EXPORT_WIDTH;
 
-                canvas.height = 840;
+                canvas.height = EXPORT_HEIGHT;
 
                 const ctx = canvas.getContext('2d');
 
-                drawCard(ctx, 600, 840, 0.55);
+                drawCard(ctx, EXPORT_WIDTH, EXPORT_HEIGHT, 0.55);
 
                 const link = document.createElement('a');
 
@@ -801,13 +805,13 @@
 
                     const workerUrl = URL.createObjectURL(workerBlob);
 
-                    const gif = new GIF({ workers: 2, quality: 1, width: 600, height: 840, workerScript: workerUrl, background: '#050505' });
+                const gif = new GIF({ workers: 2, quality: 1, width: EXPORT_WIDTH, height: EXPORT_HEIGHT, workerScript: workerUrl, background: '#050505' });
 
-                    const canvas = document.createElement('canvas');
+                const canvas = document.createElement('canvas');
 
-                    canvas.width = 600;
+                canvas.width = EXPORT_WIDTH;
 
-                    canvas.height = 840;
+                canvas.height = EXPORT_HEIGHT;
 
                     const ctx = canvas.getContext('2d');
 
@@ -817,7 +821,7 @@
 
                         ctx.clearRect(0, 0, 600, 840);
 
-                        drawCard(ctx, 600, 840, i / frames);
+                        drawCard(ctx, EXPORT_WIDTH, EXPORT_HEIGHT, i / frames);
 
                         gif.addFrame(ctx, {copy: true, delay: 50});
 
@@ -852,10 +856,10 @@
                 if (!originalFile) return;
 
                 const canvas = document.createElement('canvas');
-                canvas.width = 600;
-                canvas.height = 840;
+                canvas.width = EXPORT_WIDTH * EXPORT_HD_SCALE;
+                canvas.height = EXPORT_HEIGHT * EXPORT_HD_SCALE;
                 const ctx = canvas.getContext('2d');
-                drawCard(ctx, 600, 840, 0.55);
+                drawCard(ctx, canvas.width, canvas.height, 0.55);
 
                 const nameParts = originalFile.name ? originalFile.name.split('.') : [];
                 const baseName = nameParts.length > 1 ? nameParts.slice(0, -1).join('.') : 'pocket-card';
@@ -875,7 +879,7 @@
                 };
 
                 const extension = nameParts.length > 1 ? nameParts.pop() : extFromMime(mime);
-                const quality = mime === 'image/jpeg' ? 0.92 : undefined;
+                const quality = mime === 'image/jpeg' ? 0.95 : undefined;
 
                 const link = document.createElement('a');
                 link.download = `${baseName}-card.${extension}`;
