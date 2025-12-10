@@ -473,7 +473,8 @@
                     const offsetX = Number(card.imageOffsetX || 0);
                     const offsetY = Number(card.imageOffsetY || 0);
 
-                    const baseScale = Math.max(imgW / img.width, imgH / img.height);
+                    // Use contain by default so the full portrait is visible
+                    const baseScale = Math.min(imgW / img.width, imgH / img.height);
                     const scale = baseScale * userScale;
 
                     const xx = (imgW - img.width * scale) / 2 + offsetX;
@@ -1036,7 +1037,7 @@
 
                                     <div className="relative w-full h-[240px] mb-6 border-[2px] border-[#bf953f] bg-black shadow-inner overflow-hidden group-hover:shadow-[0_0_30px_rgba(191,149,63,0.2)] transition-shadow duration-500">
 
-                                        {card.image ? <img src={card.image} className="w-full h-full object-cover" alt="Card Art" style={{ transform: `translate(${card.imageOffsetX || 0}px, ${card.imageOffsetY || 0}px) scale(${card.imageScale || 1})`, transformOrigin: 'center' }} /> : <div className="w-full h-full flex flex-col items-center justify-center text-gray-700 bg-[#0a0a0a]"><div className="text-4xl mb-2 opacity-50">{Elements[card.type].icon}</div></div>}
+                                        {card.image ? <img src={card.image} className="w-full h-full object-contain" alt="Card Art" style={{ transform: `translate(${card.imageOffsetX || 0}px, ${card.imageOffsetY || 0}px) scale(${card.imageScale || 1})`, transformOrigin: 'center' }} /> : <div className="w-full h-full flex flex-col items-center justify-center text-gray-700 bg-[#0a0a0a]"><div className="text-4xl mb-2 opacity-50">{Elements[card.type].icon}</div></div>}
 
                                         <div className="absolute top-0 left-0 w-2 h-2 bg-[#bf953f]"></div><div className="absolute top-0 right-0 w-2 h-2 bg-[#bf953f]"></div><div className="absolute bottom-0 left-0 w-2 h-2 bg-[#bf953f]"></div><div className="absolute bottom-0 right-0 w-2 h-2 bg-[#bf953f]"></div>
 
