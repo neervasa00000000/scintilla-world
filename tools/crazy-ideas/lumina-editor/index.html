@@ -590,17 +590,16 @@
                 <div className="relative z-10 transition-all duration-300 ease-out w-full flex items-center justify-center">
                   <div 
                     style={{
-                      border: selectedFrame.id !== 'none' 
-                        ? `${selectedFrame.width || 12}px ${selectedFrame.style || 'solid'} ${selectedFrame.color}` 
-                        : 'none',
+                      padding: selectedFrame.id !== 'none' ? `${selectedFrame.width || 12}px` : '0px',
+                      backgroundColor: selectedFrame.id !== 'none' ? selectedFrame.color : 'transparent',
                     }}
-                    className="transition-all duration-300 ease-in-out shadow-2xl shadow-black/50 rounded-sm w-full bg-neutral-950"
+                    className="transition-all duration-300 ease-in-out shadow-2xl shadow-black/50 rounded-sm inline-block bg-neutral-950"
                   >
-                    <div className="relative overflow-hidden group w-full max-w-full inline-block">
+                    <div className="relative overflow-hidden group inline-block bg-neutral-950">
                       <img 
                         src={image} 
                         alt="Preview" 
-                        className="w-full h-auto max-h-[40vh] md:max-h-[80vh] object-contain block transition-all duration-200"
+                        className="max-w-full max-h-[80vh] h-auto w-auto object-contain block transition-all duration-200"
                         style={{
                           filter: getFilterString(),
                         }}
