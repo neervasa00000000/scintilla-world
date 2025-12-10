@@ -925,7 +925,7 @@
                                 <div className="text-[10px] uppercase text-[#bf953f] tracking-widest font-bold">Portrait Adjust</div>
                                 <div className="space-y-2">
                                     <label className="text-[11px] text-gray-400 flex justify-between"><span>Zoom</span><span className="text-gray-300">{(card.imageScale || 1).toFixed(2)}x</span></label>
-                                    <input type="range" min="0.5" max="2" step="0.05" value={card.imageScale} onChange={(e) => setCard({ ...card, imageScale: parseFloat(e.target.value) })} className="w-full accent-[#bf953f]" />
+                                    <input type="range" min="0.5" max="4" step="0.05" value={card.imageScale} onChange={(e) => setCard({ ...card, imageScale: parseFloat(e.target.value) })} className="w-full accent-[#bf953f]" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[11px] text-gray-400 flex justify-between"><span>Horizontal</span><span className="text-gray-300">{card.imageOffsetX}px</span></label>
