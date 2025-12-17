@@ -521,11 +521,11 @@
         };
         
         return (
-          <div className="mb-3 md:mb-5 group">
-            <div className="flex justify-between items-center mb-1.5 md:mb-2">
+          <div className="mb-2.5 md:mb-5 group">
+            <div className="flex justify-between items-center mb-1 md:mb-2">
               <div className="flex items-center text-gray-400 group-hover:text-white transition-colors">
-                {Icon && <Icon size={16} className="md:w-3.5 md:h-3.5 mr-2" />}
-                <span className="text-xs font-semibold tracking-wide uppercase">{label}</span>
+                {Icon && <Icon size={14} className="md:w-3.5 md:h-3.5 mr-1.5 md:mr-2" />}
+                <span className="text-[11px] md:text-xs font-semibold tracking-wide uppercase">{label}</span>
               </div>
               <input
                 type="number"
@@ -538,8 +538,8 @@
                 className="text-xs text-white font-mono bg-neutral-800 border border-white/20 px-2 py-0.5 rounded text-[10px] w-16 text-right focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               />
             </div>
-            <div className="relative h-7 md:h-6 flex items-center">
-              <div className="absolute w-full h-1.5 md:h-1 bg-neutral-800 rounded-full overflow-hidden border border-white/10">
+            <div className="relative h-5 md:h-6 flex items-center">
+              <div className="absolute w-full h-1 md:h-1 bg-neutral-800 rounded-full overflow-hidden border border-white/10">
                 <div 
                   className="h-full bg-indigo-500 transition-all duration-75 ease-out" 
                   style={{ width: `${((value - min) / (max - min)) * 100}%` }}
@@ -556,8 +556,8 @@
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               />
               <div 
-                className="absolute w-5 h-5 md:w-4 md:h-4 bg-white rounded-full shadow-lg border-2 border-indigo-500 pointer-events-none transition-all duration-75 ease-out"
-                style={{ left: `calc(${((value - min) / (max - min)) * 100}% - 10px)` }}
+                className="absolute w-4 h-4 md:w-4 md:h-4 bg-white rounded-full shadow-lg border-2 border-indigo-500 pointer-events-none transition-all duration-75 ease-out"
+                style={{ left: `calc(${((value - min) / (max - min)) * 100}% - 8px)` }}
               />
             </div>
           </div>
@@ -694,8 +694,8 @@
             <aside className="w-full md:w-80 bg-neutral-900/95 md:bg-neutral-900/80 backdrop-blur-xl border-t md:border-l border-white/10 flex flex-col shrink-0 md:h-auto max-h-[65vh] md:max-h-none overflow-hidden" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
               
               {/* Segmented Control Tabs */}
-              <div className="p-2.5 md:p-4 border-b border-white/10 sticky top-14 md:top-0 bg-neutral-900/95 md:bg-transparent backdrop-blur-xl z-10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
-                <div className="flex bg-neutral-950/50 p-1 rounded-lg border border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+              <div className="p-2 md:p-4 border-b border-white/10 sticky top-14 md:top-0 bg-neutral-900/95 md:bg-transparent backdrop-blur-xl z-10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+                <div className="flex bg-neutral-950/50 p-0.5 md:p-1 rounded-lg border border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                   {[
                     { id: 'templates', icon: Wand2, label: 'Filters' },
                     { id: 'adjust', icon: Sliders, label: 'Adjust' },
@@ -704,13 +704,13 @@
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex-1 flex items-center justify-center py-2.5 md:py-2 text-xs font-medium rounded-md transition-all duration-200 ${
+                      className={`flex-1 flex items-center justify-center py-2 md:py-2 text-[11px] md:text-xs font-medium rounded-md transition-all duration-200 ${
                         activeTab === tab.id 
                           ? 'bg-neutral-800 text-white shadow-sm' 
                           : 'text-neutral-500 hover:text-neutral-300'
                       }`}
                     >
-                      <tab.icon size={16} className="md:w-3.5 md:h-3.5 mr-1.5" />
+                      <tab.icon size={14} className="md:w-3.5 md:h-3.5 mr-1 md:mr-1.5" />
                       {tab.label}
                     </button>
                   ))}
@@ -718,14 +718,14 @@
               </div>
 
               {/* Tools Area */}
-              <div className="flex-1 overflow-y-auto px-3 md:px-5 py-3 md:py-6 pb-6 md:pb-6 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
+              <div className="flex-1 overflow-y-auto px-3 md:px-5 py-2 md:py-6 pb-4 md:pb-6 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
                 
                 {activeTab === 'templates' && (
-                  <div className="space-y-3 md:space-y-6">
+                  <div className="space-y-2 md:space-y-6">
                     <div className="flex justify-between items-center">
-                      <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Style Library</h3>
+                      <h3 className="text-[11px] md:text-xs font-bold text-neutral-400 uppercase tracking-wider">Style Library</h3>
                       {currentTemplateId !== 'normal' && (
-                        <button onClick={resetEdits} className="text-[10px] md:text-[10px] text-indigo-400 hover:text-indigo-300 font-medium px-2 py-1">Reset</button>
+                        <button onClick={resetEdits} className="text-[10px] md:text-[10px] text-indigo-400 hover:text-indigo-300 font-medium px-2 py-0.5 md:py-1">Reset</button>
                       )}
                     </div>
                     
@@ -736,7 +736,7 @@
                           <button
                             key={t.id}
                             onClick={() => applyTemplate(t)}
-                            className={`group relative h-20 md:h-24 rounded-xl md:rounded-2xl overflow-hidden transition-all duration-300 border ${
+                            className={`group relative h-16 md:h-24 rounded-lg md:rounded-2xl overflow-hidden transition-all duration-300 border ${
                               isActive 
                                 ? 'border-indigo-500 ring-2 ring-indigo-500/20 shadow-lg shadow-indigo-500/10 scale-[1.02]' 
                                 : 'border-white/10 hover:border-white/30 active:scale-[1.02]'
@@ -764,12 +764,12 @@
                             
                             {/* Status Icon */}
                             {isActive && (
-                               <div className="absolute top-2 right-2 w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center shadow-sm">
+                               <div className="absolute top-1.5 right-1.5 md:top-2 md:right-2 w-4 h-4 md:w-5 md:h-5 bg-indigo-500 rounded-full flex items-center justify-center shadow-sm">
                                  <Check size={10} className="text-white" />
                                </div>
                             )}
-                            <div className="absolute inset-0 p-3 flex flex-col justify-end">
-                              <span className="font-semibold text-xs text-white drop-shadow-md">{t.name}</span>
+                            <div className="absolute inset-0 p-2 md:p-3 flex flex-col justify-end">
+                              <span className="font-semibold text-[11px] md:text-xs text-white drop-shadow-md">{t.name}</span>
                             </div>
                           </button>
                         )
@@ -779,14 +779,14 @@
                 )}
 
                 {activeTab === 'adjust' && (
-                  <div className="space-y-4 md:space-y-8 animate-in slide-in-from-right-2 duration-300">
+                  <div className="space-y-3 md:space-y-8 animate-in slide-in-from-right-2 duration-300">
                     
                     {/* Light Section */}
                     <div>
-                      <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 md:mb-4">
-                        <Sun size={14} className="md:w-3 md:h-3 mr-2" /> Light & Color
+                      <h4 className="flex items-center text-[11px] md:text-xs font-bold text-neutral-400 uppercase tracking-wider mb-1.5 md:mb-4">
+                        <Sun size={13} className="md:w-3 md:h-3 mr-1.5 md:mr-2" /> Light & Color
                       </h4>
-                      <div className="space-y-1">
+                      <div className="space-y-0.5 md:space-y-1">
                         <Slider label="Exposure" icon={Sun} value={settings.brightness} min={0} max={200} onChange={(v) => updateSetting('brightness', v)} unit="%" />
                         <Slider label="Contrast" icon={Contrast} value={settings.contrast} min={0} max={200} onChange={(v) => updateSetting('contrast', v)} unit="%" />
                         <Slider label="Saturation" icon={Droplet} value={settings.saturation} min={0} max={200} onChange={(v) => updateSetting('saturation', v)} unit="%" />
@@ -795,10 +795,10 @@
 
                     {/* Effect Section */}
                     <div>
-                      <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 md:mb-4">
-                        <Aperture size={14} className="md:w-3 md:h-3 mr-2" /> Effects
+                      <h4 className="flex items-center text-[11px] md:text-xs font-bold text-neutral-400 uppercase tracking-wider mb-1.5 md:mb-4">
+                        <Aperture size={13} className="md:w-3 md:h-3 mr-1.5 md:mr-2" /> Effects
                       </h4>
-                      <div className="space-y-1">
+                      <div className="space-y-0.5 md:space-y-1">
                         <Slider label="Vignette" value={settings.vignette} min={0} max={1} step={0.1} onChange={(v) => updateSetting('vignette', v)} />
                         <Slider label="Blur" value={settings.blur} min={0} max={20} onChange={(v) => updateSetting('blur', v)} unit="px" />
                         <Slider label="Sepia" value={settings.sepia} min={0} max={100} onChange={(v) => updateSetting('sepia', v)} unit="%" />
@@ -808,18 +808,18 @@
 
                       {/* Color Balance Section */}
                     <div>
-                      <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 md:mb-4">
-                        <Palette size={14} className="md:w-3 md:h-3 mr-2" /> Color Balance
+                      <h4 className="flex items-center text-[11px] md:text-xs font-bold text-neutral-400 uppercase tracking-wider mb-1.5 md:mb-4">
+                        <Palette size={13} className="md:w-3 md:h-3 mr-1.5 md:mr-2" /> Color Balance
                       </h4>
-                      <div className="p-2.5 md:p-4 bg-neutral-950/30 rounded-xl border border-white/10 space-y-2.5 md:space-y-4" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
-                        <div className="flex items-center justify-between text-[9px] md:text-[10px] text-neutral-500 font-mono mb-1.5 md:mb-2">
+                      <div className="p-2 md:p-4 bg-neutral-950/30 rounded-xl border border-white/10 space-y-2 md:space-y-4" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+                        <div className="flex items-center justify-between text-[9px] md:text-[10px] text-neutral-500 font-mono mb-1 md:mb-2">
                           <span className="text-center flex-1">CYAN/RED</span>
                           <span className="text-center flex-1">MAGENTA/GREEN</span>
                           <span className="text-center flex-1">YELLOW/BLUE</span>
                         </div>
                         
                         {/* RGB Sliders with custom gradients */}
-                        <div className="space-y-2.5 md:space-y-3">
+                        <div className="space-y-2 md:space-y-3">
                           <div className="flex items-center gap-2">
                             <div className="relative h-3 md:h-2 rounded-full overflow-hidden bg-gradient-to-r from-cyan-500 via-neutral-600 to-red-500 flex-1 border border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                               <input type="range" min="-50" max="50" value={settings.red} onChange={(e) => updateSetting('red', Number(e.target.value))} className="w-full h-full opacity-0 cursor-pointer absolute z-10 touch-none" style={{ WebkitTapHighlightColor: 'transparent' }} />
@@ -864,7 +864,7 @@
                           </div>
                         </div>
                         
-                        <div className="pt-2">
+                        <div className="pt-1 md:pt-2">
                           <Slider label="Hue Tint" icon={RotateCcw} value={settings.hueRotate} min={-180} max={180} onChange={(v) => updateSetting('hueRotate', v)} unit="°" />
                         </div>
                       </div>
@@ -873,16 +873,16 @@
                 )}
 
                 {activeTab === 'frames' && (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <div className="flex justify-between items-center mb-1">
-                      <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Frames</h3>
+                      <h3 className="text-[11px] md:text-xs font-bold text-neutral-400 uppercase tracking-wider">Frames</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-2 md:gap-3">
                       {FRAMES.map((f) => (
                         <button
                           key={f.id}
                           onClick={() => setSelectedFrame(f)}
-                          className={`h-20 md:h-24 rounded-lg md:rounded-xl border flex flex-col items-center justify-center transition-all active:scale-95 ${
+                          className={`h-16 md:h-24 rounded-lg md:rounded-xl border flex flex-col items-center justify-center transition-all active:scale-95 ${
                             selectedFrame.id === f.id 
                               ? 'border-indigo-500 bg-neutral-800' 
                               : 'border-white/15 active:border-white/30 bg-neutral-900'
@@ -890,13 +890,13 @@
                           style={selectedFrame.id !== f.id ? { borderColor: 'rgba(255, 255, 255, 0.2)' } : {}}
                         >
                           <div 
-                            className="w-8 h-8 md:w-10 md:h-10 mb-2 shadow-sm rounded-md flex items-center justify-center"
+                            className="w-7 h-7 md:w-10 md:h-10 mb-1.5 md:mb-2 shadow-sm rounded-md flex items-center justify-center"
                             style={{ 
                               backgroundColor: f.id !== 'none' ? f.color : '#111',
                               border: f.id !== 'none' ? `3px ${f.style || 'solid'} ${f.color}` : '1px dashed #555'
                             }}
                           />
-                          <span className="text-xs text-neutral-400 font-medium">{f.name}</span>
+                          <span className="text-[11px] md:text-xs text-neutral-400 font-medium">{f.name}</span>
                         </button>
                       ))}
                     </div>
