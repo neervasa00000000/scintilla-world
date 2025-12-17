@@ -279,9 +279,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (method === 'personal_sign' || method === 'eth_sign' || method.startsWith('eth_signTypedData')) {
     // Show origin/domain (from payload or request)
     const origin = request.origin || (params && params.origin) || 'Unknown';
-    if (origin && origin !== 'Unknown') {
+    if (origin && origin !== 'Unknown' && !detailsEl.querySelector('.origin-row')) {
       const originRow = document.createElement('div');
-      originRow.className = 'detail-row';
+      originRow.className = 'detail-row origin-row';
       originRow.style.marginBottom = '12px';
       originRow.style.padding = '12px';
       originRow.style.background = 'rgba(0, 240, 255, 0.05)';
@@ -796,8 +796,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (retryButtons) retryButtons.style.display = 'flex';
         setupButtons(retryReject, retryApprove, reqId, tabId);
         // Also update button text
-        retryReject.textContent = 'CANCEL';
-        retryApprove.textContent = 'CONFIRM TRANSACTION';
+        retryReject.textContent = 'Block';
+        retryApprove.textContent = 'Continue';
       }
     }, 100);
     return;
@@ -813,34 +813,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   const shortRecipient = recipient ? `${recipient.slice(0, 6)}...${recipient.slice(-4)}` : 'UNKNOWN';
 
   // Custom logic for button text based on derived risk title
+  // SIMPLE, CONSISTENT BUTTON TEXT FOR ALL CASES
   if (title && title.includes('🛑 BLOCKED')) {
     // CRITICAL: Blocklist match - Make block button SUPER prominent
-    btnReject.textContent = '🛑 BLOCK THIS SCAM';
+    btnReject.textContent = 'Block';
     btnReject.className = 'btn-critical-block';
-    btnApprove.textContent = 'CONFIRM';
-    btnApprove.className = 'btn-approve'; // Keep original blue color
+    btnApprove.textContent = 'Continue';
+    btnApprove.className = 'btn-approve';
   } else if (title === 'TRANSACTION WILL FAIL' || risk === 'CRITICAL') {
     // Guaranteed failure or major drainer attack
-    btnReject.textContent = 'BLOCK TRANSACTION';
-    btnApprove.textContent = 'CONTINUE ANYWAY';
+    btnReject.textContent = 'Block';
+    btnApprove.textContent = 'Continue';
   } else if (title === 'SELF-TRANSFER CONFIRMATION') {
     // Self-transfer is SAFE
-    btnReject.textContent = 'CANCEL TRANSFER';
-    btnApprove.textContent = `CONFIRM TRANSFER TO MY WALLET (${shortRecipient})`; 
-    riskBox.className = 'risk-box safe'; // Ensure coloring is correct
+    btnReject.textContent = 'Block';
+    btnApprove.textContent = 'Continue';
+    riskBox.className = 'risk-box safe';
   } else if (title === 'EXTERNAL TRANSFER CONFIRMATION') {
-    // External transfer is MEDIUM RISK (Requires visual confirmation)
-    btnReject.textContent = 'CANCEL TRANSFER';
-    btnApprove.textContent = `CONFIRM TRANSFER TO ${shortRecipient}`; // FORCES CONFIRMATION
-    riskBox.className = 'risk-box medium'; // Ensure coloring is correct
+    // External transfer is MEDIUM RISK
+    btnReject.textContent = 'Block';
+    btnApprove.textContent = 'Continue';
+    riskBox.className = 'risk-box medium';
   } else if (title === 'SECURITY BLIND SPOT') {
     // Simulation failed, proceed with caution
-    btnReject.textContent = 'CANCEL';
-    btnApprove.textContent = 'PROCEED WITH CAUTION';
+    btnReject.textContent = 'Block';
+    btnApprove.textContent = 'Continue';
   } else {
-    // Default safe action (Connect, Simple Approval, etc.)
-    btnReject.textContent = 'CANCEL';
-    btnApprove.textContent = 'CONFIRM TRANSACTION';
+    // Default safe action
+    btnReject.textContent = 'Block';
+    btnApprove.textContent = 'Continue';
   }
 
   // Setup button handlers
