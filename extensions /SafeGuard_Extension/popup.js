@@ -203,72 +203,110 @@ document.addEventListener('DOMContentLoaded', async () => {
     detailsEl.appendChild(contractRow);
   }
   
-  // --- TRANSACTION DIRECTION INDICATOR (NEW: Make it crystal clear what's happening) ---
+  // --- TRANSACTION DIRECTION INDICATOR (NEW: Show EXACTLY what's going out and coming in) ---
   if (method === 'eth_sendTransaction') {
-    let direction = '';
-    let directionColor = '';
-    let directionBg = '';
-    let directionBorder = '';
-    let directionIcon = '';
+    // Collect what's being sent and received
+    const sendingItems = [];
+    const receivingItems = [];
     
-    // Determine transaction direction based on simulation
-    if (simulation && (simulation.name === 'approve' || simulation.name === 'setApprovalForAll')) {
-      direction = 'GRANTING PERMISSION';
-      directionIcon = '⚠️';
-      directionColor = '#ff6b6b';
-      directionBg = 'rgba(239, 68, 68, 0.15)';
-      directionBorder = 'rgba(239, 68, 68, 0.4)';
-    } else if (simulation && (simulation.name === 'transfer' || simulation.name === 'transferFrom' || simulation.name === 'safeTransferFrom')) {
-      direction = 'SENDING ASSETS';
-      directionIcon = '📤';
-      directionColor = '#fbbf24';
-      directionBg = 'rgba(245, 158, 11, 0.15)';
-      directionBorder = 'rgba(245, 158, 11, 0.4)';
-    } else if (simulation && simulation.params && simulation.params.some(p => p.type === 'LOSS') && simulation.params.some(p => p.type === 'INCOMING')) {
-      direction = 'SWAPPING ASSETS';
-      directionIcon = '🔄';
-      directionColor = '#00f0ff';
-      directionBg = 'rgba(0, 240, 255, 0.15)';
-      directionBorder = 'rgba(0, 240, 255, 0.4)';
-    } else if (simulation && simulation.params && simulation.params.some(p => p.type === 'LOSS')) {
-      direction = 'SENDING ASSETS';
-      directionIcon = '📤';
-      directionColor = '#fbbf24';
-      directionBg = 'rgba(245, 158, 11, 0.15)';
-      directionBorder = 'rgba(245, 158, 11, 0.4)';
-    } else if (simulation && simulation.params && simulation.params.some(p => p.type === 'INCOMING')) {
-      direction = 'RECEIVING ASSETS';
-      directionIcon = '📥';
-      directionColor = '#86efac';
-      directionBg = 'rgba(34, 197, 94, 0.15)';
-      directionBorder = 'rgba(34, 197, 94, 0.4)';
-    } else if (transactionValue && transactionValue > 0) {
-      direction = 'SENDING ETH';
-      directionIcon = '📤';
-      directionColor = '#fbbf24';
-      directionBg = 'rgba(245, 158, 11, 0.15)';
-      directionBorder = 'rgba(245, 158, 11, 0.4)';
-    } else {
-      direction = 'INTERACTING WITH CONTRACT';
-      directionIcon = '🔗';
-      directionColor = '#00f0ff';
-      directionBg = 'rgba(0, 240, 255, 0.08)';
-      directionBorder = 'rgba(0, 240, 255, 0.3)';
+    // Add transaction value (ETH) if present
+    if (transactionValue && transactionValue > 0) {
+      sendingItems.push(`${transactionValue.toFixed(6)} ETH`);
     }
     
+    // Extract from simulation params
+    if (simulation && simulation.params && simulation.params.length > 0) {
+      simulation.params.forEach(p => {
+        // Clean the value text (remove "Estimated Value:" wrapper)
+        let cleanValue = p.value;
+        if (typeof cleanValue === 'string') {
+          cleanValue = cleanValue.replace(/\(Estimated Value: ?\$[\d,\.]+\)/g, '').trim();
+        }
+        
+        if (p.type === 'LOSS') {
+          sendingItems.push(cleanValue);
+        } else if (p.type === 'INCOMING' || p.type === 'NFT MINT') {
+          receivingItems.push(cleanValue);
+        }
+      });
+    }
+    
+    // Determine transaction type and colors
+    let mainIcon = '';
+    let mainLabel = '';
+    let mainColor = '';
+    let mainBg = '';
+    let mainBorder = '';
+    
+    if (simulation && (simulation.name === 'approve' || simulation.name === 'setApprovalForAll')) {
+      mainIcon = '⚠️';
+      mainLabel = 'GRANTING PERMISSION';
+      mainColor = '#ff6b6b';
+      mainBg = 'rgba(239, 68, 68, 0.15)';
+      mainBorder = 'rgba(239, 68, 68, 0.4)';
+    } else if (sendingItems.length > 0 && receivingItems.length > 0) {
+      mainIcon = '🔄';
+      mainLabel = 'SWAP / TRADE';
+      mainColor = '#00f0ff';
+      mainBg = 'rgba(0, 240, 255, 0.15)';
+      mainBorder = 'rgba(0, 240, 255, 0.4)';
+    } else if (sendingItems.length > 0) {
+      mainIcon = '📤';
+      mainLabel = 'SENDING FROM YOUR WALLET';
+      mainColor = '#fbbf24';
+      mainBg = 'rgba(245, 158, 11, 0.15)';
+      mainBorder = 'rgba(245, 158, 11, 0.4)';
+    } else if (receivingItems.length > 0) {
+      mainIcon = '📥';
+      mainLabel = 'RECEIVING TO YOUR WALLET';
+      mainColor = '#86efac';
+      mainBg = 'rgba(34, 197, 94, 0.15)';
+      mainBorder = 'rgba(34, 197, 94, 0.4)';
+    } else {
+      mainIcon = '🔗';
+      mainLabel = 'CONTRACT INTERACTION';
+      mainColor = '#00f0ff';
+      mainBg = 'rgba(0, 240, 255, 0.08)';
+      mainBorder = 'rgba(0, 240, 255, 0.3)';
+    }
+    
+    // Build the direction box HTML
     const directionRow = document.createElement('div');
     directionRow.className = 'detail-row';
-    directionRow.style.marginBottom = '14px';
-    directionRow.style.padding = '14px';
-    directionRow.style.borderRadius = '8px';
-    directionRow.style.background = directionBg;
-    directionRow.style.border = `2px solid ${directionBorder}`;
-    directionRow.style.textAlign = 'center';
+    directionRow.style.marginBottom = '16px';
+    directionRow.style.padding = '16px';
+    directionRow.style.borderRadius = '10px';
+    directionRow.style.background = mainBg;
+    directionRow.style.border = `2px solid ${mainBorder}`;
     
-    directionRow.innerHTML = `
-      <div style="font-size: 24px; margin-bottom: 6px;">${directionIcon}</div>
-      <div style="color: ${directionColor}; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">${direction}</div>
+    let directionHTML = `
+      <div style="text-align: center; margin-bottom: ${(sendingItems.length > 0 || receivingItems.length > 0) ? '12px' : '0'};">
+        <div style="font-size: 28px; margin-bottom: 8px;">${mainIcon}</div>
+        <div style="color: ${mainColor}; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px;">${mainLabel}</div>
+      </div>
     `;
+    
+    // Show what's being sent (if any)
+    if (sendingItems.length > 0) {
+      directionHTML += `
+        <div style="margin-bottom: 12px; padding: 10px; background: rgba(239, 68, 68, 0.1); border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.3);">
+          <div style="color: #fca5a5; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">📤 LEAVING YOUR WALLET:</div>
+          ${sendingItems.map(item => `<div style="color: #ff6b6b; font-size: 11px; font-weight: 600; margin: 4px 0; line-height: 1.4;">• ${item}</div>`).join('')}
+        </div>
+      `;
+    }
+    
+    // Show what's being received (if any)
+    if (receivingItems.length > 0) {
+      directionHTML += `
+        <div style="padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 6px; border: 1px solid rgba(34, 197, 94, 0.3);">
+          <div style="color: #86efac; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">📥 COMING TO YOUR WALLET:</div>
+          ${receivingItems.map(item => `<div style="color: #86efac; font-size: 11px; font-weight: 600; margin: 4px 0; line-height: 1.4;">• ${item}</div>`).join('')}
+        </div>
+      `;
+    }
+    
+    directionRow.innerHTML = directionHTML;
     detailsEl.appendChild(directionRow);
   }
   
