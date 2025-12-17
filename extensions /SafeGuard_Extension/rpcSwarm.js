@@ -100,13 +100,8 @@ export async function swarmRequest(method, params, requiresTrace = false, chainI
   const requestPromises = nodes.map(rpcUrl => {
     return new Promise((resolve, reject) => {
       const controller = new AbortController();
-      // Shorter timeout for trace (fail fast) so we can switch to a working node
       const timeoutMs = requiresTrace ? 8000 : 2500; 
-      
-      const timeoutId = setTimeout(() => {
-        controller.abort();
-        reject(new Error(`Timeout`));
-      }, timeoutMs);
+      const timeoutId = setTimeout(() => { controller.abort(); reject(new Error('Timeout')); }, timeoutMs);
 
       fetch(rpcUrl, {
         method: 'POST',
@@ -116,35 +111,27 @@ export async function swarmRequest(method, params, requiresTrace = false, chainI
       })
       .then(async res => {
         clearTimeout(timeoutId);
-        if (!res.ok) {
-          // Reject immediately on 403/400/500 so Promise.any moves to the next node
-          throw new Error(`HTTP ${res.status}`);
-        }
+        if (!res.ok) return reject(new Error(`HTTP ${res.status}`)); // Handled rejection
         return res.json();
       })
       .then(json => {
-        if (json.error) {
-          // Vital: Reject on specific RPC errors so we try the next node
-          throw new Error(json.error.message || 'RPC Error');
-        }
-        resolve(json.result);
+        if (json && json.result !== undefined) resolve(json.result);
+        else reject(new Error(json?.error?.message || 'Invalid RPC Response'));
       })
-      .catch(error => {
+      .catch((err) => {
         clearTimeout(timeoutId);
-        // We reject here to let Promise.any catch it. 
-        // Note: Browser console may still show "POST ... 403" red text; this is unavoidable but harmless.
-        reject(error);
+        reject(err); // Ensure all errors are caught
       });
     });
   });
 
   // 3. HANDLE RESULTS
   try {
-    const result = await raceToSuccess(requestPromises);
-    return result;
-  } catch (errors) {
-    // If we are here, EVERY SINGLE node failed.
-    console.warn(`[Swarm Failed] Method: ${method}, Chain: ${chainId}. All nodes rejected.`);
+    // Use Promise.any to return the first successful result
+    return await Promise.any(requestPromises);
+  } catch (e) {
+    // Only log if the entire swarm fails to find a working node
+    console.debug(`[SAFE GUARD] Swarm exhausted for ${method} on ${chainId}`);
     return null;
   }
 }

@@ -92,6 +92,9 @@ export async function checkHoneypotAndActor({ method, params, origin, chainId })
     const tx = params[0];
     const userAddr = tx.from ? tx.from.toLowerCase() : null;
     const contractAddr = tx.to;
+    
+    // For unknown functions, try to extract NFT/token info from logs by running trace anyway
+    // This ensures we show asset info even for marketplace contracts
 
     // 1A. APPROVALS (DRAINER PATTERN)
     if (decoded.name === 'approve') {
@@ -131,53 +134,70 @@ export async function checkHoneypotAndActor({ method, params, origin, chainId })
       }
     }
 
-    // 1C. DIRECT NFT / TOKEN TRANSFERS (Without Trace)
+    // 1C. DIRECT NFT / TOKEN TRANSFERS (Without Trace - ALWAYS SHOW INFO)
     if (
       contractAddr &&
       decoded.params &&
       decoded.params.length > 0 &&
-      (decoded.name === 'safeTransferFrom' || decoded.name === 'transferFrom')
+      (decoded.name === 'safeTransferFrom' || decoded.name === 'transferFrom' || decoded.name === 'transfer')
     ) {
       try {
         const fromParam = decoded.params[0];
         const toParam = decoded.params[1];
-        const tokenIdParam = decoded.params[2];
+        const tokenIdOrAmountParam = decoded.params[2];
 
         const from = fromParam && typeof fromParam.value === 'string' ? fromParam.value.toLowerCase() : null;
         const to = toParam && typeof toParam.value === 'string' ? toParam.value.toLowerCase() : null;
-        const tokenId = tokenIdParam ? tokenIdParam.value : null;
+        
+        // Determine if NFT or token based on params
+        const isNFT = decoded.name === 'safeTransferFrom' || decoded.name === 'transferFrom';
+        const tokenId = isNFT && tokenIdOrAmountParam ? tokenIdOrAmountParam.value : null;
 
-        if (from && to && tokenId != null) {
+        if (from && to) {
           // Get token details & visuals
           const { symbol, decimals } = await getTokenDetails(contractAddr, detectedChainId);
           const usdPrice = await getTokenPrice(contractAddr, symbol, decimals, detectedChainId);
-          const imageUrl = await getNftImage(contractAddr, tokenId, detectedChainId);
+          
+          let imageUrl = null;
+          let displayValue = "";
+          let totalValue = 0;
+          
+          if (isNFT && tokenId) {
+            // NFT Transfer
+            imageUrl = await getNftImage(contractAddr, tokenId, detectedChainId);
+            displayValue = `${symbol} #${tokenId}`;
+            totalValue = usdPrice;
+          } else if (!isNFT && tokenIdOrAmountParam) {
+            // Token Transfer
+            const amount = BigInt(tokenIdOrAmountParam.value);
+            const floatVal = formatBigIntTokenValue(amount, decimals);
+            totalValue = floatVal * usdPrice;
+            displayValue = `${floatVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 6})} ${symbol}`;
+          }
 
-          // Basic value formatting (for NFTs we mainly care about symbol)
-          const displayValue = `NFT: ${symbol}`;
-          const valueStr = usdPrice > 0 ? `(~$${usdPrice.toFixed(2)})` : '';
+          const valueStr = totalValue > 0 ? `($${totalValue.toFixed(2)})` : '';
 
           // Classify relative to the user wallet
           const zeroAddress = '0x0000000000000000000000000000000000000000';
-          let eventType = '🟢 INCOMING';
+          let eventType = 'INCOMING';
 
           if (userAddr) {
             if (from === userAddr && to !== userAddr) {
-              // Outgoing NFT transfer
+              // Outgoing transfer
               risk = risk === 'CRITICAL' ? 'CRITICAL' : 'MEDIUM';
               title = 'EXTERNAL TRANSFER CONFIRMATION';
-              warnings.push(`🟡 You are sending an NFT to **${to.slice(0, 6)}...${to.slice(-4)}**. Verify this address carefully.`);
-              eventType = '🔴 LOSS';
+              warnings.push(`🔴 LOSS: You are sending ${displayValue} ${valueStr} to **${to.slice(0, 6)}...${to.slice(-4)}**. Verify this address carefully.`);
+              eventType = 'LOSS';
             } else if (to === userAddr && from !== userAddr) {
-              // Incoming NFT (airdrop / transfer)
+              // Incoming transfer
               if (risk === 'LOW') risk = 'SAFE';
               if (title === 'TRANSACTION') title = 'INCOMING ASSET';
-              eventType = (from === zeroAddress) ? '🟢 NFT MINT' : '🟢 INCOMING';
+              eventType = (from === zeroAddress) ? 'NFT MINT' : 'INCOMING';
             }
           }
 
-          // Normalize simulation to "Asset Changes" style so popup rendering is consistent
-          simulation = simulation || { name: 'Asset Changes', params: [] };
+          // ALWAYS create simulation object to show asset info
+          if (!simulation) simulation = { name: 'Asset Changes', params: [] };
           simulation.name = 'Asset Changes';
 
           simulation.params.push({
@@ -188,7 +208,7 @@ export async function checkHoneypotAndActor({ method, params, origin, chainId })
           });
         }
       } catch (e) {
-        // If this lightweight NFT decoding fails, we simply fall back to trace-based logic later.
+        console.debug('[SAFE GUARD] Direct transfer decode failed:', e);
       }
     }
   }
@@ -319,9 +339,8 @@ export async function checkHoneypotAndActor({ method, params, origin, chainId })
 
       // Finalize simulation data if changes were found
       if (assetChanges.length > 0) {
-        simulation = simulation || { name: 'Asset Changes', params: [] };
-        simulation.name = 'Asset Changes';
-        simulation.params = assetChanges;
+        // Override any "Unknown Function" with actual asset changes
+        simulation = { name: 'Asset Changes', params: assetChanges };
       }
     } else {
         // --- Detailed Fallback/Failure Check (Simplified UX) ---
