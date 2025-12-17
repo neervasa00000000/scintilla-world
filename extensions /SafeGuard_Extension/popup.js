@@ -217,10 +217,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Extract from simulation params
     if (simulation && simulation.params && simulation.params.length > 0) {
       simulation.params.forEach(p => {
-        // Clean the value text (remove "Estimated Value:" wrapper)
+        // Clean the value text (remove "Estimated Value:" wrapper and hex token IDs)
         let cleanValue = p.value;
         if (typeof cleanValue === 'string') {
           cleanValue = cleanValue.replace(/\(Estimated Value: ?\$[\d,\.]+\)/g, '').trim();
+          
+          // Fix: Convert hex token IDs to decimal (e.g., #0x75 → #117)
+          cleanValue = cleanValue.replace(/#0x([0-9a-fA-F]+)/g, (match, hex) => {
+            const decimal = parseInt(hex, 16);
+            return `#${decimal}`;
+          });
+          
+          // Fix: Clean up huge hex numbers
+          cleanValue = cleanValue.replace(/#0x0+([0-9a-fA-F]{1,8})\b/g, (match, hex) => {
+            const decimal = parseInt(hex, 16);
+            return `#${decimal}`;
+          });
         }
         
         if (p.type === 'LOSS') {
@@ -229,6 +241,25 @@ document.addEventListener('DOMContentLoaded', async () => {
           receivingItems.push(cleanValue);
         }
       });
+    }
+    
+    // FALLBACK: If trace failed but we have decoded transaction data, try to extract info
+    if (sendingItems.length === 0 && receivingItems.length === 0 && simulation && simulation.name) {
+      if (simulation.name.includes('transfer') || simulation.name.includes('Transfer')) {
+        // Try to extract from decoded params
+        if (simulation.params && simulation.params.length > 0) {
+          simulation.params.forEach(p => {
+            if (p.type === 'uint256' && p.value) {
+              // This might be a token amount or NFT ID
+              const val = p.value.startsWith('0x') ? BigInt(p.value) : BigInt('0x' + p.value);
+              // If it's a reasonable NFT ID (< 1 billion)
+              if (val < 1000000000n) {
+                sendingItems.push(`Token/NFT #${val.toString()}`);
+              }
+            }
+          });
+        }
+      }
     }
     
     // Determine transaction type and colors
@@ -286,22 +317,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     `;
     
-    // Show what's being sent (if any)
+    // Show what's being sent (if any) - CLEAN UI
     if (sendingItems.length > 0) {
       directionHTML += `
-        <div style="margin-bottom: 12px; padding: 10px; background: rgba(239, 68, 68, 0.1); border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.3);">
-          <div style="color: #fca5a5; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">📤 LEAVING YOUR WALLET:</div>
-          ${sendingItems.map(item => `<div style="color: #ff6b6b; font-size: 11px; font-weight: 600; margin: 4px 0; line-height: 1.4;">• ${item}</div>`).join('')}
+        <div style="margin-bottom: ${receivingItems.length > 0 ? '12px' : '0'}; padding: 12px; background: rgba(220, 38, 38, 0.12); border-radius: 8px; border: 1.5px solid rgba(220, 38, 38, 0.35);">
+          <div style="color: #fca5a5; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 14px;">📤</span>
+            <span>LEAVING YOUR WALLET</span>
+          </div>
+          ${sendingItems.map(item => `<div style="color: #fecaca; font-size: 11px; font-weight: 600; margin: 6px 0; padding-left: 20px; line-height: 1.5; word-break: break-word;">• ${item}</div>`).join('')}
         </div>
       `;
     }
     
-    // Show what's being received (if any)
+    // Show what's being received (if any) - CLEAN UI
     if (receivingItems.length > 0) {
       directionHTML += `
-        <div style="padding: 10px; background: rgba(34, 197, 94, 0.1); border-radius: 6px; border: 1px solid rgba(34, 197, 94, 0.3);">
-          <div style="color: #86efac; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">📥 COMING TO YOUR WALLET:</div>
-          ${receivingItems.map(item => `<div style="color: #86efac; font-size: 11px; font-weight: 600; margin: 4px 0; line-height: 1.4;">• ${item}</div>`).join('')}
+        <div style="padding: 12px; background: rgba(34, 197, 94, 0.12); border-radius: 8px; border: 1.5px solid rgba(34, 197, 94, 0.35);">
+          <div style="color: #86efac; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 14px;">📥</span>
+            <span>COMING TO YOUR WALLET</span>
+          </div>
+          ${receivingItems.map(item => `<div style="color: #86efac; font-size: 11px; font-weight: 600; margin: 6px 0; padding-left: 20px; line-height: 1.5; word-break: break-word;">• ${item}</div>`).join('')}
         </div>
       `;
     }

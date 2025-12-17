@@ -253,7 +253,16 @@ export async function checkHoneypotAndActor({ method, params, origin, chainId })
           if (from !== user && to !== user) return;
 
           const tokenAddress = t.address;
-          const tokenId = t.topics[3] ? BigInt(t.topics[3]).toString() : null;
+          // FIXED: Properly convert hex token ID to clean decimal number
+          let tokenId = null;
+          if (t.topics[3]) {
+            try {
+              const hexValue = t.topics[3].startsWith('0x') ? t.topics[3] : '0x' + t.topics[3];
+              tokenId = BigInt(hexValue).toString(); // Converts to decimal string
+            } catch (e) {
+              tokenId = null;
+            }
+          }
 
           const { symbol, decimals } = await getTokenDetails(tokenAddress, detectedChainId);
           const usdPrice = await getTokenPrice(tokenAddress, symbol, decimals, detectedChainId);
@@ -343,6 +352,78 @@ export async function checkHoneypotAndActor({ method, params, origin, chainId })
         simulation = { name: 'Asset Changes', params: assetChanges };
       }
     } else {
+        // --- FALLBACK WHEN TRACE FAILS: Try to extract basic asset info from decoded data ---
+        const assetChanges = [];
+        
+        // If we have a decoded transaction, try to show SOMETHING useful
+        if (simulation && simulation.name && simulation.params) {
+          const isTransferLike = simulation.name.includes('transfer') || simulation.name.includes('Transfer');
+          
+          if (isTransferLike && simulation.params.length >= 2) {
+            const user = tx.from ? tx.from.toLowerCase() : null;
+            
+            // Try to extract: from, to, tokenId/amount
+            let from = null, to = null, tokenIdOrAmount = null;
+            
+            // Parse parameters based on common patterns
+            simulation.params.forEach((p, idx) => {
+              if (p.type === 'address') {
+                if (!from) from = p.value.toLowerCase();
+                else if (!to) to = p.value.toLowerCase();
+              } else if (p.type === 'uint256') {
+                tokenIdOrAmount = p.value;
+              }
+            });
+            
+            // If we found useful info, add it to assetChanges
+            if (user && to && tokenIdOrAmount) {
+              const contractAddr = tx.to;
+              
+              // Try to get token/NFT details
+              const { symbol, decimals } = await getTokenDetails(contractAddr, detectedChainId);
+              
+              // Convert token ID/amount from hex
+              let cleanValue = '';
+              try {
+                const hexVal = tokenIdOrAmount.startsWith('0x') ? tokenIdOrAmount : '0x' + tokenIdOrAmount;
+                const bigIntVal = BigInt(hexVal);
+                
+                // If it's likely an NFT ID (< 1 billion)
+                if (bigIntVal < 1000000000n) {
+                  const tokenId = bigIntVal.toString();
+                  const imageUrl = await getNftImage(contractAddr, tokenId, detectedChainId);
+                  cleanValue = `${symbol} #${tokenId}`;
+                  
+                  // Determine direction
+                  if (from === user) {
+                    assetChanges.push({ type: 'LOSS', value: cleanValue, image: imageUrl, recipient: to });
+                  } else if (to === user) {
+                    assetChanges.push({ type: 'INCOMING', value: cleanValue, image: imageUrl, recipient: to });
+                  }
+                } else {
+                  // It's a token amount
+                  const floatVal = formatBigIntTokenValue(bigIntVal, decimals);
+                  const formattedAmount = floatVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 6});
+                  cleanValue = `${formattedAmount} ${symbol}`;
+                  
+                  if (from === user) {
+                    assetChanges.push({ type: 'LOSS', value: cleanValue, recipient: to });
+                  } else if (to === user) {
+                    assetChanges.push({ type: 'INCOMING', value: cleanValue, recipient: to });
+                  }
+                }
+              } catch (e) {
+                // Conversion failed, skip
+              }
+            }
+          }
+        }
+        
+        // Add asset changes to simulation if found
+        if (assetChanges.length > 0) {
+          simulation = { name: 'Asset Changes', params: assetChanges };
+        }
+        
         // --- Detailed Fallback/Failure Check (Simplified UX) ---
         try {
           // Run a simpler eth_call (no trace) to see if TX reverts
@@ -353,14 +434,18 @@ export async function checkHoneypotAndActor({ method, params, origin, chainId })
           if (!dryRun) {
             // TX reverted on the simpler call (Clear Danger)
             risk = 'CRITICAL';
-            title = 'TRANSACTION WILL FAIL'; // Clear, decisive title
+            title = 'TRANSACTION WILL FAIL';
             warnings.push('Danger: this transaction is guaranteed to revert and fail on the blockchain.');
             warnings.push('Reverting transactions waste gas and often indicate a broken or malicious contract.');
           } else {
             // TX succeeded, but no trace data was returned (Uncertain Danger)
-            if (title === 'TRANSACTION') title = 'SECURITY BLIND SPOT'; // Clear, decisive title
+            if (title === 'TRANSACTION') title = 'SECURITY BLIND SPOT';
             warnings.push(`Warning: simulation failed. The network is too congested or busy to verify the transaction outcome.`);
-            warnings.push(`Proceeding is possible, but **risky**. Transaction outcome is unknown.`);
+            if (assetChanges.length > 0) {
+              warnings.push(`However, we detected asset movements based on the transaction data.`);
+            } else {
+              warnings.push(`Proceeding is possible, but **risky**. Transaction outcome is unknown.`);
+            }
           }
         } catch (e) {
             // If even the basic eth_call fails
