@@ -203,6 +203,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     detailsEl.appendChild(contractRow);
   }
   
+  // ALWAYS show Contract/Target Address for any transaction
+  if (destinationAddress && method === 'eth_sendTransaction') {
+    const contractRow = document.createElement('div');
+    contractRow.className = 'detail-row';
+    contractRow.style.marginBottom = '12px';
+    contractRow.style.padding = '12px';
+    contractRow.style.borderRadius = '8px';
+    contractRow.style.background = 'rgba(0, 240, 255, 0.05)';
+    contractRow.style.border = '1px solid rgba(0, 240, 255, 0.15)';
+    
+    contractRow.innerHTML = `<span class="detail-label">📍 Contract Address</span> 
+      <span class="address-compact" style="color: #00f0ff; font-weight: 600; font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;">${destinationAddress}</span>`;
+    detailsEl.appendChild(contractRow);
+  }
+  
   // Show Spender/Recipient Address (The Critical Security Check)
   if (spenderAddress && spenderAddress !== destinationAddress) {
     const spenderRow = document.createElement('div');
@@ -219,13 +234,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     let borderColor = 'rgba(0, 240, 255, 0.15)';
     
     if (simulation && (simulation.name === 'approve' || simulation.name === 'setApprovalForAll')) {
-      spenderLabel = 'DANGER: Spender Address';
+      spenderLabel = '⚠️ SPENDER (Can Take Your Tokens)';
       spenderColor = '#ff6b6b';
       bgColor = 'rgba(239, 68, 68, 0.15)';
       borderColor = 'rgba(239, 68, 68, 0.3)';
       spenderRow.style.border = `2px solid ${borderColor}`;
-    } else if (simulation && (simulation.name === 'transfer' || simulation.name === 'transferFrom')) {
-      spenderLabel = 'Recipient Address';
+    } else if (simulation && (simulation.name === 'transfer' || simulation.name === 'transferFrom' || simulation.name === 'safeTransferFrom')) {
+      spenderLabel = '📤 Recipient (Receiving Your Assets)';
+      spenderColor = '#fbbf24';
+      bgColor = 'rgba(245, 158, 11, 0.08)';
+      borderColor = 'rgba(245, 158, 11, 0.2)';
+    } else if (simulation && simulation.name === 'Asset Changes') {
+      // For complex transactions, show the final recipient
+      spenderLabel = '📤 Final Recipient';
+      spenderColor = '#fbbf24';
       bgColor = 'rgba(245, 158, 11, 0.08)';
       borderColor = 'rgba(245, 158, 11, 0.2)';
     }
@@ -260,12 +282,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (origin && origin !== 'Unknown') {
       const originRow = document.createElement('div');
       originRow.className = 'detail-row';
-      originRow.style.marginBottom = '10px';
-      originRow.style.padding = '10px';
+      originRow.style.marginBottom = '12px';
+      originRow.style.padding = '12px';
       originRow.style.background = 'rgba(0, 240, 255, 0.05)';
       originRow.style.borderRadius = '8px';
-      originRow.innerHTML = `<span class="detail-label">Requesting Site</span> 
-        <span style="color: #00f0ff; font-family: 'SF Mono', 'Monaco', 'Courier New', monospace; font-size: 12px; font-weight: 600; display: block; margin-top: 4px;">${origin}</span>`;
+      originRow.style.border = '1px solid rgba(0, 240, 255, 0.15)';
+      originRow.innerHTML = `<span class="detail-label">🌐 Requesting Site</span> 
+        <span style="color: #00f0ff; font-family: 'SF Mono', 'Monaco', 'Courier New', monospace; font-size: 11px; font-weight: 600; display: block; margin-top: 6px; word-break: break-all;">${origin}</span>`;
       detailsEl.appendChild(originRow);
     }
 
@@ -361,12 +384,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (request.origin && !detailsEl.querySelector('.origin-row')) {
     const originRow = document.createElement('div');
     originRow.className = 'detail-row origin-row';
-    originRow.style.marginBottom = '10px';
-    originRow.style.padding = '10px';
+    originRow.style.marginBottom = '12px';
+    originRow.style.padding = '12px';
     originRow.style.background = 'rgba(0, 240, 255, 0.05)';
     originRow.style.borderRadius = '8px';
-    originRow.innerHTML = `<span class="detail-label">Requesting Site</span> 
-      <span style="color: #00f0ff; font-family: 'SF Mono', 'Monaco', 'Courier New', monospace; font-size: 11px; font-weight: 600; display: block; margin-top: 4px; word-break: break-all;">${request.origin}</span>`;
+    originRow.style.border = '1px solid rgba(0, 240, 255, 0.15)';
+    originRow.innerHTML = `<span class="detail-label">🌐 Requesting Site</span> 
+      <span style="color: #00f0ff; font-family: 'SF Mono', 'Monaco', 'Courier New', monospace; font-size: 11px; font-weight: 600; display: block; margin-top: 6px; word-break: break-all;">${request.origin}</span>`;
     detailsEl.appendChild(originRow);
   }
 
