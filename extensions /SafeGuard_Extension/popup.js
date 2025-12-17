@@ -203,6 +203,75 @@ document.addEventListener('DOMContentLoaded', async () => {
     detailsEl.appendChild(contractRow);
   }
   
+  // --- TRANSACTION DIRECTION INDICATOR (NEW: Make it crystal clear what's happening) ---
+  if (method === 'eth_sendTransaction') {
+    let direction = '';
+    let directionColor = '';
+    let directionBg = '';
+    let directionBorder = '';
+    let directionIcon = '';
+    
+    // Determine transaction direction based on simulation
+    if (simulation && (simulation.name === 'approve' || simulation.name === 'setApprovalForAll')) {
+      direction = 'GRANTING PERMISSION';
+      directionIcon = '⚠️';
+      directionColor = '#ff6b6b';
+      directionBg = 'rgba(239, 68, 68, 0.15)';
+      directionBorder = 'rgba(239, 68, 68, 0.4)';
+    } else if (simulation && (simulation.name === 'transfer' || simulation.name === 'transferFrom' || simulation.name === 'safeTransferFrom')) {
+      direction = 'SENDING ASSETS';
+      directionIcon = '📤';
+      directionColor = '#fbbf24';
+      directionBg = 'rgba(245, 158, 11, 0.15)';
+      directionBorder = 'rgba(245, 158, 11, 0.4)';
+    } else if (simulation && simulation.params && simulation.params.some(p => p.type === 'LOSS') && simulation.params.some(p => p.type === 'INCOMING')) {
+      direction = 'SWAPPING ASSETS';
+      directionIcon = '🔄';
+      directionColor = '#00f0ff';
+      directionBg = 'rgba(0, 240, 255, 0.15)';
+      directionBorder = 'rgba(0, 240, 255, 0.4)';
+    } else if (simulation && simulation.params && simulation.params.some(p => p.type === 'LOSS')) {
+      direction = 'SENDING ASSETS';
+      directionIcon = '📤';
+      directionColor = '#fbbf24';
+      directionBg = 'rgba(245, 158, 11, 0.15)';
+      directionBorder = 'rgba(245, 158, 11, 0.4)';
+    } else if (simulation && simulation.params && simulation.params.some(p => p.type === 'INCOMING')) {
+      direction = 'RECEIVING ASSETS';
+      directionIcon = '📥';
+      directionColor = '#86efac';
+      directionBg = 'rgba(34, 197, 94, 0.15)';
+      directionBorder = 'rgba(34, 197, 94, 0.4)';
+    } else if (transactionValue && transactionValue > 0) {
+      direction = 'SENDING ETH';
+      directionIcon = '📤';
+      directionColor = '#fbbf24';
+      directionBg = 'rgba(245, 158, 11, 0.15)';
+      directionBorder = 'rgba(245, 158, 11, 0.4)';
+    } else {
+      direction = 'INTERACTING WITH CONTRACT';
+      directionIcon = '🔗';
+      directionColor = '#00f0ff';
+      directionBg = 'rgba(0, 240, 255, 0.08)';
+      directionBorder = 'rgba(0, 240, 255, 0.3)';
+    }
+    
+    const directionRow = document.createElement('div');
+    directionRow.className = 'detail-row';
+    directionRow.style.marginBottom = '14px';
+    directionRow.style.padding = '14px';
+    directionRow.style.borderRadius = '8px';
+    directionRow.style.background = directionBg;
+    directionRow.style.border = `2px solid ${directionBorder}`;
+    directionRow.style.textAlign = 'center';
+    
+    directionRow.innerHTML = `
+      <div style="font-size: 24px; margin-bottom: 6px;">${directionIcon}</div>
+      <div style="color: ${directionColor}; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">${direction}</div>
+    `;
+    detailsEl.appendChild(directionRow);
+  }
+  
   // ALWAYS show Contract/Target Address for any transaction
   if (destinationAddress && method === 'eth_sendTransaction') {
     const contractRow = document.createElement('div');
