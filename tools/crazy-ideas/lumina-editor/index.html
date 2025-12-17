@@ -521,8 +521,8 @@
         };
         
         return (
-          <div className="mb-4 md:mb-5 group">
-            <div className="flex justify-between items-center mb-2">
+          <div className="mb-3 md:mb-5 group">
+            <div className="flex justify-between items-center mb-1.5 md:mb-2">
               <div className="flex items-center text-gray-400 group-hover:text-white transition-colors">
                 {Icon && <Icon size={16} className="md:w-3.5 md:h-3.5 mr-2" />}
                 <span className="text-xs font-semibold tracking-wide uppercase">{label}</span>
@@ -607,7 +607,7 @@
           <main className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
             
             {/* Image Preview Section */}
-            <div className="w-full md:flex-1 relative flex items-center justify-center p-4 md:p-8 min-h-[40vh] md:min-h-0 md:h-auto" style={{ backgroundColor: '#0a0a0a' }}>
+            <div className="w-full md:flex-1 relative flex items-center justify-center p-4 md:p-8 min-h-[35vh] md:min-h-0 md:h-auto" style={{ backgroundColor: '#0a0a0a' }}>
               {/* Subtle Grid Pattern Background */}
               <div className="absolute inset-0 opacity-[0.03]" 
                    style={{ 
@@ -617,24 +617,24 @@
                    }}>
               </div>
               {!image ? (
-                  <div className="relative z-10 flex flex-col items-center justify-center p-8 md:p-12 border border-white/10 bg-white/5 rounded-2xl md:rounded-3xl backdrop-blur-sm animate-in fade-in zoom-in duration-500" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-full flex items-center justify-center mb-4 md:mb-6 shadow-inner border border-white/5">
-                    <ImageIcon size={28} className="md:w-8 md:h-8 text-neutral-500" />
+                  <div className="relative z-10 flex flex-col items-center justify-center p-6 md:p-12 border border-white/10 bg-white/5 rounded-2xl md:rounded-3xl backdrop-blur-sm animate-in fade-in zoom-in duration-500" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+                  <div className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-full flex items-center justify-center mb-3 md:mb-6 shadow-inner border border-white/5">
+                    <ImageIcon size={24} className="md:w-8 md:h-8 text-neutral-500" />
                   </div>
-                  <h2 className="text-xl md:text-2xl font-bold text-white mb-2">Start Creating</h2>
-                  <p className="text-neutral-400 text-xs md:text-sm mb-6 md:mb-8 text-center max-w-[200px]">
+                  <h2 className="text-lg md:text-2xl font-bold text-white mb-1.5 md:mb-2">Start Creating</h2>
+                  <p className="text-neutral-400 text-xs md:text-sm mb-4 md:mb-8 text-center max-w-[200px]">
                     Drop an image here or browse to begin editing.
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full sm:w-auto">
                     <button 
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-6 py-3 md:py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-sm font-medium transition-all shadow-lg shadow-indigo-900/30"
+                      className="px-6 py-2.5 md:py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-sm font-medium transition-all shadow-lg shadow-indigo-900/30"
                     >
                       Open Image
                     </button>
                     <button 
                       onClick={loadDemoImage}
-                      className="px-6 py-3 md:py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 rounded-full text-sm font-medium transition-all border border-white/5"
+                      className="px-6 py-2.5 md:py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 rounded-full text-sm font-medium transition-all border border-white/5"
                     >
                       Try Demo
                     </button>
@@ -653,7 +653,7 @@
                       <img 
                         src={image} 
                         alt="Preview" 
-                        className="max-w-full max-h-[80vh] h-auto w-auto object-contain block transition-all duration-200"
+                        className="max-w-full max-h-[50vh] md:max-h-[80vh] h-auto w-auto object-contain block transition-all duration-200"
                         style={{
                           filter: getFilterString(),
                         }}
@@ -691,10 +691,10 @@
             </div>
 
             {/* Controls Section - Below image on mobile, side on desktop */}
-            <aside className="w-full md:w-80 bg-neutral-900/95 md:bg-neutral-900/80 backdrop-blur-xl border-t md:border-l border-white/10 flex flex-col shrink-0 md:h-auto max-h-[60vh] md:max-h-none overflow-hidden" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+            <aside className="w-full md:w-80 bg-neutral-900/95 md:bg-neutral-900/80 backdrop-blur-xl border-t md:border-l border-white/10 flex flex-col shrink-0 md:h-auto max-h-[65vh] md:max-h-none overflow-hidden" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
               
               {/* Segmented Control Tabs */}
-              <div className="p-3 md:p-4 border-b border-white/10 sticky top-14 md:top-0 bg-neutral-900/95 md:bg-transparent backdrop-blur-xl z-10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+              <div className="p-2.5 md:p-4 border-b border-white/10 sticky top-14 md:top-0 bg-neutral-900/95 md:bg-transparent backdrop-blur-xl z-10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                 <div className="flex bg-neutral-950/50 p-1 rounded-lg border border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                   {[
                     { id: 'templates', icon: Wand2, label: 'Filters' },
@@ -718,10 +718,10 @@
               </div>
 
               {/* Tools Area */}
-              <div className="flex-1 overflow-y-auto px-4 md:px-5 py-4 md:py-6 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
+              <div className="flex-1 overflow-y-auto px-3 md:px-5 py-3 md:py-6 pb-6 md:pb-6 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
                 
                 {activeTab === 'templates' && (
-                  <div className="space-y-4 md:space-y-6">
+                  <div className="space-y-3 md:space-y-6">
                     <div className="flex justify-between items-center">
                       <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Style Library</h3>
                       {currentTemplateId !== 'normal' && (
@@ -779,11 +779,11 @@
                 )}
 
                 {activeTab === 'adjust' && (
-                  <div className="space-y-6 md:space-y-8 animate-in slide-in-from-right-2 duration-300">
+                  <div className="space-y-4 md:space-y-8 animate-in slide-in-from-right-2 duration-300">
                     
                     {/* Light Section */}
                     <div>
-                      <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3 md:mb-4">
+                      <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 md:mb-4">
                         <Sun size={14} className="md:w-3 md:h-3 mr-2" /> Light & Color
                       </h4>
                       <div className="space-y-1">
@@ -795,7 +795,7 @@
 
                     {/* Effect Section */}
                     <div>
-                      <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3 md:mb-4">
+                      <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 md:mb-4">
                         <Aperture size={14} className="md:w-3 md:h-3 mr-2" /> Effects
                       </h4>
                       <div className="space-y-1">
@@ -808,18 +808,18 @@
 
                       {/* Color Balance Section */}
                     <div>
-                      <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3 md:mb-4">
+                      <h4 className="flex items-center text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 md:mb-4">
                         <Palette size={14} className="md:w-3 md:h-3 mr-2" /> Color Balance
                       </h4>
-                      <div className="p-3 md:p-4 bg-neutral-950/30 rounded-xl border border-white/10 space-y-3 md:space-y-4" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
-                        <div className="flex items-center justify-between text-[9px] md:text-[10px] text-neutral-500 font-mono mb-2">
+                      <div className="p-2.5 md:p-4 bg-neutral-950/30 rounded-xl border border-white/10 space-y-2.5 md:space-y-4" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+                        <div className="flex items-center justify-between text-[9px] md:text-[10px] text-neutral-500 font-mono mb-1.5 md:mb-2">
                           <span className="text-center flex-1">CYAN/RED</span>
                           <span className="text-center flex-1">MAGENTA/GREEN</span>
                           <span className="text-center flex-1">YELLOW/BLUE</span>
                         </div>
                         
                         {/* RGB Sliders with custom gradients */}
-                        <div className="space-y-3">
+                        <div className="space-y-2.5 md:space-y-3">
                           <div className="flex items-center gap-2">
                             <div className="relative h-3 md:h-2 rounded-full overflow-hidden bg-gradient-to-r from-cyan-500 via-neutral-600 to-red-500 flex-1 border border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                               <input type="range" min="-50" max="50" value={settings.red} onChange={(e) => updateSetting('red', Number(e.target.value))} className="w-full h-full opacity-0 cursor-pointer absolute z-10 touch-none" style={{ WebkitTapHighlightColor: 'transparent' }} />
@@ -873,8 +873,8 @@
                 )}
 
                 {activeTab === 'frames' && (
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center mb-1">
                       <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Frames</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-2 md:gap-3">
@@ -904,7 +904,7 @@
                 )}
               </div>
 
-              <div className="p-3 md:p-4 border-t border-white/10 text-[10px] text-neutral-600 text-center font-medium" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+              <div className="p-2 md:p-4 border-t border-white/10 text-[10px] text-neutral-600 text-center font-medium" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
                 LUMINA STUDIO v2.0
               </div>
             </aside>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      background-color: #ff0000;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    h1 { font-size: 48px; margin-bottom: 20px; }
+    p { font-size: 20px; max-width: 600px; }
+    .shield { font-size: 100px; margin-bottom: 20px; }
+    button {
+      margin-top: 30px;
+      padding: 15px 30px;
+      background: white;
+      color: red;
+      border: none;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="shield">
+    <img src="11.png" alt="SafeGuard" style="height:80px;width:80px;" />
+  </div>
+  <h1>PHISHING DETECTED</h1>
+  <p>SAFE GUARD has blocked this website because it is on a known list of crypto scams.</p>
+  <p>Visiting this site may result in loss of funds.</p>
+  <button onclick="window.history.back()">GO BACK TO SAFETY</button>
+</body>
+</html>
+
+
+

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html, body {
+      height: 100%;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      width: 380px;
+      height: 600px;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #0f172a; /* flat dark blue/gray */
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header Section */
+    .header {
+      padding: 16px 16px 10px;
+      text-align: left;
+      flex-shrink: 0;
+      border-bottom: 1px solid #1f2937;
+      background-color: #020617;
+    }
+    
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    
+    .logo {
+      width: 18px;
+      height: 18px;
+    }
+    
+    .subtitle {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    
+    #network-chain {
+      font-size: 11px;
+      font-weight: 600;
+      color: #0369a1;
+      background-color: #e0f2fe;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-left: 6px;
+    }
+    
+    /* Layout sections */
+    .status-area {
+      flex-shrink: 0;
+      padding: 10px 16px;
+    }
+    
+    .risk-box {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      background-color: #020617;
+    }
+    
+    .risk-box.safe {
+      border-color: #16a34a33;
+      background-color: #022c22;
+    }
+    
+    .risk-box.medium {
+      border-color: #f59e0b33;
+      background-color: #451a03;
+    }
+    
+    .risk-box.high {
+      border-color: #b91c1c66;
+      background-color: #450a0a;
+    }
+    
+    .risk-box.critical {
+      border: 2px solid #dc2626;
+      background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%);
+    }
+    
+    .risk-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: none;
+      letter-spacing: 0.3px;
+    }
+    
+    .warnings {
+      font-size: 11px;
+      line-height: 1.5;
+      color: #e5e7eb;
+    }
+    
+    .warnings ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+    
+    .warnings ul li {
+      margin: 3px 0;
+    }
+    
+    /* Emoji support - ensure proper rendering */
+    .warnings, .risk-title {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+    }
+    
+    /* Enhanced styling for strong emphasis in warnings */
+    .warnings strong {
+      color: #fbbf24;
+      font-weight: 700;
+    }
+    
+    /* Content Scroll Area */
+    .content-scroll {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 0 16px;
+      margin-bottom: 6px;
+      min-height: 0;
+    }
+    
+    .content-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    
+    .content-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .content-scroll::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 3px;
+    }
+    
+    /* Details cards */
+    .details {
+      background-color: #020617;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      margin-bottom: 8px;
+      border: 1px solid #1f2937;
+    }
+    
+    .detail-row {
+      margin: 4px 0;
+      color: #e5e7eb;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .detail-label {
+      color: #9ca3af;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    
+    /* Buttons */
+    .buttons {
+      display: flex;
+      gap: 8px;
+      padding: 8px 16px 12px;
+      flex-shrink: 0;
+      border-top: 1px solid #1f2937;
+      background-color: #020617;
+    }
+    
+    button {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+    }
+    
+    .btn-reject {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .btn-reject:hover {
+      background-color: #fecaca;
+    }
+    
+    .btn-approve {
+      background-color: #0369a1;
+      color: #f9fafb;
+    }
+    
+    .btn-approve:hover {
+      background-color: #075985;
+    }
+    
+    /* Critical action buttons (for blocklist warnings) */
+    button.btn-critical-block {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 12px;
+      border: 2px solid #ef4444;
+    }
+    
+    button.btn-critical-block:hover {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    }
+    
+    /* Simulation Summary */
+    #simulation-summary {
+      padding: 8px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #1f2937;
+      background-color: #020617;
+    }
+    
+    #simulation-summary:empty {
+      display: none !important;
+    }
+    
+    /* Compact address display */
+    .address-compact {
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      font-size: 10px;
+      word-break: break-all;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">
+      <img src="11.png" alt="SafeGuard" class="logo" />
+      SAFE GUARD <span id="network-chain" class="subtitle"></span>
+    </div>
+    <div class="subtitle">Transaction Analysis</div>
+  </div>
+
+  <div class="status-area">
+    <div id="riskBox" class="risk-box safe">
+      <div class="risk-title" id="riskTitle"></div>
+      <div class="warnings" id="warnings"></div>
+    </div>
+  </div>
+
+  <div class="content-scroll">
+    <div class="details" id="details"></div>
+    <div id="simulation-summary" class="details" style="margin-top: 10px; border-left: 3px solid #00f0ff; padding-left: 10px; display: none;">
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button id="btnReject" class="btn-reject">Block</button>
+    <button id="btnApprove" class="btn-approve">Continue</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
