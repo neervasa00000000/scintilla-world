@@ -511,14 +511,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             const img = document.createElement('img');
             img.src = p.image;
             img.style.width = '100%';
-            img.style.maxWidth = '100px'; 
+            img.style.maxWidth = '120px'; 
             img.style.height = 'auto';
             img.style.display = 'block';
             img.style.margin = '0 auto';
-            img.style.borderRadius = '6px';
-            img.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+            img.style.borderRadius = '8px';
+            img.style.border = '2px solid rgba(255, 255, 255, 0.15)';
             img.style.objectFit = 'cover';
-            img.onerror = () => { imgContainer.style.display = 'none'; }; // Hide if image fails to load
+            img.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
+            
+            img.onerror = () => { 
+              console.warn('[SAFE GUARD] Failed to load NFT image:', p.image);
+              imgContainer.innerHTML = '<div style="color: rgba(255,255,255,0.4); font-size: 9px; padding: 8px;">🖼️ Image unavailable</div>'; 
+            };
+            
+            img.onload = () => {
+              console.debug('[SAFE GUARD] NFT image loaded successfully');
+            };
+            
             imgContainer.appendChild(img);
             row.appendChild(imgContainer);
           }

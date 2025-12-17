@@ -264,7 +264,7 @@ export async function checkHoneypotAndActor({ method, params, origin, chainId })
           let totalValue = 0;
 
           if (tokenId) {
-            displayValue = `NFT: ${symbol}`;
+            displayValue = `${symbol} #${tokenId}`;
           } else if (t.data && t.data !== '0x') {
             const val = BigInt(t.data);
             const floatVal = formatBigIntTokenValue(val, decimals); // Use enhanced helper
@@ -418,29 +418,44 @@ async function getNftImage(contract, tokenId, chainId = '0x1') {
     const data = '0xc87b56dd' + hexId;
     const uriHex = await swarmRequest('eth_call', [{ to: contract, data }, 'latest'], false, chainId);
     
-    if (!uriHex || uriHex === '0x') return null;
+    if (!uriHex || uriHex === '0x') {
+      console.debug(`[SAFE GUARD] No tokenURI for ${contract} #${tokenId}`);
+      return null;
+    }
     
     // 2. Decode String
     let uri = hexToAscii(uriHex).replace(/[^\x20-\x7E]/g, '').trim();
     // Fix common IPFS formats
     if (uri.startsWith('ipfs://')) uri = uri.replace('ipfs://', 'https://ipfs.io/ipfs/');
     
-    // 3. Fetch Metadata JSON
-    const res = await fetch(uri);
+    // 3. Fetch Metadata JSON (with timeout)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const res = await fetch(uri, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    
+    if (!res.ok) {
+      console.debug(`[SAFE GUARD] Failed to fetch NFT metadata: ${res.status}`);
+      return null;
+    }
+    
     const json = await res.json();
     
     // 4. Extract Image
     let img = json.image || json.image_url;
-    if (img && img.startsWith('ipfs://')) img = img.replace('ipfs://', 'https://ipfs.io/ipfs/');
-    
-    // 5. PRIVACY FIX: Use proxy to prevent IP leak
-    if (img) {
-      // Use images.weserv.nl as privacy proxy (doesn't log IPs)
-      img = `https://images.weserv.nl/?url=${encodeURIComponent(img)}`;
+    if (!img) {
+      console.debug(`[SAFE GUARD] No image field in metadata`);
+      return null;
     }
     
+    if (img.startsWith('ipfs://')) img = img.replace('ipfs://', 'https://ipfs.io/ipfs/');
+    
+    // 5. Return direct image URL (removed proxy for better compatibility)
+    console.debug(`[SAFE GUARD] NFT Image found: ${img}`);
     return img;
   } catch (e) {
+    console.debug(`[SAFE GUARD] NFT Image error:`, e.message);
     return null;
   }
 }
