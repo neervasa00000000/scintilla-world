@@ -484,6 +484,147 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (simulation && simulation.name) {
       simulationSummaryEl.style.display = 'block'; // Show only when there's content
       
+      // --- TRANSACTION SUMMARY: What You Lose vs What You Gain ---
+      if (simulation.params && simulation.params.length > 0) {
+        const losses = simulation.params.filter(p => p.type === 'LOSS');
+        const gains = simulation.params.filter(p => p.type === 'INCOMING' || p.type === 'NFT MINT');
+        
+        if (losses.length > 0 || gains.length > 0) {
+          const summarySection = document.createElement('div');
+          summarySection.style.marginBottom = '16px';
+          summarySection.style.padding = '14px';
+          summarySection.style.background = 'rgba(0, 240, 255, 0.05)';
+          summarySection.style.borderRadius = '10px';
+          summarySection.style.border = '2px solid rgba(0, 240, 255, 0.2)';
+          
+          const summaryTitle = document.createElement('div');
+          summaryTitle.style.color = '#00f0ff';
+          summaryTitle.style.fontSize = '10px';
+          summaryTitle.style.fontWeight = '700';
+          summaryTitle.style.textTransform = 'uppercase';
+          summaryTitle.style.letterSpacing = '1px';
+          summaryTitle.style.marginBottom = '12px';
+          summaryTitle.textContent = '💱 TRANSACTION SUMMARY';
+          summarySection.appendChild(summaryTitle);
+          
+          // Create two-column layout
+          const summaryGrid = document.createElement('div');
+          summaryGrid.style.display = 'grid';
+          summaryGrid.style.gridTemplateColumns = '1fr 1fr';
+          summaryGrid.style.gap = '12px';
+          
+          // LEFT COLUMN: What You Lose
+          const lossColumn = document.createElement('div');
+          lossColumn.style.padding = '10px';
+          lossColumn.style.background = losses.length > 0 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.03)';
+          lossColumn.style.borderRadius = '8px';
+          lossColumn.style.border = losses.length > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.1)';
+          
+          const lossHeader = document.createElement('div');
+          lossHeader.style.color = losses.length > 0 ? '#ff6b6b' : 'rgba(255, 255, 255, 0.5)';
+          lossHeader.style.fontSize = '9px';
+          lossHeader.style.fontWeight = '700';
+          lossHeader.style.marginBottom = '8px';
+          lossHeader.style.textTransform = 'uppercase';
+          lossHeader.style.letterSpacing = '0.5px';
+          lossHeader.textContent = '📤 YOU SEND';
+          lossColumn.appendChild(lossHeader);
+          
+          if (losses.length > 0) {
+            losses.forEach(loss => {
+              const lossItem = document.createElement('div');
+              lossItem.style.color = '#fca5a5';
+              lossItem.style.fontSize = '10px';
+              lossItem.style.marginBottom = '6px';
+              lossItem.style.fontWeight = '600';
+              lossItem.style.lineHeight = '1.4';
+              lossItem.style.wordBreak = 'break-word';
+              lossItem.textContent = loss.value.replace('(Estimated Value:', '').replace(')', '');
+              lossColumn.appendChild(lossItem);
+              
+              // Add NFT image if exists
+              if (loss.image) {
+                const miniImg = document.createElement('img');
+                miniImg.src = loss.image;
+                miniImg.style.width = '60px';
+                miniImg.style.height = '60px';
+                miniImg.style.borderRadius = '6px';
+                miniImg.style.marginTop = '6px';
+                miniImg.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                miniImg.style.objectFit = 'cover';
+                miniImg.onerror = () => { miniImg.style.display = 'none'; };
+                lossColumn.appendChild(miniImg);
+              }
+            });
+          } else {
+            const noLoss = document.createElement('div');
+            noLoss.style.color = 'rgba(255, 255, 255, 0.4)';
+            noLoss.style.fontSize = '9px';
+            noLoss.style.fontStyle = 'italic';
+            noLoss.textContent = 'Nothing';
+            lossColumn.appendChild(noLoss);
+          }
+          
+          summaryGrid.appendChild(lossColumn);
+          
+          // RIGHT COLUMN: What You Gain
+          const gainColumn = document.createElement('div');
+          gainColumn.style.padding = '10px';
+          gainColumn.style.background = gains.length > 0 ? 'rgba(34, 197, 94, 0.15)' : 'rgba(255, 255, 255, 0.03)';
+          gainColumn.style.borderRadius = '8px';
+          gainColumn.style.border = gains.length > 0 ? '1px solid rgba(34, 197, 94, 0.3)' : '1px solid rgba(255, 255, 255, 0.1)';
+          
+          const gainHeader = document.createElement('div');
+          gainHeader.style.color = gains.length > 0 ? '#86efac' : 'rgba(255, 255, 255, 0.5)';
+          gainHeader.style.fontSize = '9px';
+          gainHeader.style.fontWeight = '700';
+          gainHeader.style.marginBottom = '8px';
+          gainHeader.style.textTransform = 'uppercase';
+          gainHeader.style.letterSpacing = '0.5px';
+          gainHeader.textContent = '📥 YOU RECEIVE';
+          gainColumn.appendChild(gainHeader);
+          
+          if (gains.length > 0) {
+            gains.forEach(gain => {
+              const gainItem = document.createElement('div');
+              gainItem.style.color = '#86efac';
+              gainItem.style.fontSize = '10px';
+              gainItem.style.marginBottom = '6px';
+              gainItem.style.fontWeight = '600';
+              gainItem.style.lineHeight = '1.4';
+              gainItem.style.wordBreak = 'break-word';
+              gainItem.textContent = gain.value.replace('(Estimated Value:', '').replace(')', '');
+              gainColumn.appendChild(gainItem);
+              
+              // Add NFT image if exists
+              if (gain.image) {
+                const miniImg = document.createElement('img');
+                miniImg.src = gain.image;
+                miniImg.style.width = '60px';
+                miniImg.style.height = '60px';
+                miniImg.style.borderRadius = '6px';
+                miniImg.style.marginTop = '6px';
+                miniImg.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                miniImg.style.objectFit = 'cover';
+                miniImg.onerror = () => { miniImg.style.display = 'none'; };
+                gainColumn.appendChild(miniImg);
+              }
+            });
+          } else {
+            const noGain = document.createElement('div');
+            noGain.style.color = 'rgba(255, 255, 255, 0.4)';
+            noGain.style.fontSize = '9px';
+            noGain.style.fontStyle = 'italic';
+            noGain.textContent = 'Nothing';
+            gainColumn.appendChild(noGain);
+          }
+          
+          summaryGrid.appendChild(gainColumn);
+          summarySection.appendChild(summaryGrid);
+          simulationSummaryEl.appendChild(summarySection);
+        }
+      }
+      
       // Add a header for decoded action section
       const sectionHeader = document.createElement('div');
       sectionHeader.style.color = 'rgba(255, 255, 255, 0.5)';
