@@ -508,10 +508,25 @@ async function getNftImage(contract, tokenId, chainId = '0x1') {
       return null;
     }
     
-    // 2. Decode String
+    // 2. Decode String and validate
     let uri = hexToAscii(uriHex).replace(/[^\x20-\x7E]/g, '').trim();
+    
+    // Validate and clean the URI
+    if (!uri || uri.length < 5) {
+      console.debug(`[SAFE GUARD] Invalid URI format`);
+      return null;
+    }
+    
     // Fix common IPFS formats
-    if (uri.startsWith('ipfs://')) uri = uri.replace('ipfs://', 'https://ipfs.io/ipfs/');
+    if (uri.startsWith('ipfs://')) {
+      uri = uri.replace('ipfs://', 'https://ipfs.io/ipfs/');
+    }
+    
+    // Validate it's a proper URL
+    if (!uri.startsWith('http://') && !uri.startsWith('https://')) {
+      console.debug(`[SAFE GUARD] Invalid URL scheme: ${uri.substring(0, 20)}`);
+      return null;
+    }
     
     // 3. Fetch Metadata JSON (with timeout)
     const controller = new AbortController();
@@ -527,16 +542,28 @@ async function getNftImage(contract, tokenId, chainId = '0x1') {
     
     const json = await res.json();
     
-    // 4. Extract Image
+    // 4. Extract and validate Image
     let img = json.image || json.image_url;
-    if (!img) {
+    if (!img || typeof img !== 'string') {
       console.debug(`[SAFE GUARD] No image field in metadata`);
       return null;
     }
     
-    if (img.startsWith('ipfs://')) img = img.replace('ipfs://', 'https://ipfs.io/ipfs/');
+    // Clean and validate image URL
+    img = img.trim();
     
-    // 5. Return direct image URL (removed proxy for better compatibility)
+    // Fix IPFS URLs
+    if (img.startsWith('ipfs://')) {
+      img = img.replace('ipfs://', 'https://ipfs.io/ipfs/');
+    }
+    
+    // Validate it's a proper URL
+    if (!img.startsWith('http://') && !img.startsWith('https://')) {
+      console.debug(`[SAFE GUARD] Invalid image URL scheme`);
+      return null;
+    }
+    
+    // 5. Return direct image URL
     console.debug(`[SAFE GUARD] NFT Image found: ${img}`);
     return img;
   } catch (e) {
@@ -560,13 +587,45 @@ async function getTokenDetails(contractAddress, chainId = '0x1') {
 }
 
 function hexToAscii(hex) {
-  let str = '';
-  const cleanHex = hex.replace(/^0x/, '');
-  for (let i = 0; i < cleanHex.length; i += 2) {
-    const code = parseInt(cleanHex.substr(i, 2), 16);
-    if (code > 32 && code < 126) str += String.fromCharCode(code);
+  if (!hex || hex === '0x') return '';
+  
+  try {
+    // Remove 0x prefix
+    const cleanHex = hex.replace(/^0x/, '');
+    
+    // Solidity string encoding: first 64 chars are offset, next 64 are length
+    // We need to skip the first 128 characters (64 bytes) to get to the actual string
+    if (cleanHex.length > 128) {
+      // Extract the actual string data (after offset and length)
+      const stringData = cleanHex.slice(128);
+      
+      // Decode only printable ASCII characters
+      let str = '';
+      for (let i = 0; i < stringData.length; i += 2) {
+        const code = parseInt(stringData.substring(i, i + 2), 16);
+        // Only include printable ASCII (space to ~)
+        if (code >= 32 && code <= 126) {
+          str += String.fromCharCode(code);
+        } else if (code === 0) {
+          break; // Stop at null terminator
+        }
+      }
+      return str.trim();
+    }
+    
+    // Fallback: decode the whole thing (for non-standard encodings)
+    let str = '';
+    for (let i = 0; i < cleanHex.length; i += 2) {
+      const code = parseInt(cleanHex.substring(i, i + 2), 16);
+      if (code >= 32 && code <= 126) {
+        str += String.fromCharCode(code);
+      }
+    }
+    return str.trim();
+  } catch (e) {
+    console.debug('[SAFE GUARD] hexToAscii error:', e);
+    return '';
   }
-  return str;
 }
 
 function extractLogs(traceNode) {
