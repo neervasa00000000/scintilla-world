@@ -115,11 +115,16 @@ async function getUniswapQuote(tokenIn, tokenOut, decimalsIn, decimalsOut, quote
     }, 'latest']);
 
     if (res && res !== '0x') {
-      // Decode Output (uint256 amountOut)
+      // Decode Output (uint256 amountOut) - BigInt-safe conversion
       const val = BigInt(res);
-      const divisor = BigInt(10) ** BigInt(decimalsOut);
-      // FIX: Ensure Number conversion uses division, not concatenation, for safety
-      return Number(val) / Number(divisor);
+      const decimalsOutNum = Number(decimalsOut);
+      
+      // BigInt-safe conversion: format as string then parse to float
+      // This avoids Number.MAX_SAFE_INTEGER limits and precision loss
+      let valStr = val.toString().padStart(decimalsOutNum + 1, '0');
+      const index = valStr.length - decimalsOutNum;
+      const formatted = valStr.slice(0, index) + '.' + valStr.slice(index);
+      return parseFloat(formatted);
     }
   }
   return 0;

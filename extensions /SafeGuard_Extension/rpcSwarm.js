@@ -127,11 +127,13 @@ export async function swarmRequest(method, params, requiresTrace = false, chainI
 
   // 3. HANDLE RESULTS
   try {
-    // Use Promise.any to return the first successful result
-    return await Promise.any(requestPromises);
+    // Use Promise.any with polyfill fallback for older browsers
+    return await (Promise.any ? Promise.any(requestPromises) : promiseAny(requestPromises));
   } catch (e) {
-    // Only log if the entire swarm fails to find a working node
-    console.debug(`[SAFE GUARD] Swarm exhausted for ${method} on ${chainId}`);
+    // Log detailed error information for debugging
+    const errorDetails = e.errors || [e.message || 'Unknown error'];
+    console.warn(`[SAFE GUARD] Swarm failed for ${method}:`, errorDetails);
+    // Return null to allow honeypot.js to trigger its "Blind Spot" or "Network Failure" logic
     return null;
   }
 }
