@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COPY</title>
+    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="fontawesome/css/all.min.css">
+</head>
+<body>
+    <div id="toastContainer" class="toast-container"></div>
+
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <img src="icon48.png" alt="COPY" style="width: 28px; height: 28px;">
+            </div>
+            <div>
+                <div class="header-title">COPY</div>
+                <div class="header-subtitle">Data Extractor & Automation</div>
+            </div>
+        </div>
+        <div class="header-actions" id="headerActions">
+            <label class="btn btn-secondary btn-sm" style="cursor: pointer;">
+                <i class="fa-solid fa-upload"></i>
+                <input type="file" id="csvImportInput" accept=".csv" style="display: none;" />
+            </label>
+            <button id="exportBtn" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-download"></i>
+            </button>
+            <button id="resetBtn" class="btn btn-secondary btn-icon" title="Reset">
+                <i class="fa-solid fa-rotate"></i>
+            </button>
+            <button id="scanPageBtn" class="btn btn-secondary btn-sm" title="Scan current website">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Scan Page</span>
+            </button>
+        </div>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab-btn active" data-tab="extract">
+            <i class="fa-solid fa-scissors"></i>
+            <span>Extract</span>
+        </button>
+        <button class="tab-btn" data-tab="automation">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Automation</span>
+        </button>
+    </nav>
+
+    <main class="main-content">
+        <div id="extractTab" class="tab-content active">
+            <div class="content-section">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Current selection</div>
+                            <div class="card-subtitle">What COPY found</div>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="emailCount">0</div>
+                            <div class="stat-label">Emails</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="phoneCount">0</div>
+                            <div class="stat-label">Phones</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="countDisplay">0</div>
+                            <div class="stat-label">Records</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="section-label">
+                        <i class="fa-solid fa-paste section-label-icon"></i>
+                        <span>Paste text</span>
+                    </div>
+                    <div id="pasteArea" contenteditable="true" class="input textarea scrollbar" data-placeholder="Paste your text here..."></div>
+                </section>
+            </div>
+
+            <div class="content-section">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Review & tag contact</div>
+                            <div class="card-subtitle">Edit before saving</div>
+                        </div>
+                        <div class="flex gap-1">
+                            <button id="clearInputsBtn" class="btn btn-secondary btn-icon" title="Clear"><i class="fa-solid fa-eraser"></i></button>
+                            <button id="addBtn" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i><span>Add</span></button>
+                        </div>
+                    </div>
+                    <div class="input-grid mb-2">
+                        <div class="input-group">
+                            <label class="input-label">First name</label>
+                            <input type="text" id="firstName" class="input" placeholder="John">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Last name</label>
+                            <input type="text" id="lastName" class="input" placeholder="Doe">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Company Name</label>
+                        <input type="text" id="companyName" class="input" placeholder="e.g. Google">
+                    </div>
+                    <div class="input-group">
+                        <div class="section-label"><i class="fa-solid fa-envelope section-label-icon"></i><span>Email addresses</span></div>
+                        <div id="emailList" class="chips-container scrollbar"></div>
+                    </div>
+                    <div class="input-group">
+                        <div class="section-label"><i class="fa-solid fa-phone section-label-icon"></i><span>Phone numbers</span></div>
+                        <div id="phoneList" class="chips-container scrollbar"></div>
+                    </div>
+                </section>
+
+                <section class="card records-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Saved contacts</div>
+                            <div class="card-subtitle">Your extracted records</div>
+                        </div>
+                    </div>
+                    <div id="recordsList" class="records-container scrollbar">
+                        <div id="emptyState" class="empty-records">
+                            <div class="empty-records-icon"><i class="fa-solid fa-inbox"></i></div>
+                            <div class="empty-records-title">No records yet</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div id="automationTab" class="tab-content">
+            <div class="content-section">
+                <section class="card">
+                    <div class="card-header">
+                        <div class="card-title">Email Client</div>
+                    </div>
+                    <select id="emailClientSelect" class="input">
+                        <option value="default">Apple Mail (Default)</option>
+                        <option value="gmail">Gmail</option>
+                    </select>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div class="card-title">Email Template</div>
+                    </div>
+                    <select id="templateSelect" class="input mb-2"><option value="">Loading...</option></select>
+                    <button id="editTemplateBtn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-edit"></i><span>Edit</span></button>
+                </section>
+
+                <section id="templateEditor" class="card" style="display: none;">
+                    <div class="card-header">
+                        <div class="card-title">Edit Template</div>
+                        <button id="closeEditorBtn" class="btn btn-secondary btn-icon"><i class="fa-solid fa-times"></i></button>
+                    </div>
+                    <input type="text" id="templateName" class="input mb-2" placeholder="Name">
+                    <input type="text" id="templateSubject" class="input mb-2" placeholder="Subject">
+                    <textarea id="templateBody" class="input textarea" placeholder="Body..."></textarea>
+                    <div class="flex gap-1 mt-2">
+                        <button id="saveTemplateBtn" class="btn btn-primary btn-sm">Save</button>
+                        <button id="newTemplateBtn" class="btn btn-secondary btn-sm">New</button>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Campaign Runner</div>
+                            <div id="campaignStatus">Ready</div>
+                            <div id="totalRecordsDisplay" class="card-subtitle">Total Records: 0</div>
+                        </div>
+                        <button id="startCampaignBtn" class="btn btn-primary btn-sm">Start</button>
+                    </div>
+                    <div id="progressBar" class="progress-bar" style="display: none;"><div class="progress-fill" id="progressFill"></div></div>
+                    <div id="currentContactCard" class="card" style="display: none;">
+                        <div class="card-header">
+                            <div>
+                                <div id="currentContactName">Name</div>
+                                <div id="currentContactEmail">Email</div>
+                            </div>
+                            <span class="status-badge" id="currentContactStatus">New</span>
+                        </div>
+                        <div class="preview-body" id="previewBody"></div>
+                        <div class="flex gap-1 mt-2">
+                            <a id="openEmailLink" href="#" target="_blank" class="btn btn-primary btn-sm" style="flex: 1;">Open Email & Next</a>
+                            <button id="skipContactBtn" class="btn btn-secondary btn-sm">Skip</button>
+                        </div>
+                    </div>
+                    <div id="campaignEmptyState" class="empty-records">
+                        <div class="empty-records-title">No campaign active</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="floatMenu" class="context-menu">
+        <div id="assignNameBtn" class="context-menu-item">
+            <i class="fa-solid fa-user-check"></i>
+            <span>Use as name</span>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

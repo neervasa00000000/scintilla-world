@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "COPY",
+  "version": "0.0.0.01",
+  "description": "Extract emails, phones and names from text or web pages, then automate outreach.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "COPY"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
