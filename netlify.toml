@@ -32,6 +32,12 @@
   force = false
 
 [[redirects]]
+  from = "/privacypolicy/*"
+  to = "/website/privacypolicy/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
   from = "/privacy"
   to = "/extensions /SynapseSave/privacy-policy.html"
   status = 200
