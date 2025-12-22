@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "SafeGuard",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "Intercepts Web3 transactions and runs local risk checks.",
-  "permissions": ["scripting", "tabs", "storage", "windows", "declarativeNetRequest"],
+  "permissions": ["tabs", "storage", "windows", "declarativeNetRequest"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",
