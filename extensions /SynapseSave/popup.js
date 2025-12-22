@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     await refreshAll();
     setupEventListeners();
+
+    const searchInput = document.getElementById('tabSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            filterTabs(searchInput.value);
+        });
+    }
 });
 
 // --- CORE DATA LOADING ---
@@ -30,6 +37,52 @@ async function refreshAll() {
     // 3. Restore scroll positions
     if (document.getElementById('openTabsList')) document.getElementById('openTabsList').scrollTop = scrollPosOpen;
     if (document.getElementById('snoozedList')) document.getElementById('snoozedList').scrollTop = scrollPosSnoozed;
+}
+
+let allOpenTabs = []; // To store all open tabs for filtering
+let allSnoozedTabs = []; // To store all snoozed tabs for filtering
+
+function filterTabs(query) {
+    const lowerCaseQuery = query.toLowerCase();
+
+    const filteredOpenTabs = allOpenTabs.filter(tab =>
+        (tab.title && tab.title.toLowerCase().includes(lowerCaseQuery)) ||
+        (tab.url && tab.url.toLowerCase().includes(lowerCaseQuery))
+    );
+
+    const filteredSnoozedTabs = allSnoozedTabs.filter(tab =>
+        (tab.title && tab.title.toLowerCase().includes(lowerCaseQuery)) ||
+        (tab.url && tab.url.toLowerCase().includes(lowerCaseQuery))
+    );
+
+    renderTabs(filteredOpenTabs, 'openTabsList', 'openTabCount', 'No tabs to manage', '📑', 'Open some tabs to get started');
+    renderTabs(filteredSnoozedTabs, 'snoozedList', 'snoozedTabCount', 'No snoozed tabs', '💤', 'Snooze tabs to see them here', true);
+}
+
+// Helper to render tabs (for both open and snoozed)
+function renderTabs(tabsToRender, listId, countId, emptyTitle, emptyIcon, emptyHint, isSnoozed = false) {
+    const listElement = document.getElementById(listId);
+    const countElement = document.getElementById(countId);
+
+    if (!listElement || !countElement) return;
+
+    countElement.textContent = tabsToRender.length;
+    listElement.innerHTML = '';
+
+    if (tabsToRender.length === 0) {
+        listElement.innerHTML = `<div class="empty-state"><div class="empty-icon">${emptyIcon}</div><p class="empty-title">${emptyTitle}</p><p class="empty-hint">${emptyHint}</p></div>`;
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    tabsToRender.forEach(tab => {
+        if (isSnoozed) {
+            fragment.appendChild(createSnoozedItem(tab));
+        } else {
+            fragment.appendChild(createTabItem(tab));
+        }
+    });
+    listElement.appendChild(fragment);
 }
 
 async function loadStats() {
@@ -209,26 +262,14 @@ function createDuplicateGroup(domain, tabs) {
 async function loadTabs() {
     // FIX: Only query tabs for the CURRENT WINDOW to avoid confusion
     const tabs = await chrome.tabs.query({ currentWindow: true });
-    const openTabsList = document.getElementById('openTabsList');
-    const openTabCount = document.getElementById('openTabCount');
-    
-    const filteredTabs = tabs.filter(tab => 
-        !tab.url.startsWith('chrome://') && 
+
+    allOpenTabs = tabs.filter(tab =>
+        !tab.url.startsWith('chrome://') &&
         !tab.url.startsWith('edge://') &&
         !tab.url.startsWith('about:')
     );
-    
-    openTabCount.textContent = filteredTabs.length;
-    openTabsList.innerHTML = ''; // Clear current list
-    if (filteredTabs.length === 0) {
-        openTabsList.innerHTML = `<div class="empty-state"><div class="empty-icon">📑</div><p class="empty-title">No tabs to manage</p><p class="empty-hint">Open some tabs to get started</p></div>`;
-        return;
-    }
-    
-    // PERFORMANCE: Use DocumentFragment to minimize reflows
-    const fragment = document.createDocumentFragment();
-    filteredTabs.forEach(tab => fragment.appendChild(createTabItem(tab)));
-    openTabsList.appendChild(fragment);
+
+    renderTabs(allOpenTabs, 'openTabsList', 'openTabCount', 'No tabs to manage', '📑', 'Open some tabs to get started');
 }
 
 function createTabItem(tab) {
@@ -306,23 +347,12 @@ function createTabItem(tab) {
 
 async function loadSnoozedTabs() {
     const result = await chrome.storage.local.get(['snoozedTabs']);
-    const snoozedTabs = result.snoozedTabs || [];
-    const snoozedList = document.getElementById('snoozedList');
-    const countBadge = document.getElementById('snoozedTabCount');
-    
-    countBadge.textContent = snoozedTabs.length;
-    snoozedList.innerHTML = '';
-    if (snoozedTabs.length === 0) {
-        snoozedList.innerHTML = `<div class="empty-state"><div class="empty-icon">💤</div><p class="empty-title">No snoozed tabs</p><p class="empty-hint">Snooze tabs to see them here</p></div>`;
-        return;
-    }
+    allSnoozedTabs = result.snoozedTabs || [];
 
     // Sort by wake time (soonest first)
-    snoozedTabs.sort((a, b) => a.wakeTime - b.wakeTime);
-    
-    const fragment = document.createDocumentFragment();
-    snoozedTabs.forEach(tab => fragment.appendChild(createSnoozedItem(tab)));
-    snoozedList.appendChild(fragment);
+    allSnoozedTabs.sort((a, b) => a.wakeTime - b.wakeTime);
+
+    renderTabs(allSnoozedTabs, 'snoozedList', 'snoozedTabCount', 'No snoozed tabs', '💤', 'Snooze tabs to see them here', true);
 }
 
 function createSnoozedItem(tab) {
@@ -653,6 +683,11 @@ function setupEventListeners() {
     const clearAllBtn = document.getElementById('clearAllBtn');
     if (clearAllBtn) {
         clearAllBtn.addEventListener('click', () => batchSnooze('oneday'));
+    }
+
+    const snoozeAllBtn = document.getElementById('snoozeAllBtn');
+    if (snoozeAllBtn) {
+        snoozeAllBtn.addEventListener('click', () => batchSnooze('oneday')); // Assuming default snooze all is one day
     }
     
     // Snooze Options - Use event delegation for better performance

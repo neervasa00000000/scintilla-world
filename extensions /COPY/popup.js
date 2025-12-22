@@ -16,7 +16,7 @@ let el = {};
 
 const patterns = {
     email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
-    phone: /(?:(?:\+?61|0)[2-478](?:[ -]?[0-9]){8})|(?:\+?61|0)4(?:[ -]?[0-9]){8}|(?:\(0[2-478]\)(?:[ -]?[0-9]){8})|\b\d{4}[ -]?\d{3}[ -]?\d{3}\b/g
+    phone: /(?:(?:\\+?61|0)[2-478](?:[ -]?[0-9]){8})|(?:\\+?61|0)4(?:[ -]?[0-9]){8}|(?:\\(0[2-478]\\)(?:[ -]?[0-9]){8})|\\b\\d{4}[ -]?\\d{3}[ -]?\\d{3}\\b/g
 };
 
 const filterInvalid = {
@@ -26,60 +26,78 @@ const filterInvalid = {
         return !invalid.some(inv => lower.includes(inv)) && email.includes('.') && email.includes('@');
     },
     phones: (phone) => {
-        const digits = phone.replace(/\D/g, ''); // FIXED: \D instead of \\D
+        const digits = phone.replace(/\\D/g, ''); // FIXED: \\D instead of \\\\D
         return digits.length >= 8 && digits.length <= 15 && new Set(digits).size > 2;
     }
 };
 
+// Helper functions for robust element access and event handling
+function getElementByIdOrLog(id) {
+    const element = document.getElementById(id);
+    if (!element) {
+        console.error(`Element with ID '${id}' not found.`);
+    }
+    return element;
+}
+
+function safelyOn(el, event, handler) {
+  if (el) el.addEventListener(event, handler);
+}
+
+function isRestrictedURL(url) {
+    return url.startsWith('chrome://') || url.startsWith('chrome-extension://');
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     el = {
-        pasteArea: document.getElementById('pasteArea'),
-        floatMenu: document.getElementById('floatMenu'),
-        recordsList: document.getElementById('recordsList'),
-        emptyState: document.getElementById('emptyState'),
-        countDisplay: document.getElementById('countDisplay'),
-        toastContainer: document.getElementById('toastContainer'),
-        resetBtn: document.getElementById('resetBtn'),
-        exportBtn: document.getElementById('exportBtn'),
-        clearInputsBtn: document.getElementById('clearInputsBtn'),
-        addBtn: document.getElementById('addBtn'),
-        assignNameBtn: document.getElementById('assignNameBtn'),
-        firstName: document.getElementById('firstName'),
-        lastName: document.getElementById('lastName'),
-        companyName: document.getElementById('companyName'),
-        emailList: document.getElementById('emailList'),
-        phoneList: document.getElementById('phoneList'),
-        emailCount: document.getElementById('emailCount'),
-        phoneCount: document.getElementById('phoneCount'),
+        pasteArea: getElementByIdOrLog('pasteArea'),
+        floatMenu: getElementByIdOrLog('floatMenu'),
+        recordsList: getElementByIdOrLog('recordsList'),
+        emptyState: getElementByIdOrLog('emptyState'),
+        countDisplay: getElementByIdOrLog('countDisplay'),
+        toastContainer: getElementByIdOrLog('toastContainer'),
+        resetBtn: getElementByIdOrLog('resetBtn'),
+        exportBtn: getElementByIdOrLog('exportBtn'),
+        clearInputsBtn: getElementByIdOrLog('clearInputsBtn'),
+        addBtn: getElementByIdOrLog('addBtn'),
+        assignNameBtn: getElementByIdOrLog('assignNameBtn'),
+        firstName: getElementByIdOrLog('firstName'),
+        lastName: getElementByIdOrLog('lastName'),
+        companyName: getElementByIdOrLog('companyName'),
+        emailList: getElementByIdOrLog('emailList'),
+        phoneList: getElementByIdOrLog('phoneList'),
+        emailCount: getElementByIdOrLog('emailCount'),
+        phoneCount: getElementByIdOrLog('phoneCount'),
         tabButtons: document.querySelectorAll('.tab-btn'),
-        extractTab: document.getElementById('extractTab'),
-        automationTab: document.getElementById('automationTab'),
-        templateSelect: document.getElementById('templateSelect'),
-        editTemplateBtn: document.getElementById('editTemplateBtn'),
-        templateEditor: document.getElementById('templateEditor'),
-        closeEditorBtn: document.getElementById('closeEditorBtn'),
-        templateName: document.getElementById('templateName'),
-        templateSubject: document.getElementById('templateSubject'),
-        templateBody: document.getElementById('templateBody'),
-        saveTemplateBtn: document.getElementById('saveTemplateBtn'),
-        newTemplateBtn: document.getElementById('newTemplateBtn'),
-        startCampaignBtn: document.getElementById('startCampaignBtn'),
-        progressBar: document.getElementById('progressBar'),
-        progressFill: document.getElementById('progressFill'),
-        currentContactCard: document.getElementById('currentContactCard'),
-        campaignEmptyState: document.getElementById('campaignEmptyState'),
-        currentContactName: document.getElementById('currentContactName'),
-        currentContactEmail: document.getElementById('currentContactEmail'),
-        currentContactStatus: document.getElementById('currentContactStatus'),
-        previewBody: document.getElementById('previewBody'),
-        openEmailLink: document.getElementById('openEmailLink'),
-        skipContactBtn: document.getElementById('skipContactBtn'),
-        campaignStatus: document.getElementById('campaignStatus'),
-        csvImportInput: document.getElementById('csvImportInput'),
-        emailClientSelect: document.getElementById('emailClientSelect'),
-        scanPageBtn: document.getElementById('scanPageBtn'),
-        totalRecordsDisplay: document.getElementById('totalRecordsDisplay')
+        extractTab: getElementByIdOrLog('extractTab'),
+        automationTab: getElementByIdOrLog('automationTab'),
+        templateSelect: getElementByIdOrLog('templateSelect'),
+        editTemplateBtn: getElementByIdOrLog('editTemplateBtn'),
+        templateEditor: getElementByIdOrLog('templateEditor'),
+        closeEditorBtn: getElementByIdOrLog('closeEditorBtn'),
+        templateName: getElementByIdOrLog('templateName'),
+        templateSubject: getElementByIdOrLog('templateSubject'),
+        templateBody: getElementByIdOrLog('templateBody'),
+        saveTemplateBtn: getElementByIdOrLog('saveTemplateBtn'),
+        newTemplateBtn: getElementByIdOrLog('newTemplateBtn'),
+        startCampaignBtn: getElementByIdOrLog('startCampaignBtn'),
+        progressBar: getElementByIdOrLog('progressBar'),
+        progressFill: getElementByIdOrLog('progressFill'),
+        currentContactCard: getElementByIdOrLog('currentContactCard'),
+        campaignEmptyState: getElementByIdOrLog('campaignEmptyState'),
+        currentContactName: getElementByIdOrLog('currentContactName'),
+        currentContactEmail: getElementByIdOrLog('currentContactEmail'),
+        currentContactStatus: getElementByIdOrLog('currentContactStatus'),
+        previewBody: getElementByIdOrLog('previewBody'),
+        openEmailLink: getElementByIdOrLog('openEmailLink'),
+        skipContactBtn: getElementByIdOrLog('skipContactBtn'),
+        campaignStatus: getElementByIdOrLog('campaignStatus'),
+        csvImportInput: getElementByIdOrLog('csvImportInput'),
+        emailClientSelect: getElementByIdOrLog('emailClientSelect'),
+        scanPageBtn: getElementByIdOrLog('scanPageBtn'),
+        totalRecordsDisplay: getElementByIdOrLog('totalRecordsDisplay'),
+        downloadPageBtn: getElementByIdOrLog('downloadPageBtn')
     };
 
     try {
@@ -96,9 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (el.emailClientSelect) el.emailClientSelect.value = state.emailClient;
             renderRecords();
-        renderTemplates();
+            renderTemplates();
             if (state.campaignActive) restoreCampaignUI();
-    });
+        });
     } catch (error) {
         console.error('Storage error on load:', error);
         showToast('Failed to load data', 'error');
@@ -108,105 +126,153 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setupEventListeners() {
-    el.resetBtn.addEventListener('click', clearAll);
-    el.exportBtn.addEventListener('click', exportCSV);
-    el.clearInputsBtn.addEventListener('click', clearInputs);
-    el.addBtn.addEventListener('click', addRecord);
-    el.assignNameBtn.addEventListener('click', assignName);
-    el.editTemplateBtn.addEventListener('click', () => el.templateEditor.style.display = 'block');
-    el.closeEditorBtn.addEventListener('click', () => el.templateEditor.style.display = 'none');
-    el.saveTemplateBtn.addEventListener('click', saveTemplate);
-    el.newTemplateBtn.addEventListener('click', () => { state.currentTemplateId = null; el.templateName.value = ''; el.templateSubject.value = ''; el.templateBody.value = ''; });
-    el.startCampaignBtn.addEventListener('click', startCampaign);
-    el.skipContactBtn.addEventListener('click', skipContact);
-    el.csvImportInput.addEventListener('change', handleCSVImport);
-    el.tabButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
-    el.emailClientSelect.addEventListener('change', (e) => {
-        state.emailClient = e.target.value;
-        try {
-            chrome.storage.local.set({ copy_emailClient: state.emailClient });
-        } catch (error) {
-            console.error('Storage error on saving email client:', error);
-            showToast('Failed to save email client preference', 'error');
-        }
-        if (state.campaignActive) updateCampaignPreview();
-    });
+  safelyOn(el.resetBtn, 'click', clearAll);
+  safelyOn(el.exportBtn, 'click', exportCSV);
+  safelyOn(el.clearInputsBtn, 'click', clearInputs);
+  safelyOn(el.addBtn, 'click', addRecord);
+  safelyOn(el.assignNameBtn, 'click', assignName);
 
-    el.pasteArea.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const text = (e.clipboardData || window.clipboardData).getData('text');
-        const sel = window.getSelection();
-        if (sel.rangeCount > 0) {
-            const range = sel.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(document.createTextNode(text));
-            sel.collapseToEnd();
-        } else {
-            el.pasteArea.innerText += text;
-        }
-        setTimeout(() => scanText(el.pasteArea.innerText), 10);
-    });
+  safelyOn(el.editTemplateBtn, 'click', () => el.templateEditor.style.display = 'block');
+  safelyOn(el.closeEditorBtn, 'click', () => el.templateEditor.style.display = 'none');
+  safelyOn(el.saveTemplateBtn, 'click', saveTemplate);
+  safelyOn(el.newTemplateBtn, 'click', () => {
+    state.currentTemplateId = null;
+    el.templateName.value = '';
+    el.templateSubject.value = '';
+    el.templateBody.value = '';
+  });
 
-    el.pasteArea.addEventListener('input', () => scanText(el.pasteArea.innerText));
+  safelyOn(el.startCampaignBtn, 'click', startCampaign);
+  safelyOn(el.skipContactBtn, 'click', skipContact);
+  safelyOn(el.csvImportInput, 'change', handleCSVImport);
 
-    document.addEventListener('mouseup', (e) => {
-        if (e.target.closest('button') || e.target.closest('.chip')) return;
-        const sel = window.getSelection();
-        const text = sel.toString().trim();
-        if (text.length > 1 && el.pasteArea.contains(sel.anchorNode)) {
-            state.selection = text;
-            const rect = sel.getRangeAt(0).getBoundingClientRect();
-            el.floatMenu.style.display = 'flex';
-            el.floatMenu.style.top = `${rect.top - 45}px`;
-            el.floatMenu.style.left = `${rect.left}px`;
-        } else if (!el.floatMenu.contains(e.target)) {
-            el.floatMenu.style.display = 'none';
-        }
-    });
+  if (el.tabButtons && el.tabButtons.forEach) {
+    el.tabButtons.forEach(btn =>
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab))
+    );
+  }
 
-    el.openEmailLink.addEventListener('click', () => {
-        const records = getRecordsWithEmails();
-        if (state.campaignIndex < records.length) {
-            const idx = state.records.findIndex(r => r.id === records[state.campaignIndex].id);
-            if (idx >= 0) {
-                state.records[idx].status = 'Sent';
-                state.records[idx].lastSent = new Date().toISOString();
-                chrome.storage.local.set({ copy_records: state.records }, renderRecords);
-            }
-        }
-        state.campaignIndex++;
-        saveCampaignState();
-        restoreCampaignUI();
-    });
-
-    if (el.scanPageBtn) {
-        el.scanPageBtn.addEventListener('click', async () => {
-            chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-                if (chrome.runtime.lastError) {
-                    showToast("Cannot scan this page", "error");
-                    return;
-                }
-                try {
-                    // Ensure the content script is injected before sending message
-                    await chrome.scripting.executeScript({
-                        target: { tabId: tabs[0].id },
-                        files: ['content.js']
-                    });
-                    const response = await chrome.tabs.sendMessage(tabs[0].id, { action: "extractFromPage" });
-                    if (response && response.text) {
-                        scanText(response.text);
-                        showToast("Page scanned successfully!");
-                    } else {
-                        showToast("No text extracted from page.", "info");
-                    }
-                } catch (error) {
-                    console.error('Error scanning page:', error);
-                    showToast("Failed to scan page", "error");
-                }
-            });
-        });
+  safelyOn(el.emailClientSelect, 'change', (e) => {
+    state.emailClient = e.target.value;
+    try {
+      chrome.storage.local.set({ copy_emailClient: state.emailClient });
+    } catch (error) {
+      console.error('Storage error on saving email client:', error);
+      showToast('Failed to save email client preference', 'error');
     }
+    if (state.campaignActive) updateCampaignPreview();
+  });
+
+  safelyOn(el.pasteArea, 'paste', (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text');
+    const sel = window.getSelection();
+    if (sel.rangeCount > 0) {
+      const range = sel.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(document.createTextNode(text));
+      sel.collapseToEnd();
+    } else {
+      el.pasteArea.innerText += text;
+    }
+    setTimeout(() => scanText(el.pasteArea.innerText), 10);
+  });
+
+  safelyOn(el.pasteArea, 'input', () => scanText(el.pasteArea.innerText));
+
+  document.addEventListener('mouseup', (e) => {
+    if (e.target.closest('button') || e.target.closest('.chip')) return;
+    const sel = window.getSelection();
+    const text = sel.toString().trim();
+    if (text.length > 1 && el.pasteArea && el.pasteArea.contains(sel.anchorNode)) {
+      state.selection = text;
+      const rect = sel.getRangeAt(0).getBoundingClientRect();
+      if (el.floatMenu) {
+        el.floatMenu.style.display = 'flex';
+        el.floatMenu.style.top = `${rect.top - 45}px`;
+        el.floatMenu.style.left = `${rect.left}px`;
+      }
+    } else if (el.floatMenu && !el.floatMenu.contains(e.target)) {
+      el.floatMenu.style.display = 'none';
+    }
+  });
+
+  safelyOn(el.openEmailLink, 'click', handleOpenEmailLink);
+  safelyOn(el.scanPageBtn, 'click', handleScanPageClick);
+  safelyOn(el.downloadPageBtn, 'click', handleDownloadPageClick);
 }
+
+async function handleScanPageClick() {
+  chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+    if (chrome.runtime.lastError) {
+      showToast("Cannot access tab information", "error");
+      return;
+    }
+    const activeTab = tabs[0];
+    if (isRestrictedURL(activeTab.url)) {
+      showToast("Cannot scan this page (restricted URL)", "error");
+      return;
+    }
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: activeTab.id },
+        files: ['content.js']
+      });
+      const response = await chrome.tabs.sendMessage(activeTab.id, { action: "extractFromPage" });
+      if (response && response.text) {
+        scanText(response.text);
+        showToast("Page scanned successfully!");
+      } else {
+        showToast("No text extracted from page.", "info");
+      }
+    } catch (error) {
+      console.error('Error scanning page:', error);
+      showToast("Failed to scan page", "error");
+    }
+  });
+}
+
+async function handleDownloadPageClick() {
+  chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+    if (chrome.runtime.lastError) {
+      showToast("Cannot access tab information", "error");
+      return;
+    }
+    const activeTab = tabs[0];
+    if (isRestrictedURL(activeTab.url)) {
+      showToast("Cannot download this page (restricted URL)", "error");
+      return;
+    }
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: activeTab.id },
+        function: () => {
+          window.print();
+        }
+      });
+      showToast("Print dialog opened. Save as PDF to download.");
+    } catch (error) {
+      console.error('Error printing page:', error);
+      showToast("Failed to open print dialog", "error");
+    }
+  });
+}
+
+function handleOpenEmailLink() {
+  const records = getRecordsWithEmails();
+  if (state.campaignIndex < records.length) {
+    const idx = state.records.findIndex(r => r.id === records[state.campaignIndex].id);
+    if (idx >= 0) {
+      state.records[idx].status = 'Sent';
+      state.records[idx].lastSent = new Date().toISOString();
+      chrome.storage.local.set({ copy_records: state.records }, renderRecords);
+    }
+  }
+  state.campaignIndex++;
+  saveCampaignState();
+  restoreCampaignUI();
+}
+
 
 function scanText(text) {
     if (!text) return;
@@ -280,11 +346,11 @@ function renderRecords() {
 
 function exportCSV() {
     if (!state.records.length) return showToast('No data', 'error');
-    const head = 'First Name,Last Name,Email,Company,Phone,Status,Last Sent\n';
+    const head = 'First Name,Last Name,Email,Company,Phone,Status,Last Sent\\n';
     const body = state.records.map(r => {
         const s = (v) => `"${(v || '').toString().replace(/"/g, '""')}"`;
         return `${s(r.f)},${s(r.l)},${s(r.emails[0])},${s(r.company)},${s(r.phones[0])},${s(r.status)},${s(r.lastSent)}`;
-    }).join('\n');
+    }).join('\\n');
     const link = document.createElement('a');
     link.href = URL.createObjectURL(new Blob([head + body], { type: 'text/csv' }));
     link.download = `copy_export_${Date.now()}.csv`;
@@ -321,7 +387,7 @@ function restoreCampaignUI() {
     const sub = template.subject.replace(/{name}/g, name).replace(/{company}/g, comp);
     const bod = template.body.replace(/{name}/g, name).replace(/{company}/g, comp);
     
-    el.previewBody.innerText = `Subject: ${sub}\n\n${bod}`;
+    el.previewBody.innerText = `Subject: ${sub}\\n\\n${bod}`;
     el.openEmailLink.href = state.emailClient === 'gmail' 
         ? `https://mail.google.com/mail/?view=cm&to=${contact.emails[0]}&su=${encodeURIComponent(sub)}&body=${encodeURIComponent(bod)}`
         : `mailto:${contact.emails[0]}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(bod)}`;
@@ -526,7 +592,7 @@ function mergeImportedRecords(importedRecords, mergeExisting) {
 
 // Minimal parser stub for CSV to records
 function parseCSVToRecords(csvText) {
-  const lines = csvText.trim().split('\n');
+  const lines = csvText.trim().split('\\n');
   if (lines.length < 2) return [];
 
   const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
@@ -580,8 +646,8 @@ function handleCSVImport(e) {
       let mergeExisting = false;
       if (state.mergeAction === null) { // Only ask if preference is not set
         mergeExisting = confirm(
-          'Some contacts may already exist.\n\n' +
-          'OK = Update existing contacts (merge by email/phone)\n' +
+          'Some contacts may already exist.\\n\\n' +
+          'OK = Update existing contacts (merge by email/phone)\\n' +
           'Cancel = Always create new contacts'
         );
         state.mergeAction = mergeExisting ? 'update' : 'duplicate';
