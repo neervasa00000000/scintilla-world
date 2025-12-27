@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASIN Collector</title>
+  <style>
+    :root {
+      --nippon-red: #d9333f;
+      --sumi-black: #1a1a1b;
+      --washi-white: #ffffff;
+      --paper-bg: #fdfaf7;
+      --border-gray: #e2e2e2;
+      --text-muted: #8c8c8c;
+      --radius: 2px;
+      --font-main: "Helvetica Neue", Arial, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper-bg: #121212;
+        --washi-white: #1e1e1e;
+        --sumi-black: #f0f0f0;
+        --border-gray: #333333;
+      }
+    }
+
+    * { box-sizing: border-box; transition: all 0.15s ease-out; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 380px;
+      background: var(--paper-bg);
+      font-family: var(--font-main);
+      color: var(--sumi-black);
+      line-height: 1.4;
+      overflow-x: hidden;
+    }
+
+    .app-shell { padding: 24px; }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--sumi-black);
+      padding-bottom: 12px;
+    }
+
+    .brand-box h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .brand-box p {
+      margin: 4px 0 0;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--nippon-red);
+      text-transform: uppercase;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .status-badge .count {
+      font-size: 20px;
+      color: var(--nippon-red);
+      display: block;
+      line-height: 1;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border-gray);
+      border: 1px solid var(--border-gray);
+      margin-bottom: 24px;
+    }
+
+    .control-btn {
+      background: var(--washi-white);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      align-items: center;
+    }
+
+    .control-btn:hover { background: var(--paper-bg); }
+
+    .control-label {
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--sumi-black);
+      letter-spacing: 0.08em;
+    }
+
+    /* Enhanced Visibility Toggles */
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--border-gray);
+      border: 1px solid var(--border-gray);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px; width: 14px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    input:checked + .slider { 
+      background-color: var(--nippon-red); 
+      border-color: var(--nippon-red);
+    }
+    
+    input:checked + .slider:before { 
+      transform: translateX(18px); 
+    }
+
+    .action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--nippon-red);
+      color: white;
+      border: none;
+      padding: 16px;
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+      letter-spacing: 0.2em;
+      box-shadow: 4px 4px 0 var(--sumi-black);
+    }
+
+    .btn-primary:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--sumi-black);
+    }
+
+    .btn-primary:active {
+      transform: translate(0, 0);
+      box-shadow: 2px 2px 0 var(--sumi-black);
+    }
+
+    .secondary-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--sumi-black);
+      padding: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      color: var(--sumi-black);
+    }
+
+    .btn-outline:hover {
+      background: var(--sumi-black);
+      color: var(--washi-white);
+    }
+
+    .history-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .history-label-row h2 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+
+    .clear-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .clear-btn:hover { color: var(--nippon-red); }
+
+    .search-box {
+      width: 100%;
+      border: 1px solid var(--border-gray);
+      background: var(--washi-white);
+      padding: 12px;
+      font-size: 12px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    .search-box:focus { border-color: var(--sumi-black); }
+
+    .list-container {
+      max-height: 280px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border-gray);
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-gray);
+    }
+
+    .item-meta { display: flex; flex-direction: column; }
+    .asin { font-family: monospace; font-size: 15px; font-weight: 800; letter-spacing: 0.05em; }
+    .time { font-size: 10px; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
+
+    .copy-pill {
+      background: var(--paper-bg);
+      border: 1px solid var(--border-gray);
+      padding: 6px 12px;
+      font-size: 10px;
+      font-weight: 900;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .copy-pill:hover { border-color: var(--sumi-black); background: var(--washi-white); }
+
+    .list-container::-webkit-scrollbar { width: 4px; }
+    .list-container::-webkit-scrollbar-thumb { background: var(--sumi-black); }
+
+    .empty-text {
+      text-align: center;
+      padding: 40px 0;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--sumi-black);
+      color: white;
+      padding: 10px 20px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      transform: translateY(100px);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 1000;
+    }
+    #toast.show { transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header">
+      <div class="brand-box">
+        <h1>ASIN</h1>
+        <p>Extractor Engine</p>
+      </div>
+      <div class="status-badge">
+        <span class="count" id="total-count">0</span>
+        COLLECTED
+      </div>
+    </header>
+
+    <div class="controls">
+      <label class="control-btn" for="auto-scan">
+        <span class="control-label">AUTO SCAN</span>
+        <div class="toggle">
+          <input type="checkbox" id="auto-scan">
+          <span class="slider"></span>
+        </div>
+      </label>
+      <label class="control-btn" for="click-record">
+        <span class="control-label">CLICK LOG</span>
+        <div class="toggle">
+          <input type="checkbox" id="click-record">
+          <span class="slider"></span>
+        </div>
+      </label>
+    </div>
+
+    <div class="action-group">
+      <button id="manual-scan" class="btn-primary">START PAGE SCAN</button>
+      <div class="secondary-actions">
+        <button id="download-csv" class="btn-outline">EXPORT CSV</button>
+        <button id="copy-all" class="btn-outline">COPY ALL</button>
+      </div>
+    </div>
+
+    <section class="history-section">
+      <div class="history-label-row">
+        <h2>COLLECTED DATA</h2>
+        <button id="clear-history" class="clear-btn">CLEAR HISTORY</button>
+      </div>
+      
+      <input type="text" id="search-history" class="search-box" placeholder="Search ASINs...">
+
+      <div id="history-list" class="list-container"></div>
+    </section>
+  </div>
+
+  <div id="toast">ACTION COMPLETE</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

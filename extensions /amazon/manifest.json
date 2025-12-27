@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "ASIN",
+  "version": "0.1",
+  "description": "Extracts and records ASINs from Amazon products.",
+  "privacy_policy_url": "https://scintilla.world/privacy-policy/asin",
+  "permissions": ["activeTab", "storage", "tabs"],
+  "host_permissions": [
+    "https://*.amazon.com/*",
+    "https://*.amazon.co.uk/*",
+    "https://*.amazon.de/*",
+    "https://*.amazon.co.jp/*",
+    "https://*.amazon.com.au/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "asci.png",
+      "48": "asci.png",
+      "128": "asci.png"
+    }
+  },
+  "icons": {
+    "16": "asci.png",
+    "48": "asci.png",
+    "128": "asci.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.amazon.com/*",
+        "https://*.amazon.co.uk/*",
+        "https://*.amazon.de/*",
+        "https://*.amazon.co.jp/*",
+        "https://*.amazon.com.au/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
