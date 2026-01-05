@@ -56,8 +56,38 @@
             </button>
         </div>
 
+        <!-- Export & Import Section -->
+        <div class="backup-section">
+            <div class="backup-actions">
+                <button class="backup-btn" id="exportBtn" title="Export all snoozed tabs and bundles as JSON">
+                    <span class="backup-icon">📤</span>
+                    <span class="backup-text">Export</span>
+                </button>
+                <button class="backup-btn" id="importBtn" title="Import snoozed tabs and bundles from JSON file">
+                    <span class="backup-icon">📥</span>
+                    <span class="backup-text">Import</span>
+                </button>
+            </div>
+            <input type="file" id="importFileInput" accept=".json" style="display: none;">
+        </div>
+
         <!-- Main Content -->
         <div class="main-content">
+            <!-- Tab Groups Section -->
+            <div class="section tab-groups-section" id="tabGroupsSection" style="display: none;">
+                <div class="section-header">
+                    <div class="section-title-group">
+                        <span class="section-icon">📦</span>
+                        <h2>Tab Groups</h2>
+                    </div>
+                    <div class="tab-count-badge" id="tabGroupCount">0</div>
+                </div>
+                
+                <div class="tab-groups-list" id="tabGroupsList">
+                    <!-- Tab groups will be inserted here -->
+                </div>
+            </div>
+
             <!-- Duplicate Tabs Section -->
             <div class="section duplicate-tabs-section" id="duplicateTabsSection" style="display: none;">
                 <div class="section-header">
@@ -145,11 +175,78 @@
         </div>
     </div>
 
+    <!-- Bundle Name Modal -->
+    <div class="modal" id="bundleNameModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span class="modal-icon">📦</span>
+                    <h3>Name Your Bundle</h3>
+                </div>
+                <button class="modal-close" id="closeBundleModalBtn" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="bundle-name-input-container">
+                    <input type="text" id="bundleNameInput" placeholder="e.g., Client A research, Trip planning..." class="bundle-name-input" maxlength="50">
+                    <p class="bundle-name-hint">Give your bundle a memorable name</p>
+                </div>
+                <div class="snooze-options-grid">
+                    <div class="snooze-option" data-time="oneday">
+                        <div class="snooze-emoji">⏰</div>
+                        <div class="snooze-label">One Day</div>
+                        <div class="snooze-time">24 hours</div>
+                    </div>
+                    <div class="snooze-option" data-time="nextweek">
+                        <div class="snooze-emoji">🗓️</div>
+                        <div class="snooze-label">Next Week</div>
+                        <div class="snooze-time">7 days</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="snoozeBundleBtn" style="width: 100%; margin-top: 16px;">Snooze Bundle</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast">
         <div class="toast-content">
             <span class="toast-icon" id="toastIcon">✓</span>
             <span class="toast-message" id="toastMessage">Tab snoozed!</span>
+        </div>
+    </div>
+
+    <!-- Import Confirmation Modal -->
+    <div class="modal" id="importConfirmModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span class="modal-icon">⚠️</span>
+                    <h3>Import Confirmation</h3>
+                </div>
+                <button class="modal-close" id="closeImportModalBtn" aria-label="Close">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 16px; color: var(--text-secondary);">
+                    This will replace your current snoozed tabs and bundles. Are you sure you want to continue?
+                </p>
+                <div id="importPreview" style="margin-bottom: 16px; padding: 12px; background: var(--bg-tertiary); border-radius: 8px; font-size: 0.875rem;">
+                    <!-- Preview will be inserted here -->
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-primary" id="confirmImportBtn" style="flex: 1;">Import</button>
+                    <button class="btn btn-danger" id="cancelImportBtn" style="flex: 1;">Cancel</button>
+                </div>
+            </div>
         </div>
     </div>
 

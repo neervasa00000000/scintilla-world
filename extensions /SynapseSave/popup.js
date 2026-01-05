@@ -6,18 +6,29 @@ let stats = { tabsSnoozed: 0, ramSaved: 0, timeSaved: 0 };
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
-    // Get current window ID for batch operations
-    const win = await chrome.windows.getCurrent();
-    currentWindowId = win.id;
-    
-    await refreshAll();
-    setupEventListeners();
+    try {
+        // Get current window ID for batch operations
+        try {
+            const win = await chrome.windows.getCurrent();
+            currentWindowId = win.id;
+        } catch (error) {
+            console.error('Error getting current window:', error);
+            // Fallback to last focused window
+            currentWindowId = null;
+        }
+        
+        await refreshAll();
+        setupEventListeners();
 
-    const searchInput = document.getElementById('tabSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', () => {
-            filterTabs(searchInput.value);
-        });
+        const searchInput = document.getElementById('tabSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                filterTabs(searchInput.value);
+            });
+        }
+    } catch (error) {
+        console.error('Error initializing popup:', error);
+        showToast('Error loading extension', 'error');
     }
 });
 
@@ -31,7 +42,7 @@ async function refreshAll() {
     const scrollPosSnoozed = snoozedList ? snoozedList.scrollTop : 0;
 
     // 2. Load data
-    await Promise.all([loadStats(), loadDuplicateTabs(), loadTabs(), loadSnoozedTabs()]);
+    await Promise.all([loadStats(), loadTabGroups(), loadDuplicateTabs(), loadTabs(), loadSnoozedTabs()]);
     updateStats();
 
     // 3. Restore scroll positions
@@ -86,12 +97,175 @@ function renderTabs(tabsToRender, listId, countId, emptyTitle, emptyIcon, emptyH
 }
 
 async function loadStats() {
-    const result = await chrome.storage.local.get(['snoozedTabs']);
+    const result = await chrome.storage.local.get(['snoozedTabs', 'snoozedBundles']);
     const snoozedTabs = result.snoozedTabs || [];
+    const bundles = result.snoozedBundles || [];
     
-    stats.tabsSnoozed = snoozedTabs.length;
-    stats.ramSaved = snoozedTabs.length * 75; // ~75MB avg
-    stats.timeSaved = Math.floor(snoozedTabs.length * 0.5);
+    // Count tabs in bundles
+    const bundleTabCount = bundles.reduce((sum, bundle) => sum + (bundle.tabs ? bundle.tabs.length : 0), 0);
+    
+    stats.tabsSnoozed = snoozedTabs.length + bundleTabCount;
+    stats.ramSaved = stats.tabsSnoozed * 75; // ~75MB avg
+    stats.timeSaved = Math.floor(stats.tabsSnoozed * 0.5);
+}
+
+// --- TAB GROUPS DETECTION ---
+
+let currentGroupId = null;
+let currentGroupData = null;
+
+async function loadTabGroups() {
+    try {
+        const tabs = await chrome.tabs.query({ currentWindow: true });
+        let windowId;
+        try {
+            const win = await chrome.windows.getCurrent();
+            windowId = win.id;
+        } catch (error) {
+            console.error('Error getting window for groups:', error);
+            const tabGroupsSection = document.getElementById('tabGroupsSection');
+            if (tabGroupsSection) tabGroupsSection.style.display = 'none';
+            return;
+        }
+        const groups = await chrome.tabGroups.query({ windowId: windowId });
+        
+        // Filter groups that have tabs
+        const groupsWithTabs = [];
+        for (const group of groups) {
+            const groupTabs = tabs.filter(tab => 
+                tab.groupId === group.id && 
+                !tab.url.startsWith('chrome://') && 
+                !tab.url.startsWith('edge://') &&
+                !tab.url.startsWith('about:') &&
+                !tab.url.startsWith('chrome-extension://')
+            );
+            
+            if (groupTabs.length > 0) {
+                groupsWithTabs.push({
+                    group: group,
+                    tabs: groupTabs
+                });
+            }
+        }
+        
+        const tabGroupsSection = document.getElementById('tabGroupsSection');
+        const tabGroupsList = document.getElementById('tabGroupsList');
+        const tabGroupCount = document.getElementById('tabGroupCount');
+        
+        if (groupsWithTabs.length === 0) {
+            tabGroupsSection.style.display = 'none';
+            return;
+        }
+        
+        tabGroupsSection.style.display = 'block';
+        tabGroupCount.textContent = groupsWithTabs.length;
+        tabGroupsList.innerHTML = '';
+        
+        const fragment = document.createDocumentFragment();
+        groupsWithTabs.forEach(({ group, tabs }) => {
+            fragment.appendChild(createTabGroupItem(group, tabs));
+        });
+        tabGroupsList.appendChild(fragment);
+    } catch (error) {
+        console.log('Error loading tab groups:', error);
+        const tabGroupsSection = document.getElementById('tabGroupsSection');
+        if (tabGroupsSection) tabGroupsSection.style.display = 'none';
+    }
+}
+
+function createTabGroupItem(group, tabs) {
+    const groupItem = document.createElement('div');
+    groupItem.className = 'tab-group-item';
+    
+    const header = document.createElement('div');
+    header.className = 'tab-group-header';
+    
+    const groupInfo = document.createElement('div');
+    groupInfo.className = 'tab-group-info';
+    
+    // Group color indicator
+    const colorEl = document.createElement('div');
+    colorEl.className = 'tab-group-color';
+    colorEl.style.backgroundColor = getGroupColorHex(group.color);
+    
+    // Group name
+    const nameEl = document.createElement('div');
+    nameEl.className = 'tab-group-name';
+    nameEl.textContent = group.title || 'Untitled Group';
+    nameEl.title = group.title || 'Untitled Group';
+    
+    groupInfo.appendChild(colorEl);
+    groupInfo.appendChild(nameEl);
+    
+    // Tab count badge
+    const countBadge = document.createElement('div');
+    countBadge.className = 'tab-group-count';
+    countBadge.textContent = `${tabs.length}`;
+    
+    // Action buttons
+    const actionsContainer = document.createElement('div');
+    actionsContainer.className = 'tab-group-actions';
+    
+    const snoozeBtn = document.createElement('button');
+    snoozeBtn.className = 'btn btn-primary btn-small';
+    snoozeBtn.textContent = 'Snooze';
+    snoozeBtn.title = `Snooze all ${tabs.length} tab${tabs.length > 1 ? 's' : ''} in this group as a bundle`;
+    snoozeBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        currentGroupId = group.id;
+        currentGroupData = { group, tabs };
+        openBundleNameModal();
+    });
+    
+    actionsContainer.appendChild(snoozeBtn);
+    
+    header.appendChild(groupInfo);
+    header.appendChild(countBadge);
+    header.appendChild(actionsContainer);
+    
+    groupItem.appendChild(header);
+    
+    return groupItem;
+}
+
+function getGroupColorHex(color) {
+    const colorMap = {
+        'grey': '#9aa0a6',
+        'blue': '#1a73e8',
+        'red': '#ea4335',
+        'yellow': '#fbbc04',
+        'green': '#34a853',
+        'pink': '#f28b82',
+        'purple': '#a142f4',
+        'cyan': '#5ac8fa',
+        'orange': '#ff9500'
+    };
+    return colorMap[color] || colorMap['grey'];
+}
+
+function openBundleNameModal() {
+    const modal = document.getElementById('bundleNameModal');
+    const input = document.getElementById('bundleNameInput');
+    if (modal && input) {
+        modal.classList.add('active');
+        input.value = currentGroupData?.group?.title || '';
+        input.focus();
+        input.select();
+    }
+}
+
+function closeBundleNameModal() {
+    const modal = document.getElementById('bundleNameModal');
+    if (modal) {
+        modal.classList.remove('active');
+        currentGroupId = null;
+        currentGroupData = null;
+        const input = document.getElementById('bundleNameInput');
+        if (input) input.value = '';
+        document.querySelectorAll('#bundleNameModal .snooze-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+    }
 }
 
 // --- DUPLICATE TAB DETECTION ---
@@ -346,13 +520,92 @@ function createTabItem(tab) {
 }
 
 async function loadSnoozedTabs() {
-    const result = await chrome.storage.local.get(['snoozedTabs']);
+    const result = await chrome.storage.local.get(['snoozedTabs', 'snoozedBundles']);
     allSnoozedTabs = result.snoozedTabs || [];
+    const bundles = result.snoozedBundles || [];
 
     // Sort by wake time (soonest first)
     allSnoozedTabs.sort((a, b) => a.wakeTime - b.wakeTime);
+    bundles.sort((a, b) => a.wakeTime - b.wakeTime);
 
-    renderTabs(allSnoozedTabs, 'snoozedList', 'snoozedTabCount', 'No snoozed tabs', '💤', 'Snooze tabs to see them here', true);
+    const snoozedList = document.getElementById('snoozedList');
+    const snoozedTabCount = document.getElementById('snoozedTabCount');
+    
+    if (!snoozedList || !snoozedTabCount) return;
+    
+    snoozedTabCount.textContent = allSnoozedTabs.length + bundles.length;
+    snoozedList.innerHTML = '';
+    
+    if (allSnoozedTabs.length === 0 && bundles.length === 0) {
+        snoozedList.innerHTML = `<div class="empty-state"><div class="empty-icon">💤</div><p class="empty-title">No snoozed tabs</p><p class="empty-hint">Snooze tabs to see them here</p></div>`;
+        return;
+    }
+    
+    const fragment = document.createDocumentFragment();
+    
+    // Render bundles first
+    bundles.forEach(bundle => {
+        fragment.appendChild(createBundleItem(bundle));
+    });
+    
+    // Then render individual tabs
+    allSnoozedTabs.forEach(tab => {
+        fragment.appendChild(createSnoozedItem(tab));
+    });
+    
+    snoozedList.appendChild(fragment);
+}
+
+function createBundleItem(bundle) {
+    const item = document.createElement('div');
+    item.className = 'bundle-item';
+    
+    const header = document.createElement('div');
+    header.className = 'bundle-header';
+    
+    const nameContainer = document.createElement('div');
+    nameContainer.style.flex = '1';
+    nameContainer.style.minWidth = '0';
+    
+    const name = document.createElement('div');
+    name.className = 'bundle-name';
+    name.textContent = bundle.name || 'Untitled Bundle';
+    
+    const tabsCount = document.createElement('div');
+    tabsCount.className = 'bundle-tabs-count';
+    const tabCount = bundle.tabs ? bundle.tabs.length : 0;
+    tabsCount.textContent = `${tabCount} tab${tabCount !== 1 ? 's' : ''}`;
+    
+    nameContainer.appendChild(name);
+    nameContainer.appendChild(tabsCount);
+    
+    const time = document.createElement('div');
+    time.className = 'bundle-time';
+    time.innerHTML = formatTimeUntil(bundle.wakeTime);
+    
+    header.appendChild(nameContainer);
+    header.appendChild(time);
+    
+    const actions = document.createElement('div');
+    actions.className = 'bundle-actions';
+    
+    const openBtn = document.createElement('button');
+    openBtn.className = 'btn btn-primary btn-small';
+    openBtn.textContent = 'Open Bundle';
+    openBtn.addEventListener('click', () => reopenBundle(bundle.bundleId));
+    
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn btn-danger btn-small delete-btn';
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => deleteBundle(bundle.bundleId));
+    
+    actions.appendChild(openBtn);
+    actions.appendChild(delBtn);
+    
+    item.appendChild(header);
+    item.appendChild(actions);
+    
+    return item;
 }
 
 function createSnoozedItem(tab) {
@@ -426,37 +679,58 @@ async function getGroupProperties(groupId) {
 
 // 2. Perform Snooze (Optimized Logic)
 async function performSnooze(tabId, wakeTime, timeOption) {
-    const tab = await chrome.tabs.get(tabId).catch(() => null);
-    if (!tab) return;
+    try {
+        const tab = await chrome.tabs.get(tabId).catch(() => null);
+        if (!tab) {
+            console.error(`Tab ${tabId} not found`);
+            return;
+        }
 
-    // Get tab group properties if tab belongs to a group
-    let groupInfo = null;
-    if (tab.groupId && tab.groupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
-        groupInfo = await getGroupProperties(tab.groupId);
+        // Get tab group properties if tab belongs to a group
+        let groupInfo = null;
+        if (tab.groupId && tab.groupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
+            groupInfo = await getGroupProperties(tab.groupId);
+        }
+
+        // 1. Update Storage
+        const result = await chrome.storage.local.get(['snoozedTabs']);
+        const snoozedTabs = result.snoozedTabs || [];
+        
+        snoozedTabs.push({
+            tabId: tab.id,
+            url: tab.url,
+            title: tab.title,
+            favIconUrl: tab.favIconUrl,
+            wakeTime: wakeTime,
+            snoozedAt: Date.now(),
+            timeOption: timeOption,
+            groupId: groupInfo ? groupInfo.id : null,
+            groupInfo: groupInfo // Store full group properties for restoration
+        });
+        await chrome.storage.local.set({ snoozedTabs });
+
+        // 2. Set Alarm
+        try {
+            await chrome.alarms.create(`snooze_${tab.id}_${wakeTime}`, { when: wakeTime });
+        } catch (alarmError) {
+            console.error('Error creating alarm:', alarmError);
+            // Remove from storage if alarm creation fails
+            const updated = snoozedTabs.filter(st => st.tabId !== tab.id);
+            await chrome.storage.local.set({ snoozedTabs: updated });
+            throw alarmError;
+        }
+
+        // 3. Close Tab
+        try {
+            await chrome.tabs.remove(tab.id);
+        } catch (removeError) {
+            console.error('Error removing tab:', removeError);
+            // Tab might already be closed, continue
+        }
+    } catch (error) {
+        console.error('Error in performSnooze:', error);
+        throw error;
     }
-
-    // 1. Update Storage
-    const result = await chrome.storage.local.get(['snoozedTabs']);
-    const snoozedTabs = result.snoozedTabs || [];
-    
-    snoozedTabs.push({
-        tabId: tab.id,
-        url: tab.url,
-        title: tab.title,
-        favIconUrl: tab.favIconUrl, // Backup
-        wakeTime: wakeTime,
-        snoozedAt: Date.now(),
-        timeOption: timeOption,
-        groupId: groupInfo ? groupInfo.id : null,
-        groupInfo: groupInfo // Store full group properties for restoration
-    });
-    await chrome.storage.local.set({ snoozedTabs });
-
-    // 2. Set Alarm
-    await chrome.alarms.create(`snooze_${tab.id}_${wakeTime}`, { when: wakeTime });
-
-    // 3. Close Tab
-    await chrome.tabs.remove(tab.id);
 }
 
 // 3. BATCH ACTION: Clear All / Weekend
@@ -519,44 +793,202 @@ async function restoreGroupFromPopup(tabData, newTabId) {
 }
 
 async function reopenTab(tabId) {
-    const result = await chrome.storage.local.get(['snoozedTabs']);
-    let snoozedTabs = result.snoozedTabs || [];
-    const targetTab = snoozedTabs.find(st => st.tabId === tabId);
-    
-    if (targetTab) {
+    try {
+        const result = await chrome.storage.local.get(['snoozedTabs']);
+        let snoozedTabs = result.snoozedTabs || [];
+        const targetTab = snoozedTabs.find(st => st.tabId === tabId);
+        
+        if (!targetTab) {
+            showToast('Tab not found', 'error');
+            return;
+        }
+        
         // Create the tab
-        const newTab = await chrome.tabs.create({ 
-            url: targetTab.url, 
-            active: false 
-        });
+        let newTab;
+        try {
+            newTab = await chrome.tabs.create({ 
+                url: targetTab.url, 
+                active: false 
+            });
+        } catch (createError) {
+            console.error('Error creating tab:', createError);
+            showToast('Error opening tab', 'error');
+            return;
+        }
         
         if (targetTab.groupId || targetTab.groupInfo) {
-             // Local restore logic
-             await restoreGroupFromPopup(targetTab, newTab.id);
+            try {
+                // Local restore logic
+                await restoreGroupFromPopup(targetTab, newTab.id);
+            } catch (groupError) {
+                console.error('Error restoring group:', groupError);
+                // Continue even if group restore fails
+            }
         }
         
         // Cleanup
-        chrome.alarms.clear(`snooze_${tabId}_${targetTab.wakeTime}`);
-        snoozedTabs = snoozedTabs.filter(st => st.tabId !== tabId);
-        await chrome.storage.local.set({ snoozedTabs });
+        try {
+            chrome.alarms.clear(`snooze_${tabId}_${targetTab.wakeTime}`);
+            snoozedTabs = snoozedTabs.filter(st => st.tabId !== tabId);
+            await chrome.storage.local.set({ snoozedTabs });
+        } catch (cleanupError) {
+            console.error('Error during cleanup:', cleanupError);
+        }
         
         await refreshAll();
         showToast('Tab reopened', 'success');
+    } catch (error) {
+        console.error('Error in reopenTab:', error);
+        showToast('Error reopening tab', 'error');
     }
 }
 
 async function deleteSnooze(tabId) {
-    const result = await chrome.storage.local.get(['snoozedTabs']);
-    const snoozedTabs = result.snoozedTabs || [];
-    const targetTab = snoozedTabs.find(st => st.tabId === tabId);
-    
-    if (targetTab) {
-        chrome.alarms.clear(`snooze_${tabId}_${targetTab.wakeTime}`);
+    try {
+        const result = await chrome.storage.local.get(['snoozedTabs']);
+        const snoozedTabs = result.snoozedTabs || [];
+        const targetTab = snoozedTabs.find(st => st.tabId === tabId);
+        
+        if (!targetTab) {
+            showToast('Tab not found', 'error');
+            return;
+        }
+        
+        try {
+            chrome.alarms.clear(`snooze_${tabId}_${targetTab.wakeTime}`);
+        } catch (alarmError) {
+            console.error('Error clearing alarm:', alarmError);
+        }
+        
         const updated = snoozedTabs.filter(st => st.tabId !== tabId);
         await chrome.storage.local.set({ snoozedTabs: updated });
         
         await refreshAll();
         showToast('Snooze cancelled', 'success');
+    } catch (error) {
+        console.error('Error in deleteSnooze:', error);
+        showToast('Error deleting snooze', 'error');
+    }
+}
+
+async function reopenBundle(bundleId) {
+    const result = await chrome.storage.local.get(['snoozedBundles']);
+    const bundles = result.snoozedBundles || [];
+    const bundle = bundles.find(b => b.bundleId === bundleId);
+    
+    if (!bundle) {
+        showToast('Bundle not found', 'error');
+        return;
+    }
+    
+    // Store bundle name for toast message
+    const bundleName = bundle.name;
+    const bundleWakeTime = bundle.wakeTime;
+    
+    // Function to remove bundle from storage
+    const removeBundle = async () => {
+        try {
+            const currentResult = await chrome.storage.local.get(['snoozedBundles']);
+            const currentBundles = currentResult.snoozedBundles || [];
+            const updated = currentBundles.filter(b => b.bundleId !== bundleId);
+            await chrome.storage.local.set({ snoozedBundles: updated });
+            
+            // Clear alarms
+            bundle.tabs.forEach(tab => {
+                chrome.alarms.clear(`snooze_${tab.tabId}_${bundleWakeTime}`);
+            });
+            
+            return true;
+        } catch (e) {
+            console.error('Error removing bundle:', e);
+            return false;
+        }
+    };
+    
+    // Send message to background to restore bundle
+    try {
+        const response = await new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({
+                action: 'restoreBundle',
+                bundleId: bundleId
+            }, (response) => {
+                // Check for Chrome runtime errors first
+                if (chrome.runtime.lastError) {
+                    reject(new Error(chrome.runtime.lastError.message));
+                    return;
+                }
+                resolve(response);
+            });
+        });
+        
+        // If response is successful, bundle should already be removed by background script
+        // But we'll check and refresh anyway
+        if (response && response.success) {
+            // Check if bundle was already removed by background script
+            const checkResult = await chrome.storage.local.get(['snoozedBundles']);
+            const stillExists = checkResult.snoozedBundles?.some(b => b.bundleId === bundleId);
+            
+            if (stillExists) {
+                // Background didn't remove it, do it here as fallback
+                await removeBundle();
+            }
+            
+            await refreshAll();
+            showToast(`Bundle "${bundleName}" reopened`, 'success');
+        } else {
+            // Restore failed
+            const errorMsg = response?.message || 'Unknown error occurred';
+            console.error('Bundle restore error:', errorMsg);
+            showToast(`Error: ${errorMsg}`, 'error');
+        }
+    } catch (error) {
+        console.error('Error in reopenBundle:', error);
+        // Even if there was an error, try to remove the bundle if it might have been opened
+        // But first check if tabs were actually created by checking if bundle still exists
+        const checkResult = await chrome.storage.local.get(['snoozedBundles']);
+        const stillExists = checkResult.snoozedBundles?.some(b => b.bundleId === bundleId);
+        
+        if (!stillExists) {
+            // Bundle was already removed, probably by notification handler
+            await refreshAll();
+            showToast(`Bundle "${bundleName}" reopened`, 'success');
+        } else {
+            // Bundle still exists, restore might have failed
+            showToast(`Error: ${error.message}`, 'error');
+        }
+    }
+}
+
+async function deleteBundle(bundleId) {
+    try {
+        const result = await chrome.storage.local.get(['snoozedBundles']);
+        const bundles = result.snoozedBundles || [];
+        const bundle = bundles.find(b => b.bundleId === bundleId);
+        
+        if (!bundle) {
+            showToast('Bundle not found', 'error');
+            return;
+        }
+        
+        // Clear alarms
+        if (bundle.tabs && Array.isArray(bundle.tabs)) {
+            for (const tab of bundle.tabs) {
+                try {
+                    chrome.alarms.clear(`snooze_${tab.tabId}_${bundle.wakeTime}`);
+                } catch (alarmError) {
+                    console.error(`Error clearing alarm for tab ${tab.tabId}:`, alarmError);
+                }
+            }
+        }
+        
+        const updated = bundles.filter(b => b.bundleId !== bundleId);
+        await chrome.storage.local.set({ snoozedBundles: updated });
+        
+        await refreshAll();
+        showToast('Bundle deleted', 'success');
+    } catch (error) {
+        console.error('Error in deleteBundle:', error);
+        showToast('Error deleting bundle', 'error');
     }
 }
 
@@ -659,6 +1091,15 @@ function setupEventListeners() {
         });
     }
     
+    // Bundle modal close button
+    const closeBundleModalBtn = document.getElementById('closeBundleModalBtn');
+    if (closeBundleModalBtn) {
+        closeBundleModalBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeBundleNameModal();
+        });
+    }
+    
     // Modal overlay - close on click
     const modal = document.getElementById('snoozeModal');
     if (modal) {
@@ -677,6 +1118,135 @@ function setupEventListeners() {
                 e.stopPropagation();
             });
         }
+    }
+    
+    // Bundle modal overlay
+    const bundleModal = document.getElementById('bundleNameModal');
+    if (bundleModal) {
+        const overlay = bundleModal.querySelector('.modal-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeBundleNameModal();
+            });
+        }
+        
+        const modalContent = bundleModal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+        
+        // Bundle name input - Enter key to snooze
+        const bundleNameInput = document.getElementById('bundleNameInput');
+        if (bundleNameInput) {
+            bundleNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const selectedOption = bundleModal.querySelector('.snooze-option.selected');
+                    if (selectedOption) {
+                        document.getElementById('snoozeBundleBtn').click();
+                    }
+                }
+            });
+        }
+    }
+    
+    // Bundle snooze button
+    const snoozeBundleBtn = document.getElementById('snoozeBundleBtn');
+    if (snoozeBundleBtn) {
+        snoozeBundleBtn.addEventListener('click', async () => {
+            if (!currentGroupData) return;
+            
+            const bundleNameInput = document.getElementById('bundleNameInput');
+            const bundleName = bundleNameInput.value.trim() || currentGroupData.group.title || 'Untitled Bundle';
+            
+            const selectedOption = document.querySelector('#bundleNameModal .snooze-option.selected');
+            if (!selectedOption) {
+                showToast('Please select a snooze time', 'error');
+                return;
+            }
+            
+            const timeOption = selectedOption.dataset.time;
+            const wakeTime = calculateWakeTime(timeOption);
+            
+            // Verify tabs still exist and get fresh data
+            const validTabs = [];
+            for (const tab of currentGroupData.tabs) {
+                try {
+                    const freshTab = await chrome.tabs.get(tab.id);
+                    if (freshTab && !freshTab.url.startsWith('chrome://') && 
+                        !freshTab.url.startsWith('edge://') && 
+                        !freshTab.url.startsWith('about:') &&
+                        !freshTab.url.startsWith('chrome-extension://')) {
+                        validTabs.push({
+                            id: freshTab.id,
+                            url: freshTab.url,
+                            title: freshTab.title,
+                            favIconUrl: freshTab.favIconUrl
+                        });
+                    }
+                } catch (e) {
+                    console.log(`Tab ${tab.id} no longer exists, skipping`);
+                }
+            }
+            
+            if (validTabs.length === 0) {
+                showToast('No valid tabs to snooze', 'error');
+                return;
+            }
+            
+            // Send message to background to snooze bundle
+            chrome.runtime.sendMessage({
+                action: 'snoozeBundle',
+                bundleName: bundleName,
+                groupId: currentGroupData.group.id,
+                tabs: validTabs,
+                groupInfo: {
+                    id: currentGroupData.group.id,
+                    title: currentGroupData.group.title,
+                    color: currentGroupData.group.color,
+                    collapsed: currentGroupData.group.collapsed
+                },
+                timeOption: timeOption,
+                wakeTime: wakeTime
+            }, (response) => {
+                // Check for Chrome runtime errors
+                if (chrome.runtime.lastError) {
+                    console.error('Chrome runtime error:', chrome.runtime.lastError);
+                    showToast(`Error: ${chrome.runtime.lastError.message}`, 'error');
+                    return;
+                }
+                
+                if (response && response.success) {
+                    closeBundleNameModal();
+                    refreshAll();
+                    showToast(`Bundle "${bundleName}" snoozed!`, 'success');
+                    // Close popup after a short delay
+                    setTimeout(() => window.close(), 500);
+                } else {
+                    const errorMsg = response?.message || 'Unknown error occurred';
+                    console.error('Bundle snooze error:', errorMsg);
+                    showToast(`Error: ${errorMsg}`, 'error');
+                }
+            });
+        });
+    }
+    
+    // Bundle modal snooze options
+    const bundleModalBody = document.querySelector('#bundleNameModal .modal-body');
+    if (bundleModalBody) {
+        bundleModalBody.addEventListener('click', (e) => {
+            const option = e.target.closest('.snooze-option');
+            if (!option) return;
+            
+            e.stopPropagation();
+            
+            // Remove selected state from all options
+            document.querySelectorAll('#bundleNameModal .snooze-option').forEach(o => o.classList.remove('selected'));
+            // Add selected state to clicked option
+            option.classList.add('selected');
+        });
     }
     
     // Quick Actions - USING THE NEW BATCH FUNCTION
@@ -715,6 +1285,46 @@ function setupEventListeners() {
             }
         });
     }
+    
+    // Export/Import buttons
+    const exportBtn = document.getElementById('exportBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportData);
+    }
+    
+    const importBtn = document.getElementById('importBtn');
+    const importFileInput = document.getElementById('importFileInput');
+    if (importBtn && importFileInput) {
+        importBtn.addEventListener('click', () => {
+            importFileInput.click();
+        });
+        importFileInput.addEventListener('change', handleImportFile);
+    }
+    
+    // Import confirmation modal
+    const closeImportModalBtn = document.getElementById('closeImportModalBtn');
+    if (closeImportModalBtn) {
+        closeImportModalBtn.addEventListener('click', cancelImport);
+    }
+    
+    const confirmImportBtn = document.getElementById('confirmImportBtn');
+    if (confirmImportBtn) {
+        confirmImportBtn.addEventListener('click', confirmImport);
+    }
+    
+    const cancelImportBtn = document.getElementById('cancelImportBtn');
+    if (cancelImportBtn) {
+        cancelImportBtn.addEventListener('click', cancelImport);
+    }
+    
+    const importModal = document.getElementById('importConfirmModal');
+    if (importModal) {
+        const overlay = importModal.querySelector('.modal-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', cancelImport);
+        }
+    }
+    
 }
 
 // Close modal function
@@ -735,4 +1345,159 @@ document.addEventListener('visibilitychange', async () => {
         await refreshAll();
     }
 });
+
+// --- EXPORT/IMPORT ---
+
+let pendingImportData = null;
+
+async function exportData() {
+    try {
+        const result = await chrome.storage.local.get(['snoozedTabs', 'snoozedBundles']);
+        const exportData = {
+            version: '1.0',
+            exportDate: new Date().toISOString(),
+            snoozedTabs: result.snoozedTabs || [],
+            snoozedBundles: result.snoozedBundles || []
+        };
+        
+        const jsonStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `synapsesave-export-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showToast('Data exported successfully', 'success');
+    } catch (error) {
+        console.error('Error exporting data:', error);
+        showToast('Error exporting data', 'error');
+    }
+}
+
+function handleImportFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const jsonData = JSON.parse(e.target.result);
+            
+            // Validate import data
+            if (!jsonData || typeof jsonData !== 'object') {
+                showToast('Invalid import file format', 'error');
+                return;
+            }
+            
+            if (!Array.isArray(jsonData.snoozedTabs) || !Array.isArray(jsonData.snoozedBundles)) {
+                showToast('Invalid import file format - arrays expected', 'error');
+                return;
+            }
+            
+            pendingImportData = jsonData;
+            
+            // Show preview and confirmation modal
+            const preview = document.getElementById('importPreview');
+            if (preview) {
+                const tabsCount = jsonData.snoozedTabs.length || 0;
+                const bundlesCount = jsonData.snoozedBundles.length || 0;
+                const exportDate = jsonData.exportDate ? new Date(jsonData.exportDate).toLocaleString() : 'Unknown';
+                
+                preview.innerHTML = `
+                    <div style="margin-bottom: 8px;"><strong>Export Date:</strong> ${exportDate}</div>
+                    <div style="margin-bottom: 8px;"><strong>Tabs:</strong> ${tabsCount}</div>
+                    <div><strong>Bundles:</strong> ${bundlesCount}</div>
+                `;
+            }
+            
+            const modal = document.getElementById('importConfirmModal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+        } catch (error) {
+            console.error('Error reading import file:', error);
+            showToast('Error reading import file', 'error');
+        }
+    };
+    
+    reader.readAsText(file);
+}
+
+async function confirmImport() {
+    if (!pendingImportData) return;
+    
+    try {
+        // Import the data
+        await chrome.storage.local.set({
+            snoozedTabs: pendingImportData.snoozedTabs || [],
+            snoozedBundles: pendingImportData.snoozedBundles || []
+        });
+        
+        // Recreate alarms for imported items
+        const allItems = [
+            ...(pendingImportData.snoozedTabs || []).map(tab => ({ ...tab, type: 'tab' })),
+            ...(pendingImportData.snoozedBundles || []).flatMap(bundle => 
+                bundle.tabs.map(tab => ({ ...tab, wakeTime: bundle.wakeTime, type: 'bundle' }))
+            )
+        ];
+        
+        for (const item of allItems) {
+            try {
+                // Validate wakeTime is a valid number
+                const wakeTime = Number(item.wakeTime);
+                if (isNaN(wakeTime) || wakeTime <= 0) {
+                    console.warn('Invalid wakeTime for item:', item);
+                    continue;
+                }
+                
+                // Only create alarm if wake time is in the future
+                if (wakeTime > Date.now()) {
+                    await chrome.alarms.create(`snooze_${item.tabId}_${wakeTime}`, { 
+                        when: wakeTime 
+                    });
+                }
+            } catch (e) {
+                console.error('Error recreating alarm:', e);
+            }
+        }
+        
+        // Close modal
+        const modal = document.getElementById('importConfirmModal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+        
+        // Reset file input
+        const fileInput = document.getElementById('importFileInput');
+        if (fileInput) {
+            fileInput.value = '';
+        }
+        
+        pendingImportData = null;
+        
+        await refreshAll();
+        showToast('Data imported successfully', 'success');
+    } catch (error) {
+        console.error('Error importing data:', error);
+        showToast('Error importing data', 'error');
+    }
+}
+
+function cancelImport() {
+    pendingImportData = null;
+    const modal = document.getElementById('importConfirmModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+    
+    const fileInput = document.getElementById('importFileInput');
+    if (fileInput) {
+        fileInput.value = '';
+    }
+}
 
