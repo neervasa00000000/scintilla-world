@@ -23,8 +23,8 @@
     }
   ],
   "icons": {
-    "16": "COPY.png",
-    "48": "COPY.png",
-    "128": "COPY.png"
+    "16": "cow.png",
+    "48": "cow.png",
+    "128": "cow.png"
   }
 }

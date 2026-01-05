@@ -308,8 +308,9 @@ function addRecord() {
         lastSent: ''
     };
 
-    if (record.emails.length === 0 && record.phones.length === 0) {
-        showToast("No email or phone found for this contact", "error");
+    // Allow records without email/phone if they have at least a name
+    if (record.emails.length === 0 && record.phones.length === 0 && !record.f && !record.l) {
+        showToast("Please provide at least a name, email, or phone", "error");
         return;
     }
     
@@ -333,11 +334,71 @@ function addRecord() {
 function renderRecords() {
     el.recordsList.innerHTML = '';
     el.emptyState.style.display = state.records.length ? 'none' : 'flex';
+    
+    // Build duplicate detection maps for highlighting
+    const emailMap = new Map();
+    const phoneMap = new Map();
+    
+    state.records.forEach((r, idx) => {
+        (r.emails || []).forEach(email => {
+            const key = email.toLowerCase();
+            if (!emailMap.has(key)) emailMap.set(key, []);
+            emailMap.get(key).push(idx);
+        });
+        (r.phones || []).forEach(phone => {
+            const normalized = phone.replace(/\D/g, '');
+            if (normalized) {
+                if (!phoneMap.has(normalized)) phoneMap.set(normalized, []);
+                phoneMap.get(normalized).push(idx);
+            }
+        });
+    });
+    
     for (let i = state.records.length - 1; i >= 0; i--) {
         const r = state.records[i];
         const div = document.createElement('div');
         div.className = 'record-item';
-        div.innerHTML = `<div class="record-header"><b>${escapeHTML(r.f)} ${escapeHTML(r.l)}</b> <small>${escapeHTML(r.company || '')}</small></div>`;
+        
+        // Check if this record has duplicates
+        let hasDuplicate = false;
+        let duplicateInfo = [];
+        
+        (r.emails || []).forEach(email => {
+            const indices = emailMap.get(email.toLowerCase());
+            if (indices && indices.length > 1) {
+                hasDuplicate = true;
+                duplicateInfo.push(`Email: ${email}`);
+            }
+        });
+        
+        (r.phones || []).forEach(phone => {
+            const normalized = phone.replace(/\D/g, '');
+            if (normalized) {
+                const indices = phoneMap.get(normalized);
+                if (indices && indices.length > 1) {
+                    hasDuplicate = true;
+                    duplicateInfo.push(`Phone: ${phone}`);
+                }
+            }
+        });
+        
+        if (hasDuplicate) {
+            div.classList.add('record-duplicate');
+            div.title = `Duplicate detected: ${duplicateInfo.join(', ')}`;
+        }
+        
+        const name = `${escapeHTML(r.f)} ${escapeHTML(r.l)}`.trim() || 'Unknown';
+        const company = r.company ? `<small>${escapeHTML(r.company)}</small>` : '';
+        const duplicateBadge = hasDuplicate ? '<span class="duplicate-badge" title="' + escapeHTML(duplicateInfo.join(', ')) + '">⚠ Duplicate</span>' : '';
+        
+        div.innerHTML = `
+            <div class="record-header">
+                <div>
+                    <b>${name}</b> ${company}
+                    ${duplicateBadge}
+                </div>
+            </div>
+        `;
         el.recordsList.appendChild(div);
     }
     el.countDisplay.innerText = state.records.length;
@@ -346,15 +407,18 @@ function renderRecords() {
 
 function exportCSV() {
     if (!state.records.length) return showToast('No data', 'error');
-    const head = 'First Name,Last Name,Email,Company,Phone,Status,Last Sent\\n';
+    const head = 'First Name,Last Name,Email,Emails,Company,Phone,Phones,Status,Last Sent\n';
     const body = state.records.map(r => {
         const s = (v) => `"${(v || '').toString().replace(/"/g, '""')}"`;
-        return `${s(r.f)},${s(r.l)},${s(r.emails[0])},${s(r.company)},${s(r.phones[0])},${s(r.status)},${s(r.lastSent)}`;
-    }).join('\\n');
+        const emails = (r.emails || []).join(';');
+        const phones = (r.phones || []).join(';');
+        return `${s(r.f)},${s(r.l)},${s(r.emails[0] || '')},${s(emails)},${s(r.company)},${s(r.phones[0] || '')},${s(phones)},${s(r.status)},${s(r.lastSent)}`;
+    }).join('\n');
     const link = document.createElement('a');
     link.href = URL.createObjectURL(new Blob([head + body], { type: 'text/csv' }));
     link.download = `copy_export_${Date.now()}.csv`;
     link.click();
+    showToast('CSV exported successfully', 'success');
 }
 
 function startCampaign() {
@@ -417,9 +481,18 @@ function endCampaign() {
 function showToast(m, t = 'success') {
     const d = document.createElement('div');
     d.className = `toast toast-${t}`;
+    // Handle multi-line messages
+    if (m.includes('\n')) {
+        d.style.whiteSpace = 'pre-line';
+        d.style.maxWidth = '300px';
+        d.style.fontSize = '11px';
+        d.style.lineHeight = '1.4';
+    }
     d.innerText = m;
     el.toastContainer.appendChild(d);
-    setTimeout(() => d.remove(), 2500);
+    // Longer timeout for detailed messages
+    const timeout = m.includes('\n') ? 5000 : 2500;
+    setTimeout(() => d.remove(), timeout);
 }
 
 function clearInputs() {
@@ -508,32 +581,59 @@ function escapeHTML(str) {
 // If no overlap, push as new record.
 function mergeImportedRecords(importedRecords, mergeExisting) {
   if (!Array.isArray(importedRecords) || !importedRecords.length) {
-    return { added: 0, updated: 0 };
+    return { added: 0, updated: 0, duplicates: [] };
   }
 
   // Fast lookup: email(lowercased) -> record index
   const emailIndex = new Map();
+  // Fast lookup: phone(normalized) -> record index
+  const phoneIndex = new Map();
+  
   state.records.forEach((rec, idx) => {
     (rec.emails || []).forEach(email => {
-      if (email) emailIndex.set(email.toLowerCase(), idx); // Only index non-empty emails
+      if (email) emailIndex.set(email.toLowerCase(), idx);
+    });
+    (rec.phones || []).forEach(phone => {
+      if (phone) {
+        const normalized = phone.replace(/\D/g, '');
+        if (normalized) phoneIndex.set(normalized, idx);
+      }
     });
   });
 
   let added = 0;
   let updated = 0;
+  const duplicates = [];
 
   importedRecords.forEach((imp) => {
     // Normalise imported shape
     const importedEmails = (imp.emails || []).map(e => String(e).toLowerCase()).filter(Boolean);
     const importedPhones = (imp.phones || []).map(p => String(p).trim()).filter(Boolean);
+    const importedPhoneNormalized = importedPhones.map(p => p.replace(/\D/g, '')).filter(Boolean);
 
     let existingIndex = -1;
-    // Only attempt to merge if mergeExisting is true AND there are imported emails
-    if (mergeExisting && importedEmails.length > 0) {
+    let duplicateReason = '';
+    
+    // Check for duplicates by email or phone
+    if (mergeExisting) {
+      // Check emails first
       for (const em of importedEmails) {
         if (emailIndex.has(em)) {
           existingIndex = emailIndex.get(em);
+          duplicateReason = `Email: ${em}`;
           break;
+        }
+      }
+      
+      // Check phones if no email match
+      if (existingIndex === -1) {
+        for (const phoneNorm of importedPhoneNormalized) {
+          if (phoneIndex.has(phoneNorm)) {
+            existingIndex = phoneIndex.get(phoneNorm);
+            const originalPhone = importedPhones.find(p => p.replace(/\D/g, '') === phoneNorm);
+            duplicateReason = `Phone: ${originalPhone}`;
+            break;
+          }
         }
       }
     }
@@ -541,6 +641,12 @@ function mergeImportedRecords(importedRecords, mergeExisting) {
     if (mergeExisting && existingIndex !== -1) {
       // Update existing record, only filling in missing pieces
       const existing = state.records[existingIndex];
+      
+      duplicates.push({
+        existing: `${existing.f} ${existing.l}`.trim() || 'Unknown',
+        imported: `${imp.f} ${imp.l}`.trim() || 'Unknown',
+        reason: duplicateReason
+      });
 
       if (!existing.f && imp.f) existing.f = imp.f;
       if (!existing.l && imp.l) existing.l = imp.l;
@@ -552,21 +658,24 @@ function mergeImportedRecords(importedRecords, mergeExisting) {
         if (!existingEmailsSet.has(e)) {
           existing.emails.push(e);
           existingEmailsSet.add(e);
+          emailIndex.set(e, existingIndex); // Update index
         }
       });
 
       // Merge phones
       const existingPhonesSet = new Set((existing.phones || []).map(p => p.trim()));
       importedPhones.forEach(p => {
-        if (!existingPhonesSet.has(p)) {
+        const pNorm = p.replace(/\D/g, '');
+        if (!existingPhonesSet.has(p) && pNorm) {
           existing.phones.push(p);
           existingPhonesSet.add(p);
+          phoneIndex.set(pNorm, existingIndex); // Update index
         }
       });
 
       updated += 1;
     } else {
-      // Create new record (always if no merge or no email for merge)
+      // Create new record (always if no merge or no duplicate found)
       const newRecord = {
         id: Date.now() + Math.floor(Math.random() * 1000000),
         f: imp.f || '',
@@ -580,47 +689,187 @@ function mergeImportedRecords(importedRecords, mergeExisting) {
       state.records.push(newRecord);
       added += 1;
 
-      // Update email index for future merges within same import (only for new record's emails)
+      // Update indices for future merges within same import
       newRecord.emails.forEach(e => {
         emailIndex.set(e.toLowerCase(), state.records.length - 1);
+      });
+      newRecord.phones.forEach(p => {
+        const pNorm = p.replace(/\D/g, '');
+        if (pNorm) phoneIndex.set(pNorm, state.records.length - 1);
       });
     }
   });
 
-  return { added, updated };
+  return { added, updated, duplicates };
 }
 
-// Minimal parser stub for CSV to records
+// Proper CSV parser that handles quoted fields
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    const nextChar = line[i + 1];
+    
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        // Escaped quote
+        current += '"';
+        i++; // Skip next quote
+      } else {
+        // Toggle quote state
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      // Field separator
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  
+  // Add last field
+  result.push(current.trim());
+  return result;
+}
+
+// CSV parser that handles quoted fields and flexible column names
 function parseCSVToRecords(csvText) {
-  const lines = csvText.trim().split('\\n');
+  const lines = csvText.trim().split(/\r?\n/).filter(line => line.trim());
   if (lines.length < 2) return [];
 
-  const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+  // Parse header with proper CSV handling
+  const headerLine = lines[0];
+  const headers = parseCSVLine(headerLine).map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
   const records = [];
+
+  // Helper to find column index by multiple possible names
+  const findColumn = (possibleNames) => {
+    for (const name of possibleNames) {
+      const idx = headers.indexOf(name.toLowerCase());
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  };
+
+  // Find column indices
+  const firstNameIdx = findColumn(['first name', 'firstname', 'fname', 'f']);
+  const lastNameIdx = findColumn(['last name', 'lastname', 'lname', 'l']);
+  const emailIdx = findColumn(['email', 'emails', 'e-mail', 'e-mail address']);
+  const phoneIdx = findColumn(['phone', 'phones', 'phone number', 'mobile', 'tel']);
+  const companyIdx = findColumn(['company', 'company name', 'organization', 'org']);
+  const statusIdx = findColumn(['status', 'state']);
+  const lastSentIdx = findColumn(['last sent', 'lastsent', 'last sent date', 'date sent']);
+  
+  // Find ALL columns that might contain emails (check all columns for email patterns)
+  const emailColumnIndices = [];
+  headers.forEach((header, idx) => {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('email') || headerLower.includes('e-mail') || headerLower.includes('mail')) {
+      emailColumnIndices.push(idx);
+    }
+  });
+  // If no email columns found by name, use the found emailIdx
+  if (emailColumnIndices.length === 0 && emailIdx !== -1) {
+    emailColumnIndices.push(emailIdx);
+  }
 
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
 
-    const values = line.split(','); // simple split; upgrade if you need full CSV quoting support
+    try {
+      const values = parseCSVLine(line);
+      
+      const get = (idx) => {
+        if (idx === -1) return '';
+        const val = (values[idx] || '').trim().replace(/^"|"$/g, '');
+        return val;
+      };
 
-    const get = (name) => {
-      const idx = headers.indexOf(name);
-      return idx === -1 ? '' : (values[idx] || '').trim();
-    };
+      // Extract emails from ALL email columns and the entire row
+      const allEmailStrings = new Set();
+      
+      // Get emails from dedicated email columns
+      emailColumnIndices.forEach(idx => {
+        const emailStr = get(idx);
+        if (emailStr) {
+          allEmailStrings.add(emailStr);
+        }
+      });
+      
+      // Also scan ALL columns for any email addresses (in case emails are in unexpected columns)
+      values.forEach(cellValue => {
+        if (cellValue && cellValue.trim()) {
+          const cellText = cellValue.trim().replace(/^"|"$/g, '');
+          // Check if this cell contains email-like content
+          if (cellText.includes('@')) {
+            allEmailStrings.add(cellText);
+          }
+        }
+      });
+      
+      // Extract and validate all emails
+      const emails = [];
+      const emailSet = new Set(); // To avoid duplicates
+      
+      allEmailStrings.forEach(emailStr => {
+        // Handle different separators: semicolon, comma, newline, tab
+        const separated = emailStr.split(/[;,\n\r\t]+/);
+        separated.forEach(e => {
+          const trimmed = e.trim();
+          if (!trimmed) return;
+          
+          // Try to extract emails from this string using regex
+          const extracted = trimmed.match(patterns.email) || [];
+          extracted.forEach(extractedEmail => {
+            const email = extractedEmail.toLowerCase();
+            if (filterInvalid.emails(email) && !emailSet.has(email)) {
+              emailSet.add(email);
+              emails.push(email);
+            }
+          });
+        });
+      });
 
-    const emailsStr = get('emails');
-    const phonesStr = get('phones');
+      // Extract phones - handle both single phone and semicolon-separated
+      const phoneStr = phoneIdx !== -1 ? get(phoneIdx) : '';
+      const phones = phoneStr
+        ? phoneStr.split(/[;,\s]+/).map(p => p.trim()).filter(p => {
+            // Validate phone format
+            return p && filterInvalid.phones(p);
+          })
+        : [];
 
-    records.push({
-      f: get('first name'),
-      l: get('last name'),
-      company: get('company'),
-      emails: emailsStr ? emailsStr.split(';').map(e => e.trim()).filter(Boolean) : [],
-      phones: phonesStr ? phonesStr.split(';').map(p => p.trim()).filter(Boolean) : [],
-      status: get('status') || 'New',
-      lastSent: get('last sent') || ''
-    });
+      // Extract other fields
+      const firstName = firstNameIdx !== -1 ? get(firstNameIdx) : '';
+      const lastName = lastNameIdx !== -1 ? get(lastNameIdx) : '';
+      const company = companyIdx !== -1 ? get(companyIdx) : '';
+      
+      // Import ALL records from CSV - create a record if there's ANY data
+      // This ensures we don't lose any emails, even if name/company is missing
+      if (firstName || lastName || company || emails.length > 0 || phones.length > 0) {
+        // If we have emails but no name, create a record anyway (emails are valuable)
+        records.push({
+          f: firstName,
+          l: lastName,
+          company: company,
+          emails: emails, // This array contains ALL emails found in this row
+          phones: phones,
+          status: statusIdx !== -1 ? get(statusIdx) || 'New' : 'New',
+          lastSent: lastSentIdx !== -1 ? get(lastSentIdx) : ''
+        });
+      } else {
+        // Log skipped rows for debugging
+        console.log(`Skipped empty row ${i + 1}:`, values);
+      }
+    } catch (err) {
+      console.warn(`Error parsing CSV line ${i + 1}:`, err);
+      // Continue with next line
+    }
   }
 
   return records;
@@ -631,6 +880,13 @@ function handleCSVImport(e) {
   const file = e.target.files[0];
   if (!file) return;
 
+  // Validate file type
+  if (!file.name.toLowerCase().endsWith('.csv')) {
+    showToast('Please select a CSV file', 'error');
+    e.target.value = '';
+    return;
+  }
+
   const reader = new FileReader();
 
   reader.onload = (event) => {
@@ -639,39 +895,74 @@ function handleCSVImport(e) {
       const importedRecords = parseCSVToRecords(text);
 
       if (!importedRecords.length) {
-        showToast('No records found in CSV', 'error');
+        showToast('No records found in CSV. Make sure CSV has at least one data column.', 'error');
+        e.target.value = '';
         return;
       }
 
-      let mergeExisting = false;
-      if (state.mergeAction === null) { // Only ask if preference is not set
-        mergeExisting = confirm(
-          'Some contacts may already exist.\\n\\n' +
-          'OK = Update existing contacts (merge by email/phone)\\n' +
-          'Cancel = Always create new contacts'
-        );
-        state.mergeAction = mergeExisting ? 'update' : 'duplicate';
-      } else if (state.mergeAction === 'update') {
-        mergeExisting = true;
-      }
-
-      const { added, updated } = mergeImportedRecords(importedRecords, mergeExisting);
+      // Count total emails found (before merge)
+      const totalEmails = importedRecords.reduce((sum, r) => sum + (r.emails?.length || 0), 0);
+      const totalRows = importedRecords.length;
+      
+      // Show detailed breakdown
+      const recordsWithEmails = importedRecords.filter(r => r.emails?.length > 0).length;
+      const recordsWithMultipleEmails = importedRecords.filter(r => (r.emails?.length || 0) > 1).length;
+      
+      // Always ask user about merge preference for better control
+      const mergeChoice = confirm(
+        `CSV Import Summary:\n` +
+        `• ${totalRows} row(s) processed\n` +
+        `• ${totalEmails} email(s) found\n` +
+        `• ${recordsWithEmails} record(s) with emails\n` +
+        `• ${recordsWithMultipleEmails} record(s) with multiple emails\n\n` +
+        'OK = Merge with existing (update duplicates by email/phone)\n' +
+        'Cancel = Add all as new contacts (may create duplicates)'
+      );
+      
+      const mergeExisting = mergeChoice;
+      const { added, updated, duplicates } = mergeImportedRecords(importedRecords, mergeExisting);
+      
+      // Count final emails after merge
+      const finalEmails = state.records.reduce((sum, r) => sum + (r.emails?.length || 0), 0);
 
       try {
-        chrome.storage.local.set({ copy_records: state.records }, renderRecords);
-        showToast(
-          mergeExisting
-            ? `Imported ${added} new, updated ${updated} existing`
-            : `Imported ${added} new contacts`,
-          'success'
-        );
+        chrome.storage.local.set({ copy_records: state.records }, () => {
+          renderRecords();
+          
+          // Show detailed import results
+          let message = '';
+          if (mergeExisting) {
+            message = `✓ Imported ${added} new, updated ${updated} existing\nTotal: ${finalEmails} emails in ${state.records.length} records`;
+            if (duplicates.length > 0) {
+              message += `\n\n${duplicates.length} duplicate(s) merged:`;
+              duplicates.slice(0, 5).forEach(dup => {
+                message += `\n• ${dup.imported} → ${dup.existing} (${dup.reason})`;
+              });
+              if (duplicates.length > 5) {
+                message += `\n... and ${duplicates.length - 5} more`;
+              }
+            }
+          } else {
+            message = `✓ Imported ${added} new contacts\nTotal: ${finalEmails} emails in ${state.records.length} records`;
+            if (updated > 0) {
+              message += `\n⚠ ${updated} potential duplicates were still added`;
+            }
+          }
+          
+          // Warn if email count doesn't match
+          if (totalEmails !== finalEmails && mergeExisting) {
+            message += `\n\n⚠ Note: ${totalEmails} emails found, ${finalEmails} after merge (duplicates combined)`;
+          }
+          
+          showToast(message, 'success');
+        });
       } catch (error) {
         console.error('Storage error after CSV import:', error);
         showToast('Failed to save imported data', 'error');
       }
     } catch (err) {
       console.error('CSV import error:', err);
-      showToast('Failed to import CSV', 'error');
+      showToast(`Failed to import CSV: ${err.message}`, 'error');
     } finally {
       e.target.value = ''; // reset file input
     }

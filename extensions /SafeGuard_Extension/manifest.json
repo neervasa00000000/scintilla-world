@@ -3,7 +3,7 @@
   "name": "SafeGuard",
   "version": "0.0.1",
   "description": "Intercepts Web3 transactions and runs local risk checks.",
-  "permissions": ["tabs", "storage", "windows", "declarativeNetRequest"],
+  "permissions": ["tabs", "storage", "windows"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",
@@ -37,3 +37,7 @@
     "128": "icons/icon128.png"
   }
 }
+
+
+
+
