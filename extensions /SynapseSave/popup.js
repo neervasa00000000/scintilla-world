@@ -1,19 +1,16 @@
-// SynapseSave - Optimized Popup Script
+// SynapseSave - Popup Script
 
 let currentTabId = null;
-let currentWindowId = null; // Store current window ID
-let stats = { tabsSnoozed: 0, ramSaved: 0, timeSaved: 0 };
+let currentWindowId = null;
+let stats = { tabsSnoozed: 0, ramSaved: 0 };
 
-// Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // Get current window ID for batch operations
         try {
             const win = await chrome.windows.getCurrent();
             currentWindowId = win.id;
         } catch (error) {
             console.error('Error getting current window:', error);
-            // Fallback to last focused window
             currentWindowId = null;
         }
         
@@ -22,9 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const searchInput = document.getElementById('tabSearch');
         if (searchInput) {
-            searchInput.addEventListener('input', () => {
-                filterTabs(searchInput.value);
-            });
+            searchInput.addEventListener('input', () => filterTabs(searchInput.value));
         }
     } catch (error) {
         console.error('Error initializing popup:', error);
@@ -32,26 +27,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// --- CORE DATA LOADING ---
+let allOpenTabs = [];
+let allSnoozedTabs = [];
 
 async function refreshAll() {
-    // 1. Preserve scroll positions
     const openList = document.getElementById('openTabsList');
     const snoozedList = document.getElementById('snoozedList');
     const scrollPosOpen = openList ? openList.scrollTop : 0;
     const scrollPosSnoozed = snoozedList ? snoozedList.scrollTop : 0;
 
-    // 2. Load data
-    await Promise.all([loadStats(), loadTabGroups(), loadDuplicateTabs(), loadTabs(), loadSnoozedTabs()]);
+    await Promise.all([loadStats(), loadTabGroups(), loadTabs(), loadSnoozedTabs()]);
     updateStats();
 
-    // 3. Restore scroll positions
-    if (document.getElementById('openTabsList')) document.getElementById('openTabsList').scrollTop = scrollPosOpen;
-    if (document.getElementById('snoozedList')) document.getElementById('snoozedList').scrollTop = scrollPosSnoozed;
+    if (openList) openList.scrollTop = scrollPosOpen;
+    if (snoozedList) snoozedList.scrollTop = scrollPosSnoozed;
 }
-
-let allOpenTabs = []; // To store all open tabs for filtering
-let allSnoozedTabs = []; // To store all snoozed tabs for filtering
 
 function filterTabs(query) {
     const lowerCaseQuery = query.toLowerCase();
@@ -70,7 +60,6 @@ function filterTabs(query) {
     renderTabs(filteredSnoozedTabs, 'snoozedList', 'snoozedTabCount', 'No snoozed tabs', '💤', 'Snooze tabs to see them here', true);
 }
 
-// Helper to render tabs (for both open and snoozed)
 function renderTabs(tabsToRender, listId, countId, emptyTitle, emptyIcon, emptyHint, isSnoozed = false) {
     const listElement = document.getElementById(listId);
     const countElement = document.getElementById(countId);
@@ -106,10 +95,7 @@ async function loadStats() {
     
     stats.tabsSnoozed = snoozedTabs.length + bundleTabCount;
     stats.ramSaved = stats.tabsSnoozed * 75; // ~75MB avg
-    stats.timeSaved = Math.floor(stats.tabsSnoozed * 0.5);
 }
-
-// --- TAB GROUPS DETECTION ---
 
 let currentGroupId = null;
 let currentGroupData = null;
@@ -167,7 +153,6 @@ async function loadTabGroups() {
         });
         tabGroupsList.appendChild(fragment);
     } catch (error) {
-        console.log('Error loading tab groups:', error);
         const tabGroupsSection = document.getElementById('tabGroupsSection');
         if (tabGroupsSection) tabGroupsSection.style.display = 'none';
     }
@@ -183,12 +168,10 @@ function createTabGroupItem(group, tabs) {
     const groupInfo = document.createElement('div');
     groupInfo.className = 'tab-group-info';
     
-    // Group color indicator
     const colorEl = document.createElement('div');
     colorEl.className = 'tab-group-color';
     colorEl.style.backgroundColor = getGroupColorHex(group.color);
     
-    // Group name
     const nameEl = document.createElement('div');
     nameEl.className = 'tab-group-name';
     nameEl.textContent = group.title || 'Untitled Group';
@@ -197,12 +180,10 @@ function createTabGroupItem(group, tabs) {
     groupInfo.appendChild(colorEl);
     groupInfo.appendChild(nameEl);
     
-    // Tab count badge
     const countBadge = document.createElement('div');
     countBadge.className = 'tab-group-count';
     countBadge.textContent = `${tabs.length}`;
     
-    // Action buttons
     const actionsContainer = document.createElement('div');
     actionsContainer.className = 'tab-group-actions';
     
@@ -268,173 +249,9 @@ function closeBundleNameModal() {
     }
 }
 
-// --- DUPLICATE TAB DETECTION ---
-
-async function loadDuplicateTabs() {
-    // Limit duplicates to current window only
-    const tabs = await chrome.tabs.query({ currentWindow: true });
-    const filteredTabs = tabs.filter(tab => 
-        !tab.url.startsWith('chrome://') && 
-        !tab.url.startsWith('edge://') &&
-        !tab.url.startsWith('about:') &&
-        !tab.url.startsWith('chrome-extension://')
-    );
-    
-    // Group tabs by domain (hostname) instead of full URL
-    // This way all YouTube tabs are grouped together, all Facebook tabs, etc.
-    const domainGroups = {};
-    filteredTabs.forEach(tab => {
-        try {
-            const url = new URL(tab.url);
-            // Normalize domain: remove 'www.' prefix for cleaner grouping
-            const domain = url.hostname.replace(/^www\./, '');
-            
-            if (!domainGroups[domain]) {
-                domainGroups[domain] = [];
-            }
-            domainGroups[domain].push(tab);
-        } catch (error) {
-            // Skip invalid URLs
-            console.log('Invalid URL:', tab.url);
-        }
-    });
-    
-    // Find duplicates (domains with more than 1 tab)
-    const duplicates = Object.entries(domainGroups)
-        .filter(([domain, tabs]) => tabs.length > 1)
-        .map(([domain, tabs]) => ({ domain, tabs }));
-    
-    const duplicateSection = document.getElementById('duplicateTabsSection');
-    const duplicateGroupsList = document.getElementById('duplicateGroupsList');
-    const duplicateTabCount = document.getElementById('duplicateTabCount');
-    
-    if (duplicates.length === 0) {
-        duplicateSection.style.display = 'none';
-        return;
-    }
-    
-    duplicateSection.style.display = 'block';
-    
-    // Calculate total duplicate tabs (excluding one from each group)
-    const totalDuplicates = duplicates.reduce((sum, group) => sum + (group.tabs.length - 1), 0);
-    duplicateTabCount.textContent = totalDuplicates;
-    
-    duplicateGroupsList.innerHTML = '';
-    
-    const fragment = document.createDocumentFragment();
-    duplicates.forEach(({ domain, tabs }) => {
-        fragment.appendChild(createDuplicateGroup(domain, tabs));
-    });
-    duplicateGroupsList.appendChild(fragment);
-}
-
-function createDuplicateGroup(domain, tabs) {
-    const group = document.createElement('div');
-    group.className = 'duplicate-group';
-    
-    const header = document.createElement('div');
-    header.className = 'duplicate-group-header';
-    
-    const urlInfo = document.createElement('div');
-    urlInfo.className = 'duplicate-url-info';
-    
-    // Get favicon from first tab's URL
-    const faviconEl = document.createElement('div');
-    faviconEl.className = 'tab-favicon';
-    try {
-        const firstTabUrl = tabs[0].url;
-        const faviconUrl = new URL(chrome.runtime.getURL("/_favicon/"));
-        faviconUrl.searchParams.set("pageUrl", firstTabUrl);
-        faviconUrl.searchParams.set("size", "16");
-        const img = document.createElement('img');
-        img.src = faviconUrl.toString();
-        img.alt = '';
-        img.onerror = () => {
-            faviconEl.textContent = '🌐';
-            faviconEl.style.fontSize = '8px';
-            faviconEl.style.display = 'flex';
-            faviconEl.style.alignItems = 'center';
-            faviconEl.style.justifyContent = 'center';
-        };
-        faviconEl.appendChild(img);
-    } catch (error) {
-        faviconEl.textContent = '🌐';
-        faviconEl.style.fontSize = '8px';
-        faviconEl.style.display = 'flex';
-        faviconEl.style.alignItems = 'center';
-        faviconEl.style.justifyContent = 'center';
-    }
-    
-    const urlText = document.createElement('div');
-    urlText.className = 'duplicate-url-text';
-    urlText.textContent = domain;
-    urlText.title = `${tabs.length} tabs from ${domain}`;
-    
-    urlInfo.appendChild(faviconEl);
-    urlInfo.appendChild(urlText);
-    
-    const countBadge = document.createElement('div');
-    countBadge.className = 'duplicate-count-badge';
-    countBadge.textContent = `${tabs.length}x`;
-    
-    // Action buttons container
-    const actionsContainer = document.createElement('div');
-    actionsContainer.className = 'duplicate-actions';
-    actionsContainer.style.display = 'flex';
-    actionsContainer.style.gap = '8px';
-    
-    // Snooze button - snooze ALL duplicates (all tabs from this domain)
-    const snoozeBtn = document.createElement('button');
-    snoozeBtn.className = 'btn btn-primary btn-small';
-    snoozeBtn.textContent = 'Snooze';
-    snoozeBtn.title = `Snooze all ${tabs.length} tab${tabs.length > 1 ? 's' : ''} from ${domain}`;
-    snoozeBtn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        // Snooze ALL tabs from this domain
-        if (tabs.length > 0) {
-            // Use default 1 day snooze
-            const wakeTime = calculateWakeTime('oneday');
-            for (const tab of tabs) {
-                await performSnooze(tab.id, wakeTime, 'oneday');
-            }
-            await refreshAll();
-            showToast(`Snoozed ${tabs.length} tab${tabs.length > 1 ? 's' : ''}`, 'success');
-        }
-    });
-    
-    // Cleanup button - close all duplicates (keep first, close rest)
-    const cleanupBtn = document.createElement('button');
-    cleanupBtn.className = 'btn btn-danger btn-small close-all-duplicates-btn';
-    cleanupBtn.textContent = 'Cleanup';
-    cleanupBtn.title = `Close ${tabs.length - 1} duplicate tab${tabs.length > 2 ? 's' : ''} from ${domain} (keeping 1 open)`;
-    cleanupBtn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        // Keep the first tab open, close the rest (duplicates)
-        const tabsToClose = tabs.slice(1); // Skip first tab
-        const tabIds = tabsToClose.map(t => t.id);
-        if (tabIds.length > 0) {
-            await chrome.tabs.remove(tabIds);
-            await refreshAll();
-            showToast(`Closed ${tabIds.length} duplicates`, 'success');
-        }
-    });
-    
-    actionsContainer.appendChild(snoozeBtn);
-    actionsContainer.appendChild(cleanupBtn);
-    
-    header.appendChild(urlInfo);
-    header.appendChild(countBadge);
-    header.appendChild(actionsContainer);
-    
-    group.appendChild(header);
-    
-    return group;
-}
-
 // --- TAB MANAGEMENT ---
 
 async function loadTabs() {
-    // FIX: Only query tabs for the CURRENT WINDOW to avoid confusion
     const tabs = await chrome.tabs.query({ currentWindow: true });
 
     allOpenTabs = tabs.filter(tab =>
@@ -457,34 +274,23 @@ function createTabItem(tab) {
     const faviconEl = document.createElement('div');
     faviconEl.className = 'tab-favicon';
     
-    // MODERN FAVICON FETCHING (MV3) with improved error handling
-    // Chrome's _favicon/ API handles CORS internally, but may log CORS warnings in console
-    // These warnings occur when Chrome's internal favicon service tries to fetch from
-    // domains with strict CORS policies (e.g., ahrefs.com, gstatic.com). These warnings
-    // are informational only and don't affect functionality - favicons will still display
-    // if available through Chrome's cache or fallback mechanisms.
     try {
         const faviconUrl = new URL(chrome.runtime.getURL("/_favicon/"));
         faviconUrl.searchParams.set("pageUrl", tab.url);
         faviconUrl.searchParams.set("size", "32");
         
-    const img = document.createElement('img');
-    img.src = faviconUrl.toString();
-    img.alt = '';
-        
-        // Improved error handling with fallback
-    img.onerror = function() {
-            // Fallback to emoji icon if favicon fails to load
+        const img = document.createElement('img');
+        img.src = faviconUrl.toString();
+        img.alt = '';
+        img.onerror = () => {
             faviconEl.textContent = '🌐';
             faviconEl.style.fontSize = '10px';
             faviconEl.style.display = 'flex';
             faviconEl.style.alignItems = 'center';
             faviconEl.style.justifyContent = 'center';
         };
-        
         faviconEl.appendChild(img);
     } catch (error) {
-        // Fallback if favicon URL creation fails
         faviconEl.textContent = '🌐';
         faviconEl.style.fontSize = '10px';
         faviconEl.style.display = 'flex';
@@ -524,7 +330,6 @@ async function loadSnoozedTabs() {
     allSnoozedTabs = result.snoozedTabs || [];
     const bundles = result.snoozedBundles || [];
 
-    // Sort by wake time (soonest first)
     allSnoozedTabs.sort((a, b) => a.wakeTime - b.wakeTime);
     bundles.sort((a, b) => a.wakeTime - b.wakeTime);
 
@@ -542,16 +347,8 @@ async function loadSnoozedTabs() {
     }
     
     const fragment = document.createDocumentFragment();
-    
-    // Render bundles first
-    bundles.forEach(bundle => {
-        fragment.appendChild(createBundleItem(bundle));
-    });
-    
-    // Then render individual tabs
-    allSnoozedTabs.forEach(tab => {
-        fragment.appendChild(createSnoozedItem(tab));
-    });
+    bundles.forEach(bundle => fragment.appendChild(createBundleItem(bundle)));
+    allSnoozedTabs.forEach(tab => fragment.appendChild(createSnoozedItem(tab)));
     
     snoozedList.appendChild(fragment);
 }
@@ -648,9 +445,6 @@ function createSnoozedItem(tab) {
     return item;
 }
 
-// --- ACTIONS ---
-
-// 1. Snooze Single
 function snoozeTab(tabId) {
     currentTabId = tabId;
     const modal = document.getElementById('snoozeModal');
@@ -659,7 +453,6 @@ function snoozeTab(tabId) {
     }
 }
 
-// Helper function to get group properties
 async function getGroupProperties(groupId) {
     if (!groupId || groupId === chrome.tabs.TAB_GROUP_ID_NONE) {
         return null;
@@ -677,7 +470,6 @@ async function getGroupProperties(groupId) {
     }
 }
 
-// 2. Perform Snooze (Optimized Logic)
 async function performSnooze(tabId, wakeTime, timeOption) {
     try {
         const tab = await chrome.tabs.get(tabId).catch(() => null);
@@ -686,13 +478,11 @@ async function performSnooze(tabId, wakeTime, timeOption) {
             return;
         }
 
-        // Get tab group properties if tab belongs to a group
         let groupInfo = null;
         if (tab.groupId && tab.groupId !== chrome.tabs.TAB_GROUP_ID_NONE) {
             groupInfo = await getGroupProperties(tab.groupId);
         }
 
-        // 1. Update Storage
         const result = await chrome.storage.local.get(['snoozedTabs']);
         const snoozedTabs = result.snoozedTabs || [];
         
@@ -705,27 +495,23 @@ async function performSnooze(tabId, wakeTime, timeOption) {
             snoozedAt: Date.now(),
             timeOption: timeOption,
             groupId: groupInfo ? groupInfo.id : null,
-            groupInfo: groupInfo // Store full group properties for restoration
+            groupInfo: groupInfo
         });
         await chrome.storage.local.set({ snoozedTabs });
 
-        // 2. Set Alarm
         try {
             await chrome.alarms.create(`snooze_${tab.id}_${wakeTime}`, { when: wakeTime });
         } catch (alarmError) {
             console.error('Error creating alarm:', alarmError);
-            // Remove from storage if alarm creation fails
             const updated = snoozedTabs.filter(st => st.tabId !== tab.id);
             await chrome.storage.local.set({ snoozedTabs: updated });
             throw alarmError;
         }
 
-        // 3. Close Tab
         try {
             await chrome.tabs.remove(tab.id);
         } catch (removeError) {
             console.error('Error removing tab:', removeError);
-            // Tab might already be closed, continue
         }
     } catch (error) {
         console.error('Error in performSnooze:', error);
@@ -733,24 +519,14 @@ async function performSnooze(tabId, wakeTime, timeOption) {
     }
 }
 
-// 3. BATCH ACTION: Clear All / Weekend
-// Crash Fixed: Now fires a message to background.js and closes the popup immediately.
-// It will no longer fail if the user clicks away.
 async function batchSnooze(timeOption) {
-    // FIX: Send the Window ID so background script knows which window to target
     chrome.runtime.sendMessage(
         { action: 'batchSnooze', timeOption: timeOption, windowId: currentWindowId },
-        (response) => {
-            // Response is handled, but popup is already closed
-            // Background script handles everything
-        }
+        () => {}
     );
-    
-    // Close popup immediately to prevent crash if user clicks away
     window.close();
 }
 
-// --- LOGIC FIX: Always find group by NAME first ---
 async function restoreGroupFromPopup(tabData, newTabId) {
     if (!tabData.groupInfo && !tabData.groupId) return;
     try {
@@ -761,23 +537,19 @@ async function restoreGroupFromPopup(tabData, newTabId) {
         let groupInfo = tabData.groupInfo || { title: '', color: 'grey' };
         let foundGroup = null;
         
-        // 1. SEARCH BY NAME ("Group B") in the CURRENT WINDOW
         if (groupInfo.title) {
             const windowGroups = await chrome.tabGroups.query({ windowId: newTab.windowId });
             foundGroup = windowGroups.find(g => g.title === groupInfo.title);
         }
         
-        // 2. Fallback to ID
         if (!foundGroup && tabData.groupId) {
-             try {
+            try {
                 const groupById = await chrome.tabGroups.get(tabData.groupId);
                 if (groupById && groupById.windowId === newTab.windowId) {
                     foundGroup = groupById;
                 }
             } catch (e) {}
         }
-        
-        // 3. ACTION
         if (foundGroup) {
             await chrome.tabs.group({ groupId: foundGroup.id, tabIds: [newTabId] });
         } else {
@@ -789,7 +561,7 @@ async function restoreGroupFromPopup(tabData, newTabId) {
                 await chrome.tabGroups.update(newGroupId, updateData);
             }
         }
-    } catch(e) { console.log('Popup Restore Group Error', e); }
+    } catch(e) {}
 }
 
 async function reopenTab(tabId) {
@@ -803,13 +575,9 @@ async function reopenTab(tabId) {
             return;
         }
         
-        // Create the tab
         let newTab;
         try {
-            newTab = await chrome.tabs.create({ 
-                url: targetTab.url, 
-                active: false 
-            });
+            newTab = await chrome.tabs.create({ url: targetTab.url, active: false });
         } catch (createError) {
             console.error('Error creating tab:', createError);
             showToast('Error opening tab', 'error');
@@ -818,15 +586,12 @@ async function reopenTab(tabId) {
         
         if (targetTab.groupId || targetTab.groupInfo) {
             try {
-                // Local restore logic
                 await restoreGroupFromPopup(targetTab, newTab.id);
             } catch (groupError) {
                 console.error('Error restoring group:', groupError);
-                // Continue even if group restore fails
             }
         }
         
-        // Cleanup
         try {
             chrome.alarms.clear(`snooze_${tabId}_${targetTab.wakeTime}`);
             snoozedTabs = snoozedTabs.filter(st => st.tabId !== tabId);
@@ -881,11 +646,9 @@ async function reopenBundle(bundleId) {
         return;
     }
     
-    // Store bundle name for toast message
     const bundleName = bundle.name;
     const bundleWakeTime = bundle.wakeTime;
     
-    // Function to remove bundle from storage
     const removeBundle = async () => {
         try {
             const currentResult = await chrome.storage.local.get(['snoozedBundles']);
@@ -893,11 +656,9 @@ async function reopenBundle(bundleId) {
             const updated = currentBundles.filter(b => b.bundleId !== bundleId);
             await chrome.storage.local.set({ snoozedBundles: updated });
             
-            // Clear alarms
             bundle.tabs.forEach(tab => {
                 chrome.alarms.clear(`snooze_${tab.tabId}_${bundleWakeTime}`);
             });
-            
             return true;
         } catch (e) {
             console.error('Error removing bundle:', e);
@@ -905,14 +666,9 @@ async function reopenBundle(bundleId) {
         }
     };
     
-    // Send message to background to restore bundle
     try {
         const response = await new Promise((resolve, reject) => {
-            chrome.runtime.sendMessage({
-                action: 'restoreBundle',
-                bundleId: bundleId
-            }, (response) => {
-                // Check for Chrome runtime errors first
+            chrome.runtime.sendMessage({ action: 'restoreBundle', bundleId: bundleId }, (response) => {
                 if (chrome.runtime.lastError) {
                     reject(new Error(chrome.runtime.lastError.message));
                     return;
@@ -921,39 +677,30 @@ async function reopenBundle(bundleId) {
             });
         });
         
-        // If response is successful, bundle should already be removed by background script
-        // But we'll check and refresh anyway
         if (response && response.success) {
-            // Check if bundle was already removed by background script
             const checkResult = await chrome.storage.local.get(['snoozedBundles']);
             const stillExists = checkResult.snoozedBundles?.some(b => b.bundleId === bundleId);
             
             if (stillExists) {
-                // Background didn't remove it, do it here as fallback
                 await removeBundle();
             }
             
             await refreshAll();
             showToast(`Bundle "${bundleName}" reopened`, 'success');
         } else {
-            // Restore failed
             const errorMsg = response?.message || 'Unknown error occurred';
             console.error('Bundle restore error:', errorMsg);
             showToast(`Error: ${errorMsg}`, 'error');
         }
     } catch (error) {
         console.error('Error in reopenBundle:', error);
-        // Even if there was an error, try to remove the bundle if it might have been opened
-        // But first check if tabs were actually created by checking if bundle still exists
         const checkResult = await chrome.storage.local.get(['snoozedBundles']);
         const stillExists = checkResult.snoozedBundles?.some(b => b.bundleId === bundleId);
         
         if (!stillExists) {
-            // Bundle was already removed, probably by notification handler
             await refreshAll();
             showToast(`Bundle "${bundleName}" reopened`, 'success');
         } else {
-            // Bundle still exists, restore might have failed
             showToast(`Error: ${error.message}`, 'error');
         }
     }
@@ -970,7 +717,6 @@ async function deleteBundle(bundleId) {
             return;
         }
         
-        // Clear alarms
         if (bundle.tabs && Array.isArray(bundle.tabs)) {
             for (const tab of bundle.tabs) {
                 try {
@@ -992,12 +738,6 @@ async function deleteBundle(bundleId) {
     }
 }
 
-async function closeTab(tabId) {
-    await chrome.tabs.remove(tabId);
-    await refreshAll();
-}
-
-// --- UTILS ---
 
 function calculateWakeTime(option) {
     const now = new Date();
@@ -1006,11 +746,9 @@ function calculateWakeTime(option) {
     
     switch(option) {
         case 'oneday':
-            // Add exactly 24 hours from now (not a fixed time)
             wakeTime = new Date(now.getTime() + (24 * 60 * 60 * 1000));
             break;
         case 'nextweek':
-            // Add exactly 7 days from now at 9:00 AM
             wakeTime = new Date(now);
             wakeTime.setDate(now.getDate() + 7);
             wakeTime.setHours(9, 0, 0, 0);
@@ -1026,11 +764,9 @@ function calculateWakeTime(option) {
 function updateStats() {
     const tabsSnoozedEl = document.getElementById('tabsSnoozed');
     const ramSavedEl = document.getElementById('ramSaved');
-    const timeSavedEl = document.getElementById('timeSaved');
     
     if (tabsSnoozedEl) tabsSnoozedEl.textContent = stats.tabsSnoozed;
     if (ramSavedEl) ramSavedEl.textContent = `${stats.ramSaved} MB`;
-    if (timeSavedEl) timeSavedEl.textContent = `${stats.timeSaved}h`;
 }
 
 function formatTimeUntil(timestamp) {
@@ -1043,7 +779,6 @@ function formatTimeUntil(timestamp) {
     const remainingHours = hours % 24;
     const remainingMins = mins % 60;
     
-    // More accurate display
     if (days > 0) {
         if (remainingHours > 0) {
             return `${days}d ${remainingHours}h`;
@@ -1082,7 +817,19 @@ function showToast(msg, type = 'success') {
 }
 
 function setupEventListeners() {
-    // Modal close button
+    // Unified modal close handlers with ESC key support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const snoozeModal = document.getElementById('snoozeModal');
+            const bundleModal = document.getElementById('bundleNameModal');
+            if (snoozeModal?.classList.contains('active')) {
+                closeModal();
+            } else if (bundleModal?.classList.contains('active')) {
+                closeBundleNameModal();
+            }
+        }
+    });
+
     const closeModalBtn = document.getElementById('closeModalBtn');
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', (e) => {
@@ -1091,7 +838,6 @@ function setupEventListeners() {
         });
     }
     
-    // Bundle modal close button
     const closeBundleModalBtn = document.getElementById('closeBundleModalBtn');
     if (closeBundleModalBtn) {
         closeBundleModalBtn.addEventListener('click', (e) => {
@@ -1100,45 +846,29 @@ function setupEventListeners() {
         });
     }
     
-    // Modal overlay - close on click
     const modal = document.getElementById('snoozeModal');
     if (modal) {
         const overlay = modal.querySelector('.modal-overlay');
         if (overlay) {
-            overlay.addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeModal();
-            });
+            overlay.addEventListener('click', () => closeModal());
         }
-        
-        // Prevent modal content clicks from closing modal
         const modalContent = modal.querySelector('.modal-content');
         if (modalContent) {
-            modalContent.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
+            modalContent.addEventListener('click', (e) => e.stopPropagation());
         }
     }
     
-    // Bundle modal overlay
     const bundleModal = document.getElementById('bundleNameModal');
     if (bundleModal) {
         const overlay = bundleModal.querySelector('.modal-overlay');
         if (overlay) {
-            overlay.addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeBundleNameModal();
-            });
+            overlay.addEventListener('click', () => closeBundleNameModal());
         }
-        
         const modalContent = bundleModal.querySelector('.modal-content');
         if (modalContent) {
-            modalContent.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
+            modalContent.addEventListener('click', (e) => e.stopPropagation());
         }
         
-        // Bundle name input - Enter key to snooze
         const bundleNameInput = document.getElementById('bundleNameInput');
         if (bundleNameInput) {
             bundleNameInput.addEventListener('keypress', (e) => {
@@ -1152,7 +882,6 @@ function setupEventListeners() {
         }
     }
     
-    // Bundle snooze button
     const snoozeBundleBtn = document.getElementById('snoozeBundleBtn');
     if (snoozeBundleBtn) {
         snoozeBundleBtn.addEventListener('click', async () => {
@@ -1170,7 +899,6 @@ function setupEventListeners() {
             const timeOption = selectedOption.dataset.time;
             const wakeTime = calculateWakeTime(timeOption);
             
-            // Verify tabs still exist and get fresh data
             const validTabs = [];
             for (const tab of currentGroupData.tabs) {
                 try {
@@ -1186,9 +914,7 @@ function setupEventListeners() {
                             favIconUrl: freshTab.favIconUrl
                         });
                     }
-                } catch (e) {
-                    console.log(`Tab ${tab.id} no longer exists, skipping`);
-                }
+                } catch (e) {}
             }
             
             if (validTabs.length === 0) {
@@ -1196,7 +922,6 @@ function setupEventListeners() {
                 return;
             }
             
-            // Send message to background to snooze bundle
             chrome.runtime.sendMessage({
                 action: 'snoozeBundle',
                 bundleName: bundleName,
@@ -1211,7 +936,6 @@ function setupEventListeners() {
                 timeOption: timeOption,
                 wakeTime: wakeTime
             }, (response) => {
-                // Check for Chrome runtime errors
                 if (chrome.runtime.lastError) {
                     console.error('Chrome runtime error:', chrome.runtime.lastError);
                     showToast(`Error: ${chrome.runtime.lastError.message}`, 'error');
@@ -1222,7 +946,6 @@ function setupEventListeners() {
                     closeBundleNameModal();
                     refreshAll();
                     showToast(`Bundle "${bundleName}" snoozed!`, 'success');
-                    // Close popup after a short delay
                     setTimeout(() => window.close(), 500);
                 } else {
                     const errorMsg = response?.message || 'Unknown error occurred';
@@ -1233,45 +956,29 @@ function setupEventListeners() {
         });
     }
     
-    // Bundle modal snooze options
     const bundleModalBody = document.querySelector('#bundleNameModal .modal-body');
     if (bundleModalBody) {
         bundleModalBody.addEventListener('click', (e) => {
             const option = e.target.closest('.snooze-option');
             if (!option) return;
-            
             e.stopPropagation();
-            
-            // Remove selected state from all options
             document.querySelectorAll('#bundleNameModal .snooze-option').forEach(o => o.classList.remove('selected'));
-            // Add selected state to clicked option
             option.classList.add('selected');
         });
     }
     
-    // Quick Actions - USING THE NEW BATCH FUNCTION
-    const clearAllBtn = document.getElementById('clearAllBtn');
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', () => batchSnooze('oneday'));
-    }
-
     const snoozeAllBtn = document.getElementById('snoozeAllBtn');
     if (snoozeAllBtn) {
-        snoozeAllBtn.addEventListener('click', () => batchSnooze('oneday')); // Assuming default snooze all is one day
+        snoozeAllBtn.addEventListener('click', () => batchSnooze('oneday'));
     }
     
-    // Snooze Options - Use event delegation for better performance
     const modalBody = document.querySelector('.modal-body');
     if (modalBody) {
         modalBody.addEventListener('click', async (e) => {
             const option = e.target.closest('.snooze-option');
             if (!option) return;
-            
             e.stopPropagation();
-            
-            // Remove selected state from all options
             document.querySelectorAll('.snooze-option').forEach(o => o.classList.remove('selected'));
-            // Add selected state to clicked option
             option.classList.add('selected');
             
             const timeOption = option.dataset.time;
@@ -1280,224 +987,26 @@ function setupEventListeners() {
             if (currentTabId && time) {
                 await performSnooze(currentTabId, time, timeOption);
                 closeModal();
-                await refreshAll(); // Refresh UI only after single snooze
+                await refreshAll();
                 showToast('Tab snoozed!', 'success');
             }
         });
     }
-    
-    // Export/Import buttons
-    const exportBtn = document.getElementById('exportBtn');
-    if (exportBtn) {
-        exportBtn.addEventListener('click', exportData);
-    }
-    
-    const importBtn = document.getElementById('importBtn');
-    const importFileInput = document.getElementById('importFileInput');
-    if (importBtn && importFileInput) {
-        importBtn.addEventListener('click', () => {
-            importFileInput.click();
-        });
-        importFileInput.addEventListener('change', handleImportFile);
-    }
-    
-    // Import confirmation modal
-    const closeImportModalBtn = document.getElementById('closeImportModalBtn');
-    if (closeImportModalBtn) {
-        closeImportModalBtn.addEventListener('click', cancelImport);
-    }
-    
-    const confirmImportBtn = document.getElementById('confirmImportBtn');
-    if (confirmImportBtn) {
-        confirmImportBtn.addEventListener('click', confirmImport);
-    }
-    
-    const cancelImportBtn = document.getElementById('cancelImportBtn');
-    if (cancelImportBtn) {
-        cancelImportBtn.addEventListener('click', cancelImport);
-    }
-    
-    const importModal = document.getElementById('importConfirmModal');
-    if (importModal) {
-        const overlay = importModal.querySelector('.modal-overlay');
-        if (overlay) {
-            overlay.addEventListener('click', cancelImport);
-        }
-    }
-    
 }
 
-// Close modal function
 function closeModal() {
     const modal = document.getElementById('snoozeModal');
     if (modal) {
         modal.classList.remove('active');
         currentTabId = null;
-        document.querySelectorAll('.snooze-option').forEach(opt => {
-            opt.classList.remove('selected');
-        });
+        document.querySelectorAll('.snooze-option').forEach(opt => opt.classList.remove('selected'));
     }
 }
 
-// Also refresh when popup becomes visible (in case it was already open)
 document.addEventListener('visibilitychange', async () => {
     if (!document.hidden) {
         await refreshAll();
     }
 });
 
-// --- EXPORT/IMPORT ---
-
-let pendingImportData = null;
-
-async function exportData() {
-    try {
-        const result = await chrome.storage.local.get(['snoozedTabs', 'snoozedBundles']);
-        const exportData = {
-            version: '1.0',
-            exportDate: new Date().toISOString(),
-            snoozedTabs: result.snoozedTabs || [],
-            snoozedBundles: result.snoozedBundles || []
-        };
-        
-        const jsonStr = JSON.stringify(exportData, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `synapsesave-export-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        showToast('Data exported successfully', 'success');
-    } catch (error) {
-        console.error('Error exporting data:', error);
-        showToast('Error exporting data', 'error');
-    }
-}
-
-function handleImportFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        try {
-            const jsonData = JSON.parse(e.target.result);
-            
-            // Validate import data
-            if (!jsonData || typeof jsonData !== 'object') {
-                showToast('Invalid import file format', 'error');
-                return;
-            }
-            
-            if (!Array.isArray(jsonData.snoozedTabs) || !Array.isArray(jsonData.snoozedBundles)) {
-                showToast('Invalid import file format - arrays expected', 'error');
-                return;
-            }
-            
-            pendingImportData = jsonData;
-            
-            // Show preview and confirmation modal
-            const preview = document.getElementById('importPreview');
-            if (preview) {
-                const tabsCount = jsonData.snoozedTabs.length || 0;
-                const bundlesCount = jsonData.snoozedBundles.length || 0;
-                const exportDate = jsonData.exportDate ? new Date(jsonData.exportDate).toLocaleString() : 'Unknown';
-                
-                preview.innerHTML = `
-                    <div style="margin-bottom: 8px;"><strong>Export Date:</strong> ${exportDate}</div>
-                    <div style="margin-bottom: 8px;"><strong>Tabs:</strong> ${tabsCount}</div>
-                    <div><strong>Bundles:</strong> ${bundlesCount}</div>
-                `;
-            }
-            
-            const modal = document.getElementById('importConfirmModal');
-            if (modal) {
-                modal.classList.add('active');
-            }
-        } catch (error) {
-            console.error('Error reading import file:', error);
-            showToast('Error reading import file', 'error');
-        }
-    };
-    
-    reader.readAsText(file);
-}
-
-async function confirmImport() {
-    if (!pendingImportData) return;
-    
-    try {
-        // Import the data
-        await chrome.storage.local.set({
-            snoozedTabs: pendingImportData.snoozedTabs || [],
-            snoozedBundles: pendingImportData.snoozedBundles || []
-        });
-        
-        // Recreate alarms for imported items
-        const allItems = [
-            ...(pendingImportData.snoozedTabs || []).map(tab => ({ ...tab, type: 'tab' })),
-            ...(pendingImportData.snoozedBundles || []).flatMap(bundle => 
-                bundle.tabs.map(tab => ({ ...tab, wakeTime: bundle.wakeTime, type: 'bundle' }))
-            )
-        ];
-        
-        for (const item of allItems) {
-            try {
-                // Validate wakeTime is a valid number
-                const wakeTime = Number(item.wakeTime);
-                if (isNaN(wakeTime) || wakeTime <= 0) {
-                    console.warn('Invalid wakeTime for item:', item);
-                    continue;
-                }
-                
-                // Only create alarm if wake time is in the future
-                if (wakeTime > Date.now()) {
-                    await chrome.alarms.create(`snooze_${item.tabId}_${wakeTime}`, { 
-                        when: wakeTime 
-                    });
-                }
-            } catch (e) {
-                console.error('Error recreating alarm:', e);
-            }
-        }
-        
-        // Close modal
-        const modal = document.getElementById('importConfirmModal');
-        if (modal) {
-            modal.classList.remove('active');
-        }
-        
-        // Reset file input
-        const fileInput = document.getElementById('importFileInput');
-        if (fileInput) {
-            fileInput.value = '';
-        }
-        
-        pendingImportData = null;
-        
-        await refreshAll();
-        showToast('Data imported successfully', 'success');
-    } catch (error) {
-        console.error('Error importing data:', error);
-        showToast('Error importing data', 'error');
-    }
-}
-
-function cancelImport() {
-    pendingImportData = null;
-    const modal = document.getElementById('importConfirmModal');
-    if (modal) {
-        modal.classList.remove('active');
-    }
-    
-    const fileInput = document.getElementById('importFileInput');
-    if (fileInput) {
-        fileInput.value = '';
-    }
-}
 

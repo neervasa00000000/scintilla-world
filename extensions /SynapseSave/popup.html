@@ -34,41 +34,14 @@
                     <div class="stat-label">RAM Saved</div>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">⚡</div>
-                <div class="stat-content">
-                    <div class="stat-value" id="timeSaved">0h</div>
-                    <div class="stat-label">Time Saved</div>
-                </div>
-            </div>
         </div>
 
         <!-- Quick Actions Bar -->
         <div class="quick-actions-bar">
-            <input type="text" id="tabSearch" placeholder="Search tabs..." class="search-input">
             <button class="quick-action-btn" id="snoozeAllBtn" title="Snooze all open tabs">
                 <span class="quick-action-icon">😴</span>
                 <span class="quick-action-text">Snooze All</span>
             </button>
-            <button class="quick-action-btn" id="clearAllBtn" title="Snooze all tabs for one day">
-                <span class="quick-action-icon">🧹</span>
-                <span class="quick-action-text">Clear All</span>
-            </button>
-        </div>
-
-        <!-- Export & Import Section -->
-        <div class="backup-section">
-            <div class="backup-actions">
-                <button class="backup-btn" id="exportBtn" title="Export all snoozed tabs and bundles as JSON">
-                    <span class="backup-icon">📤</span>
-                    <span class="backup-text">Export</span>
-                </button>
-                <button class="backup-btn" id="importBtn" title="Import snoozed tabs and bundles from JSON file">
-                    <span class="backup-icon">📥</span>
-                    <span class="backup-text">Import</span>
-                </button>
-            </div>
-            <input type="file" id="importFileInput" accept=".json" style="display: none;">
         </div>
 
         <!-- Main Content -->
@@ -88,21 +61,6 @@
                 </div>
             </div>
 
-            <!-- Duplicate Tabs Section -->
-            <div class="section duplicate-tabs-section" id="duplicateTabsSection" style="display: none;">
-                <div class="section-header">
-                    <div class="section-title-group">
-                        <span class="section-icon">🔁</span>
-                        <h2>Duplicate Tabs</h2>
-                    </div>
-                    <div class="tab-count-badge" id="duplicateTabCount">0</div>
-                </div>
-                
-                <div class="duplicate-groups" id="duplicateGroupsList">
-                    <!-- Duplicate groups will be inserted here -->
-                </div>
-            </div>
-
             <!-- Open Tabs Section -->
             <div class="section open-tabs-section">
                 <div class="section-header">
@@ -112,6 +70,8 @@
                     </div>
                     <div class="tab-count-badge" id="openTabCount">0</div>
                 </div>
+                
+                <input type="text" id="tabSearch" placeholder="Search tabs..." class="search-input" style="margin-bottom: 12px;">
                 
                 <div class="tabs-list" id="openTabsList">
                     <div class="empty-state">
@@ -152,7 +112,7 @@
                     <span class="modal-icon">⏰</span>
                     <h3>Snooze Tab Until...</h3>
                 </div>
-                <button class="modal-close" id="closeModalBtn" aria-label="Close">
+                <button class="modal-close" id="closeModalBtn" aria-label="Close" title="Close (ESC)">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
@@ -184,7 +144,7 @@
                     <span class="modal-icon">📦</span>
                     <h3>Name Your Bundle</h3>
                 </div>
-                <button class="modal-close" id="closeBundleModalBtn" aria-label="Close">
+                <button class="modal-close" id="closeBundleModalBtn" aria-label="Close" title="Close (ESC)">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
@@ -217,36 +177,6 @@
         <div class="toast-content">
             <span class="toast-icon" id="toastIcon">✓</span>
             <span class="toast-message" id="toastMessage">Tab snoozed!</span>
-        </div>
-    </div>
-
-    <!-- Import Confirmation Modal -->
-    <div class="modal" id="importConfirmModal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title-group">
-                    <span class="modal-icon">⚠️</span>
-                    <h3>Import Confirmation</h3>
-                </div>
-                <button class="modal-close" id="closeImportModalBtn" aria-label="Close">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p style="margin-bottom: 16px; color: var(--text-secondary);">
-                    This will replace your current snoozed tabs and bundles. Are you sure you want to continue?
-                </p>
-                <div id="importPreview" style="margin-bottom: 16px; padding: 12px; background: var(--bg-tertiary); border-radius: 8px; font-size: 0.875rem;">
-                    <!-- Preview will be inserted here -->
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-primary" id="confirmImportBtn" style="flex: 1;">Import</button>
-                    <button class="btn btn-danger" id="cancelImportBtn" style="flex: 1;">Cancel</button>
-                </div>
-            </div>
         </div>
     </div>
 
