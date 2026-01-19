@@ -14,17 +14,17 @@
     "downloads"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "js/background.js"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["js/content.js"]
     }
   ],
   "icons": {
-    "16": "cow.png",
-    "48": "cow.png",
-    "128": "cow.png"
+    "16": "assets/cow.png",
+    "48": "assets/cow.png",
+    "128": "assets/cow.png"
   }
 }

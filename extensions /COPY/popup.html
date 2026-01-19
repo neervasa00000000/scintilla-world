@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COPY</title>
-    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="css/popup.css">
     <link rel="stylesheet" href="fontawesome/css/all.min.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
     <header class="header">
         <div class="header-left">
             <div class="logo">
-                <img src="cow.png" alt="COPY" style="width: 28px; height: 28px;">
+                <img src="assets/cow.png" alt="COPY" style="width: 28px; height: 28px;">
             </div>
             <div>
                 <div class="header-title">COPY</div>
@@ -42,7 +42,11 @@
     </header>
 
     <nav class="tabs">
-        <button class="tab-btn active" data-tab="extract">
+        <button class="tab-btn active" data-tab="notes">
+            <i class="fa-solid fa-sticky-note"></i>
+            <span>Notes</span>
+        </button>
+        <button class="tab-btn" data-tab="extract">
             <i class="fa-solid fa-scissors"></i>
             <span>Extract</span>
         </button>
@@ -50,10 +54,34 @@
             <i class="fa-solid fa-paper-plane"></i>
             <span>Automation</span>
         </button>
+        <button class="tab-btn" data-tab="calendar">
+            <i class="fa-solid fa-calendar-plus"></i>
+            <span>Calendar</span>
+        </button>
     </nav>
 
     <main class="main-content">
-        <div id="extractTab" class="tab-content active">
+        <div id="notesTab" class="tab-content active">
+            <div class="content-section">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Notes & Todos</div>
+                            <div class="card-subtitle">Keep track of your tasks and reminders</div>
+                        </div>
+                    </div>
+                    <textarea id="notesInput" class="input textarea" placeholder="Write your note here...&#10;Add deadline: Meeting tomorrow at 2pm&#10;Task: Finish project by Friday" rows="4"></textarea>
+                    <input type="datetime-local" id="notesDeadlineInput" class="input mt-2" placeholder="Deadline (optional)">
+                    <button id="notesAddBtn" class="btn btn-primary mt-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Note</span>
+                    </button>
+                    <div id="notesList" class="mt-2"></div>
+                </section>
+            </div>
+        </div>
+
+        <div id="extractTab" class="tab-content">
             <div class="content-section">
                 <section class="card">
                     <div class="card-header">
@@ -204,6 +232,25 @@
                 </section>
             </div>
         </div>
+
+        <div id="calendarTab" class="tab-content">
+            <div class="content-section">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Calendar Reminder</div>
+                            <div class="card-subtitle">Create events from natural language</div>
+                        </div>
+                    </div>
+                    <textarea id="calendarInput" class="input textarea" placeholder="Meeting next Friday at 2pm...&#10;Lunch tomorrow 12pm...&#10;Doctor appointment Nov 15 at 10am" rows="4"></textarea>
+                    <button id="calendarGenerateBtn" class="btn btn-primary mt-2">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                        <span>Generate Event</span>
+                    </button>
+                    <div id="calendarResult" class="mt-2"></div>
+                </section>
+            </div>
+        </div>
     </main>
 
     <div id="floatMenu" class="context-menu">
@@ -213,6 +260,12 @@
         </div>
     </div>
 
-    <script src="popup.js"></script>
+    <!-- Load scripts in order: common first, then tools, then main coordinator -->
+    <script src="js/common.js"></script>
+    <script src="js/extract.js"></script>
+    <script src="js/automation.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/notes.js"></script>
+    <script src="js/popup-main.js"></script>
 </body>
 </html>

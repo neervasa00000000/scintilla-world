@@ -42,10 +42,22 @@ body {
     flex-direction: column;
     gap: 12px;
     padding: 12px;
+    padding-right: 12px;
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
+    position: relative;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
+
+.main-content::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+/* Notes tab uses same .tab-content.active styling as other tabs */
 
 .content-section {
     display: flex;
@@ -352,6 +364,7 @@ body {
     max-height: 120px;
     overflow-y: auto;
     padding: 8px;
+    padding-right: 8px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-tertiary);
@@ -359,6 +372,14 @@ body {
     flex-wrap: wrap;
     gap: 6px;
     align-items: flex-start;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.chips-container::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
 }
 
 .chips-container:empty::before {
@@ -397,8 +418,6 @@ body {
     font-size: 10px;
 }
 
-.chip-remove:hover {
-}
 
 /* Records List */
 .records-card {
@@ -411,7 +430,15 @@ body {
     min-height: 200px;
     max-height: 300px;
     overflow-y: auto;
-    padding-right: 4px;
+    padding-right: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.records-container::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
 }
 
 .record-item {
@@ -492,8 +519,6 @@ body {
     font-size: 10px;
 }
 
-.chip-remove:hover {
-}
 
 /* Empty State */
 .empty-records {
@@ -592,17 +617,16 @@ body {
 
 /* Scrollbar */
 .scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-right: 0;
 }
 
-.scrollbar::-webkit-scrollbar { width: 6px; }
-.scrollbar::-webkit-scrollbar-track { background: transparent; }
-.scrollbar::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 3px;
+.scrollbar::-webkit-scrollbar { 
+    display: none;
+    width: 0;
+    height: 0;
 }
-.scrollbar::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
 
 /* Section Labels */
 .section-label {
@@ -637,8 +661,29 @@ body {
 .tabs {
     display: flex;
     background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border);
+    border-bottom: none;
     padding: 0 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tabs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tabs::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 2px;
+}
+
+.tabs::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
 }
 
 .tab-btn {
@@ -648,12 +693,14 @@ body {
     padding: 10px 16px;
     background: transparent;
     border: none;
-    border-bottom: 2px solid transparent;
+    border-bottom: none;
     color: var(--text-secondary);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     outline: none;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .tab-btn:hover {
@@ -663,7 +710,7 @@ body {
 
 .tab-btn.active {
     color: var(--text-primary);
-    border-bottom-color: var(--text-primary);
+    border-bottom-color: transparent;
     background: var(--bg-tertiary);
 }
 
@@ -682,6 +729,33 @@ body {
 .tab-content.active {
     display: flex;
     flex-direction: column;
+}
+
+/* Ensure Notes tab displays when active - same as other tabs */
+#notesTab.tab-content.active {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+#notesTab.tab-content.active .content-section {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#notesTab.tab-content.active .card {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#notesTab.tab-content.active textarea,
+#notesTab.tab-content.active input,
+#notesTab.tab-content.active button {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 /* Progress Bar */
@@ -810,8 +884,334 @@ a.btn:focus {
     text-decoration: none;
 }
 
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch-large {
+    width: 52px;
+    height: 28px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--text-secondary);
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggle-switch-large .toggle-slider:before {
+    height: 22px;
+    width: 22px;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+    background-color: var(--bg);
+}
+
+.toggle-switch-large input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+.toggle-switch input:focus + .toggle-slider {
+    box-shadow: 0 0 1px var(--text-primary);
+}
+
+
+.stat-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
+    opacity: 0.8;
+}
+
+/* Calendar Tool Styles */
+.calendar-success {
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-top: 12px;
+}
+
+.calendar-event-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.calendar-event-time {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.calendar-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.calendar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border);
+    flex: 1;
+    justify-content: center;
+    min-width: 140px;
+}
+
+.calendar-btn-primary {
+    background: var(--text-primary);
+    color: var(--bg);
+    border-color: var(--text-primary);
+}
+
+.calendar-btn-primary:hover {
+    background: var(--text-secondary);
+    border-color: var(--text-secondary);
+    transform: translateY(-1px);
+}
+
+.calendar-btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: var(--border);
+}
+
+.calendar-btn-secondary:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--text-secondary);
+    transform: translateY(-1px);
+}
+
+.calendar-error {
+    padding: 12px;
+    background: rgba(244, 67, 54, 0.1);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    border-radius: var(--radius);
+    color: #f44336;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+/* Notes/Todo Styles - matches Calendar tab styling */
+#notesList {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#notesList::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+#notesList:empty {
+    display: none;
+}
+
+.note-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    background: var(--bg-secondary);
+    transition: all 0.2s ease;
+    gap: 12px;
+}
+
+.note-item:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.note-item.note-completed {
+    opacity: 0.6;
+    background: var(--bg-tertiary);
+}
+
+.note-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.note-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.note-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+}
+
+.note-checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: var(--bg-tertiary);
+    position: relative;
+}
+
+.note-checkbox input[type="checkbox"]:checked + .note-checkmark {
+    background: #4285f4;
+    border-color: #4285f4;
+}
+
+.note-checkbox input[type="checkbox"]:checked + .note-checkmark::after {
+    content: '✓';
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.note-text-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.note-text {
+    word-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+
+.note-item.note-completed .note-text {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+}
+
+.note-deadline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+
+.note-deadline i {
+    font-size: 11px;
+}
+
+.deadline-overdue {
+    background: #fee;
+    color: #c33;
+    font-weight: 600;
+}
+
+.deadline-today {
+    background: #fff3cd;
+    color: #856404;
+    font-weight: 600;
+}
+
+.deadline-soon {
+    background: #d1ecf1;
+    color: #0c5460;
+    font-weight: 500;
+}
+
+.deadline-future {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+.note-delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+}
+
+.note-delete-btn:hover {
+    background: #fee;
+    color: #c33;
+}
+
+.note-item.note-completed .note-delete-btn {
+    opacity: 0.5;
+}
+
 /* Utilities */
 .flex { display: flex; }
 .gap-1 { gap: 4px; }
 .gap-2 { gap: 8px; }
 .mb-2 { margin-bottom: 8px; }
+.mt-2 { margin-top: 8px; }
