@@ -86,6 +86,8 @@
     </style>
 </head>
 <body>
+    <!-- Ensures Tailwind CDN includes green utilities for BlogCard dynamic classes -->
+    <span class="hidden bg-green-400 text-green-400 group-hover:text-green-400" aria-hidden="true"></span>
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect } = React;
@@ -125,6 +127,22 @@
             }, []);
             
             const blogPosts = [
+                {
+                    title: "High Cholesterol? Why Australians Are Adding Moringa to Their Routine (2026 Science)",
+                    description: "How moringa fits food-first cholesterol conversations in Australia—mechanisms, realistic routines, labs with your doctor, and NutriThrive moringa.",
+                    category: "Metabolic Health",
+                    date: "Mar 2026",
+                    link: "/blogs/moringa-cholesterol-australia-2026.html",
+                    color: "green"
+                },
+                {
+                    title: "Moringa vs Matcha Australia 2026 – Which Green Powder Actually Delivers Healthspan?",
+                    description: "Nutrient showdown, caffeine vs calm energy, cost per serve, and who wins for healthspan in Melbourne, Sydney, and Brisbane—with NutriThrive moringa in focus.",
+                    category: "Superfood Showdown",
+                    date: "Mar 2026",
+                    link: "/blogs/moringa-vs-matcha-australia-2026.html",
+                    color: "green"
+                },
                 {
                     title: "Student Hack: Convert PDFs to Text—No Sign-Up Needed",
                     description: "Turn locked PDFs into editable text instantly with the Scintilla PDF Converter. No logins, limits, or watermarks.",
