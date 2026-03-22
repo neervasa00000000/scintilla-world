@@ -20,7 +20,11 @@
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": "Nutri Thrive Moringa Glow-Up Bundle",
-      "image": "https://nutrithrive.com.au/cdn/shop/files/moringa-soap-bundle.jpg",
+      "url": "https://nutrithrive.com.au/",
+      "image": [
+        "https://nutrithrive.com.au/assets/images/homepage/product-showcase/Moringa.webp",
+        "https://nutrithrive.com.au/assets/images/homepage/product-showcase/moringa_soap.webp"
+      ],
       "description": "The perfect duo for inside-out beauty. Includes 100g Premium Moringa Powder and 95g Artisan Moringa Soap. Lab-tested and dispatched from Melbourne.",
       "brand": { "@type": "Brand", "name": "Nutri Thrive" },
       "offers": {
@@ -29,16 +33,7 @@
         "priceCurrency": "AUD",
         "price": "17.00",
         "availability": "https://schema.org/InStock",
-        "seller": { "@type": "Organization", "name": "Nutri Thrive", "url": "https://nutrithrive.com.au" },
-        "shippingDetails": {
-          "@type": "OfferShippingDetails",
-          "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "AU" },
-          "deliveryTime": {
-            "@type": "ShippingDeliveryTime",
-            "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" },
-            "transitTime": { "@type": "QuantitativeValue", "minValue": 2, "maxValue": 4, "unitCode": "DAY" }
-          }
-        }
+        "seller": { "@type": "Organization", "name": "Nutri Thrive", "url": "https://nutrithrive.com.au" }
       },
       "aggregateRating": {
         "@type": "AggregateRating",
@@ -50,12 +45,14 @@
       "review": [
         {
           "@type": "Review",
+          "datePublished": "2026-02-12",
           "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
           "author": { "@type": "Person", "name": "Sydney buyer" },
           "reviewBody": "Powder in the morning, soap at night—simple stack that replaced a shelf of single-use products."
         },
         {
           "@type": "Review",
+          "datePublished": "2026-03-01",
           "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
           "author": { "@type": "Person", "name": "Melbourne bayside" },
           "reviewBody": "Bundle pricing made it easy to try both; shipping from Victoria was quick."
@@ -73,7 +70,7 @@
           "@type": "ListItem",
           "position": 1,
           "item": {
-            "@type": "Product",
+            "@type": "Thing",
             "name": "Premium Moringa Powder",
             "url": "https://nutrithrive.com.au/products/moringa-powder/"
           }
@@ -82,7 +79,7 @@
           "@type": "ListItem",
           "position": 2,
           "item": {
-            "@type": "Product",
+            "@type": "Thing",
             "name": "Artisan Moringa Soap",
             "url": "https://nutrithrive.com.au/products/product-moringa-soap.html"
           }
