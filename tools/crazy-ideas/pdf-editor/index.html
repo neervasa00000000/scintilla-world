@@ -7,7 +7,7 @@
   <meta name="description" content="Drag and drop to rearrange PDF pages, then download the new PDF. All processing runs in your browser." />
   <link rel="icon" type="image/png" href="../../../assets/logo/favicon.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="../convoter/pdf.min.js"></script>
+  <script src="/tools/crazy-ideas/convoter/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <style>
@@ -451,7 +451,7 @@
     (function () {
       if (typeof pdfjsLib === 'undefined') {
         document.getElementById('status').textContent =
-          'PDF engine failed to load. Refresh the page or check that ../convoter/pdf.min.js is reachable.';
+          'PDF engine failed to load. Refresh the page or check that /tools/crazy-ideas/convoter/pdf.min.js loads (see browser console).';
         document.getElementById('status').classList.remove('hidden');
         document.getElementById('status').classList.add('error');
         return;
@@ -465,8 +465,8 @@
       }
 
       pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-        '../convoter/pdf.worker.min.js',
-        window.location.href
+        '/tools/crazy-ideas/convoter/pdf.worker.min.js',
+        window.location.origin
       ).href;
 
       const uploadPanel = document.getElementById('uploadPanel');
