@@ -39,7 +39,7 @@
     }
 
     header {
-      text-align: center;
+      text-align: left;
       margin-bottom: 2rem;
     }
 
@@ -53,8 +53,8 @@
     header p {
       color: var(--muted);
       font-size: 0.95rem;
-      max-width: 32rem;
-      margin: 0 auto;
+      max-width: 36rem;
+      margin: 0;
     }
 
     .panel {
@@ -66,38 +66,124 @@
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
     }
 
-    .dropzone {
-      border: 2px dashed var(--border);
+    .upload-root {
+      position: relative;
       border-radius: 10px;
-      padding: 2.5rem 1.5rem;
-      text-align: center;
+      overflow: hidden;
+    }
+
+    .visually-hidden-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+      opacity: 0;
+    }
+
+    .dropzone {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      border: 2px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 1.5rem 1.25rem;
+      text-align: left;
       cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      background: var(--accent);
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      background: #f8fafc;
     }
 
     .dropzone:hover, .dropzone.dragover {
       border-color: var(--primary);
       background: #eff6ff;
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
     }
 
-    .dropzone strong { display: block; margin-bottom: 0.35rem; }
-    .dropzone span { font-size: 0.875rem; color: var(--muted); }
+    .dropzone-icon {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: #e0e7ff;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    #fileInput { position: absolute; width: 0; height: 0; opacity: 0; }
+    .dropzone-icon svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .dropzone-copy {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .dropzone-copy strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--text);
+    }
+
+    .dropzone-copy .sub {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .dropzone-copy .sub + .sub {
+      margin-top: 0.35rem;
+    }
 
     .toolbar {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.75rem 1rem;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
+      justify-content: flex-start;
+      margin-bottom: 0.75rem;
     }
 
     .toolbar .meta {
       font-size: 0.875rem;
+      color: var(--text);
+      font-weight: 500;
+      flex: 1 1 auto;
+      min-width: min(100%, 12rem);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+
+    @media (max-width: 520px) {
+      .toolbar-actions {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
+    .pages-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       color: var(--muted);
+      margin-bottom: 0.5rem;
+      text-align: left;
     }
 
     .btn {
@@ -140,30 +226,50 @@
       color: var(--text);
     }
 
-    .pages-scroll {
-      display: flex;
-      gap: 1rem;
-      overflow-x: auto;
-      padding: 0.75rem 0.25rem 1rem;
-      min-height: 220px;
-      align-items: flex-start;
-      scroll-behavior: smooth;
+    .pages-region {
+      width: 100%;
+      text-align: left;
     }
 
-    .pages-scroll::-webkit-scrollbar { height: 8px; }
+    .pages-scroll {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 1rem;
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: visible;
+      padding: 0.5rem 0.25rem 1rem 0;
+      min-height: 240px;
+      scroll-behavior: smooth;
+      scroll-snap-type: x proximity;
+    }
+
+    .pages-scroll::-webkit-scrollbar { height: 10px; }
+    .pages-scroll::-webkit-scrollbar-track {
+      background: var(--accent);
+      border-radius: 5px;
+    }
     .pages-scroll::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 4px;
+      background: #cbd5e1;
+      border-radius: 5px;
+    }
+    .pages-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
     }
 
     .page-card {
       flex: 0 0 auto;
-      width: 140px;
+      width: 158px;
+      scroll-snap-align: start;
       border-radius: 10px;
-      border: 2px solid var(--border);
+      border: 1px solid var(--border);
       background: var(--surface);
       overflow: hidden;
       cursor: grab;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
       transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
       user-select: none;
     }
@@ -190,17 +296,29 @@
       width: 100%;
       aspect-ratio: 1 / 1.294;
       object-fit: contain;
-      background: #1e293b;
-      display: block;
-    }
-
-    .page-thumb.loading {
-      min-height: 160px;
+      background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #94a3b8;
+      padding: 6px;
+    }
+
+    .page-thumb canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+    }
+
+    .page-thumb.loading {
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
       font-size: 0.75rem;
+      font-weight: 500;
     }
 
     .page-footer {
@@ -227,7 +345,13 @@
     .hint {
       font-size: 0.8rem;
       color: var(--muted);
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
+      text-align: left;
+    }
+
+    .upload-panel .hint {
+      margin-top: 0.65rem;
+      padding-left: 0.15rem;
     }
 
     .hidden { display: none !important; }
@@ -253,6 +377,7 @@
       flex-wrap: wrap;
       gap: 0.75rem;
       align-items: center;
+      justify-content: flex-start;
       margin-bottom: 0.75rem;
     }
 
@@ -273,25 +398,40 @@
       <p>Drag thumbnails left or right to change order. Positions update live. Download keeps your new sequence.</p>
     </header>
 
-    <div class="panel">
-      <label class="dropzone" id="dropzone" for="fileInput">
-        <strong>Drop a PDF here or click to choose</strong>
-        <span>Files stay on your device — nothing is uploaded.</span>
-      </label>
-      <input type="file" id="fileInput" accept="application/pdf" />
-      <p class="hint">Large files may take a moment to generate thumbnails.</p>
+    <div class="panel upload-panel">
+      <div class="upload-root">
+        <input type="file" id="fileInput" class="visually-hidden-input" accept="application/pdf" />
+        <label class="dropzone" id="dropzone" for="fileInput">
+          <span class="dropzone-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="12" y1="18" x2="12" y2="12" />
+              <line x1="9" y1="15" x2="15" y2="15" />
+            </svg>
+          </span>
+          <span class="dropzone-copy">
+            <strong>Drop a PDF here or click to choose</strong>
+            <span class="sub">Files stay on your device — nothing is uploaded.</span>
+            <span class="sub">Large files may take a moment to generate thumbnails.</span>
+          </span>
+        </label>
+      </div>
       <p class="status hidden" id="status"></p>
     </div>
 
     <div class="panel hidden" id="editorPanel">
       <div class="toolbar">
         <div class="meta" id="fileMeta"></div>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <div class="toolbar-actions">
           <button type="button" class="btn btn-ghost" id="btnReset">Reset order</button>
           <button type="button" class="btn btn-primary" id="btnDownload" disabled>Download PDF</button>
         </div>
       </div>
-      <div class="pages-scroll" id="pagesStrip"></div>
+      <div class="pages-region">
+        <div class="pages-label">Pages — drag to reorder</div>
+        <div class="pages-scroll" id="pagesStrip"></div>
+      </div>
       <p class="hint">Tip: the blue number is the new position; the grey label is the original page from your file.</p>
 
       <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);">
@@ -374,13 +514,14 @@
           pagesStrip.appendChild(card);
 
           const page = await pdf.getPage(i);
-          const scale = 0.35;
+          const scale = 0.44;
           const vp = page.getViewport({ scale: scale });
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           canvas.width = vp.width;
           canvas.height = vp.height;
           await page.render({ canvasContext: ctx, viewport: vp }).promise;
+          canvas.draggable = false;
           thumb.classList.remove('loading');
           thumb.replaceChildren(canvas);
         }
@@ -388,6 +529,7 @@
         if (sortable) sortable.destroy();
         sortable = Sortable.create(pagesStrip, {
           animation: 200,
+          forceFallback: true,
           easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
           ghostClass: 'sortable-ghost',
           dragClass: 'sortable-drag',
@@ -459,10 +601,6 @@
         }
         previewDebounce = setTimeout(refreshLivePreview, 400);
       }
-
-      dropzone.addEventListener('click', function () {
-        fileInput.click();
-      });
 
       ['dragenter', 'dragover'].forEach(function (ev) {
         dropzone.addEventListener(ev, function (e) {
