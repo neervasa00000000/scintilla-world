@@ -398,9 +398,9 @@
       <p>Drag thumbnails left or right to change order. Positions update live. Download keeps your new sequence.</p>
     </header>
 
-    <div class="panel upload-panel">
+    <div class="panel upload-panel" id="uploadPanel">
+      <input type="file" id="fileInput" class="visually-hidden-input" accept=".pdf,application/pdf,application/x-pdf" />
       <div class="upload-root">
-        <input type="file" id="fileInput" class="visually-hidden-input" accept="application/pdf" />
         <label class="dropzone" id="dropzone" for="fileInput">
           <span class="dropzone-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -449,8 +449,27 @@
 
   <script>
     (function () {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = '../convoter/pdf.worker.min.js';
+      if (typeof pdfjsLib === 'undefined') {
+        document.getElementById('status').textContent =
+          'PDF engine failed to load. Refresh the page or check that ../convoter/pdf.min.js is reachable.';
+        document.getElementById('status').classList.remove('hidden');
+        document.getElementById('status').classList.add('error');
+        return;
+      }
+      if (typeof PDFLib === 'undefined') {
+        document.getElementById('status').textContent =
+          'PDF export library failed to load. Check your connection (CDN blocked?).';
+        document.getElementById('status').classList.remove('hidden');
+        document.getElementById('status').classList.add('error');
+        return;
+      }
 
+      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+        '../convoter/pdf.worker.min.js',
+        window.location.href
+      ).href;
+
+      const uploadPanel = document.getElementById('uploadPanel');
       const dropzone = document.getElementById('dropzone');
       const fileInput = document.getElementById('fileInput');
       const statusEl = document.getElementById('status');
@@ -468,6 +487,15 @@
       let pageCount = 0;
       let sortable = null;
       let previewDebounce = null;
+
+      function looksLikePdfBuffer(buf) {
+        if (!buf || buf.byteLength < 5) return false;
+        var u8 = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+        var n = Math.min(u8.length, 2048);
+        var s = '';
+        for (var i = 0; i < n; i++) s += String.fromCharCode(u8[i]);
+        return s.indexOf('%PDF-') !== -1;
+      }
 
       function setStatus(msg, isError) {
         statusEl.textContent = msg || '';
@@ -543,18 +571,30 @@
       }
 
       async function loadPdfFile(file) {
-        if (!file || file.type !== 'application/pdf') {
-          setStatus('Please choose a PDF file.', true);
-          return;
-        }
+        if (!file) return;
+
+        var backupBytes = pdfBytes;
+        var backupLib = pdfLibDoc;
         setStatus('Loading…');
         btnDownload.disabled = true;
-        editorPanel.classList.add('hidden');
 
         try {
-          pdfBytes = new Uint8Array(await file.arrayBuffer());
-          pdfLibDoc = await PDFLib.PDFDocument.load(pdfBytes.slice());
-          await renderThumbnails(pdfBytes.slice());
+          var buf = await file.arrayBuffer();
+          if (!looksLikePdfBuffer(buf)) {
+            setStatus(
+              'This file is not a PDF (or your browser did not send it correctly). Use a .pdf file, or try “choose file” instead of drag-and-drop.',
+              true
+            );
+            btnDownload.disabled = !pdfLibDoc;
+            return;
+          }
+
+          editorPanel.classList.add('hidden');
+          var newBytes = new Uint8Array(buf);
+          var newLib = await PDFLib.PDFDocument.load(newBytes.slice());
+          await renderThumbnails(newBytes);
+          pdfBytes = newBytes;
+          pdfLibDoc = newLib;
 
           fileMeta.textContent = file.name + ' · ' + pageCount + ' page' + (pageCount === 1 ? '' : 's');
           editorPanel.classList.remove('hidden');
@@ -562,9 +602,41 @@
           if (togglePreview.checked) schedulePreviewRefresh(true);
         } catch (e) {
           console.error(e);
-          setStatus('Could not read this PDF. It may be encrypted or damaged.', true);
-          pdfBytes = null;
-          pdfLibDoc = null;
+          var detail = e && e.message ? String(e.message) : '';
+          setStatus(
+            'Could not read this PDF. It may be password-protected or damaged.' +
+              (detail ? ' (' + detail + ')' : ''),
+            true
+          );
+          pdfBytes = backupBytes;
+          pdfLibDoc = backupLib;
+          if (backupBytes && backupLib) {
+            try {
+              await renderThumbnails(backupBytes.slice());
+              editorPanel.classList.remove('hidden');
+            } catch (e2) {
+              console.error(e2);
+              pagesStrip.innerHTML = '';
+              if (sortable) {
+                sortable.destroy();
+                sortable = null;
+              }
+              pdfBytes = null;
+              pdfLibDoc = null;
+              editorPanel.classList.add('hidden');
+            }
+            btnDownload.disabled = false;
+          } else {
+            pagesStrip.innerHTML = '';
+            if (sortable) {
+              sortable.destroy();
+              sortable = null;
+            }
+            pdfBytes = null;
+            pdfLibDoc = null;
+            editorPanel.classList.add('hidden');
+            btnDownload.disabled = true;
+          }
         }
       }
 
@@ -602,20 +674,19 @@
         previewDebounce = setTimeout(refreshLivePreview, 400);
       }
 
-      ['dragenter', 'dragover'].forEach(function (ev) {
-        dropzone.addEventListener(ev, function (e) {
-          e.preventDefault();
-          dropzone.classList.add('dragover');
-        });
+      uploadPanel.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+        dropzone.classList.add('dragover');
       });
-      ['dragleave', 'drop'].forEach(function (ev) {
-        dropzone.addEventListener(ev, function (e) {
-          e.preventDefault();
-          dropzone.classList.remove('dragover');
-        });
+      uploadPanel.addEventListener('dragleave', function (e) {
+        var to = e.relatedTarget;
+        if (!to || !uploadPanel.contains(to)) dropzone.classList.remove('dragover');
       });
-      dropzone.addEventListener('drop', function (e) {
-        const f = e.dataTransfer.files[0];
+      uploadPanel.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
         if (f) loadPdfFile(f);
       });
 
