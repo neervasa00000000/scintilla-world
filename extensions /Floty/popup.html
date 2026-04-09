@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Floty</title>
+    <link rel="stylesheet" href="css/popup.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <h1 class="title">Floty</h1>
+      <p class="sub">
+        Send questions from any page to a <strong>chat tab</strong> you choose (ChatGPT, etc.). Replies are copied here and shown in the bubble panel.
+      </p>
+      <p class="hint bubble-hint">
+        Floty does <strong>not</strong> switch browser tabs. It only reads what the chat page has already drawn. If a site pauses when its tab is fully covered (common on Gemini), keep that chat <strong>visible</strong> (split screen or second monitor) — you can stay on your other tab.
+      </p>
+
+      <label class="row toggle-row">
+        <span class="toggle-label">Show ✦ bubble on pages</span>
+        <input type="checkbox" id="enabled" checked />
+      </label>
+      <p class="bubble-hint">After changing this, refresh open tabs (or open new ones).</p>
+
+      <div class="relay-section">
+        <span class="label">Your AI chat tab</span>
+        <p class="hint relay-lead">
+          Open <strong>ChatGPT</strong> (or similar) in a tab, switch to that tab, open this popup, then:
+        </p>
+        <p id="relayTargetLabel" class="hint relay-target">Not set yet</p>
+        <div class="relay-btns">
+          <button type="button" id="setAiTab" class="btn secondary">Use this tab as AI tab</button>
+          <button type="button" id="clearAiTab" class="btn secondary ghost">Clear</button>
+        </div>
+        <label class="row toggle-row relay-toggle">
+          <span class="toggle-label">Auto-send when clipboard changes (only while this tab is focused)</span>
+          <input type="checkbox" id="relayAuto" />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="save" class="btn primary">Save</button>
+      </div>
+      <p id="status" class="status" role="status"></p>
+    </main>
+    <script src="js/popup.js"></script>
+  </body>
+</html>
