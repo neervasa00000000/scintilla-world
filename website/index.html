@@ -1,28 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scintilla World | The Creator's Toolkit</title>
-    <meta name="description" content="Scintilla World - A platform for tools, utilities, and innovative web applications.">
+    <title>Scintilla World | Free Online Tools — No Sign-Up Required</title>
+    <meta name="description" content="17 free browser-based tools — password generator, PDF converter, sleep calculator, image editor & more. No sign-up, no ads, 100% private. Powered by NutriThrive.">
+    <link rel="canonical" href="https://scintilla.world/">
     <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
     <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
     <link rel="shortcut icon" href="/assets/logo/favicon.png">
+    <meta name="robots" content="index, follow">
     
-    <!-- Tailwind CSS -->
+    <meta property="og:title" content="Scintilla World | 17 Free Online Tools — No Sign-Up">
+    <meta property="og:description" content="Free browser tools: PDF converter, sleep calculator, image enhancer & more. No sign-up, no ads, 100% private.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://scintilla.world">
+    <meta property="og:image" content="https://scintilla.world/assets/logo/scintilla.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Scintilla World | 17 Free Online Tools">
+    <meta name="twitter:description" content="Free browser tools: PDF converter, sleep calculator, image enhancer & more. No sign-up, no ads.">
+    <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Scintilla World",
+      "url": "https://scintilla.world",
+      "logo": "https://scintilla.world/assets/logo/scintilla.png",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://scintilla.world/blogs/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Scintilla World",
+      "url": "https://scintilla.world",
+      "logo": "https://scintilla.world/assets/logo/scintilla.png",
+      "sameAs": [],
+      "sponsoringOrganization": {
+        "@type": "Organization",
+        "name": "NutriThrive",
+        "url": "https://nutrithrive.com.au"
+      }
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    
-    <!-- Babel for JSX -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -31,11 +64,9 @@
             color: #ffffff;
             overflow-x: hidden;
         }
-        
         .font-display {
             font-family: 'Space Grotesk', sans-serif;
         }
-        /* Animated Background Gradients */
         .aurora-bg {
             position: fixed;
             top: 0;
@@ -45,14 +76,12 @@
             z-index: -1;
             overflow: hidden;
         }
-
         .blob {
             position: absolute;
             filter: blur(80px);
             opacity: 0.4;
             animation: float 10s infinite ease-in-out;
         }
-
         .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #4f46e5; animation-delay: 0s; }
         .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: #db2777; animation-delay: -2s; }
         .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: #0ea5e9; animation-delay: -4s; }
@@ -61,7 +90,6 @@
             33% { transform: translate(30px, -50px) scale(1.1); }
             66% { transform: translate(-20px, 20px) scale(0.9); }
         }
-        /* Glassmorphism Utilities */
         .glass-panel {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(16px);
@@ -75,7 +103,6 @@
             transform: translateY(-2px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
@@ -83,34 +110,49 @@
         .neon-text {
             text-shadow: 0 0 20px rgba(255,255,255,0.3);
         }
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+        .menu-open .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .menu-open .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        .menu-open .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-        
-        // --- Functional Tool Components ---
-        // 1. Quick Password Generator
+        const { useState, useEffect } = React;
+
         const PasswordGen = () => {
             const [pass, setPass] = useState('CLICK_GENERATE');
-            
+            const [copied, setCopied] = useState(false);
             const generate = () => {
                 const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
                 let result = "";
-                for (let i = 0; i < 12; i++) {
-                    result += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
+                for (let i = 0; i < 12; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
                 setPass(result);
+                setCopied(false);
             };
             const copyToClipboard = () => {
-                const textarea = document.createElement('textarea');
-                textarea.value = pass;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                alert("Copied!");
+                navigator.clipboard.writeText(pass).then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                }).catch(() => {
+                    const t = document.createElement('textarea');
+                    t.value = pass;
+                    document.body.appendChild(t);
+                    t.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(t);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                });
             };
             return (
                 <div className="p-4 h-full flex flex-col">
@@ -121,19 +163,17 @@
                     <div className="flex-grow flex flex-col justify-center items-center gap-3">
                         <div onClick={copyToClipboard} className="cursor-pointer w-full bg-black/30 border border-emerald-500/30 p-3 rounded text-center font-mono text-emerald-200 hover:bg-emerald-900/20 transition-colors break-all">
                             {pass}
+                            {copied && <div className="text-emerald-400 text-xs mt-1">Copied!</div>}
                         </div>
-                        <button onClick={generate} className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 rounded font-bold text-xs uppercase tracking-widest transition-all">
-                            Generate New
-                        </button>
+                        <button onClick={generate} className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 rounded font-bold text-xs uppercase tracking-widest transition-all">Generate New</button>
                     </div>
                 </div>
             );
         };
 
-        // 2. PX to REM Converter
         const UnitConverter = () => {
             const [px, setPx] = useState(16);
-            
+            const remValue = px === '' || isNaN(Number(px)) ? '—' : (Number(px) / 16).toFixed(3);
             return (
                 <div className="p-4 h-full flex flex-col">
                     <div className="flex items-center gap-2 mb-4 text-blue-400">
@@ -142,17 +182,12 @@
                     </div>
                     <div className="flex-grow flex items-center justify-between gap-4">
                         <div className="flex-1">
-                            <input 
-                                type="number" 
-                                value={px} 
-                                onChange={(e) => setPx(e.target.value)} 
-                                className="w-full bg-transparent border-b border-blue-500/50 text-2xl font-mono text-center focus:outline-none"
-                            />
+                            <input type="number" value={px} onChange={(e) => setPx(e.target.value)} className="w-full bg-transparent border-b border-blue-500/50 text-2xl font-mono text-center focus:outline-none" />
                             <div className="text-center text-xs text-gray-500 mt-1">Pixels</div>
                         </div>
                         <div className="text-blue-500 font-bold">=</div>
                         <div className="flex-1 text-center">
-                            <div className="text-2xl font-mono text-white">{(px / 16).toFixed(3)}</div>
+                            <div className="text-2xl font-mono text-white">{remValue}</div>
                             <div className="text-xs text-gray-500 mt-1">REM</div>
                         </div>
                     </div>
@@ -160,94 +195,161 @@
             );
         };
 
-        // --- Main Layout Components ---
         const ToolCard = ({ children, className = "", colSpan = "col-span-1", rowSpan = "row-span-1", onClick }) => (
-            <div 
-                className={`glass-panel rounded-2xl overflow-hidden transition-all duration-300 ${colSpan} ${rowSpan} ${className} ${onClick ? 'cursor-pointer' : ''}`}
-                onClick={onClick}
-            >
+            <div className={`glass-panel rounded-2xl overflow-hidden transition-all duration-300 ${colSpan} ${rowSpan} ${className} ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
                 {children}
             </div>
         );
 
-        const StatCard = ({ icon, label, value, color }) => (
-            <div className="flex items-center gap-4 p-4 h-full">
-                <div className={`w-10 h-10 rounded-full bg-${color}-500/20 flex items-center justify-center text-${color}-400`}>
-                    <i data-lucide={icon} className="w-5 h-5"></i>
-                </div>
-                <div>
-                    <div className="text-2xl font-display font-bold">{value}</div>
-                    <div className="text-xs text-gray-400 uppercase tracking-wider">{label}</div>
-                </div>
-            </div>
-        );
+        const colorMap = {
+            blue:    { bg: "bg-blue-500/20",    text: "text-blue-400",    hoverBg: "group-hover:bg-blue-500/30" },
+            purple:  { bg: "bg-purple-500/20",  text: "text-purple-400",  hoverBg: "group-hover:bg-purple-500/30" },
+            green:   { bg: "bg-green-500/20",   text: "text-green-400",   hoverBg: "group-hover:bg-green-500/30" },
+            orange:  { bg: "bg-orange-500/20",  text: "text-orange-400",  hoverBg: "group-hover:bg-orange-500/30" },
+            cyan:    { bg: "bg-cyan-500/20",    text: "text-cyan-400",    hoverBg: "group-hover:bg-cyan-500/30" },
+            pink:    { bg: "bg-pink-500/20",    text: "text-pink-400",    hoverBg: "group-hover:bg-pink-500/30" },
+            red:     { bg: "bg-red-500/20",     text: "text-red-400",     hoverBg: "group-hover:bg-red-500/30" },
+            amber:   { bg: "bg-amber-500/20",   text: "text-amber-400",   hoverBg: "group-hover:bg-amber-500/30" },
+            emerald: { bg: "bg-emerald-500/20", text: "text-emerald-400", hoverBg: "group-hover:bg-emerald-500/30" },
+            violet:  { bg: "bg-violet-500/20",  text: "text-violet-400",  hoverBg: "group-hover:bg-violet-500/30" },
+        };
 
-        const ToolLinkCard = ({ title, icon, description, link, color = "purple" }) => (
-            <div className="p-6 h-full flex flex-col justify-between group cursor-pointer">
-                <div className="flex justify-between items-start">
-                    <div className={`p-2 bg-${color}-500/20 rounded-lg group-hover:bg-${color}-500/30 transition-colors text-${color}-400`}>
-                        <i data-lucide={icon} className="w-6 h-6"></i>
+        const StatCard = ({ icon, label, value, color }) => {
+            const c = colorMap[color] || colorMap.blue;
+            return (
+                <div className="flex items-center gap-4 p-4 h-full">
+                    <div className={`w-10 h-10 rounded-full ${c.bg} flex items-center justify-center ${c.text}`}>
+                        <i data-lucide={icon} className="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div className="text-2xl font-display font-bold">{value}</div>
+                        <div className="text-xs text-gray-400 uppercase tracking-wider">{label}</div>
                     </div>
                 </div>
-                <div>
-                    <h4 className="text-lg font-bold mb-1 group-hover:text-purple-400 transition-colors">{title}</h4>
-                    <p className="text-xs text-gray-400 leading-relaxed">{description}</p>
+            );
+        };
+
+        const ToolLinkCard = ({ title, icon, description, color = "purple" }) => {
+            const c = colorMap[color] || colorMap.purple;
+            return (
+                <div className="p-6 h-full flex flex-col justify-between group cursor-pointer">
+                    <div className="flex justify-between items-start">
+                        <div className={`p-2 ${c.bg} rounded-lg ${c.hoverBg} transition-colors ${c.text}`}>
+                            <i data-lucide={icon} className="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-bold mb-1 group-hover:text-purple-400 transition-colors">{title}</h4>
+                        <p className="text-xs text-gray-400 leading-relaxed">{description}</p>
+                    </div>
                 </div>
+            );
+        };
+
+        const MobileMenu = ({ isOpen, onClose }) => {
+            if (!isOpen) return null;
+            return (
+                <div className="fixed inset-0 z-50 md:hidden" onClick={onClose}>
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+                    <div className="absolute right-0 top-0 h-full w-64 bg-gray-950 border-l border-white/10 p-8 flex flex-col gap-6" onClick={(e) => e.stopPropagation()}>
+                        <button onClick={onClose} className="self-end text-gray-400 hover:text-white">
+                            <i data-lucide="x" className="w-6 h-6"></i>
+                        </button>
+                        <nav className="flex flex-col gap-6 text-lg font-medium text-gray-300">
+                            <a href="#tools" onClick={onClose} className="hover:text-white transition-colors">Tools</a>
+                            <a href="/blogs" className="hover:text-white transition-colors">Blogs</a>
+                            <a href="#about" onClick={onClose} className="hover:text-white transition-colors">About</a>
+                            <a href="/privacy-policy.html" onClick={onClose} className="hover:text-white transition-colors">Privacy</a>
+                        </nav>
+                        <div className="mt-auto border-t border-white/10 pt-6">
+                            <p className="text-xs text-gray-500 mb-3">Proudly powered by</p>
+                            <a href="https://nutrithrive.com.au" target="_blank" rel="noopener" className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors">
+                                <span className="font-bold text-sm">NutriThrive</span>
+                                <i data-lucide="external-link" className="w-3 h-3"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const NutriThriveBanner = () => (
+            <div className="w-full max-w-7xl mb-8">
+                <a href="https://nutrithrive.com.au" target="_blank" rel="noopener sponsored" className="block glass-panel rounded-2xl p-4 sm:p-6 hover:scale-[1.01] transition-all bg-gradient-to-r from-emerald-900/30 to-teal-900/30 border border-emerald-500/20">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                                <i data-lucide="leaf" className="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <p className="text-xs text-emerald-400 uppercase tracking-widest font-bold mb-1">Powered by NutriThrive</p>
+                                <p className="text-sm text-gray-300">Australia's lab-tested moringa superfood — farm-fresh from Truganina, VIC</p>
+                            </div>
+                        </div>
+                        <div className="bg-emerald-500 hover:bg-emerald-400 text-black px-5 py-2 rounded-lg text-sm font-bold shrink-0 transition-colors">
+                            Shop Now →
+                        </div>
+                    </div>
+                </a>
             </div>
         );
 
         const App = () => {
+            const [menuOpen, setMenuOpen] = useState(false);
+
             useEffect(() => {
-                if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                    lucide.createIcons();
-                }
-                // Re-initialize icons after React renders
-                setTimeout(() => {
-                    if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                        lucide.createIcons();
-                    }
-                }, 100);
-            }, []);
-            
+                const init = () => { if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons(); };
+                init();
+                setTimeout(init, 100);
+                setTimeout(init, 500);
+            }, [menuOpen]);
+
             return (
                 <div className="relative min-h-screen w-full p-4 md:p-8 lg:p-12 flex flex-col items-center">
-                    
-                    {/* Background Blobs */}
                     <div className="aurora-bg">
                         <div className="blob blob-1"></div>
                         <div className="blob blob-2"></div>
                         <div className="blob blob-3"></div>
                     </div>
-                    
-                    {/* Header */}
-                    <header className="w-full max-w-7xl flex justify-between items-center mb-12 animate-fade-in">
-                        <div className="flex items-center gap-3">
+
+                    <MobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+
+                    <header className="w-full max-w-7xl flex justify-between items-center mb-8">
+                        <a href="/" className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-white text-black rounded-lg flex items-center justify-center font-bold text-xl font-display">S</div>
                             <span className="font-display text-2xl font-bold tracking-tight neon-text">SCINTILLA WORLD</span>
-                        </div>
+                        </a>
                         <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-300">
                             <a href="#tools" className="hover:text-white transition-colors">Tools</a>
                             <a href="/blogs" className="hover:text-white transition-colors">Blogs</a>
                             <a href="#about" className="hover:text-white transition-colors">About</a>
+                            <a href="/privacy-policy.html" className="hover:text-white transition-colors">Privacy</a>
                         </nav>
+                        <button onClick={() => setMenuOpen(true)} className="md:hidden flex flex-col gap-1.5 p-2" aria-label="Open menu">
+                            <span className="hamburger-line block w-6 h-0.5 bg-white rounded"></span>
+                            <span className="hamburger-line block w-6 h-0.5 bg-white rounded"></span>
+                            <span className="hamburger-line block w-6 h-0.5 bg-white rounded"></span>
+                        </button>
                     </header>
-                    
-                    {/* Hero Section */}
-                    <div className="w-full max-w-7xl mb-16 text-center md:text-left">
-                        <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-6">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">Everyday Magic.</span><br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">Instant Tools.</span>
+
+                    <NutriThriveBanner />
+
+                    <div className="w-full max-w-7xl mb-12 text-center md:text-left">
+                        <h1 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-6">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">Free Web Tools.</span><br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">No Sign-Up.</span>
                         </h1>
-                        <p className="text-lg text-gray-400 max-w-2xl md:ml-2 mb-8">
-                            A curated suite of stunning, high-performance utilities designed to make your digital life 
-                            <span className="text-white italic"> faster, easier,</span> and <span className="text-white italic">more beautiful</span>.
+                        <p className="text-lg text-gray-400 max-w-2xl md:ml-2 mb-6">
+                            17 browser-based utilities — PDF converter, sleep calculator, image enhancer & more.
+                            <span className="text-white font-semibold"> No ads. No tracking. 100% private.</span>
                         </p>
+                        <div className="flex flex-wrap gap-3 md:ml-2">
+                            <a href="#tools" className="bg-white text-black px-6 py-3 rounded-lg font-bold text-sm hover:scale-105 transition-transform">Explore Tools ↓</a>
+                            <a href="/blogs" className="border border-white/20 text-white px-6 py-3 rounded-lg font-bold text-sm hover:bg-white/5 transition-colors">Read Blog →</a>
+                        </div>
                     </div>
-                    
-                    {/* The Bento Grid */}
+
                     <div id="tools" className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-[200px]">
-                        
-                        {/* Large Feature Card: Introduction */}
                         <ToolCard colSpan="md:col-span-2 lg:col-span-2" rowSpan="row-span-1 md:row-span-2" className="bg-gradient-to-br from-purple-900/50 to-blue-900/50 p-4 sm:p-6 md:p-8 flex flex-col justify-end relative group overflow-hidden">
                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
                             <div className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 sm:p-3 bg-white/10 backdrop-blur rounded-full">
@@ -256,69 +358,34 @@
                             <div className="relative z-10">
                                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold mb-2">Efficiency Redefined.</h2>
                                 <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6">No ads. No lag. Just pure utility wrapped in a mind-blowing interface. Experience the future of web tools.</p>
-                                <a href="#tools" className="flex items-center gap-2 text-xs sm:text-sm font-bold uppercase tracking-widest hover:gap-4 transition-all">
-                                    Explore All <i data-lucide="arrow-right" className="w-4 h-4"></i>
-                                </a>
+                                <a href="#tools" className="flex items-center gap-2 text-xs sm:text-sm font-bold uppercase tracking-widest hover:gap-4 transition-all">Explore All <i data-lucide="arrow-right" className="w-4 h-4"></i></a>
                             </div>
                         </ToolCard>
-                        
-                        {/* Sleep Cycle Calculator */}
                         <ToolCard colSpan="col-span-1" rowSpan="row-span-1" onClick={() => window.open('/tools/crazy-ideas/sleep-cycle-calculator/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Sleep Calculator" 
-                                icon="moon" 
-                                description="Calculate optimal sleep times based on sleep cycles."
-                                color="purple"
-                            />
+                            <ToolLinkCard title="Sleep Calculator" icon="moon" description="Calculate optimal sleep times based on sleep cycles." color="purple" />
                         </ToolCard>
-                        
-                        {/* Stat Card */}
                         <ToolCard>
-                            <StatCard icon="zap" label="Free Tools" value="13+" color="blue" />
+                            <StatCard icon="zap" label="Free Tools" value="17+" color="blue" />
                         </ToolCard>
-                        
-                        {/* Functional Tool: Password Gen */}
                         <ToolCard colSpan="col-span-1" rowSpan="row-span-1">
                             <PasswordGen />
                         </ToolCard>
-                        
-                        {/* Functional Tool: Unit Converter */}
                         <ToolCard colSpan="col-span-1" rowSpan="row-span-1">
                             <UnitConverter />
                         </ToolCard>
-                        
-                        {/* Cost Per Serve Calculator */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/cost-per-serve/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Cost Calculator" 
-                                icon="calculator" 
-                                description="Calculate cost per serving for products and ingredients."
-                                color="green"
-                            />
+                            <ToolLinkCard title="Cost Calculator" icon="calculator" description="Calculate cost per serving for products and ingredients." color="green" />
                         </ToolCard>
-                        
-                        {/* Quick Recipes */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/quick-recipes/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Recipe Generator" 
-                                icon="chef-hat" 
-                                description="Get recipe ideas based on your preferences."
-                                color="orange"
-                            />
+                            <ToolLinkCard title="Recipe Generator" icon="chef-hat" description="Get recipe ideas based on your preferences." color="orange" />
                         </ToolCard>
-                        
-                        {/* Image Enhancer */}
                         <ToolCard colSpan="md:col-span-2" onClick={() => window.open('/tools/crazy-ideas/Image-Enhancer/', '_blank')} className="bg-gradient-to-r from-pink-900/40 to-purple-900/40 p-6 flex items-center justify-between">
                             <div>
                                 <h3 className="text-xl font-bold mb-1">Image Enhancer</h3>
                                 <p className="text-xs text-gray-300">Brighten, sharpen, and enhance photos instantly in your browser.</p>
                             </div>
-                            <div className="bg-white text-black px-4 py-2 rounded text-sm font-bold hover:scale-105 transition-transform">
-                                Open →
-                            </div>
+                            <div className="bg-white text-black px-4 py-2 rounded text-sm font-bold hover:scale-105 transition-transform">Open →</div>
                         </ToolCard>
-                        
-                        {/* Color Palette Extractor */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/hex-colour-finder/', '_blank')}>
                             <div className="h-full w-full bg-gradient-to-br from-orange-400 via-red-500 to-purple-600 flex items-center justify-center cursor-pointer group">
                                 <div className="text-center">
@@ -327,146 +394,106 @@
                                 </div>
                             </div>
                         </ToolCard>
-                        
-                        {/* PDF Converter - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/convoter/', '_blank')}>
-                            <ToolLinkCard 
-                                title="PDF Converter" 
-                                icon="file-text" 
-                                description="Convert PDFs to text or notes to PDFs instantly."
-                                color="blue"
-                            />
+                            <ToolLinkCard title="PDF Converter" icon="file-text" description="Convert PDFs to text or notes to PDFs instantly." color="blue" />
                         </ToolCard>
-                        
-                        {/* PDF Page Reorder - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/pdf-editor/', '_blank')}>
-                            <ToolLinkCard 
-                                title="PDF Page Reorder" 
-                                icon="layers" 
-                                description="Drag and drop to rearrange pages, then download—runs in your browser."
-                                color="cyan"
-                            />
+                            <ToolLinkCard title="PDF Page Reorder" icon="layers" description="Drag and drop to rearrange pages, then download." color="cyan" />
                         </ToolCard>
-                        
-                        {/* Calendar Reminder - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/calendar-reminder/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Calendar Reminder" 
-                                icon="calendar" 
-                                description="Generate calendar events from natural language."
-                                color="purple"
-                            />
+                            <ToolLinkCard title="Calendar Reminder" icon="calendar" description="Generate calendar events from natural language." color="purple" />
                         </ToolCard>
-                        
-                        {/* Meeting Cost Tracker - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/earning-finder/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Meeting Tracker" 
-                                icon="dollar-sign" 
-                                description="Track meeting costs in real-time."
-                                color="emerald"
-                            />
+                            <ToolLinkCard title="Meeting Tracker" icon="dollar-sign" description="Track meeting costs in real-time." color="emerald" />
                         </ToolCard>
-                        
-                        {/* Size Converter - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/clothes-size-finder/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Size Converter" 
-                                icon="ruler" 
-                                description="Convert sizes across brands and countries."
-                                color="pink"
-                            />
+                            <ToolLinkCard title="Size Converter" icon="ruler" description="Convert sizes across brands and countries." color="pink" />
                         </ToolCard>
-                        
-                        {/* Place Near Me - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/place-near-me/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Place Finder" 
-                                icon="map-pin" 
-                                description="Find restaurants and deals near you."
-                                color="red"
-                            />
+                            <ToolLinkCard title="Place Finder" icon="map-pin" description="Find restaurants and deals near you." color="red" />
                         </ToolCard>
-                        
-                        {/* PocketCard Studio - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/cards/', '_blank')}>
-                            <ToolLinkCard 
-                                title="PocketCard Studio" 
-                                icon="credit-card" 
-                                description="Design luxe trading cards and export PNG/GIF holo renders." 
-                                color="amber"
-                            />
+                            <ToolLinkCard title="PocketCard Studio" icon="credit-card" description="Design luxe trading cards and export PNG/GIF holo renders." color="amber" />
                         </ToolCard>
-                        
-                        {/* SIGIL - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/sigil/', '_blank')}>
-                            <ToolLinkCard 
-                                title="SIGIL Generator" 
-                                icon="sparkles" 
-                                description="Generate sacred geometry sigils from intent."
-                                color="purple"
-                            />
+                            <ToolLinkCard title="SIGIL Generator" icon="sparkles" description="Generate sacred geometry sigils from intent." color="purple" />
                         </ToolCard>
-                        
-                        {/* CORE - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/core/', '_blank')}>
-                            <ToolLinkCard 
-                                title="CORE Engine" 
-                                icon="atom" 
-                                description="3D holographic thought visualization."
-                                color="blue"
-                            />
+                            <ToolLinkCard title="CORE Engine" icon="atom" description="3D holographic thought visualization." color="blue" />
                         </ToolCard>
-
-                        {/* Design Vision - Link Card */}
                         <ToolCard colSpan="col-span-1" onClick={() => window.open('/tools/crazy-ideas/vision/', '_blank')}>
-                            <ToolLinkCard 
-                                title="Design Vision" 
-                                icon="eye" 
-                                description="Simulate color blindness and blurred vision for your designs."
-                                color="cyan"
-                            />
+                            <ToolLinkCard title="Design Vision" icon="eye" description="Simulate color blindness and blurred vision for your designs." color="cyan" />
                         </ToolCard>
-                        
-                        {/* Lumina Editor - Link Card */}
                         <ToolCard colSpan="md:col-span-2" onClick={() => window.open('/tools/crazy-ideas/lumina-editor/', '_blank')} className="bg-gradient-to-r from-indigo-900/40 to-violet-900/40 p-6 flex items-center justify-between">
                             <div>
                                 <h3 className="text-xl font-bold mb-1">Lumina Editor</h3>
                                 <p className="text-xs text-gray-300">Professional image editor with filters, adjustments, and frames.</p>
                             </div>
-                            <div className="bg-white text-black px-4 py-2 rounded text-sm font-bold hover:scale-105 transition-transform">
-                                Open →
-                            </div>
+                            <div className="bg-white text-black px-4 py-2 rounded text-sm font-bold hover:scale-105 transition-transform">Open →</div>
                         </ToolCard>
-                        
-                        {/* Email Automation - Link Card */}
                         <ToolCard colSpan="md:col-span-2" onClick={() => window.open('/tools/crazy-ideas/email-automation/', '_blank')} className="bg-gradient-to-r from-emerald-900/40 to-teal-900/40 p-6 flex items-center justify-between">
                             <div>
                                 <h3 className="text-xl font-bold mb-1">Email Automation</h3>
                                 <p className="text-xs text-gray-300">Manage contacts, create templates, and automate personalized email campaigns.</p>
                             </div>
-                            <div className="bg-white text-black px-4 py-2 rounded text-sm font-bold hover:scale-105 transition-transform">
-                                Open →
-                            </div>
+                            <div className="bg-white text-black px-4 py-2 rounded text-sm font-bold hover:scale-105 transition-transform">Open →</div>
                         </ToolCard>
-                        
                     </div>
-                    
-                    {/* Footer */}
-                    <footer id="about" className="w-full max-w-7xl mt-20 py-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
-                        <div>&copy; 2025 Scintilla World</div>
-                        <div className="flex gap-6 mt-4 md:mt-0">
-                            <a href="https://scintilla.world" className="hover:text-white">Home</a>
-                            <a href="/blogs" className="hover:text-white">Blogs</a>
-                            <a href="https://scintilla.world" className="hover:text-white">About</a>
+
+                    <div className="w-full max-w-7xl mt-16 mb-8">
+                        <a href="https://nutrithrive.com.au/products/moringa-powder" target="_blank" rel="noopener sponsored" className="block glass-panel rounded-2xl p-6 sm:p-8 bg-gradient-to-br from-emerald-900/30 via-teal-900/20 to-cyan-900/30 border border-emerald-500/20 hover:border-emerald-500/40 transition-all">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div className="flex items-center gap-5">
+                                    <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                                        <i data-lucide="leaf" className="w-8 h-8"></i>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-display font-bold text-white mb-1">NutriThrive Moringa Powder</h3>
+                                        <p className="text-gray-400 text-sm">Lab-tested, farm-fresh from Truganina VIC. 100g from AU$10.50. Free shipping over AU$80.</p>
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <div className="flex text-yellow-400 text-sm">★★★★★</div>
+                                            <span className="text-xs text-gray-500">4.9 · 156+ verified reviews</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-emerald-500 hover:bg-emerald-400 text-black px-6 py-3 rounded-lg font-bold text-sm shrink-0 transition-colors">Shop Moringa →</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <footer id="about" className="w-full max-w-7xl mt-8 py-10 border-t border-white/10">
+                        <div className="flex flex-col md:flex-row justify-between items-start gap-8 text-gray-500 text-sm">
+                            <div>
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-8 h-8 bg-white text-black rounded-lg flex items-center justify-center font-bold text-sm font-display">S</div>
+                                    <span className="font-display text-lg font-bold text-white">SCINTILLA WORLD</span>
+                                </div>
+                                <p className="text-gray-500 max-w-sm">Free browser-based tools. No sign-up, no ads, no data collection. Your privacy is our policy.</p>
+                            </div>
+                            <div>
+                                <h4 className="text-white font-bold mb-3 uppercase tracking-wider text-xs">Navigate</h4>
+                                <div className="flex flex-col gap-2">
+                                    <a href="#tools" className="hover:text-white transition-colors">Tools</a>
+                                    <a href="/blogs" className="hover:text-white transition-colors">Blogs</a>
+                                    <a href="/privacy-policy.html" className="hover:text-white transition-colors">Privacy Policy</a>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 className="text-white font-bold mb-3 uppercase tracking-wider text-xs">Sponsored by</h4>
+                                <a href="https://nutrithrive.com.au" target="_blank" rel="noopener sponsored" className="text-emerald-400 hover:text-emerald-300 transition-colors font-semibold">NutriThrive.com.au</a>
+                                <p className="text-xs text-gray-600 mt-1">Lab-tested moringa from Truganina, VIC</p>
+                            </div>
+                        </div>
+                        <div className="mt-8 pt-6 border-t border-white/5 text-center text-gray-600 text-xs">
+                            &copy; 2026 Scintilla World · All tools run in your browser · <a href="/privacy-policy.html" className="hover:text-gray-400">Privacy Policy</a>
                         </div>
                     </footer>
-                    
                 </div>
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>

@@ -1,9 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lumina - Professional Image Editor</title>
+    <title>Lumina - Professional Image Editor | Scintilla World — Free Online Tool</title>
+  <meta name="description" content="Professional image editor in your browser. Adjust filters, crop, export — free, no sign-up, no watermarks.">
+  <link rel="canonical" href="https://scintilla.world/tools/crazy-ideas/lumina-editor/">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Lumina - Professional Image Editor | Scintilla World — Free Online Tool">
+  <meta property="og:description" content="Professional image editor in your browser. Adjust filters, crop, export — free, no sign-up, no watermarks.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://scintilla.world/tools/crazy-ideas/lumina-editor/">
+  <meta property="og:image" content="https://scintilla.world/assets/logo/scintilla.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lumina - Professional Image Editor | Scintilla World — Free Online Tool">
+  <meta name="twitter:description" content="Professional image editor in your browser. Adjust filters, crop, export — free, no sign-up, no watermarks.">
+  <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Lumina - Professional Image Editor","url":"https://scintilla.world/tools/crazy-ideas/lumina-editor/","description":"Professional image editor in your browser. Adjust filters, crop, export \u2014 free, no sign-up, no watermarks.","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"}}</script>
   <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
   <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
   <link rel="shortcut icon" href="/assets/logo/favicon.png">
@@ -60,6 +73,19 @@
   </style>
 </head>
 <body>
+
+<!-- SCINTILLA WORLD HEADER -->
+<header style="position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,0.1);">
+  <a href="https://scintilla.world" style="color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;">
+    <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#2563eb);border-radius:8px;font-size:18px;font-weight:800;">S</span>
+    SCINTILLA WORLD
+  </a>
+  <nav style="display:flex;gap:16px;font-size:14px;">
+    <a href="https://scintilla.world/tools/" style="color:#d1d5db;text-decoration:none;">Tools</a>
+    <a href="https://scintilla.world/blog/" style="color:#d1d5db;text-decoration:none;">Blogs</a>
+  </nav>
+</header>
+
   <div id="root"></div>
 
   <script type="text/babel">
@@ -573,9 +599,9 @@
               <div className="w-7 h-7 md:w-9 md:h-9 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
                 <Aperture size={16} className="md:w-5 md:h-5 text-white" />
               </div>
-              <span className="text-sm md:text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-400">
+              <h1 className="text-sm md:text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-400">
                 Lumina
-              </span>
+              </h1>
             </div>
             <div className="flex items-center gap-1.5 md:gap-3">
               <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
@@ -916,6 +942,13 @@
     // Render the app
     ReactDOM.render(<LuminaEditor />, document.getElementById('root'));
   </script>
+
+<!-- SCINTILLA WORLD FOOTER -->
+<footer style="background:#0a0a0a;color:#9ca3af;padding:20px;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:13px;border-top:1px solid rgba(255,255,255,0.1);">
+  <p>Powered by <a href="https://nutrithrive.com.au" style="color:#7c3aed;text-decoration:none;">NutriThrive</a></p>
+  <p style="margin-top:4px;">&copy; 2026 Scintilla World &middot; <a href="https://scintilla.world/privacy/" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a></p>
+</footer>
+
 </body>
 </html>
 

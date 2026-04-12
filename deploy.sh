@@ -8,8 +8,8 @@ echo "======================================"
 echo ""
 
 # Check if we're in the right directory
-if [ ! -f "index.html" ]; then
-    echo "❌ Error: index.html not found. Make sure you're in the scintilla-world directory."
+if [ ! -f "website/index.html" ]; then
+    echo "❌ Error: website/index.html not found. Make sure you're in the scintilla-world directory."
     exit 1
 fi
 

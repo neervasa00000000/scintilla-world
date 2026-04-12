@@ -1,12 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="theme-color" content="#FF8F8F">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>AutoReach - Email Automation</title>
+      <title>AutoReach - Email Automation | Scintilla World — Free Online Tool</title>
+  <meta name="description" content="Automate email outreach with smart templates and scheduling. Free online email automation tool — no sign-up.">
+  <link rel="canonical" href="https://scintilla.world/tools/crazy-ideas/email-automation/">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="AutoReach - Email Automation | Scintilla World — Free Online Tool">
+  <meta property="og:description" content="Automate email outreach with smart templates and scheduling. Free online email automation tool — no sign-up.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://scintilla.world/tools/crazy-ideas/email-automation/">
+  <meta property="og:image" content="https://scintilla.world/assets/logo/scintilla.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AutoReach - Email Automation | Scintilla World — Free Online Tool">
+  <meta name="twitter:description" content="Automate email outreach with smart templates and scheduling. Free online email automation tool — no sign-up.">
+  <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AutoReach - Email Automation","url":"https://scintilla.world/tools/crazy-ideas/email-automation/","description":"Automate email outreach with smart templates and scheduling. Free online email automation tool \u2014 no sign-up.","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"}}</script>
     
     <!-- Favicon - Multiple formats for better compatibility -->
     <link rel="icon" type="image/svg+xml" href="./favicon.svg">
@@ -108,6 +121,20 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
+
+<!-- SCINTILLA WORLD HEADER -->
+<header style="position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,0.1);">
+  <a href="https://scintilla.world" style="color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;">
+    <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#2563eb);border-radius:8px;font-size:18px;font-weight:800;">S</span>
+    SCINTILLA WORLD
+  </a>
+  <nav style="display:flex;gap:16px;font-size:14px;">
+    <a href="https://scintilla.world/tools/" style="color:#d1d5db;text-decoration:none;">Tools</a>
+    <a href="https://scintilla.world/blog/" style="color:#d1d5db;text-decoration:none;">Blogs</a>
+  </nav>
+</header>
+
+<h1 style="position:absolute;left:-9999px;">Email Automation</h1>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -857,7 +884,6 @@
             const [editingTemplate, setEditingTemplate] = useState(null);
             const [searchTerm, setSearchTerm] = useState('');
 
-
             const handleSendEmail = async (contactId, subject, body) => {
                 setContacts(prevContacts => 
                     prevContacts.map(contact => 
@@ -867,7 +893,6 @@
                     )
                 );
             };
-
 
             const handleFileUpload = (event) => {
                 const file = event.target.files[0];
@@ -1086,5 +1111,12 @@
 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+
+<!-- SCINTILLA WORLD FOOTER -->
+<footer style="background:#0a0a0a;color:#9ca3af;padding:20px;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:13px;border-top:1px solid rgba(255,255,255,0.1);">
+  <p>Powered by <a href="https://nutrithrive.com.au" style="color:#7c3aed;text-decoration:none;">NutriThrive</a></p>
+  <p style="margin-top:4px;">&copy; 2026 Scintilla World &middot; <a href="https://scintilla.world/privacy/" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a></p>
+</footer>
+
 </body>
 </html>

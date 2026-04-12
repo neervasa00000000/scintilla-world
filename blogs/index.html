@@ -1,20 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-AU">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blogs | Scintilla World</title>
-    <meta name="description" content="Insights, tutorials, and thoughts on web development, tools, and innovation.">
+    <title>Blog | Scintilla World — Superfood Guides, Free Tools & Wellness</title>
+    <meta name="description" content="Superfood science, free web tool guides, and Australian wellness insights. Explore moringa benefits, NutriThrive reviews, and practical lifestyle tips.">
+    <link rel="canonical" href="https://scintilla.world/blogs/">
     <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
     <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
     <link rel="shortcut icon" href="/assets/logo/favicon.png">
+    <meta name="robots" content="index, follow">
     
+    <meta property="og:title" content="Blog | Scintilla World — Superfood Guides & Free Tools">
+    <meta property="og:description" content="Superfood science, free web tool guides, and Australian wellness insights.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://scintilla.world/blogs">
+    <meta property="og:image" content="https://scintilla.world/assets/logo/scintilla.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog | Scintilla World — Superfood Guides & Free Tools">
+    <meta name="twitter:description" content="Superfood science, free web tool guides, and Australian wellness insights.">
+    <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Scintilla World Blog",
+      "description": "Superfood science, free web tool guides, and Australian wellness insights.",
+      "url": "https://scintilla.world/blogs/",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Scintilla World",
+        "url": "https://scintilla.world"
+      }
+    }
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- React & ReactDOM (Production) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     
     <!-- Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -86,33 +113,71 @@
     </style>
 </head>
 <body>
-    <!-- Ensures Tailwind CDN includes green utilities for BlogCard dynamic classes -->
-    <span class="hidden bg-green-400 text-green-400 group-hover:text-green-400" aria-hidden="true"></span>
+    <!-- Ensures Tailwind CDN includes utilities for BlogCard dynamic classes -->
+    <span class="hidden" aria-hidden="true">
+        <span class="bg-green-400 text-green-400 group-hover:text-green-400"></span>
+        <span class="bg-purple-400 text-purple-400 group-hover:text-purple-400"></span>
+        <span class="bg-violet-400 text-violet-400 group-hover:text-violet-400"></span>
+        <span class="bg-cyan-400 text-cyan-400 group-hover:text-cyan-400"></span>
+        <span class="bg-pink-400 text-pink-400 group-hover:text-pink-400"></span>
+        <span class="bg-blue-400 text-blue-400 group-hover:text-blue-400"></span>
+        <span class="bg-red-400 text-red-400 group-hover:text-red-400"></span>
+        <span class="bg-amber-400 text-amber-400 group-hover:text-amber-400"></span>
+        <span class="bg-emerald-400 text-emerald-400 group-hover:text-emerald-400"></span>
+    </span>
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect } = React;
+
+        const blogColorMap = {
+            green:   "bg-green-400",
+            purple:  "bg-purple-400",
+            violet:  "bg-violet-400",
+            cyan:    "bg-cyan-400",
+            pink:    "bg-pink-400",
+            blue:    "bg-blue-400",
+            red:     "bg-red-400",
+            amber:   "bg-amber-400",
+            emerald: "bg-emerald-400",
+        };
+
+        const blogTextMap = {
+            green:   "group-hover:text-green-400 text-green-400",
+            purple:  "group-hover:text-purple-400 text-purple-400",
+            violet:  "group-hover:text-violet-400 text-violet-400",
+            cyan:    "group-hover:text-cyan-400 text-cyan-400",
+            pink:    "group-hover:text-pink-400 text-pink-400",
+            blue:    "group-hover:text-blue-400 text-blue-400",
+            red:     "group-hover:text-red-400 text-red-400",
+            amber:   "group-hover:text-amber-400 text-amber-400",
+            emerald: "group-hover:text-emerald-400 text-emerald-400",
+        };
         
-        const BlogCard = ({ title, description, category, date, link, color = "purple" }) => (
+        const BlogCard = ({ title, description, category, date, link, color = "purple" }) => {
+            const dotClass = blogColorMap[color] || blogColorMap.purple;
+            const textClass = blogTextMap[color] || blogTextMap.purple;
+            return (
             <a href={link} className="glass-panel rounded-2xl p-6 min-h-[280px] flex flex-col justify-between group cursor-pointer hover:scale-[1.02] transition-all block">
                 <div>
                     <div className="flex items-center gap-2 mb-3">
-                        <div className={`w-2 h-2 bg-${color}-400 rounded-full`}></div>
+                        <div className={`w-2 h-2 ${dotClass} rounded-full`}></div>
                         <span className="text-xs text-gray-400 uppercase tracking-wider">{category}</span>
                         {date && <span className="text-xs text-gray-500 ml-auto">{date}</span>}
                     </div>
-                    <h3 className={`text-xl font-display font-bold mb-2 group-hover:text-${color}-400 transition-colors`}>
+                    <h3 className={`text-xl font-display font-bold mb-2 ${textClass.split(' ').find(c => c.startsWith('group-hover:'))} transition-colors`}>
                         {title}
                     </h3>
                     <p className="text-sm text-gray-400 leading-relaxed">
                         {description}
                     </p>
                 </div>
-                <div className={`mt-4 flex items-center gap-2 text-xs text-${color}-400 group-hover:gap-3 transition-all`}>
+                <div className={`mt-4 flex items-center gap-2 text-xs ${textClass.split(' ').find(c => !c.startsWith('group-hover:'))} group-hover:gap-3 transition-all`}>
                     <span>Read more</span>
                     <i data-lucide="arrow-right" className="w-4 h-4"></i>
                 </div>
             </a>
-        );
+            );
+        };
 
         const App = () => {
             useEffect(() => {
@@ -387,7 +452,7 @@
                     
                     {/* Footer */}
                     <footer className="w-full max-w-7xl mt-20 py-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
-                        <div>&copy; 2025 Scintilla World</div>
+                        <div>&copy; 2026 Scintilla World</div>
                         <div className="flex gap-6 mt-4 md:mt-0">
                             <a href="/" className="hover:text-white">Home</a>
                             <a href="/blogs" className="hover:text-white">Blogs</a>
@@ -399,7 +464,8 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>

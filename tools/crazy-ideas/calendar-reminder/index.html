@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en-AU">
 
 <head>
 
@@ -8,7 +8,20 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>QuickCal_TERM_v3.0 | NutriThrive Labs</title>
+    <title>Calendar Reminder | Scintilla World — Free Online Tool</title>
+  <meta name="description" content="Set calendar reminders and events quickly. Free online calendar reminder tool — no sign-up required.">
+  <link rel="canonical" href="https://scintilla.world/tools/crazy-ideas/calendar-reminder/">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Calendar Reminder | Scintilla World — Free Online Tool">
+  <meta property="og:description" content="Set calendar reminders and events quickly. Free online calendar reminder tool — no sign-up required.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://scintilla.world/tools/crazy-ideas/calendar-reminder/">
+  <meta property="og:image" content="https://scintilla.world/assets/logo/scintilla.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Calendar Reminder | Scintilla World — Free Online Tool">
+  <meta name="twitter:description" content="Set calendar reminders and events quickly. Free online calendar reminder tool — no sign-up required.">
+  <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Calendar Reminder","url":"https://scintilla.world/tools/crazy-ideas/calendar-reminder/","description":"Set calendar reminders and events quickly. Free online calendar reminder tool \u2014 no sign-up required.","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"}}</script>
 
   <link rel="icon" type="image/png" href="../../../assets/logo/scintilla.png">
 
@@ -29,8 +42,6 @@
     /* --- TERMINAL RESET --- */
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-
-
 
     :root {
 
@@ -80,8 +91,6 @@
 
     }
 
-
-
     @media (max-width: 768px) {
 
       body {
@@ -94,23 +103,17 @@
 
     }
 
-
-
     body::before {
 
       display: none;
 
     }
 
-
-
     body::after {
 
       display: none;
 
     }
-
-
 
     /* --- MAIN INTERFACE FRAME --- */
 
@@ -133,8 +136,6 @@
       box-shadow: 0 0 0 1px #000;
 
     }
-
-
 
     /* --- HEADER BAR --- */
 
@@ -160,8 +161,6 @@
 
     }
 
-
-
     .status-led {
 
       display: inline-block;
@@ -180,8 +179,6 @@
 
     }
 
-
-
     /* --- WORKSPACE --- */
 
     .workspace {
@@ -191,8 +188,6 @@
       grid-template-columns: 1fr 300px;
 
     }
-
-
 
     /* --- INPUT AREA --- */
 
@@ -208,8 +203,6 @@
 
     }
 
-
-
     .prompt-line {
 
       display: flex;
@@ -222,8 +215,6 @@
 
     }
 
-
-
     .prompt-symbol {
 
       color: var(--accent);
@@ -231,8 +222,6 @@
       font-weight: 700;
 
     }
-
-
 
     textarea {
 
@@ -258,15 +247,11 @@
 
     }
 
-
-
     textarea::placeholder {
 
       color: #333;
 
     }
-
-
 
     /* --- SIDEBAR (CONTEXT) --- */
 
@@ -280,8 +265,6 @@
 
     }
 
-
-
     .panel-section {
 
       padding: 1.5rem;
@@ -289,8 +272,6 @@
       border-bottom: 1px solid var(--border);
 
     }
-
-
 
     .panel-label {
 
@@ -306,8 +287,6 @@
 
     }
 
-
-
     .cmd-list {
 
       list-style: none;
@@ -319,8 +298,6 @@
       gap: 0.5rem;
 
     }
-
-
 
     .cmd-item {
 
@@ -338,8 +315,6 @@
 
     }
 
-
-
     .cmd-item:hover {
 
       background: var(--surface);
@@ -349,8 +324,6 @@
       color: var(--text-main);
 
     }
-
-
 
     .cmd-item::before {
 
@@ -362,15 +335,11 @@
 
       }
 
-
-
     .cmd-item:hover::before {
 
         opacity: 1;
 
     }
-
-
 
     /* --- ACTION FOOTER --- */
 
@@ -389,8 +358,6 @@
       align-items: center;
 
     }
-
-
 
     button#generateBtn {
 
@@ -416,8 +383,6 @@
 
     }
 
-
-
     button#generateBtn:hover {
 
       background: var(--accent);
@@ -426,15 +391,11 @@
 
     }
 
-
-
     button#generateBtn:active {
 
       transform: translateY(2px);
 
     }
-
-
 
     button#generateBtn:disabled {
 
@@ -443,8 +404,6 @@
       cursor: not-allowed;
 
     }
-
-
 
     .key-hint {
 
@@ -459,8 +418,6 @@
       border-radius: 4px;
 
     }
-
-
 
     /* --- OUTPUT DISPLAY --- */
 
@@ -478,15 +435,11 @@
 
     }
 
-
-
     .output-log.active {
 
       display: block;
 
     }
-
-
 
     .log-line {
 
@@ -498,23 +451,13 @@
 
     }
 
-
-
     .log-ts { color: var(--text-dim); }
-
-
 
     .log-msg { color: var(--text-main); }
 
-
-
     .log-success { color: var(--success); }
 
-
-
     .log-error { color: var(--accent); }
-
-
 
     .result-actions {
 
@@ -525,8 +468,6 @@
       gap: 1rem;
 
     }
-
-
 
     .res-link {
 
@@ -544,8 +485,6 @@
 
     }
 
-
-
     .res-link:hover {
 
       border-color: var(--accent);
@@ -553,8 +492,6 @@
       color: var(--accent);
 
     }
-
-
 
     /* Mobile */
 
@@ -574,8 +511,6 @@
 
     }
 
-
-
     @media (max-width: 768px) {
 
       .terminal-frame {
@@ -588,8 +523,6 @@
 
       }
 
-
-
       .header-bar {
 
         padding: 0.7rem 1rem;
@@ -598,23 +531,17 @@
 
       }
 
-
-
       .header-bar span:last-child {
 
         font-size: 0.65rem;
 
       }
 
-
-
       .input-area {
 
         padding: 1.5rem 1rem;
 
       }
-
-
 
       .prompt-line {
 
@@ -623,8 +550,6 @@
         margin-bottom: 0.8rem;
 
       }
-
-
 
       textarea {
 
@@ -636,8 +561,6 @@
 
       }
 
-
-
       .footer-bar {
 
         padding: 0.8rem 1rem;
@@ -647,8 +570,6 @@
         gap: 0.5rem;
 
       }
-
-
 
       button#generateBtn {
 
@@ -660,8 +581,6 @@
 
       }
 
-
-
       .key-hint {
 
         font-size: 0.7rem;
@@ -669,8 +588,6 @@
         padding: 4px 8px;
 
       }
-
-
 
       .output-log {
 
@@ -680,8 +597,6 @@
 
       }
 
-
-
       .log-line {
 
         flex-wrap: wrap;
@@ -690,8 +605,6 @@
 
       }
 
-
-
       .result-actions {
 
         flex-direction: column;
@@ -699,8 +612,6 @@
         gap: 0.5rem;
 
       }
-
-
 
       .res-link {
 
@@ -714,8 +625,6 @@
 
     }
 
-
-
     @media (max-width: 480px) {
 
       body {
@@ -726,15 +635,11 @@
 
       }
 
-
-
       .terminal-frame {
 
         border-radius: 0;
 
       }
-
-
 
       .header-bar {
 
@@ -744,15 +649,11 @@
 
       }
 
-
-
       .input-area {
 
         padding: 1rem 0.8rem;
 
       }
-
-
 
       textarea {
 
@@ -762,15 +663,11 @@
 
       }
 
-
-
       .footer-bar {
 
         padding: 0.7rem 0.8rem;
 
       }
-
-
 
       button#generateBtn {
 
@@ -779,8 +676,6 @@
         font-size: 0.8rem;
 
       }
-
-
 
       /* Product Links Section Mobile */
 
@@ -792,15 +687,11 @@
 
       }
 
-
-
       .product-links-section > div {
 
         padding: 1.5rem 1rem !important;
 
       }
-
-
 
       .product-links-section h3 {
 
@@ -810,8 +701,6 @@
 
       }
 
-
-
       .product-links-section p {
 
         font-size: 0.85rem !important;
@@ -819,8 +708,6 @@
         margin-bottom: 1.2rem !important;
 
       }
-
-
 
       .product-links-section a {
 
@@ -840,8 +727,6 @@
 
     }
 
-
-
     /* Product Links Mobile Styles */
 
     @media (max-width: 768px) {
@@ -854,15 +739,11 @@
 
       }
 
-
-
       .product-links-section > div {
 
         padding: 1.5rem 1rem !important;
 
       }
-
-
 
       .product-links-section h3 {
 
@@ -872,8 +753,6 @@
 
       }
 
-
-
       .product-links-section p {
 
         font-size: 0.85rem !important;
@@ -882,8 +761,6 @@
 
       }
 
-
-
       .product-links-section > div > div:first-of-type {
 
         flex-direction: column !important;
@@ -891,8 +768,6 @@
         gap: 0.5rem !important;
 
       }
-
-
 
       .product-links-section > div > div:first-of-type a {
 
@@ -904,8 +779,6 @@
 
       }
 
-
-
       .product-links-section > div > div:last-of-type > div {
 
         flex-direction: column !important;
@@ -913,8 +786,6 @@
         gap: 0.5rem !important;
 
       }
-
-
 
       .product-links-section > div > div:last-of-type a {
 
@@ -926,8 +797,6 @@
 
     }
 
-
-
     @media (max-width: 480px) {
 
       .product-links-section {
@@ -938,23 +807,17 @@
 
       }
 
-
-
       .product-links-section > div {
 
         padding: 1.2rem 0.8rem !important;
 
       }
 
-
-
       .product-links-section h3 {
 
         font-size: 1rem !important;
 
       }
-
-
 
       .product-links-section p {
 
@@ -963,8 +826,6 @@
       }
 
     }
-
-
 
   </style>
   <script>
@@ -2497,6 +2358,20 @@
 
 <body>
 
+<!-- SCINTILLA WORLD HEADER -->
+<header style="position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,0.1);">
+  <a href="https://scintilla.world" style="color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;">
+    <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#2563eb);border-radius:8px;font-size:18px;font-weight:800;">S</span>
+    SCINTILLA WORLD
+  </a>
+  <nav style="display:flex;gap:16px;font-size:14px;">
+    <a href="https://scintilla.world/tools/" style="color:#d1d5db;text-decoration:none;">Tools</a>
+    <a href="https://scintilla.world/blog/" style="color:#d1d5db;text-decoration:none;">Blogs</a>
+  </nav>
+</header>
+
+<h1 style="position:absolute;left:-9999px;">Calendar Reminder</h1>
+
   <script>
     // Clock
     setInterval(() => {
@@ -2827,6 +2702,13 @@
       </div>
     </div>
   </div>
+
+<!-- SCINTILLA WORLD FOOTER -->
+<footer style="background:#0a0a0a;color:#9ca3af;padding:20px;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:13px;border-top:1px solid rgba(255,255,255,0.1);">
+  <p>Powered by <a href="https://nutrithrive.com.au" style="color:#7c3aed;text-decoration:none;">NutriThrive</a></p>
+  <p style="margin-top:4px;">&copy; 2026 Scintilla World &middot; <a href="https://scintilla.world/privacy/" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a></p>
+</footer>
+
 </body>
 
 </html>
