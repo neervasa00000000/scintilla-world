@@ -19,6 +19,10 @@
   <meta name="twitter:title" content="AutoReach - Email Automation | Scintilla World — Free Online Tool">
   <meta name="twitter:description" content="Automate email outreach with smart templates and scheduling. Free online email automation tool — no sign-up.">
   <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"AutoReach - Email Automation","url":"https://scintilla.world/tools/crazy-ideas/email-automation/","description":"Automate email outreach with smart templates and scheduling. Free online email automation tool \u2014 no sign-up.","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"}}</script>
     
     <!-- Favicon - Multiple formats for better compatibility -->
@@ -30,7 +34,7 @@
     <link rel="shortcut icon" href="./favicon.svg">
     <link rel="shortcut icon" href="favicon.svg">
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
             --blue-light: #C2E2FA;
@@ -119,8 +123,13 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <meta name="geo.region" content="AU-VIC">
+  <link rel="alternate" hreflang="en-AU" href="https://scintilla.world/tools/crazy-ideas/email-automation/">
+  <link rel="alternate" hreflang="x-default" href="https://scintilla.world/tools/crazy-ideas/email-automation/">
 </head>
 <body>
+<div id="app-loading" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#050505;color:#666;font-family:Inter,sans-serif;font-size:14px;">Loading tool...</div>
 
 <!-- SCINTILLA WORLD HEADER -->
 <header style="position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,0.1);">
@@ -135,7 +144,7 @@
 </header>
 
 <h1 style="position:absolute;left:-9999px;">Email Automation</h1>
-    <div id="root"></div>
+    <div id="root" style="display:none"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
@@ -1110,6 +1119,7 @@
         }
 
         ReactDOM.render(<App />, document.getElementById('root'));
+    document.getElementById('app-loading').style.display='none'; document.getElementById('root').style.display='block';
     </script>
 
 <!-- SCINTILLA WORLD FOOTER -->

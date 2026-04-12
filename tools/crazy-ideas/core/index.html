@@ -16,13 +16,17 @@
   <meta name="twitter:title" content="CORE - Holographic Thought Engine | Scintilla World — Free Online Tool">
   <meta name="twitter:description" content="Organize thoughts visually with a holographic mind map engine. Free online thought organizer tool.">
   <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"CORE - Holographic Thought Engine","url":"https://scintilla.world/tools/crazy-ideas/core/","description":"Organize thoughts visually with a holographic mind map engine. Free online thought organizer tool.","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"}}</script>
   <link rel="icon" type="image/png" href="../../../assets/logo/scintilla.png">
   <link rel="apple-touch-icon" href="../../../assets/logo/scintilla.png">
   <link rel="shortcut icon" href="../../../assets/logo/scintilla.png">
   
   <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.tailwindcss.com"></script>
   
   <!-- React and ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -44,8 +48,13 @@
     .animate-slideUp { animation: slideUp 0.8s ease-out forwards; }
     body { background-color: #020202; }
   </style>
+
+  <meta name="geo.region" content="AU-VIC">
+  <link rel="alternate" hreflang="en-AU" href="https://scintilla.world/tools/crazy-ideas/core/">
+  <link rel="alternate" hreflang="x-default" href="https://scintilla.world/tools/crazy-ideas/core/">
 </head>
 <body>
+<div id="app-loading" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#050505;color:#666;font-family:Inter,sans-serif;font-size:14px;">Loading tool...</div>
 
 <!-- SCINTILLA WORLD HEADER -->
 <header style="position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,0.1);">
@@ -59,7 +68,7 @@
   </nav>
 </header>
 
-  <div id="root"></div>
+  <div id="root" style="display:none"></div>
 
   <script type="text/babel">
     const { useState, useEffect, useRef, useMemo } = React;
@@ -506,6 +515,7 @@
     }
 
     ReactDOM.render(<CoreApp />, document.getElementById('root'));
+    document.getElementById('app-loading').style.display='none'; document.getElementById('root').style.display='block';
   </script>
 
 <!-- SCINTILLA WORLD FOOTER -->

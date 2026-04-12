@@ -9,7 +9,14 @@
     <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
     <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
     <link rel="shortcut icon" href="/assets/logo/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <meta name="robots" content="index, follow">
+    <meta name="geo.region" content="AU-VIC">
+    <link rel="alternate" hreflang="en-AU" href="https://scintilla.world/blogs/">
+    <link rel="alternate" hreflang="x-default" href="https://scintilla.world/blogs/">
     
     <meta property="og:title" content="Blog | Scintilla World — Superfood Guides & Free Tools">
     <meta property="og:description" content="Superfood science, free web tool guides, and Australian wellness insights.">
@@ -110,9 +117,33 @@
         .neon-text {
             text-shadow: 0 0 20px rgba(255,255,255,0.3);
         }
+        .mob-menu { position:fixed; inset:0; z-index:100; display:none; }
+        .mob-menu.open { display:flex; }
+        .mob-overlay { position:absolute; inset:0; background:rgba(0,0,0,.8); backdrop-filter:blur(4px); }
+        .mob-panel { position:absolute; right:0; top:0; height:100%; width:16rem; background:#0a0a0a; border-left:1px solid rgba(255,255,255,.1); padding:2rem; display:flex; flex-direction:column; gap:1.5rem; }
+        .mob-panel a { font-size:1.125rem; color:#d1d5db; text-decoration:none; }
+        .mob-panel a:hover { color:#fff; }
+        .search-bar { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:.75rem; padding:.75rem 1rem; color:#fff; font-size:.875rem; width:100%; outline:none; }
+        .search-bar:focus { border-color:rgba(168,85,247,.5); }
+        .search-bar::placeholder { color:#6b7280; }
     </style>
 </head>
 <body>
+    <div class="mob-menu" id="mobileMenu">
+        <div class="mob-overlay" onclick="document.getElementById('mobileMenu').classList.remove('open')"></div>
+        <div class="mob-panel">
+            <button onclick="document.getElementById('mobileMenu').classList.remove('open')" style="align-self:end;color:#9ca3af;background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+            <nav style="display:flex;flex-direction:column;gap:1.5rem;">
+                <a href="/#tools">Tools</a>
+                <a href="/blogs">Blogs</a>
+                <a href="/#about">About</a>
+                <a href="/privacy-policy.html">Privacy</a>
+            </nav>
+            <div style="margin-top:auto;border-top:1px solid rgba(255,255,255,.1);padding-top:1.5rem;">
+                <a href="https://nutrithrive.com.au" target="_blank" rel="noopener sponsored" style="color:#34d399;font-weight:700;text-decoration:none;font-size:.875rem;">NutriThrive ↗</a>
+            </div>
+        </div>
+    </div>
     <!-- Ensures Tailwind CDN includes utilities for BlogCard dynamic classes -->
     <span class="hidden" aria-hidden="true">
         <span class="bg-green-400 text-green-400 group-hover:text-green-400"></span>
@@ -180,6 +211,8 @@
         };
 
         const App = () => {
+            const [search, setSearch] = useState('');
+
             useEffect(() => {
                 if (typeof lucide !== 'undefined' && lucide.createIcons) {
                     lucide.createIcons();
@@ -189,7 +222,7 @@
                         lucide.createIcons();
                     }
                 }, 100);
-            }, []);
+            }, [search]);
             
             const blogPosts = [
                 {
@@ -421,7 +454,7 @@
                     </div>
                     
                     {/* Header */}
-                    <header className="w-full max-w-7xl flex justify-between items-center mb-12">
+                    <header className="w-full max-w-7xl flex justify-between items-center mb-8">
                         <a href="/" className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-white text-black rounded-lg flex items-center justify-center font-bold text-xl font-display">S</div>
                             <span className="font-display text-2xl font-bold tracking-tight neon-text">SCINTILLA WORLD</span>
@@ -430,22 +463,40 @@
                             <a href="/#tools" className="hover:text-white transition-colors">Tools</a>
                             <a href="/blogs" className="hover:text-white transition-colors text-white">Blogs</a>
                             <a href="/#about" className="hover:text-white transition-colors">About</a>
+                            <a href="/privacy-policy.html" className="hover:text-white transition-colors">Privacy</a>
                         </nav>
+                        <button onClick={() => document.getElementById('mobileMenu').classList.add('open')} className="md:hidden flex flex-col gap-1.5 p-2" aria-label="Open menu">
+                            <span className="block w-6 h-0.5 bg-white rounded"></span>
+                            <span className="block w-6 h-0.5 bg-white rounded"></span>
+                            <span className="block w-6 h-0.5 bg-white rounded"></span>
+                        </button>
                     </header>
                     
                     {/* Page Title */}
-                    <div className="w-full max-w-7xl mb-12 text-center">
+                    <div className="w-full max-w-7xl mb-8 text-center">
                         <h1 className="font-display text-5xl md:text-6xl font-bold mb-4">
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">Blogs</span>
                         </h1>
-                        <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-                            Insights, tutorials, and thoughts on web development, tools, and innovation.
+                        <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-6">
+                            Superfood science, free web tool guides, and Australian wellness insights.
                         </p>
+                        <div className="max-w-lg mx-auto">
+                            <input 
+                                type="text" 
+                                placeholder="Search articles... (e.g. moringa, sleep, PDF)" 
+                                value={search} 
+                                onChange={(e) => setSearch(e.target.value.toLowerCase())}
+                                className="search-bar"
+                            />
+                        </div>
                     </div>
                     
                     {/* Blog Grid */}
                     <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {blogPosts.map((post, index) => (
+                        {blogPosts.filter(post => {
+                            if (!search) return true;
+                            return post.title.toLowerCase().includes(search) || post.description.toLowerCase().includes(search) || post.category.toLowerCase().includes(search);
+                        }).map((post, index) => (
                             <BlogCard key={index} {...post} />
                         ))}
                     </div>
@@ -456,7 +507,8 @@
                         <div className="flex gap-6 mt-4 md:mt-0">
                             <a href="/" className="hover:text-white">Home</a>
                             <a href="/blogs" className="hover:text-white">Blogs</a>
-                            <a href="/#about" className="hover:text-white">About</a>
+                            <a href="/privacy-policy.html" className="hover:text-white">Privacy</a>
+                            <a href="https://nutrithrive.com.au" target="_blank" rel="noopener sponsored" className="hover:text-white text-emerald-400">NutriThrive ↗</a>
                         </div>
                     </footer>
                     

@@ -16,13 +16,17 @@
   <meta name="twitter:title" content="Lumina - Professional Image Editor | Scintilla World — Free Online Tool">
   <meta name="twitter:description" content="Professional image editor in your browser. Adjust filters, crop, export — free, no sign-up, no watermarks.">
   <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Lumina - Professional Image Editor","url":"https://scintilla.world/tools/crazy-ideas/lumina-editor/","description":"Professional image editor in your browser. Adjust filters, crop, export \u2014 free, no sign-up, no watermarks.","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"}}</script>
   <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
   <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
   <link rel="shortcut icon" href="/assets/logo/favicon.png">
   
   <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.tailwindcss.com"></script>
   
   <!-- React and ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -71,8 +75,13 @@
       }
     }
   </style>
+
+  <meta name="geo.region" content="AU-VIC">
+  <link rel="alternate" hreflang="en-AU" href="https://scintilla.world/tools/crazy-ideas/lumina-editor/">
+  <link rel="alternate" hreflang="x-default" href="https://scintilla.world/tools/crazy-ideas/lumina-editor/">
 </head>
 <body>
+<div id="app-loading" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#050505;color:#666;font-family:Inter,sans-serif;font-size:14px;">Loading tool...</div>
 
 <!-- SCINTILLA WORLD HEADER -->
 <header style="position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,0.1);">
@@ -86,7 +95,7 @@
   </nav>
 </header>
 
-  <div id="root"></div>
+  <div id="root" style="display:none"></div>
 
   <script type="text/babel">
     const { useState, useRef, useEffect } = React;
@@ -941,6 +950,7 @@
 
     // Render the app
     ReactDOM.render(<LuminaEditor />, document.getElementById('root'));
+    document.getElementById('app-loading').style.display='none'; document.getElementById('root').style.display='block';
   </script>
 
 <!-- SCINTILLA WORLD FOOTER -->
