@@ -11,7 +11,7 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog | Scintilla World — Superfood Guides, Free Tools & Wellness</title>
+    <title>Blog | Scintilla World — Superfood & Wellness</title>
     <meta name="description" content="Superfood science, free web tool guides, and Australian wellness insights. Explore moringa benefits, NutriThrive reviews, and practical lifestyle tips.">
     <link rel="canonical" href="https://scintilla.world/blogs/">
     <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
@@ -19,20 +19,19 @@
     <link rel="shortcut icon" href="/assets/logo/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://unpkg.com">
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    
     <meta name="robots" content="index, follow">
     <meta name="geo.region" content="AU-VIC">
     <link rel="alternate" hreflang="en-AU" href="https://scintilla.world/blogs/">
     <link rel="alternate" hreflang="x-default" href="https://scintilla.world/blogs/">
-    
-    <meta property="og:title" content="Blog | Scintilla World — Superfood Guides & Free Tools">
+
+    <meta property="og:title" content="Blog | Scintilla World — Superfood & Wellness">
     <meta property="og:description" content="Superfood science, free web tool guides, and Australian wellness insights.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://scintilla.world/blogs">
     <meta property="og:image" content="https://scintilla.world/assets/logo/scintilla.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Blog | Scintilla World — Superfood Guides & Free Tools">
+    <meta name="twitter:title" content="Blog | Scintilla World — Superfood & Wellness">
     <meta name="twitter:description" content="Superfood science, free web tool guides, and Australian wellness insights.">
     <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
 
@@ -51,22 +50,10 @@
     }
     </script>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- React & ReactDOM (Production) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Google Fonts -->
+
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -74,12 +61,9 @@
             color: #ffffff;
             overflow-x: hidden;
         }
-        
         .font-display {
             font-family: 'Space Grotesk', sans-serif;
         }
-        
-        /* Animated Background Gradients */
         .aurora-bg {
             position: fixed;
             top: 0;
@@ -89,31 +73,27 @@
             z-index: -1;
             overflow: hidden;
         }
-
         .blob {
             position: absolute;
             filter: blur(80px);
             opacity: 0.4;
             animation: float 10s infinite ease-in-out;
         }
-
         .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #4f46e5; animation-delay: 0s; }
         .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: #db2777; animation-delay: -2s; }
         .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: #0ea5e9; animation-delay: -4s; }
-        
         @keyframes float {
             0%, 100% { transform: translate(0, 0) scale(1); }
             33% { transform: translate(30px, -50px) scale(1.1); }
             66% { transform: translate(-20px, 20px) scale(0.9); }
         }
-        
-        /* Glassmorphism Utilities */
         .glass-panel {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
         }
         .glass-panel:hover {
             background: rgba(255, 255, 255, 0.06);
@@ -121,7 +101,6 @@
             transform: translateY(-2px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        
         .neon-text {
             text-shadow: 0 0 20px rgba(255,255,255,0.3);
         }
@@ -134,7 +113,35 @@
         .search-bar { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:.75rem; padding:.75rem 1rem; color:#fff; font-size:.875rem; width:100%; outline:none; }
         .search-bar:focus { border-color:rgba(168,85,247,.5); }
         .search-bar::placeholder { color:#6b7280; }
+        .blog-card { display:flex; flex-direction:column; justify-content:space-between; min-height:280px; cursor:pointer; text-decoration:none; color:inherit; }
+        .blog-card:hover { transform:scale(1.02); }
+        .blog-card .read-more { transition:gap 0.3s; }
+        .blog-card:hover .read-more { gap:0.75rem; }
+        .cat-dot { width:0.5rem; height:0.5rem; border-radius:9999px; }
+        [data-category="superfood"] .cat-dot { background:#4ade80; }
+        [data-category="superfood"] .cat-text { color:#4ade80; }
+        [data-category="superfood"]:hover .card-title { color:#4ade80; }
+        [data-category="skincare"] .cat-dot { background:#c084fc; }
+        [data-category="skincare"] .cat-text { color:#c084fc; }
+        [data-category="skincare"]:hover .card-title { color:#c084fc; }
+        [data-category="freetools"] .cat-dot { background:#22d3ee; }
+        [data-category="freetools"] .cat-text { color:#22d3ee; }
+        [data-category="freetools"]:hover .card-title { color:#22d3ee; }
+        [data-category="localguides"] .cat-dot { background:#fbbf24; }
+        [data-category="localguides"] .cat-text { color:#fbbf24; }
+        [data-category="localguides"]:hover .card-title { color:#fbbf24; }
+        .card-title { transition:color 0.3s; }
+        .filter-btn {
+            padding:0.375rem 1rem; border-radius:9999px; font-size:0.75rem; font-weight:600;
+            text-transform:uppercase; letter-spacing:0.05em; border:1px solid rgba(255,255,255,0.1);
+            background:rgba(255,255,255,0.03); color:#9ca3af; cursor:pointer; transition:all 0.3s;
+        }
+        .filter-btn:hover { border-color:rgba(255,255,255,0.2); color:#e5e7eb; }
+        .filter-btn.active { border-color:rgba(168,85,247,0.5); background:rgba(168,85,247,0.15); color:#c084fc; }
+        .no-results { text-align:center; padding:4rem 1rem; color:#6b7280; }
+        .blog-card.hidden { display:none; }
     </style>
+    <link rel="stylesheet" href="/assets/css/tailwind-blog.css">
 </head>
 <body>
     <div class="mob-menu" id="mobileMenu">
@@ -152,382 +159,568 @@
             </div>
         </div>
     </div>
-    <!-- Ensures Tailwind CDN includes utilities for BlogCard dynamic classes -->
-    <span class="hidden" aria-hidden="true">
-        <span class="bg-green-400 text-green-400 group-hover:text-green-400"></span>
-        <span class="bg-purple-400 text-purple-400 group-hover:text-purple-400"></span>
-        <span class="bg-violet-400 text-violet-400 group-hover:text-violet-400"></span>
-        <span class="bg-cyan-400 text-cyan-400 group-hover:text-cyan-400"></span>
-        <span class="bg-pink-400 text-pink-400 group-hover:text-pink-400"></span>
-        <span class="bg-blue-400 text-blue-400 group-hover:text-blue-400"></span>
-        <span class="bg-red-400 text-red-400 group-hover:text-red-400"></span>
-        <span class="bg-amber-400 text-amber-400 group-hover:text-amber-400"></span>
-        <span class="bg-emerald-400 text-emerald-400 group-hover:text-emerald-400"></span>
-    </span>
-    <div id="root"></div>
-    <script type="text/babel">
-        const { useState, useEffect } = React;
 
-        const blogColorMap = {
-            green:   "bg-green-400",
-            purple:  "bg-purple-400",
-            violet:  "bg-violet-400",
-            cyan:    "bg-cyan-400",
-            pink:    "bg-pink-400",
-            blue:    "bg-blue-400",
-            red:     "bg-red-400",
-            amber:   "bg-amber-400",
-            emerald: "bg-emerald-400",
-        };
+    <div class="relative min-h-screen w-full p-4 md:p-8 lg:p-12 flex flex-col items-center">
 
-        const blogTextMap = {
-            green:   "group-hover:text-green-400 text-green-400",
-            purple:  "group-hover:text-purple-400 text-purple-400",
-            violet:  "group-hover:text-violet-400 text-violet-400",
-            cyan:    "group-hover:text-cyan-400 text-cyan-400",
-            pink:    "group-hover:text-pink-400 text-pink-400",
-            blue:    "group-hover:text-blue-400 text-blue-400",
-            red:     "group-hover:text-red-400 text-red-400",
-            amber:   "group-hover:text-amber-400 text-amber-400",
-            emerald: "group-hover:text-emerald-400 text-emerald-400",
-        };
-        
-        const BlogCard = ({ title, description, category, date, link, color = "purple" }) => {
-            const dotClass = blogColorMap[color] || blogColorMap.purple;
-            const textClass = blogTextMap[color] || blogTextMap.purple;
-            return (
-            <a href={link} className="glass-panel rounded-2xl p-6 min-h-[280px] flex flex-col justify-between group cursor-pointer hover:scale-[1.02] transition-all block">
+        <div class="aurora-bg">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+        </div>
+
+        <header class="w-full max-w-7xl flex justify-between items-center mb-8">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white text-black rounded-lg flex items-center justify-center font-bold text-xl font-display">S</div>
+                <span class="font-display text-2xl font-bold tracking-tight neon-text">SCINTILLA WORLD</span>
+            </a>
+            <nav class="hidden md:flex gap-8 text-sm font-medium text-gray-300">
+                <a href="/#tools" class="hover:text-white transition-colors">Tools</a>
+                <a href="/blogs" class="hover:text-white transition-colors text-white">Blogs</a>
+                <a href="/#about" class="hover:text-white transition-colors">About</a>
+                <a href="/privacy-policy.html" class="hover:text-white transition-colors">Privacy</a>
+            </nav>
+            <button onclick="document.getElementById('mobileMenu').classList.add('open')" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Open menu">
+                <span class="block w-6 h-0.5 bg-white rounded"></span>
+                <span class="block w-6 h-0.5 bg-white rounded"></span>
+                <span class="block w-6 h-0.5 bg-white rounded"></span>
+            </button>
+        </header>
+
+        <div class="w-full max-w-7xl mb-8 text-center">
+            <h1 class="font-display text-5xl md:text-6xl font-bold mb-4">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">Blogs</span>
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-6">
+                Superfood science, free web tool guides, and Australian wellness insights.
+            </p>
+            <div class="max-w-lg mx-auto">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search articles... (e.g. moringa, sleep, PDF)"
+                    class="search-bar"
+                >
+            </div>
+            <div class="flex flex-wrap gap-2 justify-center mt-4" id="filterButtons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="superfood">Superfood Science</button>
+                <button class="filter-btn" data-filter="skincare">Skincare</button>
+                <button class="filter-btn" data-filter="freetools">Free Tools</button>
+                <button class="filter-btn" data-filter="localguides">Local Guides</button>
+            </div>
+        </div>
+
+        <div class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6" id="blogGrid">
+
+            <a href="/blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Where to Buy Quality Moringa AU 2026" data-desc="Where to buy quality moringa in Australia — retail vs specialist, freshness checks, and lab-testing context for 2026.">
                 <div>
-                    <div className="flex items-center gap-2 mb-3">
-                        <div className={`w-2 h-2 ${dotClass} rounded-full`}></div>
-                        <span className="text-xs text-gray-400 uppercase tracking-wider">{category}</span>
-                        {date && <span className="text-xs text-gray-500 ml-auto">{date}</span>}
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
                     </div>
-                    <h3 className={`text-xl font-display font-bold mb-2 ${textClass.split(' ').find(c => c.startsWith('group-hover:'))} transition-colors`}>
-                        {title}
-                    </h3>
-                    <p className="text-sm text-gray-400 leading-relaxed">
-                        {description}
-                    </p>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Where to Buy Quality Moringa AU 2026</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Where to buy quality moringa in Australia — retail vs specialist, freshness checks, and lab-testing context for 2026.</p>
                 </div>
-                <div className={`mt-4 flex items-center gap-2 text-xs ${textClass.split(' ').find(c => !c.startsWith('group-hover:'))} group-hover:gap-3 transition-all`}>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
                     <span>Read more</span>
-                    <i data-lucide="arrow-right" className="w-4 h-4"></i>
+                    <span>→</span>
                 </div>
             </a>
-            );
-        };
 
-        const App = () => {
-            const [search, setSearch] = useState('');
-
-            useEffect(() => {
-                if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                    lucide.createIcons();
-                }
-                setTimeout(() => {
-                    if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                        lucide.createIcons();
-                    }
-                }, 100);
-            }, [search]);
-            
-            const blogPosts = [
-                {
-                    title: "Top 10 Melbourne Health & Wellness Shops (2026) — All Official Links",
-                    description: "Elite Supps, Nutrition Warehouse, Evelyn Faye, QVM Vitamins, Passionfoods, Moses & Co, Terra Madre, Urban Wellness, RAYS, Australian Organic Products — plus Nutri Thrive online.",
-                    category: "Wellness Guides",
-                    date: "Mar 2026",
-                    link: "/blogs/top-10-melbourne-health-wellness-shops-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Moringa Tree at Bunnings & Australian Growing Zones (2026)",
-                    description: "Does Bunnings stock moringa? QLD to TAS climate reality, Bunnings & ABC links, Daleys & NutriThrive—plus when powder beats the backyard.",
-                    category: "Garden & Superfood Guides",
-                    date: "Mar 2026",
-                    link: "/blogs/moringa-tree-bunnings-growing-zones-australia-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Australian Sourcing & Where to Buy Quality Moringa (2026)",
-                    description: "Chemist Warehouse vs specialist brands, freshness and lab testing, where to buy—with NutriThrive PDP, comparison blog, quality test, and complete AU guide links.",
-                    category: "Superfood Guides",
-                    date: "Mar 2026",
-                    link: "/blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Moringa for Real Life: Women, Professionals & Fitness (2026)",
-                    description: "Hormone-friendly nutrition narratives, steady energy vs caffeine crashes, post-workout recovery—inline brand & research links plus NutriThrive CTAs.",
-                    category: "Superfood Guides",
-                    date: "Mar 2026",
-                    link: "/blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "The Ultimate Nutritional Deep Dive: Moringa vs Matcha vs Kale (2026 Guide)",
-                    description: "Protein, caffeine vs calm energy, kale’s vitamin K, complete amino acids—plus links to our moringa vs matcha, ultimate AU guide, and brand roundup.",
-                    category: "Superfood Guides",
-                    date: "Mar 2026",
-                    link: "/blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Top Moringa Brands You Should Know in 2026 (Plus Real Links)",
-                    description: "NutriThrive, Kuli Kuli, Pura Vida, Terrasoul, Tribe Organics, Sun Potion—what each excels at and verified shop links.",
-                    category: "Superfood Guides",
-                    date: "Mar 2026",
-                    link: "/blogs/top-moringa-brands-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Why Most People Still Get Moringa Wrong (And How to Avoid It)",
-                    description: "Consistency over intensity: 90-day habits, week-by-week expectations, taste tips, and Nutri Thrive lab-tested powder—shop CTAs to moringa PDP, combo & 4-pack.",
-                    category: "How-To Guide",
-                    date: "Mar 2026",
-                    link: "/blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Nutri Thrive vs Store-Bought Moringa (Melbourne & Australia 2026)",
-                    description: "3-point quality audit, comparison table, 4-pack spotlight, Product + standalone Review JSON-LD.",
-                    category: "Comparison Guide",
-                    date: "Mar 2026",
-                    link: "/blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "The Ultimate 2026 Australian Guide to Moringa (Science & Truganina)",
-                    description: "Complete superfood education: nutrition, clean beauty, Nutri Thrive hub, TechArticle + LocalBusiness JSON-LD, product table with live prices.",
-                    category: "Superfood Education",
-                    date: "Mar 2026",
-                    link: "/blogs/ultimate-2026-australian-guide-moringa.html",
-                    color: "green"
-                },
-                {
-                    title: "The Nutri Thrive Verdict: 500+ Australians & Moringa (Reviews)",
-                    description: "Surry Hills to South Yarra stories, Product + 3 Review JSON-LD, Store schema—links to powder, combo & 4-pack.",
-                    category: "Reviews",
-                    date: "Mar 2026",
-                    link: "/blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "The Ultimate 2026 Glow-Up: Nutri Thrive Moringa + Soap Duo (Sydney)",
-                    description: "Inside-out beauty bundle for AOV: powder + soap from Truganina, Product + ItemList schema, homepage checkout AU$17.",
-                    category: "Bundles",
-                    date: "Mar 2026",
-                    link: "/blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html",
-                    color: "green"
-                },
-                {
-                    title: "Melbourne’s Glow Secret: Nutri Thrive Moringa Soap — Best Cleanser in Victoria",
-                    description: "CBD, St Kilda & four-seasons skin: Truganina moringa soap, Product + shippingDetails + LocalBusiness (15 Europe St), Melbourne keywords.",
-                    category: "Skincare",
-                    date: "Mar 2026",
-                    link: "/blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "The 4-Pack Revolution: Nutri Thrive Moringa 3+1 Free (400g)",
-                    description: "Bulk moringa from Truganina, Fresh-Lock guarantee, MerchantReturnPolicy + Product schema—checkout via NutriThrive homepage.",
-                    category: "Bulk Savings",
-                    date: "Mar 2026",
-                    link: "/blogs/moringa-4-pack-revolution-australia-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "The Smart Australian’s 2026 Pantry: Nutri Thrive Premium Combo Pack — Ultimate Value",
-                    description: "Moringa + Darjeeling + curry leaves bundle AU$15.55, Truganina dispatch, OfferShippingDetails + Product schema, Sydney/Melbourne/Brisbane focus.",
-                    category: "Value Bundles",
-                    date: "Mar 2026",
-                    link: "/blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html",
-                    color: "green"
-                },
-                {
-                    title: "The Truganina Secret: Why Nutri Thrive Moringa Soap is Australia’s New Natural Skincare Essential",
-                    description: "Clean beauty 2026, Truganina dispatch, microbiome bar + moringa powder pairing—Product, Review & FAQ schema; NutriThrive-only shop links.",
-                    category: "Skincare Guides",
-                    date: "Mar 2026",
-                    link: "/blogs/truganina-secret-moringa-soap-australia-skincare-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Beyond the Spice Rack: Curry Leaves & Darjeeling — Australia’s 2026 Wellness Powerhouse",
-                    description: "Metabolic duo + moringa stack, Truganina dispatch, free AU shipping AU$80+, aggressive CTAs and Product + LocalBusiness JSON-LD.",
-                    category: "Wellness Articles",
-                    date: "Mar 2026",
-                    link: "/blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Why Nutri Thrive Moringa is Australia’s #1 Superfood Choice in 2026",
-                    description: "Farm-to-Melbourne moringa, 2026 wellness trends for Sydney, Melbourne & Brisbane, FAQs, and shop CTAs to nutrithrive.com.au/products/.",
-                    category: "Superfood Guides",
-                    date: "Mar 2026",
-                    link: "/blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Sarcopenia Prevention Supplements Sydney – The 2026 High-Performance Protocol",
-                    description: "Muscle protection for Bondi to Parramatta: moringa, training, a daily protocol, and why NutriThrive fits Sydney—with shop links to nutrithrive.com.au.",
-                    category: "NSW Performance",
-                    date: "Mar 2026",
-                    link: "/blogs/sarcopenia-prevention-supplements-sydney-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "High Cholesterol? Why Australians Are Adding Moringa to Their Routine (2026 Science)",
-                    description: "How moringa fits food-first cholesterol conversations in Australia—mechanisms, realistic routines, labs with your doctor, and NutriThrive moringa.",
-                    category: "Metabolic Health",
-                    date: "Mar 2026",
-                    link: "/blogs/moringa-cholesterol-australia-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Moringa vs Matcha Australia 2026 – Which Green Powder Actually Delivers Healthspan?",
-                    description: "Nutrient showdown, caffeine vs calm energy, cost per serve, and who wins for healthspan in Melbourne, Sydney, and Brisbane—with NutriThrive moringa in focus.",
-                    category: "Superfood Showdown",
-                    date: "Mar 2026",
-                    link: "/blogs/moringa-vs-matcha-australia-2026.html",
-                    color: "green"
-                },
-                {
-                    title: "Student Hack: Convert PDFs to Text—No Sign-Up Needed",
-                    description: "Turn locked PDFs into editable text instantly with the Scintilla PDF Converter. No logins, limits, or watermarks.",
-                    category: "Tools",
-                    date: "Dec 2025",
-                    link: "/blogs/student-hack-pdf-to-text.html",
-                    color: "violet"
-                },
-                {
-                    title: "No Filter Needed: Instantly Fix Blurry Photos for Free",
-                    description: "How Scintilla Image Enhancer sharpens, brightens, and upscales your photos for Instagram and TikTok without expensive software.",
-                    category: "Aesthetics",
-                    date: "Dec 2025",
-                    link: "/blogs/no-filter-needed-fix-blurry-photos.html",
-                    color: "purple"
-                },
-                {
-                    title: "SynapseSave: The Ultimate Chrome Extension to Stop Tab Overload",
-                    description: "Discover how SynapseSave lets you snooze tabs, free up RAM, and stay focused – especially helpful for ADHD and attention challenges.",
-                    category: "Extensions",
-                    date: "Dec 2025",
-                    link: "/blogs/synapsesave-stop-tab-overload.html",
-                    color: "cyan"
-                },
-                {
-                    title: "Stop Guessing: The Ultimate Cheat Sheet for Online Shopping Sizes",
-                    description: "Learn how the Universal Clothes Size Finder solves the frustrating problem of inconsistent sizing across brands and countries when shopping online.",
-                    category: "Tools",
-                    date: "Dec 2025",
-                    link: "/blogs/stop-guessing-size-finder.html",
-                    color: "pink"
-                },
-                {
-                    title: "Confessions of a Tab Hoarder: Why I Built SynapseSave",
-                    description: "The story behind SynapseSave: a simple Chrome extension that helps you manage tab overload and reclaim your mental space.",
-                    category: "Product",
-                    date: "Dec 2025",
-                    link: "/blogs/confessions-of-a-tab-hoarder.html",
-                    color: "blue"
-                },
-                {
-                    title: "Stop Waking Up Groggy: The Science Behind the Sleep Cycle Calculator",
-                    description: "Learn the science behind sleep cycles, ultradian rhythms, and how timing your sleep can help you wake up refreshed instead of groggy.",
-                    category: "Science",
-                    date: "Nov 26, 2025",
-                    link: "/blogs/sleep-cycle-calculator-science.html",
-                    color: "purple"
-                },
-                {
-                    title: "Lifestyle & Functional Health Benefits of Moringa (Australia 2026)",
-                    description: "Weight loss, blood sugar, hormones, and natural energy without caffeine—research woven through the text plus NutriThrive CTAs and source list at the end.",
-                    category: "Superfood Guides",
-                    date: "Mar 2026",
-                    link: "/blogs/moringa-lifestyle-functional-health-australia-2026.html",
-                    color: "green"
-                }
-            ];
-            
-            return (
-                <div className="relative min-h-screen w-full p-4 md:p-8 lg:p-12 flex flex-col items-center">
-                    
-                    {/* Background Blobs */}
-                    <div className="aurora-bg">
-                        <div className="blob blob-1"></div>
-                        <div className="blob blob-2"></div>
-                        <div className="blob blob-3"></div>
+            <a href="/blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Curry Leaves & Darjeeling Tea Guide" data-desc="Curry leaves and Darjeeling tea are trending in Australian wellness. Here is the science and how to use them together.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
                     </div>
-                    
-                    {/* Header */}
-                    <header className="w-full max-w-7xl flex justify-between items-center mb-8">
-                        <a href="/" className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-white text-black rounded-lg flex items-center justify-center font-bold text-xl font-display">S</div>
-                            <span className="font-display text-2xl font-bold tracking-tight neon-text">SCINTILLA WORLD</span>
-                        </a>
-                        <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-300">
-                            <a href="/#tools" className="hover:text-white transition-colors">Tools</a>
-                            <a href="/blogs" className="hover:text-white transition-colors text-white">Blogs</a>
-                            <a href="/#about" className="hover:text-white transition-colors">About</a>
-                            <a href="/privacy-policy.html" className="hover:text-white transition-colors">Privacy</a>
-                        </nav>
-                        <button onClick={() => document.getElementById('mobileMenu').classList.add('open')} className="md:hidden flex flex-col gap-1.5 p-2" aria-label="Open menu">
-                            <span className="block w-6 h-0.5 bg-white rounded"></span>
-                            <span className="block w-6 h-0.5 bg-white rounded"></span>
-                            <span className="block w-6 h-0.5 bg-white rounded"></span>
-                        </button>
-                    </header>
-                    
-                    {/* Page Title */}
-                    <div className="w-full max-w-7xl mb-8 text-center">
-                        <h1 className="font-display text-5xl md:text-6xl font-bold mb-4">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">Blogs</span>
-                        </h1>
-                        <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-6">
-                            Superfood science, free web tool guides, and Australian wellness insights.
-                        </p>
-                        <div className="max-w-lg mx-auto">
-                            <input 
-                                type="text" 
-                                placeholder="Search articles... (e.g. moringa, sleep, PDF)" 
-                                value={search} 
-                                onChange={(e) => setSearch(e.target.value.toLowerCase())}
-                                className="search-bar"
-                            />
-                        </div>
-                    </div>
-                    
-                    {/* Blog Grid */}
-                    <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {blogPosts.filter(post => {
-                            if (!search) return true;
-                            return post.title.toLowerCase().includes(search) || post.description.toLowerCase().includes(search) || post.category.toLowerCase().includes(search);
-                        }).map((post, index) => (
-                            <BlogCard key={index} {...post} />
-                        ))}
-                    </div>
-                    
-                    {/* Footer */}
-                    <footer className="w-full max-w-7xl mt-20 py-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
-                        <div>&copy; 2026 Scintilla World</div>
-                        <div className="flex gap-6 mt-4 md:mt-0">
-                            <a href="/" className="hover:text-white">Home</a>
-                            <a href="/blogs" className="hover:text-white">Blogs</a>
-                            <a href="/privacy-policy.html" className="hover:text-white">Privacy</a>
-                            <a href="https://nutrithrive.com.au" target="_blank" rel="noopener sponsored" className="hover:text-white text-emerald-400">NutriThrive ↗</a>
-                        </div>
-                    </footer>
-                    
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Curry Leaves &amp; Darjeeling Tea Guide</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Curry leaves and Darjeeling tea are trending in Australian wellness. Here is the science and how to use them together.</p>
                 </div>
-            );
-        };
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+            <a href="/blogs/confessions-of-a-tab-hoarder.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="freetools" data-title="Tab Hoarder: Why I Built SynapseSave" data-desc="Why one developer built SynapseSave to fight browser tab overload — and how it helps ADHD focus.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Free Tools</span>
+                        <span class="text-xs text-gray-500 ml-auto">Dec 2025</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Tab Hoarder: Why I Built SynapseSave</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Why one developer built SynapseSave to fight browser tab overload — and how it helps ADHD focus.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="localguides" data-title="Melbourne Skin & Climate Guide 2026" data-desc="How Melbourne's climate, hard water, and UV stress affect your skin — plus seasonal skincare routines for Victoria.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Local Guides</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Melbourne Skin &amp; Climate Guide 2026</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">How Melbourne's climate, hard water, and UV stress affect your skin — plus seasonal skincare routines for Victoria.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/moringa-4-pack-revolution-australia-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Bulk Buying Superfoods Guide" data-desc="When does bulk buying superfoods actually make sense? Cost-per-serving math, shelf life, and storage tips for 2026.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Bulk Buying Superfoods Guide</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">When does bulk buying superfoods actually make sense? Cost-per-serving math, shelf life, and storage tips for 2026.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/moringa-cholesterol-australia-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="High Cholesterol? Moringa & Your Routine 2026" data-desc="How moringa may support healthier cholesterol as part of diet and lifestyle in Australia.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">High Cholesterol? Moringa &amp; Your Routine 2026</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">How moringa may support healthier cholesterol as part of diet and lifestyle in Australia.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Why Most People Still Get Moringa Wrong" data-desc="Why most people get moringa wrong — shade-drying, fillers, and quality checks explained for Australian buyers.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Why Most People Still Get Moringa Wrong</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Why most people get moringa wrong — shade-drying, fillers, and quality checks explained for Australian buyers.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Moringa for Real Life: Targeted Lifestyle Solutions" data-desc="Targeted moringa solutions for women, busy professionals, and fitness enthusiasts in Australia.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Moringa for Real Life: Targeted Lifestyle Solutions</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Targeted moringa solutions for women, busy professionals, and fitness enthusiasts in Australia.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/moringa-lifestyle-functional-health-australia-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Lifestyle & Functional Health Benefits of Moringa" data-desc="Functional health benefits of moringa in the Australian lifestyle context — energy, immunity, digestion.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Lifestyle &amp; Functional Health Benefits of Moringa</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Functional health benefits of moringa in the Australian lifestyle context — energy, immunity, digestion.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/moringa-tree-bunnings-growing-zones-australia-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="localguides" data-title="Moringa Tree at Bunnings & Growing Zones AU" data-desc="Can you grow moringa in Australia? Bunnings availability, climate zones, and cultivation tips.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Local Guides</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Moringa Tree at Bunnings &amp; Growing Zones AU</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Can you grow moringa in Australia? Bunnings availability, climate zones, and cultivation tips.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/moringa-vs-matcha-australia-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Moringa vs Matcha Australia 2026" data-desc="Moringa vs matcha — which green powder delivers real healthspan benefits for Australians?">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Moringa vs Matcha Australia 2026</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Moringa vs matcha — which green powder delivers real healthspan benefits for Australians?</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Moringa vs Matcha vs Kale: Nutritional Deep Dive" data-desc="The ultimate nutritional comparison: moringa, matcha, and kale head-to-head with real data.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Moringa vs Matcha vs Kale: Nutritional Deep Dive</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">The ultimate nutritional comparison: moringa, matcha, and kale head-to-head with real data.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/no-filter-needed-fix-blurry-photos.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="freetools" data-title="Fix Blurry Photos Instantly, Free" data-desc="How to instantly fix blurry or low-quality photos using a free browser-based image enhancer.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Free Tools</span>
+                        <span class="text-xs text-gray-500 ml-auto">Dec 2025</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Fix Blurry Photos Instantly, Free</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">How to instantly fix blurry or low-quality photos using a free browser-based image enhancer.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Real vs Fake Superfood Reviews Guide" data-desc="How to spot fake superfood reviews and evaluate health product claims — a 2026 buyer's literacy guide.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Real vs Fake Superfood Reviews Guide</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">How to spot fake superfood reviews and evaluate health product claims — a 2026 buyer's literacy guide.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Moringa Quality Guide: Lab Tests & Fillers" data-desc="Learn to evaluate moringa quality: shade-drying, lab tests, and the fillers to watch for in 2026.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Moringa Quality Guide: Lab Tests &amp; Fillers</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Learn to evaluate moringa quality: shade-drying, lab tests, and the fillers to watch for in 2026.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/sarcopenia-prevention-supplements-sydney-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="localguides" data-title="Sarcopenia Prevention Supplements Sydney" data-desc="Sarcopenia prevention in Sydney — protein intake, exercise protocols, and supplement science for 2026.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Local Guides</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Sarcopenia Prevention Supplements Sydney</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Sarcopenia prevention in Sydney — protein intake, exercise protocols, and supplement science for 2026.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/sleep-cycle-calculator-science.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="freetools" data-title="Sleep Cycle Calculator Science" data-desc="The science behind 90-minute sleep cycles — and how timing your wake-up can transform how rested you feel.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Free Tools</span>
+                        <span class="text-xs text-gray-500 ml-auto">Nov 2025</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Sleep Cycle Calculator Science</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">The science behind 90-minute sleep cycles — and how timing your wake-up can transform how rested you feel.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Australian Wellness Pantry Essentials 2026" data-desc="How to build a functional wellness pantry in Australia — staples, storage, sourcing, and seasonal rotation.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Australian Wellness Pantry Essentials 2026</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">How to build a functional wellness pantry in Australia — staples, storage, sourcing, and seasonal rotation.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/stop-guessing-size-finder.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="freetools" data-title="Online Shopping Size Cheat Sheet" data-desc="Stop guessing your size when shopping online — find your exact fit for major Australian brands.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Free Tools</span>
+                        <span class="text-xs text-gray-500 ml-auto">Dec 2025</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Online Shopping Size Cheat Sheet</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Stop guessing your size when shopping online — find your exact fit for major Australian brands.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/student-hack-pdf-to-text.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="freetools" data-title="Convert PDF to Text Free (No Sign-Up)" data-desc="How to convert PDFs to editable text without signing up for anything — free, private, and instant.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Free Tools</span>
+                        <span class="text-xs text-gray-500 ml-auto">Dec 2025</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Convert PDF to Text Free (No Sign-Up)</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">How to convert PDFs to editable text without signing up for anything — free, private, and instant.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/synapsesave-stop-tab-overload.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="freetools" data-title="SynapseSave: Stop Tab Overload" data-desc="How SynapseSave helps you stop tab overload, free up RAM, and boost focus — ADHD friendly.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Free Tools</span>
+                        <span class="text-xs text-gray-500 ml-auto">Dec 2025</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">SynapseSave: Stop Tab Overload</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">How SynapseSave helps you stop tab overload, free up RAM, and boost focus — ADHD friendly.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/top-10-melbourne-health-wellness-shops-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="localguides" data-title="Top 10 Melbourne Health Shops 2026" data-desc="Melbourne's top 10 health and wellness shops for 2026 — from Victoria Market to specialist superfood stores.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Local Guides</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Top 10 Melbourne Health Shops 2026</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Melbourne's top 10 health and wellness shops for 2026 — from Victoria Market to specialist superfood stores.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/top-moringa-brands-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Top Moringa Brands Australia 2026" data-desc="Which moringa brands are worth buying in 2026? We reviewed the top options available in Australia.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Top Moringa Brands Australia 2026</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Which moringa brands are worth buying in 2026? We reviewed the top options available in Australia.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/truganina-secret-moringa-soap-australia-skincare-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="skincare" data-title="Moringa Skincare: Botanical Cleansers Science" data-desc="The science behind moringa in skincare — MO2 proteins, pH balance, and how botanical cleansers compare.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Skincare</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Moringa Skincare: Botanical Cleansers Science</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">The science behind moringa in skincare — MO2 proteins, pH balance, and how botanical cleansers compare.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/ultimate-2026-australian-guide-moringa.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="Moringa 101: Complete AU Guide" data-desc="The complete Australian guide to moringa — origins, nutrition, recipes, TGA context, and quality markers.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Moringa 101: Complete AU Guide</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">The complete Australian guide to moringa — origins, nutrition, recipes, TGA context, and quality markers.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="skincare" data-title="Inside-Out Beauty: Diet + Skincare Routines" data-desc="Why diet and skincare work better together — the science of inside-out beauty routines for 2026.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Skincare</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">Inside-Out Beauty: Diet + Skincare Routines</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Why diet and skincare work better together — the science of inside-out beauty routines for 2026.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+            <a href="/blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html" class="blog-card glass-panel rounded-2xl p-6 group" data-category="superfood" data-title="AU Superfoods: Moringa vs Spirulina" data-desc="Moringa vs spirulina vs wheatgrass vs more — an honest comparison of Australia's top superfoods for 2026.">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="cat-dot"></div>
+                        <span class="text-xs text-gray-400 uppercase tracking-wider">Superfood Science</span>
+                        <span class="text-xs text-gray-500 ml-auto">Mar 2026</span>
+                    </div>
+                    <h3 class="text-xl font-display font-bold mb-2 card-title">AU Superfoods: Moringa vs Spirulina</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Moringa vs spirulina vs wheatgrass vs more — an honest comparison of Australia's top superfoods for 2026.</p>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-xs cat-text read-more">
+                    <span>Read more</span>
+                    <span>→</span>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="no-results hidden" id="noResults" style="max-width:7xl;margin:2rem auto;text-align:center;padding:4rem 1rem;color:#6b7280;">
+            <p class="text-lg font-display font-semibold mb-2">No articles found</p>
+            <p class="text-sm">Try a different search term or filter category.</p>
+        </div>
+
+        <footer class="w-full max-w-7xl mt-20 py-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+            <div>&copy; 2026 Scintilla World</div>
+            <div class="flex gap-6 mt-4 md:mt-0">
+                <a href="/" class="hover:text-white">Home</a>
+                <a href="/blogs" class="hover:text-white">Blogs</a>
+                <a href="/privacy-policy.html" class="hover:text-white">Privacy</a>
+                <a href="https://nutrithrive.com.au" target="_blank" rel="noopener sponsored" class="hover:text-white text-emerald-400">NutriThrive ↗</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <noscript>
+        <section style="max-width:820px;margin:2rem auto;padding:2rem;color:#c4c4c4;font-family:Inter,system-ui,sans-serif;line-height:1.8;">
+            <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:600;color:#e8e8e8;margin-bottom:0.75rem;">Scintilla World Blog — Superfood Science, Free Tools & Australian Wellness</h2>
+            <p style="margin-bottom:1.1rem;">Explore our library of expert-written guides covering moringa science, superfood comparisons, skincare routines, and free browser tools. Every article is independently researched with editorial integrity — product links use <code>rel="sponsored"</code> per Google guidelines.</p>
+            <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:600;color:#d4d4d4;margin-top:1.25rem;">Popular Topics</h3>
+            <ul style="list-style:disc;padding-left:1.35rem;margin-bottom:1.1rem;color:#c4c4c4;">
+                <li style="margin-bottom:0.4rem;">Moringa science and quality guides — cholesterol, skincare, sourcing</li>
+                <li style="margin-bottom:0.4rem;">Superfood comparisons — moringa vs spirulina vs matcha vs kale</li>
+                <li style="margin-bottom:0.4rem;">Melbourne and Sydney wellness — local shops, climate-specific skincare</li>
+                <li style="margin-bottom:0.4rem;">Free tool guides — PDF converter, sleep calculator, image enhancer, size finder</li>
+                <li style="margin-bottom:0.4rem;">Australian pantry essentials — bulk buying, combo packs, seasonal rotation</li>
+            </ul>
+            <p style="margin-bottom:1.1rem;">All blog posts include author bylines, structured data (BlogPosting schema), and related posts for deeper reading. We cover health science honestly — no fabricated testimonials, no exaggerated claims.</p>
+        </section>
+    </noscript>
+
+    <script>
+    (function(){
+        var searchInput = document.getElementById('searchInput');
+        var filterButtons = document.querySelectorAll('.filter-btn');
+        var cards = document.querySelectorAll('.blog-card');
+        var noResults = document.getElementById('noResults');
+        var activeFilter = 'all';
+
+        function filterCards(){
+            var query = searchInput.value.toLowerCase().trim();
+            var visible = 0;
+            cards.forEach(function(card){
+                var cat = card.getAttribute('data-category');
+                var title = card.getAttribute('data-title').toLowerCase();
+                var desc = card.getAttribute('data-desc').toLowerCase();
+                var matchCat = activeFilter === 'all' || cat === activeFilter;
+                var matchSearch = !query || title.indexOf(query) !== -1 || desc.indexOf(query) !== -1;
+                if(matchCat && matchSearch){
+                    card.classList.remove('hidden');
+                    visible++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            if(visible === 0){
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        }
+
+        searchInput.addEventListener('input', filterCards);
+
+        filterButtons.forEach(function(btn){
+            btn.addEventListener('click', function(){
+                filterButtons.forEach(function(b){ b.classList.remove('active'); });
+                btn.classList.add('active');
+                activeFilter = btn.getAttribute('data-filter');
+                filterCards();
+            });
+        });
+    })();
     </script>
 </body>
 </html>
-
-

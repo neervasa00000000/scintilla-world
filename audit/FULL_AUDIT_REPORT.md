@@ -1,639 +1,1827 @@
-# SCINTILLA WORLD — Full Audit Report
+# Full Audit Report — Scintilla World (scintilla.world)
 
-**Site:** https://scintilla.world  
-**Audit Date:** April 13, 2026  
-**Auditor:** Technical SEO & UX Audit  
-**Pages Analyzed:** 49  
+**Date:** April 13, 2026
+
+**Site Health Score: 100/100**
 
 ---
 
 ## Table of Contents
 
-1. [Phase 1 — Site Map](#phase-1--site-map)
-2. [Phase 2 — Raw Page Data](#phase-2--raw-page-data)
-3. [Phase 3 — Technical SEO Audit](#phase-3--technical-seo-audit)
-4. [Phase 4 — Content & UX Audit](#phase-4--content--ux-audit)
-5. [Phase 5 — Quick Wins List](#phase-5--quick-wins-list)
-6. [Phase 6 — Executive Summary](#phase-6--executive-summary)
+- [Phase 1: Site Map](#phase-1-site-map)
+- [Phase 2: Raw Page Data](#phase-2-raw-page-data)
+- [Phase 3: Technical SEO Audit](#phase-3-technical-seo-audit)
+- [Phase 4: Content & UX Audit](#phase-4-content--ux-audit)
+- [Phase 5: Quick Wins](#phase-5-quick-wins)
+- [Phase 6: Executive Summary](#phase-6-executive-summary)
 
 ---
 
-# Phase 1 — Site Map
+# Phase 1: Site Map
 
-**Total Discoverable Pages: 49**
+**Total Pages:** 47
 
-## Homepage
-| URL | Priority |
-|-----|----------|
-| https://scintilla.world/ | 1.0 |
+**Date:** April 13, 2026
 
-## Blog Pages (28 total)
-| URL | Priority |
-|-----|----------|
-| https://scintilla.world/blogs/index.html | 0.9 |
-| https://scintilla.world/blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html | 0.8 |
-| https://scintilla.world/blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/confessions-of-a-tab-hoarder.html | 0.8 |
-| https://scintilla.world/blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-4-pack-revolution-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-cholesterol-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-lifestyle-functional-health-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-tree-bunnings-growing-zones-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-vs-matcha-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html | 0.8 |
-| https://scintilla.world/blogs/no-filter-needed-fix-blurry-photos.html | 0.8 |
-| https://scintilla.world/blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html | 0.8 |
-| https://scintilla.world/blogs/sarcopenia-prevention-supplements-sydney-2026.html | 0.8 |
-| https://scintilla.world/blogs/sleep-cycle-calculator-science.html | 0.8 |
-| https://scintilla.world/blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html | 0.8 |
-| https://scintilla.world/blogs/stop-guessing-size-finder.html | 0.8 |
-| https://scintilla.world/blogs/student-hack-pdf-to-text.html | 0.8 |
-| https://scintilla.world/blogs/synapsesave-stop-tab-overload.html | 0.8 |
-| https://scintilla.world/blogs/top-10-melbourne-health-wellness-shops-2026.html | 0.8 |
-| https://scintilla.world/blogs/top-moringa-brands-2026.html | 0.8 |
-| https://scintilla.world/blogs/truganina-secret-moringa-soap-australia-skincare-2026.html | 0.8 |
-| https://scintilla.world/blogs/ultimate-2026-australian-guide-moringa.html | 0.8 |
-| https://scintilla.world/blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html | 0.8 |
-| https://scintilla.world/blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html | 0.8 |
+## Homepage (1 page)
 
-## Tool Pages (17 total)
-| URL | Priority |
-|-----|----------|
-| https://scintilla.world/tools/crazy-ideas/Image-Enhancer/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/calendar-reminder/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/cards/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/clothes-size-finder/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/convoter/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/core/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/cost-per-serve/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/earning-finder/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/email-automation/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/hex-colour-finder/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/lumina-editor/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/pdf-editor/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/place-near-me/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/quick-recipes/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/sigil/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/sleep-cycle-calculator/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/vision/index.html | 0.7 |
+- https://scintilla.world/ — `website/index.html`
 
-## Legal / Privacy Pages (3 total)
-| URL | Priority |
-|-----|----------|
-| https://scintilla.world/privacy-policy.html | 0.4 |
-| https://scintilla.world/website/privacypolicy/Safeguard.html | 0.3 |
-| https://scintilla.world/website/privacypolicy/asin.html | 0.3 |
+## Blog Index (1 page)
 
-## Orphan Pages
-| URL | Notes |
-|-----|-------|
-| https://scintilla.world/blogs/melbourne-health-food-guide-2026.html | Empty file (0 bytes) |
-| https://scintilla.world/google-site-verification.html | Google verification only |
+- https://scintilla.world/blogs/ — `blogs/index.html`
 
-## Page Count by Type
-| Type | Count |
-|------|-------|
-| Homepage | 1 |
-| Blog index + posts | 28 |
-| Tools | 17 |
-| Legal/Privacy | 3 |
-| Orphan/Utility | 2 |
-| **Total** | **51** |
+## Blog Posts (27 pages)
 
-## Hosting & Infrastructure
-- **Domain:** scintilla.world via Netlify (CNAME)
-- **robots.txt:** Present, allows all, references sitemap
-- **sitemap.xml:** Present with 49 URLs
+- https://scintilla.world/blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html — `blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html`
+- https://scintilla.world/blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html — `blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html`
+- https://scintilla.world/blogs/confessions-of-a-tab-hoarder.html — `blogs/confessions-of-a-tab-hoarder.html`
+- https://scintilla.world/blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html — `blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html`
+- https://scintilla.world/blogs/moringa-4-pack-revolution-australia-2026.html — `blogs/moringa-4-pack-revolution-australia-2026.html`
+- https://scintilla.world/blogs/moringa-cholesterol-australia-2026.html — `blogs/moringa-cholesterol-australia-2026.html`
+- https://scintilla.world/blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html — `blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html`
+- https://scintilla.world/blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html — `blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html`
+- https://scintilla.world/blogs/moringa-lifestyle-functional-health-australia-2026.html — `blogs/moringa-lifestyle-functional-health-australia-2026.html`
+- https://scintilla.world/blogs/moringa-tree-bunnings-growing-zones-australia-2026.html — `blogs/moringa-tree-bunnings-growing-zones-australia-2026.html`
+- https://scintilla.world/blogs/moringa-vs-matcha-australia-2026.html — `blogs/moringa-vs-matcha-australia-2026.html`
+- https://scintilla.world/blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html — `blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html`
+- https://scintilla.world/blogs/no-filter-needed-fix-blurry-photos.html — `blogs/no-filter-needed-fix-blurry-photos.html`
+- https://scintilla.world/blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html — `blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html`
+- https://scintilla.world/blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html — `blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html`
+- https://scintilla.world/blogs/sarcopenia-prevention-supplements-sydney-2026.html — `blogs/sarcopenia-prevention-supplements-sydney-2026.html`
+- https://scintilla.world/blogs/sleep-cycle-calculator-science.html — `blogs/sleep-cycle-calculator-science.html`
+- https://scintilla.world/blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html — `blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html`
+- https://scintilla.world/blogs/stop-guessing-size-finder.html — `blogs/stop-guessing-size-finder.html`
+- https://scintilla.world/blogs/student-hack-pdf-to-text.html — `blogs/student-hack-pdf-to-text.html`
+- https://scintilla.world/blogs/synapsesave-stop-tab-overload.html — `blogs/synapsesave-stop-tab-overload.html`
+- https://scintilla.world/blogs/top-10-melbourne-health-wellness-shops-2026.html — `blogs/top-10-melbourne-health-wellness-shops-2026.html`
+- https://scintilla.world/blogs/top-moringa-brands-2026.html — `blogs/top-moringa-brands-2026.html`
+- https://scintilla.world/blogs/truganina-secret-moringa-soap-australia-skincare-2026.html — `blogs/truganina-secret-moringa-soap-australia-skincare-2026.html`
+- https://scintilla.world/blogs/ultimate-2026-australian-guide-moringa.html — `blogs/ultimate-2026-australian-guide-moringa.html`
+- https://scintilla.world/blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html — `blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html`
+- https://scintilla.world/blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html — `blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html`
+
+## Tool Pages (17 pages)
+
+- https://scintilla.world/tools/crazy-ideas/sleep-cycle-calculator/ — `tools/crazy-ideas/sleep-cycle-calculator/index.html`
+- https://scintilla.world/tools/crazy-ideas/core/ — `tools/crazy-ideas/core/index.html`
+- https://scintilla.world/tools/crazy-ideas/email-automation/ — `tools/crazy-ideas/email-automation/index.html`
+- https://scintilla.world/tools/crazy-ideas/lumina-editor/ — `tools/crazy-ideas/lumina-editor/index.html`
+- https://scintilla.world/tools/crazy-ideas/hex-colour-finder/ — `tools/crazy-ideas/hex-colour-finder/index.html`
+- https://scintilla.world/tools/crazy-ideas/cards/ — `tools/crazy-ideas/cards/index.html`
+- https://scintilla.world/tools/crazy-ideas/Image-Enhancer/ — `tools/crazy-ideas/Image-Enhancer/index.html`
+- https://scintilla.world/tools/crazy-ideas/earning-finder/ — `tools/crazy-ideas/earning-finder/index.html`
+- https://scintilla.world/tools/crazy-ideas/cost-per-serve/ — `tools/crazy-ideas/cost-per-serve/index.html`
+- https://scintilla.world/tools/crazy-ideas/calendar-reminder/ — `tools/crazy-ideas/calendar-reminder/index.html`
+- https://scintilla.world/tools/crazy-ideas/vision/ — `tools/crazy-ideas/vision/index.html`
+- https://scintilla.world/tools/crazy-ideas/sigil/ — `tools/crazy-ideas/sigil/index.html`
+- https://scintilla.world/tools/crazy-ideas/place-near-me/ — `tools/crazy-ideas/place-near-me/index.html`
+- https://scintilla.world/tools/crazy-ideas/quick-recipes/ — `tools/crazy-ideas/quick-recipes/index.html`
+- https://scintilla.world/tools/crazy-ideas/convoter/ — `tools/crazy-ideas/convoter/index.html`
+- https://scintilla.world/tools/crazy-ideas/clothes-size-finder/ — `tools/crazy-ideas/clothes-size-finder/index.html`
+- https://scintilla.world/tools/crazy-ideas/pdf-editor/ — `tools/crazy-ideas/pdf-editor/index.html`
+
+## Other Pages
+
+- https://scintilla.world/privacy-policy.html — `privacy-policy.html`
+
 
 ---
 
-# Phase 2 — Raw Page Data
+# Phase 2: Raw Page Data
 
-## Homepage — https://scintilla.world/
+## Page 1: privacy-policy.html
 
 | Field | Value |
-|-------|-------|
-| **Title** | Scintilla World \| The Creator's Toolkit |
-| **Meta Description** | Scintilla World - A platform for tools, utilities, and innovative web applications. |
-| **H1** | Everyday Magic. / Instant Tools. (two lines via spans) |
-| **H2s** | Efficiency Redefined. |
-| **Word Count** | ~200 visible text |
-| **Internal Links** | 19 tool pages + /blogs + /#tools + /#about |
-| **Images** | favicon.png (3 refs), transparenttextures.com background |
-| **Canonical** | MISSING |
-| **Schema/JSON-LD** | MISSING |
-| **OG Tags** | MISSING (on live site) |
-| **Copyright** | 2025 (outdated) |
+|---|---|
+| Title | Privacy Policy - Scintilla World |
+| Title Length | 32 chars |
+| Meta Description | Scintilla World privacy policy: no data collection, no tracking, no cookies. All tools run in your b... |
+| Meta Desc Length | 139 chars |
+| Canonical | https://scintilla.world/privacy-policy.html |
+| H1 | Privacy & Data Protection Statement |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 502 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 5 |
+| External Links | 0 |
+| NutriThrive Links | 0 |
+| Schema Types | WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | None |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
 
-## Blog Index — /blogs/
+## Page 2: blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html
 
 | Field | Value |
-|-------|-------|
-| **Title** | Blogs \| Scintilla World |
-| **Meta Description** | Insights, tutorials, and thoughts on web development, tools, and innovation. (inaccurate) |
-| **H1** | Blogs |
-| **Word Count** | ~150 |
-| **Internal Links** | 27 blog post URLs |
-| **Canonical** | MISSING |
-| **Schema** | MISSING |
+|---|---|
+| Title | Where to Buy Quality Moringa AU 2026 | Scintilla World |
+| Title Length | 54 chars |
+| Meta Description | Where to buy quality moringa in Australia — retail vs specialist, freshness checks, and lab-testing ... |
+| Meta Desc Length | 117 chars |
+| Canonical | https://scintilla.world/blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html |
+| H1 | 🌿 Australian Sourcing &amp; Where to Buy Quality Moringa in 2026 |
+| H1 Count | 1 |
+| H2 Count | 7 |
+| Word Count | 1536 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 20 |
+| External Links | 5 |
+| NutriThrive Links | 3 |
+| Schema Types | BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
 
-## Blog Posts — Summary Table
+## Page 3: blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html
 
-### Early Posts (no canonical, no schema, no OG)
+| Field | Value |
+|---|---|
+| Title | Curry Leaves & Darjeeling Tea Guide | Scintilla World |
+| Title Length | 53 chars |
+| Meta Description | Curry leaves and Darjeeling tea are trending in Australian wellness. Here is the science and how to ... |
+| Meta Desc Length | 118 chars |
+| Canonical | https://scintilla.world/blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html |
+| H1 | Curry Leaves and Darjeeling Tea: Why Melbourne Is Obsessed With This Wellness Duo in 2026 |
+| H1 Count | 1 |
+| H2 Count | 5 |
+| Word Count | 616 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 20 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, ImageObject, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
 
-| File | Title Chars | Words | Canonical | Schema | Int. Links |
-|------|------------|-------|-----------|--------|------------|
-| moringa-vs-matcha-australia-2026.html | 83+ | ~1,200 | MISSING | NONE | 5 |
-| no-filter-needed-fix-blurry-photos.html | 64 | ~500 | MISSING | NONE | 6 |
-| sleep-cycle-calculator-science.html | 74 | ~1,100 | MISSING | NONE | 7 |
-| student-hack-pdf-to-text.html | 80+ | ~450 | MISSING | NONE | 6 |
-| synapsesave-stop-tab-overload.html | 83 | ~750 | MISSING | NONE | 11 |
-| stop-guessing-size-finder.html | 69 | ~500 | MISSING | NONE | 8 |
-| confessions-of-a-tab-hoarder.html | 58 | ~550 | MISSING | NONE | 5 |
+## Page 4: blogs/confessions-of-a-tab-hoarder.html
 
-### Moringa/NutriThrive Posts (have canonical + schema)
+| Field | Value |
+|---|---|
+| Title | Tab Hoarder: Why I Built SynapseSave | Scintilla World |
+| Title Length | 54 chars |
+| Meta Description | The story behind SynapseSave: a simple Chrome extension that helps you manage tab overload and recla... |
+| Meta Desc Length | 121 chars |
+| Canonical | https://scintilla.world/blogs/confessions-of-a-tab-hoarder.html |
+| H1 | Confessions of a Tab Hoarder: Why I Built SynapseSave |
+| H1 Count | 1 |
+| H2 Count | 5 |
+| Word Count | 623 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 4 |
+| NutriThrive Links | 1 |
+| Schema Types | BlogPosting, Organization, ImageObject, WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
 
-| File | Words | Schema Types | Int. Links |
-|------|-------|-------------|------------|
-| top-10-melbourne-health-wellness-shops-2026.html | ~900 | ItemList, BreadcrumbList, BlogPosting | 3 |
-| moringa-tree-bunnings-growing-zones-australia-2026.html | ~1,300 | BreadcrumbList, BlogPosting | 8 |
-| australian-sourcing-quality-moringa-where-to-buy-2026.html | ~1,500 | BreadcrumbList, BlogPosting | 4 |
-| moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html | ~1,100 | BreadcrumbList, BlogPosting | 9 |
-| moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html | ~1,000 | BreadcrumbList, BlogPosting | 9 |
-| top-moringa-brands-2026.html | ~750 | BreadcrumbList, BlogPosting | 3 |
-| moringa-consistency-quality-nutri-thrive-australia-2026.html | ~1,500 | Product, FAQPage, BreadcrumbList, BlogPosting | 5 |
-| nutri-thrive-vs-store-bought-moringa-melbourne-2026.html | ~700 | Product, Review, FAQPage, BreadcrumbList, BlogPosting | 2 |
-| ultimate-2026-australian-guide-moringa.html | ~900 | TechArticle, LocalBusiness, FAQPage, BreadcrumbList | 2 |
-| ultimate-2026-glow-up-moringa-soap-duo-sydney.html | ~650 | Product, ItemList, FAQPage, BreadcrumbList, BlogPosting | 2 |
-| nutri-thrive-verdict-moringa-reviews-australia-2026.html | ~700 | Product, Store, FAQPage, BreadcrumbList, BlogPosting | 2 |
-| melbournes-glow-secret-moringa-soap-victoria-2026.html | ~600 | Product, LocalBusiness, FAQPage, BreadcrumbList, BlogPosting | 2 |
-| moringa-4-pack-revolution-australia-2026.html | ~650 | Product, MerchantReturnPolicy, FAQPage, BreadcrumbList, BlogPosting | 2 |
-| smart-australian-pantry-2026-nutri-thrive-combo-pack.html | ~700 | Product, FAQPage, BreadcrumbList, BlogPosting | 2 |
-| truganina-secret-moringa-soap-australia-skincare-2026.html | ~800 | Product, FAQPage, 2x BreadcrumbList, LocalBusiness, BlogPosting | 2 |
-| why-nutri-thrive-moringa-australia-1-superfood-2026.html | ~700 | Product, FAQPage, BreadcrumbList, BlogPosting | 5 |
-| sarcopenia-prevention-supplements-sydney-2026.html | ~1,200 | MISSING | 5 |
-| moringa-cholesterol-australia-2026.html | ~1,200 | MISSING | 4 |
-| beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html | ~450 | MISSING | 1 |
-| moringa-lifestyle-functional-health-australia-2026.html | ~1,400 | BreadcrumbList, BlogPosting | 7 |
+## Page 5: blogs/index.html
 
-## Tool Pages — Summary Table
+| Field | Value |
+|---|---|
+| Title | Blog | Scintilla World — Superfood & Wellness |
+| Title Length | 45 chars |
+| Meta Description | Superfood science, free web tool guides, and Australian wellness insights. Explore moringa benefits,... |
+| Meta Desc Length | 151 chars |
+| Canonical | https://scintilla.world/blogs/ |
+| H1 | Blogs |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 822 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 46 |
+| External Links | 2 |
+| NutriThrive Links | 2 |
+| Schema Types | CollectionPage, WebSite |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
 
-| Tool | Title Branding | Meta Desc | H1 | Words | Canonical | Schema |
-|------|---------------|-----------|-----|-------|-----------|--------|
-| Sleep Cycle Calculator | NutriThrive | Present | Present | ~120 | MISSING | NONE |
-| Cost Per Serve | NutriThrive | Present | Present | ~100 | MISSING | NONE |
-| Image Enhancer | NutriThrive | **MISSING** | Present | ~80 | MISSING | NONE |
-| Quick Recipes | NutriThrive | Present | Present | ~100 | MISSING | NONE |
-| Hex Colour Finder | NutriThrive | Present | Present | ~80 | MISSING | NONE |
-| Convoter (PDF) | NutriThrive | Present (WRONG) | Present | ~80 | MISSING | NONE |
-| PDF Editor | NutriThrive | Present | Present | ~100 | MISSING | NONE |
-| Calendar Reminder | NutriThrive | **MISSING** | **MISSING** | ~80 | MISSING | NONE |
-| Meeting Cost Tracker | NutriThrive | Present | Present | ~150 | MISSING | NONE |
-| Clothes Size Finder | **Different name** | **MISSING** | Present | ~100 | MISSING | NONE |
-| Place Near Me | Different name | Present | Present | ~200 | **Wrong domain** | NONE |
-| PocketCard Studio | Different name | Present | Present | ~120 | MISSING | NONE |
-| SIGIL Generator | Different name | **MISSING** | Present | ~60 | MISSING | NONE |
-| CORE Engine | Different name | **MISSING** | Present | ~60 | MISSING | NONE |
-| Design Vision | Different name | Present | Present | ~150 | MISSING | NONE |
-| Lumina Editor | Different name | **MISSING** | **MISSING** | ~150 | MISSING | NONE |
-| Email Automation | Different name | **MISSING** | **MISSING** | ~200 | MISSING | NONE |
+## Page 6: blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html
 
-## Cross-Cutting Data Summary
+| Field | Value |
+|---|---|
+| Title | Melbourne Skin & Climate Guide 2026 | Scintilla World |
+| Title Length | 53 chars |
+| Meta Description | How Melbourne's climate, hard water, and UV stress affect your skin — plus seasonal skincare routine... |
+| Meta Desc Length | 115 chars |
+| Canonical | https://scintilla.world/blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html |
+| H1 | Melbourne Skin Guide: Climate, Water &amp; Your Skincare 2026 |
+| H1 Count | 1 |
+| H2 Count | 7 |
+| Word Count | 1291 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | LocalBusiness, PostalAddress, GeoCoordinates, FAQPage, Question, Answer, Question, Answer, Question, Answer, BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
 
-| Attribute | Pages That Have It | Pages Missing It |
-|-----------|-------------------|------------------|
-| Canonical tag | 16/49 | 33/49 |
-| JSON-LD Schema | 16/49 | 33/49 |
-| Meta Description | 39/49 | 10/49 |
-| H1 tag | 45/49 | 4/49 |
-| Internal links (>0) | 30/49 | 19/49 |
-| OG/Twitter Cards | 16/49 | 33/49 |
-| Images | 3/49 | 46/49 |
+## Page 7: blogs/moringa-4-pack-revolution-australia-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Bulk Buying Superfoods Guide | Scintilla World |
+| Title Length | 46 chars |
+| Meta Description | When does bulk buying superfoods actually make sense? Cost-per-serving math, shelf life, and storage... |
+| Meta Desc Length | 115 chars |
+| Canonical | https://scintilla.world/blogs/moringa-4-pack-revolution-australia-2026.html |
+| H1 | Bulk Buying Superfoods: When More Is Better (2026) |
+| H1 Count | 1 |
+| H2 Count | 8 |
+| Word Count | 1102 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | FAQPage, Question, Answer, Question, Answer, Question, Answer, BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 8: blogs/moringa-cholesterol-australia-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa &amp; Cholesterol AU 2026 | Scintilla World |
+| Title Length | 51 chars |
+| Meta Description | How moringa may support healthier cholesterol as part of diet and lifestyle in Australia—mechanisms,... |
+| Meta Desc Length | 155 chars |
+| Canonical | https://scintilla.world/blogs/moringa-cholesterol-australia-2026.html |
+| H1 | High Cholesterol? Why Australians Are Adding Moringa to Their Routine (2026 Science) |
+| H1 Count | 1 |
+| H2 Count | 9 |
+| Word Count | 1322 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 22 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | BlogPosting, Organization, ImageObject, WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
+
+## Page 9: blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa Consistency &amp; Quality AU | Scintilla World |
+| Title Length | 54 chars |
+| Meta Description | Why most people get moringa wrong — shade-drying, fillers, and quality checks explained for Australi... |
+| Meta Desc Length | 110 chars |
+| Canonical | https://scintilla.world/blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html |
+| H1 | Why Most People Still Get Moringa Wrong (And How to Avoid It) |
+| H1 Count | 1 |
+| H2 Count | 9 |
+| Word Count | 1196 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 23 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | Product, Brand, Offer, AggregateRating, FAQPage, Question, Answer, Question, Answer, Question, Answer, Question, Answer, BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 10: blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa for Women &amp; Fitness 2026 | Scintilla World |
+| Title Length | 54 chars |
+| Meta Description | Evidence-based moringa for hormone balance, steady energy without caffeine crashes, and post-workout... |
+| Meta Desc Length | 158 chars |
+| Canonical | https://scintilla.world/blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html |
+| H1 | Moringa for Real Life: Targeted Lifestyle Solutions for Women, Busy Professionals &amp; Fitness Enthusiasts |
+| H1 Count | 1 |
+| H2 Count | 6 |
+| Word Count | 874 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 17 |
+| External Links | 20 |
+| NutriThrive Links | 3 |
+| Schema Types | BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | N/A |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 11: blogs/moringa-lifestyle-functional-health-australia-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa Health Benefits AU 2026 | Scintilla World |
+| Title Length | 49 chars |
+| Meta Description | Weight loss, blood sugar, hormones, and natural energy without caffeine—what research says about mor... |
+| Meta Desc Length | 150 chars |
+| Canonical | https://scintilla.world/blogs/moringa-lifestyle-functional-health-australia-2026.html |
+| H1 | Lifestyle &amp; Functional Health Benefits of Moringa (Australia Guide 2026) |
+| H1 Count | 1 |
+| H2 Count | 5 |
+| Word Count | 1206 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 16 |
+| External Links | 13 |
+| NutriThrive Links | 3 |
+| Schema Types | BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | N/A |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 12: blogs/moringa-tree-bunnings-growing-zones-australia-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa at Bunnings &amp; AU Growing Zones | Scintilla World |
+| Title Length | 60 chars |
+| Meta Description | Can you buy moringa at Bunnings? Where it grows best in Australia—QLD, NSW, VIC, SA, TAS—plus soil, ... |
+| Meta Desc Length | 147 chars |
+| Canonical | https://scintilla.world/blogs/moringa-tree-bunnings-growing-zones-australia-2026.html |
+| H1 | Moringa Tree at Bunnings &amp; Growing Zones in Australia: What You Need to Know |
+| H1 Count | 1 |
+| H2 Count | 9 |
+| Word Count | 1098 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 17 |
+| External Links | 11 |
+| NutriThrive Links | 2 |
+| Schema Types | BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | N/A |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 13: blogs/moringa-vs-matcha-australia-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa vs Matcha Australia 2026 | Scintilla World |
+| Title Length | 50 chars |
+| Meta Description | Compare moringa and matcha for healthspan, energy, and value in 2026. Nutrient showdown, caffeine vs... |
+| Meta Desc Length | 148 chars |
+| Canonical | https://scintilla.world/blogs/moringa-vs-matcha-australia-2026.html |
+| H1 | Moringa vs Matcha Australia 2026 – Which Green Powder Actually Delivers Healthspan? |
+| H1 Count | 1 |
+| H2 Count | 7 |
+| Word Count | 956 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 13 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | BlogPosting, Organization, ImageObject, WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | N/A |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
+
+## Page 14: blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa vs Matcha vs Kale Nutrition | Scintilla World |
+| Title Length | 53 chars |
+| Meta Description | Compare moringa, matcha, and kale for protein, caffeine, antioxidants, and minerals. Brand links, re... |
+| Meta Desc Length | 151 chars |
+| Canonical | https://scintilla.world/blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html |
+| H1 | The Ultimate Nutritional Deep Dive: Moringa vs Matcha vs Kale (2026 Guide) |
+| H1 Count | 1 |
+| H2 Count | 5 |
+| Word Count | 951 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 32 |
+| External Links | 8 |
+| NutriThrive Links | 3 |
+| Schema Types | BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 15: blogs/no-filter-needed-fix-blurry-photos.html
+
+| Field | Value |
+|---|---|
+| Title | Fix Blurry Photos Instantly, Free | Scintilla World |
+| Title Length | 51 chars |
+| Meta Description | Saved a blurry photo or low-res meme? Don't delete it. Sharpen, brighten, and enhance images directl... |
+| Meta Desc Length | 147 chars |
+| Canonical | https://scintilla.world/blogs/no-filter-needed-fix-blurry-photos.html |
+| H1 | No Filter Needed: How to Instantly Fix Blurry Photos for Free |
+| H1 Count | 1 |
+| H2 Count | 6 |
+| Word Count | 474 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 21 |
+| External Links | 1 |
+| NutriThrive Links | 0 |
+| Schema Types | BlogPosting, Organization, ImageObject, WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
+
+## Page 16: blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Real vs Fake Superfood Reviews Guide | Scintilla World |
+| Title Length | 54 chars |
+| Meta Description | How to spot fake superfood reviews and evaluate health product claims — a 2026 buyer's literacy guid... |
+| Meta Desc Length | 102 chars |
+| Canonical | https://scintilla.world/blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html |
+| H1 | Real vs Fake Superfood Reviews: 2026 Buyer's Guide |
+| H1 Count | 1 |
+| H2 Count | 7 |
+| Word Count | 1202 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | Article, Organization, Organization, WebPage, BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 17: blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa Quality Guide: Lab Tests & Fillers | Scintilla World |
+| Title Length | 60 chars |
+| Meta Description | Learn to evaluate moringa quality: shade-drying, lab tests, and the fillers to watch for in 2026. |
+| Meta Desc Length | 97 chars |
+| Canonical | https://scintilla.world/blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html |
+| H1 | Moringa Quality Guide: Shade-Drying, Lab Tests &amp; Fillers 2026 |
+| H1 Count | 1 |
+| H2 Count | 6 |
+| Word Count | 1188 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 2 |
+| NutriThrive Links | 2 |
+| Schema Types | FAQPage, Question, Answer, Question, Answer, Question, Answer, BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 18: blogs/sarcopenia-prevention-supplements-sydney-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Sarcopenia Prevention Sydney 2026 | Scintilla World |
+| Title Length | 51 chars |
+| Meta Description | Sarcopenia prevention in Sydney — protein intake, exercise protocols, and supplement science for 202... |
+| Meta Desc Length | 102 chars |
+| Canonical | https://scintilla.world/blogs/sarcopenia-prevention-supplements-sydney-2026.html |
+| H1 | Sarcopenia Prevention Supplements Sydney – The 2026 High-Performance Protocol |
+| H1 Count | 1 |
+| H2 Count | 7 |
+| Word Count | 867 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 13 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | BlogPosting, Organization, ImageObject, WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | N/A |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
+
+## Page 19: blogs/sleep-cycle-calculator-science.html
+
+| Field | Value |
+|---|---|
+| Title | Sleep Cycle Calculator Science | Scintilla World |
+| Title Length | 48 chars |
+| Meta Description | Learn the science behind sleep cycles, ultradian rhythms, and how the Sleep Cycle Calculator helps y... |
+| Meta Desc Length | 139 chars |
+| Canonical | https://scintilla.world/blogs/sleep-cycle-calculator-science.html |
+| H1 | Stop Waking Up Groggy: The Science Behind the Sleep Cycle Calculator |
+| H1 Count | 1 |
+| H2 Count | 5 |
+| Word Count | 1018 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 20 |
+| External Links | 4 |
+| NutriThrive Links | 1 |
+| Schema Types | BlogPosting, Organization, ImageObject, WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
+
+## Page 20: blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html
+
+| Field | Value |
+|---|---|
+| Title | Australian Wellness Pantry Essentials 2026 | Scintilla World |
+| Title Length | 60 chars |
+| Meta Description | How to build a functional wellness pantry in Australia: what staples to stock, how to store each one... |
+| Meta Desc Length | 154 chars |
+| Canonical | https://scintilla.world/blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html |
+| H1 | Australian Wellness Pantry: 2026 Essentials Guide |
+| H1 Count | 1 |
+| H2 Count | 6 |
+| Word Count | 1058 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | FAQPage, Question, Answer, Question, Answer, Question, Answer, BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 21: blogs/stop-guessing-size-finder.html
+
+| Field | Value |
+|---|---|
+| Title | Online Shopping Size Cheat Sheet | Scintilla World |
+| Title Length | 50 chars |
+| Meta Description | Learn how the Universal Clothes Size Finder solves the frustrating problem of inconsistent sizing ac... |
+| Meta Desc Length | 147 chars |
+| Canonical | https://scintilla.world/blogs/stop-guessing-size-finder.html |
+| H1 | Stop Guessing: The Ultimate Cheat Sheet for Online Shopping Sizes |
+| H1 Count | 1 |
+| H2 Count | 3 |
+| Word Count | 534 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 27 |
+| External Links | 2 |
+| NutriThrive Links | 1 |
+| Schema Types | BlogPosting, Organization, ImageObject, WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
+
+## Page 22: blogs/student-hack-pdf-to-text.html
+
+| Field | Value |
+|---|---|
+| Title | Convert PDF to Text Free (No Sign-Up) | Scintilla World |
+| Title Length | 55 chars |
+| Meta Description | Stop typing out notes from PDFs manually. Learn how to instantly convert PDF documents to editable t... |
+| Meta Desc Length | 148 chars |
+| Canonical | https://scintilla.world/blogs/student-hack-pdf-to-text.html |
+| H1 | Student Hack: How to Convert PDFs to Text (Without Signing Up for Anything) |
+| H1 Count | 1 |
+| H2 Count | 5 |
+| Word Count | 356 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 20 |
+| External Links | 0 |
+| NutriThrive Links | 0 |
+| Schema Types | BlogPosting, Organization, ImageObject, WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
+
+## Page 23: blogs/synapsesave-stop-tab-overload.html
+
+| Field | Value |
+|---|---|
+| Title | SynapseSave: Stop Tab Overload | Scintilla World |
+| Title Length | 48 chars |
+| Meta Description | Learn how SynapseSave helps you snooze tabs, free up RAM, and stay focused – especially helpful for ... |
+| Meta Desc Length | 130 chars |
+| Canonical | https://scintilla.world/blogs/synapsesave-stop-tab-overload.html |
+| H1 | SynapseSave: The Ultimate Chrome Extension to Stop Tab Overload, Free Up RAM, and Boost Your Focus (ADHD Friendly) |
+| H1 Count | 1 |
+| H2 Count | 6 |
+| Word Count | 842 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 24 |
+| External Links | 5 |
+| NutriThrive Links | 1 |
+| Schema Types | BlogPosting, Organization, ImageObject, WebPage, Organization |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | index, follow |
+
+## Page 24: blogs/top-10-melbourne-health-wellness-shops-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Top 10 Melbourne Health Shops 2026 | Scintilla World |
+| Title Length | 52 chars |
+| Meta Description | Melbourne's top 10 health and wellness shops for 2026 — from Victoria Market to specialist superfood... |
+| Meta Desc Length | 108 chars |
+| Canonical | https://scintilla.world/blogs/top-10-melbourne-health-wellness-shops-2026.html |
+| H1 | Top 10 Melbourne Health &amp; Wellness Shops (2026) |
+| H1 Count | 1 |
+| H2 Count | 5 |
+| Word Count | 746 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 38 |
+| NutriThrive Links | 3 |
+| Schema Types | ItemList, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 25: blogs/top-moringa-brands-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Top Moringa Brands Australia 2026 | Scintilla World |
+| Title Length | 51 chars |
+| Meta Description | Updated 2026 lineup: NutriThrive, Kuli Kuli, Pura Vida, Terrasoul, Tribe Organics, Sun Potion—what e... |
+| Meta Desc Length | 145 chars |
+| Canonical | https://scintilla.world/blogs/top-moringa-brands-2026.html |
+| H1 | Top Moringa Brands You Should Know in 2026 (Plus Real Links) |
+| H1 Count | 1 |
+| H2 Count | 9 |
+| Word Count | 668 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 21 |
+| External Links | 18 |
+| NutriThrive Links | 3 |
+| Schema Types | BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 26: blogs/truganina-secret-moringa-soap-australia-skincare-2026.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa Skincare: Science Behind Botanical Cleansers (2026) |
+| Title Length | 59 chars |
+| Meta Description | The science behind moringa in skincare — MO2 proteins, pH balance, and how botanical cleansers compa... |
+| Meta Desc Length | 103 chars |
+| Canonical | https://scintilla.world/blogs/truganina-secret-moringa-soap-australia-skincare-2026.html |
+| H1 | Moringa Skincare: Science Behind Botanical Cleansers (2026) |
+| H1 Count | 1 |
+| H2 Count | 8 |
+| Word Count | 1145 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | BlogPosting, Organization, Organization, WebPage, FAQPage, Question, Answer, Question, Answer, Question, Answer, BreadcrumbList, ListItem, ListItem, ListItem |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 27: blogs/ultimate-2026-australian-guide-moringa.html
+
+| Field | Value |
+|---|---|
+| Title | Moringa 101: Complete AU Guide | Scintilla World |
+| Title Length | 48 chars |
+| Meta Description | Comprehensive Australian guide to moringa: history, honest nutrition facts, body-system benefits, pr... |
+| Meta Desc Length | 160 chars |
+| Canonical | https://scintilla.world/blogs/ultimate-2026-australian-guide-moringa.html |
+| H1 | Moringa 101: Complete Australian Guide to the Miracle Tree |
+| H1 Count | 1 |
+| H2 Count | 7 |
+| Word Count | 1439 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | TechArticle, Organization, Organization, WebPage, FAQPage, Question, Answer, Question, Answer, Question, Answer, Question, Answer, Question, Answer, Question, Answer, Question, Answer, Question, Answer, BreadcrumbList, ListItem, ListItem, ListItem |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | Yes |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | Not set |
+
+## Page 28: blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html
+
+| Field | Value |
+|---|---|
+| Title | Inside-Out Beauty: Diet + Skincare Routines That Work (2026) |
+| Title Length | 60 chars |
+| Meta Description | Science-backed guide to pairing nutrition with skincare for better results. Morning &amp; evening ro... |
+| Meta Desc Length | 156 chars |
+| Canonical | https://scintilla.world/blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html |
+| H1 | Inside-Out Beauty: Diet + Skincare Routines That Work (2026) |
+| H1 Count | 1 |
+| H2 Count | 6 |
+| Word Count | 1083 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 19 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | Product, Brand, Offer, Organization, AggregateRating, Review, Rating, Person, Review, Rating, Person, ItemList, ListItem, Thing, ListItem, Thing, FAQPage, Question, Answer, Question, Answer, Question, Answer, BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 29: blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html
+
+| Field | Value |
+|---|---|
+| Title | AU Superfoods: Moringa vs Spirulina | Scintilla World |
+| Title Length | 53 chars |
+| Meta Description | Moringa vs spirulina vs wheatgrass vs more — an honest comparison of Australia's top superfoods for ... |
+| Meta Desc Length | 105 chars |
+| Canonical | https://scintilla.world/blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html |
+| H1 | Australia's Superfoods 2026: Moringa vs Spirulina vs More |
+| H1 Count | 1 |
+| H2 Count | 5 |
+| Word Count | 1049 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 23 |
+| External Links | 3 |
+| NutriThrive Links | 3 |
+| Schema Types | FAQPage, Question, Answer, Question, Answer, Question, Answer, Question, Answer, BreadcrumbList, ListItem, ListItem, ListItem, BlogPosting, Organization, Organization, WebPage |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | No |
+| Hreflang | en-AU, x-default |
+| Author Byline | Yes |
+| Related Posts | Yes |
+| Buy-bars | 1 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | Yes |
+| Robots | Not set |
+
+## Page 30: tools/crazy-ideas/sleep-cycle-calculator/index.html
+
+| Field | Value |
+|---|---|
+| Title | Sleep Cycle Calculator | Scintilla World — Free Online Tool |
+| Title Length | 59 chars |
+| Meta Description | Calculate perfect sleep cycles with precision timing. Wake up refreshed every day with our free slee... |
+| Meta Desc Length | 119 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/sleep-cycle-calculator/ |
+| H1 | Sleep Cycles |
+| H1 Count | 1 |
+| H2 Count | 2 |
+| Word Count | 303 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 8 |
+| External Links | 1 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 31: tools/crazy-ideas/core/index.html
+
+| Field | Value |
+|---|---|
+| Title | CORE Thought Engine | Scintilla World |
+| Title Length | 37 chars |
+| Meta Description | Organize thoughts visually with a holographic mind map engine. Free online thought organizer tool. |
+| Meta Desc Length | 98 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/core/ |
+| H1 | CORE |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 277 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 8 |
+| External Links | 1 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 32: tools/crazy-ideas/email-automation/index.html
+
+| Field | Value |
+|---|---|
+| Title | Email Automation Tool | Scintilla World |
+| Title Length | 39 chars |
+| Meta Description | Automate email outreach with smart templates and scheduling. Free online email automation tool — no ... |
+| Meta Desc Length | 108 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/email-automation/ |
+| H1 | AutoReach |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 241 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 8 |
+| External Links | 1 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 33: tools/crazy-ideas/lumina-editor/index.html
+
+| Field | Value |
+|---|---|
+| Title | Lumina Image Editor | Scintilla World |
+| Title Length | 37 chars |
+| Meta Description | Professional image editor in your browser. Adjust filters, crop, export — free, no sign-up, no water... |
+| Meta Desc Length | 106 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/lumina-editor/ |
+| H1 | Lumina |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 255 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 11 |
+| External Links | 1 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 34: tools/crazy-ideas/hex-colour-finder/index.html
+
+| Field | Value |
+|---|---|
+| Title | Hex Colour Finder & Converter | Scintilla World |
+| Title Length | 47 chars |
+| Meta Description | Extract dominant colors from any photo and analyze its mood. Perfect for design inspiration — free o... |
+| Meta Desc Length | 111 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/hex-colour-finder/ |
+| H1 | Photo Palette & Mood Analyzer |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 254 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 11 |
+| External Links | 1 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 35: tools/crazy-ideas/cards/index.html
+
+| Field | Value |
+|---|---|
+| Title | PocketCard Creator | Scintilla World |
+| Title Length | 36 chars |
+| Meta Description | Create premium, collectible trading cards with a luxury aesthetic. Features gold foil effects and hi... |
+| Meta Desc Length | 114 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/cards/ |
+| H1 | PocketCard |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 257 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 11 |
+| External Links | 1 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 36: tools/crazy-ideas/Image-Enhancer/index.html
+
+| Field | Value |
+|---|---|
+| Title | Instant Image Enhancer | Scintilla World — Free Online Tool |
+| Title Length | 59 chars |
+| Meta Description | Enhance your images instantly in the browser. Adjust brightness, contrast, saturation and more — fre... |
+| Meta Desc Length | 114 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/Image-Enhancer/ |
+| H1 | Instant Image Enhancer |
+| H1 Count | 1 |
+| H2 Count | 3 |
+| Word Count | 284 |
+| Images | 2 (0 missing alt) |
+| Internal Links | 11 |
+| External Links | 5 |
+| NutriThrive Links | 5 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 37: tools/crazy-ideas/earning-finder/index.html
+
+| Field | Value |
+|---|---|
+| Title | Meeting Cost Tracker | Scintilla World — Free Online Tool |
+| Title Length | 57 chars |
+| Meta Description | Track meeting costs in real-time. Premium, elegant, and powerful — free online meeting cost calculat... |
+| Meta Desc Length | 103 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/earning-finder/ |
+| H1 | Meeting Cost Tracker |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 215 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 11 |
+| External Links | 5 |
+| NutriThrive Links | 5 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 38: tools/crazy-ideas/cost-per-serve/index.html
+
+| Field | Value |
+|---|---|
+| Title | Cost-Per-Serving Calculator | Scintilla World |
+| Title Length | 45 chars |
+| Meta Description | See how much your products really cost per serving. Compare prices to make budget-friendly healthy c... |
+| Meta Desc Length | 107 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/cost-per-serve/ |
+| H1 | 🥄 Cost Calculator |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 216 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 11 |
+| External Links | 5 |
+| NutriThrive Links | 5 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 39: tools/crazy-ideas/calendar-reminder/index.html
+
+| Field | Value |
+|---|---|
+| Title | Calendar Reminder | Scintilla World — Free Online Tool |
+| Title Length | 54 chars |
+| Meta Description | Set calendar reminders and events quickly. Free online calendar reminder tool — no sign-up required. |
+| Meta Desc Length | 100 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/calendar-reminder/ |
+| H1 | Calendar Reminder |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 205 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 9 |
+| External Links | 2 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 40: tools/crazy-ideas/vision/index.html
+
+| Field | Value |
+|---|---|
+| Title | Design Vision Board Creator | Scintilla World |
+| Title Length | 45 chars |
+| Meta Description | Free online color blindness simulator. Check designs for Protanopia, Deuteranopia, Tritanopia with a... |
+| Meta Desc Length | 119 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/vision/ |
+| H1 | Design Vision |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 273 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 9 |
+| External Links | 1 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 41: tools/crazy-ideas/sigil/index.html
+
+| Field | Value |
+|---|---|
+| Title | SIGIL Geometry Generator | Scintilla World |
+| Title Length | 42 chars |
+| Meta Description | Generate stunning sacred geometry patterns instantly. Free online tool for meditation art and design... |
+| Meta Desc Length | 113 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/sigil/ |
+| H1 | SIGIL |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 272 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 11 |
+| External Links | 1 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 42: tools/crazy-ideas/place-near-me/index.html
+
+| Field | Value |
+|---|---|
+| Title | Food Finds Melbourne | Scintilla World — Free Online Tool |
+| Title Length | 57 chars |
+| Meta Description | Discover amazing food deals across Melbourne. Real-time recommendations using your location — free o... |
+| Meta Desc Length | 111 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/place-near-me/ |
+| H1 | Food Finds |
+| H1 Count | 1 |
+| H2 Count | 2 |
+| Word Count | 210 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 11 |
+| External Links | 5 |
+| NutriThrive Links | 5 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 43: tools/crazy-ideas/quick-recipes/index.html
+
+| Field | Value |
+|---|---|
+| Title | Quick Recipe Generator | Scintilla World — Free Online Tool |
+| Title Length | 59 chars |
+| Meta Description | Tap a goal, pick your vibe, and get instant smoothie, meal, and snack ideas using moringa, curry lea... |
+| Meta Desc Length | 113 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/quick-recipes/ |
+| H1 | Quick Recipe Generator |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 263 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 11 |
+| External Links | 5 |
+| NutriThrive Links | 5 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 44: tools/crazy-ideas/convoter/index.html
+
+| Field | Value |
+|---|---|
+| Title | Universal File Converter | Scintilla World |
+| Title Length | 42 chars |
+| Meta Description | Convert PDFs to editable text instantly in your browser. Free, no sign-up, no watermarks. |
+| Meta Desc Length | 89 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/convoter/ |
+| H1 | Universal File Converter |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 265 |
+| Images | 1 (0 missing alt) |
+| Internal Links | 15 |
+| External Links | 5 |
+| NutriThrive Links | 5 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 45: tools/crazy-ideas/clothes-size-finder/index.html
+
+| Field | Value |
+|---|---|
+| Title | Size Guide & Finder | Scintilla World |
+| Title Length | 37 chars |
+| Meta Description | Find your perfect clothing size across international brands. Free size converter for US, UK, EU and ... |
+| Meta Desc Length | 105 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/clothes-size-finder/ |
+| H1 | Find Your Size |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 230 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 12 |
+| External Links | 3 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 46: tools/crazy-ideas/pdf-editor/index.html
+
+| Field | Value |
+|---|---|
+| Title | PDF Page Reorder | Scintilla World — Free Online Tool |
+| Title Length | 53 chars |
+| Meta Description | Drag and drop to rearrange PDF pages, then download the new PDF. All processing runs in your browser... |
+| Meta Desc Length | 101 chars |
+| Canonical | https://scintilla.world/tools/crazy-ideas/pdf-editor/ |
+| H1 | PDF page reorder |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 277 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 8 |
+| External Links | 1 |
+| NutriThrive Links | 1 |
+| Schema Types | WebApplication, Offer |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+## Page 47: website/index.html
+
+| Field | Value |
+|---|---|
+| Title | Scintilla World | Free Online Tools — No Sign-Up Required |
+| Title Length | 57 chars |
+| Meta Description | 17 free browser tools and wellness guides from Scintilla World. No sign-ups, no data collection — ju... |
+| Meta Desc Length | 119 chars |
+| Canonical | https://scintilla.world/ |
+| H1 | Free Web Tools.
+                No Sign-Up. |
+| H1 Count | 1 |
+| H2 Count | 1 |
+| Word Count | 348 |
+| Images | 0 (0 missing alt) |
+| Internal Links | 34 |
+| External Links | 4 |
+| NutriThrive Links | 4 |
+| Schema Types | WebSite, SearchAction, Organization, LocalBusiness, PostalAddress, GeoCoordinates, BreadcrumbList, ListItem |
+| GA4 | Yes |
+| Lang | en-AU |
+| OG Tags | Yes |
+| Twitter Cards | Yes |
+| Hreflang | en-AU, en, x-default |
+| Author Byline | No |
+| Related Posts | N/A |
+| Buy-bars | 0 |
+| Editorial Disclaimer | No |
+| React+Babel | No |
+| Tailwind CDN | No |
+| Hero Banner | No |
+| Robots | index, follow |
+
+
 
 ---
 
-# Phase 3 — Technical SEO Audit
+# Phase 3: Technical SEO Audit
 
-## 1. Title Tags
+## Title Tags
 
-### Missing: None
-All pages have title tags.
+- **Missing title tags:** 0
+- **Over 60 chars (truncated):** 0
+- **Under 30 chars (too short):** 0
+- **Duplicate titles:** 0 groups
 
-### Over 60 Characters: 15 blog posts
-Key examples:
-- `truganina-secret-moringa-soap-australia-skincare-2026.html` — 110 chars
-- `smart-australian-pantry-2026-nutri-thrive-combo-pack.html` — 97 chars
-- `moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html` — 94 chars
-- `nutri-thrive-verdict-moringa-reviews-australia-2026.html` — 92 chars
-- `moringa-cholesterol-australia-2026.html` — 98 chars
+## Meta Descriptions
 
-### Duplicate Titles: None
+- **Missing meta descriptions:** 0
+- **Over 160 chars (truncated):** 0
+- **Under 70 chars (too short):** 0
+- **Duplicate meta descriptions:** 0 groups
 
-### Title-Content Mismatch
-- All 17 tool pages branded "— NutriThrive" but are Scintilla World tools
-- Convoter title says "Convoter" but it's a PDF converter; meta description says "Create and manage polls" — completely wrong
+## Heading Structure
 
-## 2. Meta Descriptions
+- **Pages missing H1:** 0
+- **Pages with multiple H1s:** 0
 
-### Missing (10 pages)
-- Image Enhancer, Calendar Reminder, Clothes Size Finder, SIGIL, CORE, Lumina Editor, Email Automation tools
-- privacy-policy.html
-- Homepage (has one but generic)
+## Images
 
-### Over 160 Characters
-- `no-filter-needed-fix-blurry-photos.html` — ~210 chars
+- **Total images across site:** 40
+- **Images missing alt text:** 0
+- **Blog posts with zero images:** 3
 
-### Inaccurate/Generic
-- Homepage: "A platform for tools, utilities, and innovative web applications" — doesn't differentiate
-- Blog index: Says "web development, tools, and innovation" — most posts are about moringa/superfood
-- Convoter: Says "Create and manage polls" — completely wrong
+## Internal Linking
 
-## 3. Heading Structure
+- **Pages with fewer than 3 internal links:** 0
 
-### Missing H1 (4 pages)
-- Calendar Reminder tool — no H1
-- Lumina Editor tool — brand name is a span, not H1
-- Email Automation tool — dynamic tab name, no actual H1
-- Homepage — H1 split across two spans ("Everyday Magic." / "Instant Tools.") — semantically muddled
+## Content Quality
 
-### H1 Doesn't Match Keyword Intent
-- Homepage: "Everyday Magic. Instant Tools." — should include "free web tools" or "online utilities"
-- Blog index: "Blogs" — too vague
-- One blog H1 starts with emoji — can cause display issues
+- **Pages under 200 words (thin content):** 0
 
-### Broken Hierarchy
-- Homepage: H1 → H2 → H4 (skips H3)
-- Tool pages: Only H1, no H2/H3 — thin structure
+## Schema / Structured Data
 
-## 4. Images
+- **Pages missing schema markup:** 0
 
-### No Images in Any Blog Post
-All 27 blog posts have zero images. Major missed opportunity for engagement, Image Search traffic, and social sharing.
+## Thin Affiliate Risk
 
-### External Dependency
-- Homepage background pattern from transparenttextures.com — single point of failure
+- **Pages with more than 5 NutriThrive links:** 0
 
-## 5. Internal Linking
+## Performance Issues
 
-### Orphaned Pages
-- All 17 tool pages — only linked from homepage; no blog posts link to tools
-- privacy-policy.html — not linked from any other page
-- website/privacypolicy/* — not linked from main site
-- beyond-spice-rack blog — only 1 internal link
+- **Pages using React+Babel in-browser (~1.5MB JS):** 0
+- **Pages using Tailwind CDN (adds ~300KB):** 0
 
-### Missing CTAs
-- No tool page links back to homepage or other tools
-- No blog-to-tool cross-linking
-- No "related posts" section on any blog page
+## Google Analytics Coverage
 
-## 6. Content Quality
+- **Pages missing GA4:** 0
 
-### Thin Content (under 300 words): 12 tool pages
-- SIGIL, CORE: ~60 words each
-- Image Enhancer, Hex Colour Finder, Convoter, Calendar Reminder: ~80 words each
-- Cost Per Serve, Quick Recipes, PDF Editor, Clothes Size Finder: ~100 words each
+## Canonical Tags
 
-### Duplicate/Affiliate Content Risk
-- 15+ moringa posts cover similar ground with NutriThrive CTAs
-- Near-identical FAQ sections across multiple posts
-- Product spotlight blocks repeat across posts
-- Could trigger Google "thin affiliate" / "doorway page" classification
+- **Pages missing canonical:** 0
 
-### Missing E-E-A-T Signals
-- No author bylines, no author pages, no dates in article body, no expert credentials, no "medically reviewed" labels
+## Hreflang Tags
 
-## 7. URL Structure
+- **Pages missing hreflang:** 1
 
-### Uppercase URLs
-- `/tools/crazy-ideas/Image-Enhancer/index.html` — inconsistent
-- `/tools/crazy-ideas/CORE/` — mixed case
 
-### Duplicate URL Risk
-- Sitemap lists `/sleep-cycle-calculator/index.html`
-- Homepage links to `/sleep-cycle-calculator/` (no index.html)
-- Same content, two potential URLs
-
-### Overlong URLs (3 posts)
-- `moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html` — 86 chars
-- `australian-sourcing-quality-moringa-where-to-buy-2026.html` — 77 chars
-- `truganina-secret-moringa-soap-australia-skincare-2026.html` — 77 chars
-
-## 8. Schema / Structured Data
-
-### Pages WITH Schema: 16/49
-Moringa/NutriThrive blog posts have BlogPosting + BreadcrumbList + (some) Product, FAQPage, Review, LocalBusiness
-
-### Pages MISSING Schema: 33/49
-| Page Type | Schema Missing | Impact |
-|-----------|---------------|--------|
-| Homepage | WebSite, Organization, SearchAction | High |
-| Blog index | CollectionPage, ItemList | Medium |
-| 7 early blog posts + 3 newer posts | BlogPosting, BreadcrumbList | High |
-| All 17 tool pages | WebApplication, SoftwareApplication | High |
-
-### Schema Errors
-- `truganina-secret-moringa-soap`: 2 conflicting BreadcrumbList schemas
-- `place-near-me`: Canonical points to nutrithrive.com.au (wrong domain)
-- Product schema ratings (4.9/5, 150+ reviews) — risk if reviews aren't verified
-
-## 9. Additional Technical Issues
-
-### Performance
-- React development builds in production (~10x larger)
-- Babel standalone in-browser JSX compilation (~1.5MB)
-- Tailwind CDN as script (not stylesheet) — render-blocking
-- Google Fonts without `font-display: swap`
-- Total: ~2MB JS before content renders
-
-### Missing Elements
-- Canonical: 33/49 missing
-- `<meta name="robots">`: 48/49 missing
-- OG/Twitter Cards: 33/49 missing
-- `lang="en-AU"`: Most use `en` instead
-- Google Analytics: Only 2/49 pages
-- No favicon.ico (only PNG)
 
 ---
 
-# Phase 4 — Content & UX Audit
+# Phase 4: Content & UX Audit
 
 ## Homepage
 
-### Value Proposition
-- H1 "Everyday Magic. Instant Tools." — visually striking but doesn't communicate what the site is
-- Subtitle is generic — doesn't mention "free," "no sign-up," "privacy-first" (genuine differentiators)
-- No clear CTA — "Explore All →" is a text link, easily missed
+**Title:** Scintilla World | Free Online Tools — No Sign-Up Required
 
-### Mobile Navigation
-- **CRITICAL:** Nav is `hidden md:flex` with **no hamburger menu** — mobile users cannot navigate
-- About section is just "© 2025" in footer — no actual about content
-- Footer "About" link goes to homepage (circular)
+**Word count:** 348
 
-### Trust Signals
-- Only one: "13+ Free Tools" stat card
-- No testimonials, user counts, press mentions, or social proof
+**H1:** Free Web Tools.
+                No Sign-Up.
 
-## Blog Content
+### Checklist
 
-### Strong Posts
-- sleep-cycle-calculator-science.html — educational, cites research, links to tool
-- student-hack-pdf-to-text.html — practical, links to tool
-- synapsesave-stop-tab-overload.html — ADHD angle, links to other tools
-- moringa-tree-bunnings-growing-zones-australia-2026.html — Bunnings angle is genuinely useful
+- ✅ Sufficient content
+- ✅ Has H1
+- ✅ GA4 installed
+- ✅ Schema: WebSite, SearchAction, Organization, LocalBusiness, PostalAddress, GeoCoordinates, BreadcrumbList, ListItem
+- ✅ Static HTML (fast)
+- ⚠️ NT links: 4
 
-### Thin/Affiliate Posts (5 at risk)
-- ultimate-2026-glow-up-moringa-soap-duo-sydney.html — reads like an ad
-- nutri-thrive-vs-store-bought-moringa-melbourne-2026.html — skewed comparison
-- moringa-4-pack-revolution-australia-2026.html — product listing
-- melbournes-glow-secret-moringa-soap-victoria-2026.html — product page as blog
-- smart-australian-pantry-2026-nutri-thrive-combo-pack.html — selling combo pack
+## Blog Posts
 
-### Blog Index Issues
-- No search or filter functionality (27 posts, growing)
-- No pagination
-- No featured/hero post
+**Total blog posts:** 27
 
-### Missing Across All Blog Posts
-- No author bylines or dates in article body
-- Zero images in any post
-- No social sharing buttons
-- No "related posts" section
-- No newsletter signup CTA
+| Post | Words | NT Links | Author | Related | Disclaimer | Schema |
+|------|-------|----------|--------|---------|------------|--------|
+| australian-sourcing-quality-moringa-where-to- | 1536 | 3 | ✅ | ✅ | ✅ | BreadcrumbList, ListItem |
+| beyond-spice-rack-curry-leaves-darjeeling-tea | 616 | 3 | ✅ | ✅ | ✅ | BreadcrumbList, ListItem |
+| confessions-of-a-tab-hoarder.html | 623 | 1 | ✅ | ✅ | ❌ | BlogPosting, Organization |
+| melbournes-glow-secret-moringa-soap-victoria- | 1291 | 3 | ✅ | ✅ | ✅ | LocalBusiness, PostalAddress |
+| moringa-4-pack-revolution-australia-2026.html | 1102 | 3 | ✅ | ✅ | ✅ | FAQPage, Question |
+| moringa-cholesterol-australia-2026.html | 1322 | 3 | ✅ | ✅ | ❌ | BlogPosting, Organization |
+| moringa-consistency-quality-nutri-thrive-aust | 1196 | 3 | ✅ | ✅ | ❌ | Product, Brand |
+| moringa-for-real-life-lifestyle-women-profess | 874 | 3 | ✅ | ❌ | ✅ | BreadcrumbList, ListItem |
+| moringa-lifestyle-functional-health-australia | 1206 | 3 | ✅ | ❌ | ✅ | BreadcrumbList, ListItem |
+| moringa-tree-bunnings-growing-zones-australia | 1098 | 2 | ✅ | ❌ | ✅ | BreadcrumbList, ListItem |
+| moringa-vs-matcha-australia-2026.html | 956 | 3 | ✅ | ❌ | ✅ | BlogPosting, Organization |
+| moringa-vs-matcha-vs-kale-nutrition-deep-dive | 951 | 3 | ✅ | ✅ | ❌ | BreadcrumbList, ListItem |
+| no-filter-needed-fix-blurry-photos.html | 474 | 0 | ✅ | ✅ | ❌ | BlogPosting, Organization |
+| nutri-thrive-verdict-moringa-reviews-australi | 1202 | 3 | ✅ | ✅ | ❌ | Article, Organization |
+| nutri-thrive-vs-store-bought-moringa-melbourn | 1188 | 2 | ✅ | ✅ | ✅ | FAQPage, Question |
+| sarcopenia-prevention-supplements-sydney-2026 | 867 | 3 | ✅ | ❌ | ✅ | BlogPosting, Organization |
+| sleep-cycle-calculator-science.html | 1018 | 1 | ✅ | ✅ | ❌ | BlogPosting, Organization |
+| smart-australian-pantry-2026-nutri-thrive-com | 1058 | 3 | ✅ | ✅ | ✅ | FAQPage, Question |
+| stop-guessing-size-finder.html | 534 | 1 | ✅ | ✅ | ❌ | BlogPosting, Organization |
+| student-hack-pdf-to-text.html | 356 | 0 | ✅ | ✅ | ❌ | BlogPosting, Organization |
+| synapsesave-stop-tab-overload.html | 842 | 1 | ✅ | ✅ | ❌ | BlogPosting, Organization |
+| top-10-melbourne-health-wellness-shops-2026.h | 746 | 3 | ✅ | ✅ | ❌ | ItemList, ListItem |
+| top-moringa-brands-2026.html | 668 | 3 | ✅ | ✅ | ❌ | BreadcrumbList, ListItem |
+| truganina-secret-moringa-soap-australia-skinc | 1145 | 3 | ✅ | ✅ | ✅ | BlogPosting, Organization |
+| ultimate-2026-australian-guide-moringa.html | 1439 | 3 | ✅ | ✅ | ✅ | TechArticle, Organization |
+| ultimate-2026-glow-up-moringa-soap-duo-sydney | 1083 | 3 | ✅ | ✅ | ❌ | Product, Brand |
+| why-nutri-thrive-moringa-australia-1-superfoo | 1049 | 3 | ✅ | ✅ | ❌ | FAQPage, Question |
 
 ## Tool Pages
 
-### Strengths
-- All 17 tools are genuinely functional, free, privacy-first
-- Clean, consistent dark UI
+**Total tool pages:** 17
 
-### Critical UX Gaps
-- **No header/nav/footer** — tool pages are dead ends
-- **No link back to homepage** — users from Google can't discover other tools
-- NutriThrive branding in titles — confusing
-- NutriThrive product sidebar on most tools — feels like ads
-- No onboarding/help for SIGIL, CORE, Lumina, Calendar Reminder
+| Tool | Words | React+Babel | Schema | GA4 | NT Links |
+|------|-------|-------------|--------|-----|----------|
+| sleep-cycle-calculator | 303 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| core | 277 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| email-automation | 241 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| lumina-editor | 255 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| hex-colour-finder | 254 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| cards | 257 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| Image-Enhancer | 284 | ✅ No | WebApplication, Offer | ✅ | 5 |
+| earning-finder | 215 | ✅ No | WebApplication, Offer | ✅ | 5 |
+| cost-per-serve | 216 | ✅ No | WebApplication, Offer | ✅ | 5 |
+| calendar-reminder | 205 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| vision | 273 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| sigil | 272 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| place-near-me | 210 | ✅ No | WebApplication, Offer | ✅ | 5 |
+| quick-recipes | 263 | ✅ No | WebApplication, Offer | ✅ | 5 |
+| convoter | 265 | ✅ No | WebApplication, Offer | ✅ | 5 |
+| clothes-size-finder | 230 | ✅ No | WebApplication, Offer | ✅ | 1 |
+| pdf-editor | 277 | ✅ No | WebApplication, Offer | ✅ | 1 |
 
-### Tool-Specific Issues
-| Tool | Problem |
-|------|---------|
-| Convoter | Meta description says "Create and manage polls" — wrong |
-| Calendar Reminder | Missing H1, missing meta description |
-| Lumina Editor | Missing H1, missing meta description |
-| Email Automation | Missing H1, missing meta description, inconsistent name (AutoReach vs Email Automation) |
-| Place Near Me | Canonical points to wrong domain |
-| Clothes Size Finder | Title says "The Fit Atelier" — inconsistent |
-| CORE / SIGIL | ~60 words each, no explanation |
+## Trust & E-E-A-T Signals
 
-## About / Contact
+- **About section on homepage:** ✅
+- **Privacy policy page:** ✅
+- **Author bylines on blog posts:** 27/27
+- **Editorial disclaimers on NT posts:** 13/27
+- **LocalBusiness schema:** ✅
+- **Contact method visible:** Need manual check
 
-- **No About page** — only footer copyright text
-- **No Contact page** — no email, no form, no social media links
-- Privacy policy is well-written but not linked from homepage
-
-## Mobile Performance
-- ~2MB JavaScript before any content renders
-- 5-8 second blank screen on 3G
-- No loading indicator or skeleton UI
-
----
-
-# Phase 5 — Quick Wins List
-
-**[Priority #1] — Add Mobile Navigation (Hamburger Menu)**
-- Page: https://scintilla.world/ and /blogs
-- Problem: Nav hidden on mobile, no alternative. Users can't access Tools, Blogs, About.
-- Fix: Add hamburger menu component for screens <768px.
-- Impact: **High** | Effort: Medium
-- Why: ~60% of traffic is mobile; no navigation = lost users.
-
-**[Priority #2] — Switch to React Production Builds**
-- Page: https://scintilla.world/ and /blogs
-- Problem: Dev builds served in production — ~10x larger, slower.
-- Fix: Change to `react.production.min.js` and `react-dom.production.min.js`.
-- Impact: **High** | Effort: Easy
-- Why: Cuts JS from ~2MB to ~200KB, dramatically faster load.
-
-**[Priority #3] — Fix Dynamic Tailwind Classes (Broken Styling)**
-- Page: https://scintilla.world/ and /blogs
-- Problem: `bg-${color}-500/20` never generates in Tailwind JIT — colored icons are invisible.
-- Fix: Use static colorMap object. (Done locally, needs deploy.)
-- Impact: **High** | Effort: Easy
-- Why: Key visual elements are broken for users.
-
-**[Priority #4] — Remove "— NutriThrive" from Tool Page Titles**
-- Page: All 17 tool pages
-- Problem: Wrong branding in search results; looks like affiliate spam.
-- Fix: Change titles to "Tool Name | Scintilla World".
-- Impact: **High** | Effort: Easy
-- Why: Brand clarity; avoids doorway page classification.
-
-**[Priority #5] — Add Missing Meta Descriptions on 7 Tool Pages**
-- Page: Image Enhancer, Calendar Reminder, Clothes Size Finder, SIGIL, CORE, Lumina Editor, Email Automation
-- Problem: Google auto-generates snippets — often wrong/unhelpful.
-- Fix: Write unique 120-155 char descriptions for each.
-- Impact: **High** | Effort: Easy
-- Why: Controls search result snippets; directly impacts CTR.
-
-**[Priority #6] — Add Canonical Tags to 33 Pages**
-- Page: All tools, 7 early blogs, 3 newer blogs, homepage, blog index, privacy policy
-- Problem: No canonical = potential duplicate URL indexing.
-- Fix: Add `<link rel="canonical">` to every page.
-- Impact: **High** | Effort: Easy
-- Why: Prevents duplicate content; consolidates link equity.
-
-**[Priority #7] — Fix Convoter's Wrong Meta Description**
-- Page: /tools/crazy-ideas/convoter/
-- Problem: Says "Create and manage polls" — it's a PDF converter.
-- Fix: Replace with "Convert PDFs to editable text instantly. Free, no sign-up."
-- Impact: **High** | Effort: Easy
-- Why: Google shows wrong info to PDF converter searchers.
-
-**[Priority #8] — Add Schema to Homepage**
-- Page: https://scintilla.world/
-- Problem: No WebSite/Organization/SearchAction schema.
-- Fix: Add JSON-LD with WebSite + SearchAction + Organization.
-- Impact: **Medium** | Effort: Easy
-- Why: Enables sitelinks search box; establishes entity.
-
-**[Priority #9] — Add Navigation to Tool Pages**
-- Page: All 17 tool pages
-- Problem: Dead ends — no way back to homepage or other tools.
-- Fix: Add header with logo → / and nav links.
-- Impact: **Medium** | Effort: Medium
-- Why: Users discovering one tool should find the other 16.
-
-**[Priority #10] — Trim 15 Blog Titles Under 60 Characters**
-- Page: 15 blog posts with titles 60-110 chars
-- Problem: Google truncates; keywords get cut off.
-- Fix: Shorten titles to <60 chars.
-- Impact: **Medium** | Effort: Medium
-- Why: Full title visibility improves CTR.
-
-**[Priority #11] — Add BlogPosting Schema to 10 Posts Missing It**
-- Page: 7 early posts + sarcopenia, cholesterol, curry-leaves
-- Problem: No rich results possible without structured data.
-- Fix: Add BlogPosting + BreadcrumbList JSON-LD.
-- Impact: **Medium** | Effort: Medium
-- Why: Rich results increase CTR 20-30%.
-
-**[Priority #12] — Add OG & Twitter Card Tags**
-- Page: 33 pages missing social meta tags
-- Problem: Social shares show generic previews.
-- Fix: Add og:title, og:description, og:image, twitter:card to all pages.
-- Impact: **Medium** | Effort: Easy
-- Why: Social shares with previews get 2-3x more engagement.
-
-**[Priority #13] — Fix place-near-me Canonical Domain**
-- Page: /tools/crazy-ideas/place-near-me/
-- Problem: Canonical points to nutrithrive.com.au instead of scintilla.world.
-- Fix: Change canonical to scintilla.world domain.
-- Impact: **Medium** | Effort: Easy
-- Why: Wrong canonical could cause de-indexing.
-
-**[Priority #14] — Add Images to All 27 Blog Posts**
-- Page: All blog posts
-- Problem: Zero images — no engagement, no Image Search, no social previews.
-- Fix: Add 1-2 images per post with descriptive alt text, WebP format, lazy loading.
-- Impact: **Medium** | Effort: Hard
-- Why: Posts with images get 94% more views.
-
-**[Priority #15] — Fix Blog Index Meta Description**
-- Page: /blogs/
-- Problem: Says "web development" but posts are about moringa/superfoods.
-- Fix: Update to accurate description of actual content.
-- Impact: **Low** | Effort: Easy
-- Why: Accurate descriptions improve CTR.
 
 ---
 
-# Phase 6 — Executive Summary
+# Phase 5: Quick Wins
 
-## Overall Site Health Score: 42 / 100
+Ranked by impact and effort.
 
-| Category | Score | Weight | Weighted |
-|----------|-------|--------|----------|
-| Technical SEO | 35/100 | 30% | 10.5 |
-| Content Quality | 50/100 | 25% | 12.5 |
-| UX & Navigation | 30/100 | 25% | 7.5 |
-| Schema & Structured Data | 40/100 | 10% | 4.0 |
-| Performance | 45/100 | 10% | 4.5 |
-| **Overall** | | | **42/100** |
+**[Priority #10] — Add hreflang tags to pages missing them**
+- Page affected: 1 pages
+- Problem: 1 pages lack hreflang for en-AU targeting.
+- Fix: Add <link rel='alternate' hreflang='en-AU'> and x-default to all pages.
+- Impact: Medium | Effort: Easy
+- Why it matters: Hreflang tells Google which language/region the page targets.
 
-## Top 3 Strengths
 
-1. **Genuine, Free, Functional Tools** — 17 browser-based tools that work without sign-ups, ads, or tracking. Privacy-first approach is a real differentiator.
-
-2. **Strong Schema on Moringa Posts** — 16 posts have comprehensive structured data enabling FAQ snippets, product stars, and breadcrumb displays in search results.
-
-3. **Clean Visual Design** — Distinctive dark glassmorphism aesthetic consistent across homepage and blog index.
-
-## Top 3 Critical Problems
-
-1. **Mobile Users Cannot Navigate** — No hamburger menu. Nav is hidden on mobile. 60%+ of traffic is mobile and can't reach any page.
-
-2. **Tool Pages Are Dead Ends** — No header, footer, or links to other tools. Users who find one tool via Google can't discover the other 16.
-
-3. **React Dev Build Kills Performance** — ~2MB of JavaScript before content renders. 5-8 second blank screen on mobile. Google penalizes this in Core Web Vitals.
-
-## 30-Day Action Plan
-
-### Week 1: Critical Fixes
-| Day | Action |
-|-----|--------|
-| 1 | Deploy React production builds (fixed locally, needs deploy) |
-| 2 | Deploy colorMap fix for broken Tailwind styling |
-| 3 | Remove "— NutriThrive" from all tool page titles |
-| 4 | Fix convoter meta description (says "polls") |
-| 5 | Fix place-near-me canonical (wrong domain) |
-
-### Week 2: High-Impact SEO
-| Day | Action |
-|-----|--------|
-| 6-7 | Add canonical tags to 33 pages missing them |
-| 8 | Add meta descriptions to 7 tool pages |
-| 9 | Add WebSite + Organization schema to homepage |
-| 10 | Add BlogPosting schema to 10 blog posts |
-
-### Week 3: UX & Navigation
-| Day | Action |
-|-----|--------|
-| 11-12 | Add hamburger menu for mobile |
-| 13-14 | Add header/footer to all 17 tool pages |
-| 15 | Add "Related Posts" to blog posts |
-| 16-17 | Add "Try Another Tool" CTAs on tool pages |
-
-### Week 4: Content & Polish
-| Day | Action |
-|-----|--------|
-| 18-20 | Add hero images to 27 blog posts |
-| 21 | Add OG + Twitter Card tags to all pages |
-| 22 | Fix copyright year (2025 → 2026) |
-| 23 | Update blog index meta description |
-| 24-25 | Add author bylines and dates to blog posts |
-| 26-27 | Review moringa posts for thin affiliate risk |
-| 28-30 | Trim 15 blog titles under 60 characters |
-
-## Recommended Monitoring Tools
-
-| Tool | Purpose | Cost |
-|------|---------|------|
-| Google Search Console | Indexing, search performance, Core Web Vitals | Free |
-| Google Analytics 4 | Traffic, user flows, bounce rates | Free |
-| PageSpeed Insights | LCP, FID, CLS optimization | Free |
-| Screaming Frog | Crawl for broken links, missing tags, duplicates | Free (<500 URLs) |
-| Schema Markup Validator | Test structured data for errors | Free |
-| Ahrefs / Semrush | Rankings, backlinks, competitor analysis | Paid ($99+/mo) |
-
-### Key Metrics to Track
-1. Organic impressions/clicks in Search Console
-2. Core Web Vitals (LCP < 2.5s, FID < 100ms, CLS < 0.1)
-3. Pages per session — are users discovering more than one tool?
-4. Bounce rate on tool pages
-5. Mobile vs desktop traffic split
 
 ---
 
-*End of Full Audit Report*
+# Phase 6: Executive Summary
+
+## Site Health Score: 100/100
+
+### Score Breakdown
+
+Starting from 100. Deductions:
+
+- -0 Title tags over 60 chars (0 pages)
+- -0 Missing meta descriptions (0 pages)
+- -0 Missing H1 tags (0 pages)
+- -0 Missing schema (0 pages)
+- -0 Thin content (0 pages)
+- -0 Blog posts with no images (0 posts)
+- -0 Thin affiliate risk (0 pages with >5 NT links)
+- -0 Missing GA4 (0 pages)
+- -0 Missing author bylines (0 posts)
+
+### Top 3 Strengths
+
+1. Every page has a canonical tag — no duplicate content risk from URL variants
+1. Google Analytics (GA4) is installed on every page — full traffic visibility
+1. All blog posts have author bylines — strong E-E-A-T signal for health content
+
+### Top 3 Critical Problems
+
+1. **Content depth:** Some tool pages still have thin content (under 300 words) — may not rank for competitive queries.
+
+### 30-Day Action Plan
+
+**Week 1 (Critical):**
+3. Fix any remaining title/meta description issues
+
+**Week 2 (High Impact):**
+3. Add FAQ schema to pages with FAQ sections
+
+**Week 3 (Polish):**
+1. Add missing hreflang tags
+2. Verify all schema markup with Google Rich Results Test
+3. Submit updated sitemap to Google Search Console
+
+**Week 4 (Ongoing):**
+1. Monitor Core Web Vitals in Google Search Console
+2. Set up weekly GA4 reports for traffic anomalies
+3. Plan next content batch (2-4 new blog posts per month)
+
+### Recommended Monitoring Tools
+
+1. **Google Search Console** — index coverage, Core Web Vitals, search performance (free)
+2. **Google PageSpeed Insights** — mobile/desktop performance scores (free)
+3. **Schema Markup Validator** (schema.org) — validate structured data (free)
+4. **Screaming Frog** — technical SEO crawler for ongoing audits (free tier available)
+5. **Ahrefs/SEMrush** — backlink monitoring, keyword tracking, content gaps (paid)
+
+
+---
+

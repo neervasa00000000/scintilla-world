@@ -5,7 +5,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://unpkg.com">
-  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-WH21SW75WP"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -15,17 +15,17 @@
 </script>
 
   <meta charset="UTF-8" />
-    <title>Universal File Converter | Scintilla World — Free Online Tool</title>
+    <title>Universal File Converter | Scintilla World</title>
   <meta name="description" content="Convert PDFs to editable text instantly in your browser. Free, no sign-up, no watermarks.">
   <link rel="canonical" href="https://scintilla.world/tools/crazy-ideas/convoter/">
   <meta name="robots" content="index, follow">
-  <meta property="og:title" content="Universal File Converter | Scintilla World — Free Online Tool">
+  <meta property="og:title" content="Universal File Converter | Scintilla World">
   <meta property="og:description" content="Convert PDFs to editable text instantly in your browser. Free, no sign-up, no watermarks.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://scintilla.world/tools/crazy-ideas/convoter/">
   <meta property="og:image" content="https://scintilla.world/assets/logo/scintilla.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Universal File Converter | Scintilla World — Free Online Tool">
+  <meta name="twitter:title" content="Universal File Converter | Scintilla World">
   <meta name="twitter:description" content="Convert PDFs to editable text instantly in your browser. Free, no sign-up, no watermarks.">
   <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Universal File Converter","url":"https://scintilla.world/tools/crazy-ideas/convoter/","description":"Convert PDFs to editable text instantly in your browser. Free, no sign-up, no watermarks.","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"}}</script>
@@ -489,6 +489,7 @@
   <meta name="geo.region" content="AU-VIC">
   <link rel="alternate" hreflang="en-AU" href="https://scintilla.world/tools/crazy-ideas/convoter/">
   <link rel="alternate" hreflang="x-default" href="https://scintilla.world/tools/crazy-ideas/convoter/">
+    <link rel="stylesheet" href="/assets/css/tailwind-blog.css">
 </head>
 <body>
 
@@ -618,10 +619,10 @@
       <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text); margin-bottom: 16px;">Shop NutriThrive Products</h3>
       <p style="color: var(--text-light); margin-bottom: 24px; font-size: 1rem;">Discover premium superfoods and wellness products:</p>
       <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
-        <a href="https://nutrithrive.com.au/pages/products/product-detail.html" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Moringa Powder →</a>
-        <a href="https://nutrithrive.com.au/pages/products/product-curry-leaves.html" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Curry Leaves →</a>
-        <a href="https://nutrithrive.com.au/pages/products/product-black-tea.html" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Black Tea →</a>
-        <a href="https://nutrithrive.com.au/pages/products/products.html" style="background: transparent; color: var(--primary); border: 2px solid var(--primary); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">All Products →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-detail.html" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;" rel="noopener sponsored">Moringa Powder →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-curry-leaves.html" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;" rel="noopener sponsored">Curry Leaves →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-black-tea.html" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;" rel="noopener sponsored">Black Tea →</a>
+        <a href="https://nutrithrive.com.au/pages/products/products.html" style="background: transparent; color: var(--primary); border: 2px solid var(--primary); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;" rel="noopener sponsored">All Products →</a>
       </div>
     </div>
   </div>
@@ -1149,7 +1150,8 @@
       if (!window.pdfjsLib) throw new Error('PDF library not loaded');
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Converted PDF</title></head><body>';
+      let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Universal File Converter | Scintilla World</title>    <link rel="stylesheet" href="/assets/css/tailwind-blog.css">
+</head><body>';
       for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         const page = await pdf.getPage(pageNum);
         const content = await page.getTextContent();
@@ -1162,7 +1164,7 @@
       html += '
 <!-- SCINTILLA WORLD FOOTER -->
 <footer style="background:#0a0a0a;color:#9ca3af;padding:20px;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:13px;border-top:1px solid rgba(255,255,255,0.1);">
-  <p>Powered by <a href="https://nutrithrive.com.au" style="color:#7c3aed;text-decoration:none;">NutriThrive</a></p>
+  <p>Powered by <a href="https://nutrithrive.com.au" style="color:#7c3aed;text-decoration:none;" rel="noopener sponsored">NutriThrive</a></p>
   <p style="margin-top:4px;">&copy; 2026 Scintilla World &middot; <a href="https://scintilla.world/privacy-policy.html" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a></p>
 </footer>
 
@@ -1305,7 +1307,8 @@
         paragraphs.push(...lines);
       }
       
-      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;line-height:1.6;padding:20px;max-width:800px;margin:0 auto;}p{margin:12px 0;white-space:pre-wrap;}</style></head><body>${paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`).join('')}</body></html>`;
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;line-height:1.6;padding:20px;max-width:800px;margin:0 auto;}p{margin:12px 0;white-space:pre-wrap;}</style>    <link rel="stylesheet" href="/assets/css/tailwind-blog.css">
+</head><body>${paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`).join('')}</body></html>`;
       
       // Use the library to convert HTML to DOCX
       const converted = htmlDocxLib.asBlob(html);
@@ -1370,7 +1373,8 @@
         throw new Error('No readable content found in text file.');
       }
       
-      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;line-height:1.6;padding:20px;max-width:800px;margin:0 auto;}p{margin:12px 0;white-space:pre-wrap;}</style></head><body>${paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`).join('')}</body></html>`;
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;line-height:1.6;padding:20px;max-width:800px;margin:0 auto;}p{margin:12px 0;white-space:pre-wrap;}</style>    <link rel="stylesheet" href="/assets/css/tailwind-blog.css">
+</head><body>${paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`).join('')}</body></html>`;
       const result = await htmlToDocx(new Blob([html], { type: 'text/html' }));
       
       if (!result || result.size === 0) {
@@ -1483,7 +1487,8 @@
         }
         if (toExt === 'html') {
           const text = await file.text();
-          const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Converted Text</title><style>body{font-family:sans-serif;line-height:1.6;max-width:800px;margin:40px auto;padding:20px;}</style></head><body><pre style="white-space:pre-wrap;word-wrap:break-word;">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre></body></html>`;
+          const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Universal File Converter | Scintilla World</title><style>body{font-family:sans-serif;line-height:1.6;max-width:800px;margin:40px auto;padding:20px;}</style>    <link rel="stylesheet" href="/assets/css/tailwind-blog.css">
+</head><body><pre style="white-space:pre-wrap;word-wrap:break-word;">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre></body></html>`;
           return new Blob([html], { type: 'text/html' });
         }
         if (toExt === 'rtf') {

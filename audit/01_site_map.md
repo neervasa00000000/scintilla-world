@@ -1,102 +1,67 @@
-# PHASE 1 — Site Map
+# Phase 1: Site Map
 
-## Site: https://scintilla.world
-## Crawl Date: 2026-04-13
-## Total Discoverable Pages: 49
+**Total Pages:** 47
 
----
+**Date:** April 13, 2026
 
-## Homepage
-| URL | Priority |
-|-----|----------|
-| https://scintilla.world/ | 1.0 |
+## Homepage (1 page)
 
-## Blog Pages
-| URL | Priority |
-|-----|----------|
-| https://scintilla.world/blogs/index.html | 0.9 |
-| https://scintilla.world/blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html | 0.8 |
-| https://scintilla.world/blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/confessions-of-a-tab-hoarder.html | 0.8 |
-| https://scintilla.world/blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-4-pack-revolution-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-cholesterol-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-lifestyle-functional-health-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-tree-bunnings-growing-zones-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-vs-matcha-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html | 0.8 |
-| https://scintilla.world/blogs/no-filter-needed-fix-blurry-photos.html | 0.8 |
-| https://scintilla.world/blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html | 0.8 |
-| https://scintilla.world/blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html | 0.8 |
-| https://scintilla.world/blogs/sarcopenia-prevention-supplements-sydney-2026.html | 0.8 |
-| https://scintilla.world/blogs/sleep-cycle-calculator-science.html | 0.8 |
-| https://scintilla.world/blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html | 0.8 |
-| https://scintilla.world/blogs/stop-guessing-size-finder.html | 0.8 |
-| https://scintilla.world/blogs/student-hack-pdf-to-text.html | 0.8 |
-| https://scintilla.world/blogs/synapsesave-stop-tab-overload.html | 0.8 |
-| https://scintilla.world/blogs/top-10-melbourne-health-wellness-shops-2026.html | 0.8 |
-| https://scintilla.world/blogs/top-moringa-brands-2026.html | 0.8 |
-| https://scintilla.world/blogs/truganina-secret-moringa-soap-australia-skincare-2026.html | 0.8 |
-| https://scintilla.world/blogs/ultimate-2026-australian-guide-moringa.html | 0.8 |
-| https://scintilla.world/blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html | 0.8 |
-| https://scintilla.world/blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html | 0.8 |
+- https://scintilla.world/ — `website/index.html`
 
-**Blog count: 28 (1 index + 27 posts)**
+## Blog Index (1 page)
 
-## Tool Pages
-| URL | Priority |
-|-----|----------|
-| https://scintilla.world/tools/crazy-ideas/Image-Enhancer/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/calendar-reminder/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/cards/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/clothes-size-finder/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/convoter/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/core/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/cost-per-serve/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/earning-finder/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/email-automation/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/hex-colour-finder/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/lumina-editor/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/pdf-editor/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/place-near-me/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/quick-recipes/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/sigil/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/sleep-cycle-calculator/index.html | 0.7 |
-| https://scintilla.world/tools/crazy-ideas/vision/index.html | 0.7 |
+- https://scintilla.world/blogs/ — `blogs/index.html`
 
-**Tool count: 17**
+## Blog Posts (27 pages)
 
-## Legal / Privacy Pages
-| URL | Priority |
-|-----|----------|
-| https://scintilla.world/privacy-policy.html | 0.4 |
-| https://scintilla.world/website/privacypolicy/Safeguard.html | 0.3 |
-| https://scintilla.world/website/privacypolicy/asin.html | 0.3 |
+- https://scintilla.world/blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html — `blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html`
+- https://scintilla.world/blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html — `blogs/beyond-spice-rack-curry-leaves-darjeeling-tea-australia-2026.html`
+- https://scintilla.world/blogs/confessions-of-a-tab-hoarder.html — `blogs/confessions-of-a-tab-hoarder.html`
+- https://scintilla.world/blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html — `blogs/melbournes-glow-secret-moringa-soap-victoria-2026.html`
+- https://scintilla.world/blogs/moringa-4-pack-revolution-australia-2026.html — `blogs/moringa-4-pack-revolution-australia-2026.html`
+- https://scintilla.world/blogs/moringa-cholesterol-australia-2026.html — `blogs/moringa-cholesterol-australia-2026.html`
+- https://scintilla.world/blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html — `blogs/moringa-consistency-quality-nutri-thrive-australia-2026.html`
+- https://scintilla.world/blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html — `blogs/moringa-for-real-life-lifestyle-women-professionals-fitness-2026.html`
+- https://scintilla.world/blogs/moringa-lifestyle-functional-health-australia-2026.html — `blogs/moringa-lifestyle-functional-health-australia-2026.html`
+- https://scintilla.world/blogs/moringa-tree-bunnings-growing-zones-australia-2026.html — `blogs/moringa-tree-bunnings-growing-zones-australia-2026.html`
+- https://scintilla.world/blogs/moringa-vs-matcha-australia-2026.html — `blogs/moringa-vs-matcha-australia-2026.html`
+- https://scintilla.world/blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html — `blogs/moringa-vs-matcha-vs-kale-nutrition-deep-dive-2026.html`
+- https://scintilla.world/blogs/no-filter-needed-fix-blurry-photos.html — `blogs/no-filter-needed-fix-blurry-photos.html`
+- https://scintilla.world/blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html — `blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html`
+- https://scintilla.world/blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html — `blogs/nutri-thrive-vs-store-bought-moringa-melbourne-2026.html`
+- https://scintilla.world/blogs/sarcopenia-prevention-supplements-sydney-2026.html — `blogs/sarcopenia-prevention-supplements-sydney-2026.html`
+- https://scintilla.world/blogs/sleep-cycle-calculator-science.html — `blogs/sleep-cycle-calculator-science.html`
+- https://scintilla.world/blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html — `blogs/smart-australian-pantry-2026-nutri-thrive-combo-pack.html`
+- https://scintilla.world/blogs/stop-guessing-size-finder.html — `blogs/stop-guessing-size-finder.html`
+- https://scintilla.world/blogs/student-hack-pdf-to-text.html — `blogs/student-hack-pdf-to-text.html`
+- https://scintilla.world/blogs/synapsesave-stop-tab-overload.html — `blogs/synapsesave-stop-tab-overload.html`
+- https://scintilla.world/blogs/top-10-melbourne-health-wellness-shops-2026.html — `blogs/top-10-melbourne-health-wellness-shops-2026.html`
+- https://scintilla.world/blogs/top-moringa-brands-2026.html — `blogs/top-moringa-brands-2026.html`
+- https://scintilla.world/blogs/truganina-secret-moringa-soap-australia-skincare-2026.html — `blogs/truganina-secret-moringa-soap-australia-skincare-2026.html`
+- https://scintilla.world/blogs/ultimate-2026-australian-guide-moringa.html — `blogs/ultimate-2026-australian-guide-moringa.html`
+- https://scintilla.world/blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html — `blogs/ultimate-2026-glow-up-moringa-soap-duo-sydney.html`
+- https://scintilla.world/blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html — `blogs/why-nutri-thrive-moringa-australia-1-superfood-2026.html`
 
-**Legal count: 3**
+## Tool Pages (17 pages)
 
-## Orphan Pages (exist as files but not in sitemap or navigation)
-| URL | Notes |
-|-----|-------|
-| https://scintilla.world/blogs/melbourne-health-food-guide-2026.html | Empty file (0 bytes) |
-| https://scintilla.world/google-site-verification.html | Google verification only |
+- https://scintilla.world/tools/crazy-ideas/sleep-cycle-calculator/ — `tools/crazy-ideas/sleep-cycle-calculator/index.html`
+- https://scintilla.world/tools/crazy-ideas/core/ — `tools/crazy-ideas/core/index.html`
+- https://scintilla.world/tools/crazy-ideas/email-automation/ — `tools/crazy-ideas/email-automation/index.html`
+- https://scintilla.world/tools/crazy-ideas/lumina-editor/ — `tools/crazy-ideas/lumina-editor/index.html`
+- https://scintilla.world/tools/crazy-ideas/hex-colour-finder/ — `tools/crazy-ideas/hex-colour-finder/index.html`
+- https://scintilla.world/tools/crazy-ideas/cards/ — `tools/crazy-ideas/cards/index.html`
+- https://scintilla.world/tools/crazy-ideas/Image-Enhancer/ — `tools/crazy-ideas/Image-Enhancer/index.html`
+- https://scintilla.world/tools/crazy-ideas/earning-finder/ — `tools/crazy-ideas/earning-finder/index.html`
+- https://scintilla.world/tools/crazy-ideas/cost-per-serve/ — `tools/crazy-ideas/cost-per-serve/index.html`
+- https://scintilla.world/tools/crazy-ideas/calendar-reminder/ — `tools/crazy-ideas/calendar-reminder/index.html`
+- https://scintilla.world/tools/crazy-ideas/vision/ — `tools/crazy-ideas/vision/index.html`
+- https://scintilla.world/tools/crazy-ideas/sigil/ — `tools/crazy-ideas/sigil/index.html`
+- https://scintilla.world/tools/crazy-ideas/place-near-me/ — `tools/crazy-ideas/place-near-me/index.html`
+- https://scintilla.world/tools/crazy-ideas/quick-recipes/ — `tools/crazy-ideas/quick-recipes/index.html`
+- https://scintilla.world/tools/crazy-ideas/convoter/ — `tools/crazy-ideas/convoter/index.html`
+- https://scintilla.world/tools/crazy-ideas/clothes-size-finder/ — `tools/crazy-ideas/clothes-size-finder/index.html`
+- https://scintilla.world/tools/crazy-ideas/pdf-editor/ — `tools/crazy-ideas/pdf-editor/index.html`
 
-## Page Count by Type
-| Type | Count |
-|------|-------|
-| Homepage | 1 |
-| Blog index + posts | 28 |
-| Tools | 17 |
-| Legal/Privacy | 3 |
-| Orphan/Utility | 2 |
-| **Total** | **51** |
+## Other Pages
 
-## Hosting & Infrastructure
-- **Domain:** scintilla.world
-- **CNAME:** Points to Netlify
-- **Also configured for:** Vercel (vercel.json present but likely not active)
-- **CDN/SSL:** Netlify managed
-- **robots.txt:** Present, allows all, references sitemap
-- **sitemap.xml:** Present with 49 URLs
+- https://scintilla.world/privacy-policy.html — `privacy-policy.html`
