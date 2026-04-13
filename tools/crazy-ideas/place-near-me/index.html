@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-AU">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WH21SW75WP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-WH21SW75WP');
+</script>
   <meta charset="UTF-8" />
     <title>Food Finds Melbourne | Scintilla World — Free Online Tool</title>
   <meta name="description" content="Discover amazing food deals across Melbourne. Real-time recommendations using your location — free online tool.">
@@ -603,8 +611,8 @@
     SCINTILLA WORLD
   </a>
   <nav style="display:flex;gap:16px;font-size:14px;">
-    <a href="https://scintilla.world/tools/" style="color:#d1d5db;text-decoration:none;">Tools</a>
-    <a href="https://scintilla.world/blog/" style="color:#d1d5db;text-decoration:none;">Blogs</a>
+    <a href="https://scintilla.world/#tools" style="color:#d1d5db;text-decoration:none;">Tools</a>
+    <a href="https://scintilla.world/blogs/" style="color:#d1d5db;text-decoration:none;">Blogs</a>
   </nav>
 </header>
 
@@ -1318,7 +1326,7 @@
           mapsUrl = `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
         }
         linkRow.innerHTML =
-          `<a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="card-link">Open in Maps →</a>`;
+          `<a href="${mapsUrl}" target="_blank" rel="noopener sponsored" class="card-link">Open in Maps →</a>`;
 
         card.appendChild(header);
         card.appendChild(tagsRow);
@@ -1459,9 +1467,23 @@
   </script>
 
 <!-- SCINTILLA WORLD FOOTER -->
+
+<!-- SEO Content Section -->
+<section style="max-width:820px;margin:2rem auto;padding:2rem;color:#c4c4c4;font-family:Inter,system-ui,sans-serif;line-height:1.8;">
+    <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:600;color:#e8e8e8;margin-bottom:0.75rem;">Find Places Near You — Free Location Search Tool</h2>
+    <p>Place Near Me is a free browser tool that helps you find nearby businesses, services, and points of interest based on your current location. Search for cafes, gyms, pharmacies, grocery stores, and more — all without installing an app.</p>
+<h3>How It Works</h3>
+<ol>
+<li>Allow location access (only used in your browser, never stored)</li>
+<li>Choose a category or type what you are looking for</li>
+<li>Get instant results with distance and directions</li>
+</ol>
+<h3>Privacy</h3>
+<p>Your location is used only for the search and never sent to any third-party server. This is not another app tracking your movements — it is a simple utility that respects your privacy.</p>
+</section>
 <footer style="background:#0a0a0a;color:#9ca3af;padding:20px;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:13px;border-top:1px solid rgba(255,255,255,0.1);">
   <p>Powered by <a href="https://nutrithrive.com.au" style="color:#7c3aed;text-decoration:none;">NutriThrive</a></p>
-  <p style="margin-top:4px;">&copy; 2026 Scintilla World &middot; <a href="https://scintilla.world/privacy/" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a></p>
+  <p style="margin-top:4px;">&copy; 2026 Scintilla World &middot; <a href="https://scintilla.world/privacy-policy.html" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a></p>
 </footer>
 
 </body>
