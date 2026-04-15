@@ -1,28 +1,22 @@
 User-agent: *
 Allow: /
 
-# Sitemap location
 Sitemap: https://scintilla.world/sitemap.xml
 
-# Allow all crawlers
 User-agent: Googlebot
 Allow: /
+
+User-agent: Googlebot-Image
+Allow: /assets/
 
 User-agent: Bingbot
 Allow: /
 
-# Crawl-delay for slower bots
 User-agent: AhrefsBot
 Crawl-delay: 1
 
 User-agent: SemrushBot
 Crawl-delay: 1
 
-# Disallow admin and system folders
 Disallow: /admin/
 Disallow: /cgi-bin/
-Disallow: /tmp/
-
-# Allow images
-User-agent: Googlebot-Image
-Allow: /assets/

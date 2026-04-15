@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WH21SW75WP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-WH21SW75WP');
+</script>
+  <meta charset="UTF-8">
+    <title>Instant Image Enhancer | Scintilla World — Free Online Tool</title>
+  <meta name="description" content="Enhance your images instantly in the browser. Adjust brightness, contrast, saturation and more — free, no sign-up.">
+  <link rel="canonical" href="https://scintilla.world/tools/image-enhancer/">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Instant Image Enhancer | Scintilla World — Free Online Tool">
+  <meta property="og:description" content="Enhance your images instantly in the browser. Adjust brightness, contrast, saturation and more — free, no sign-up.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://scintilla.world/tools/image-enhancer/">
+  <meta property="og:image" content="https://scintilla.world/assets/logo/scintilla.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Instant Image Enhancer | Scintilla World — Free Online Tool">
+  <meta name="twitter:description" content="Enhance your images instantly in the browser. Adjust brightness, contrast, saturation and more — free, no sign-up.">
+  <meta name="twitter:image" content="https://scintilla.world/assets/logo/scintilla.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com">
+  
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Instant Image Enhancer","url":"https://scintilla.world/tools/image-enhancer/","description":"Enhance your images instantly in the browser. Adjust brightness, contrast, saturation and more \u2014 free, no sign-up.","applicationCategory":"UtilityApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"}}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="/assets/logo/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/logo/favicon.png">
+  <link rel="shortcut icon" href="/assets/logo/favicon.png">
+  <style>
+    :root {
+      --bg: #EBFFD8;
+      --panel: #C4E1E6;
+      --pane-alt: #A4CCD9;
+      --ink: #2f4f57;
+      --muted: #456b74;
+      --accent: #8DBCC7;
+      --accent-soft: #A4CCD9;
+      --border: #8DBCC7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+
+    .app-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .hero {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .eyebrow {
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+      color: var(--accent-soft);
+      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px 0;
+      font-size: clamp(2rem, 3.6vw, 3rem);
+      letter-spacing: -0.015em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #d7f0f4;
+      font-size: 0.9rem;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .hero-action {
+      align-self: center;
+      justify-self: end;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .primary-btn {
+      border: none;
+      background: var(--accent);
+      color: #F5F5F0;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .primary-btn:hover {
+      background: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    .primary-btn:active,
+    .primary-btn.active {
+      background: var(--ink);
+      transform: translateY(0);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .primary-btn:disabled:hover {
+      transform: none;
+      background: var(--accent);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .hero-action { justify-self: stretch; }
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .drop-zone {
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
+      background: var(--pane-alt);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .drop-zone.dragover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .preview-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--pane-alt);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .preview-card span {
+      font-size: 0.92rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .preview-card img {
+      max-width: 100%;
+      max-height: 320px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      object-fit: contain;
+      display: none;
+    }
+
+    .preview-card img.visible {
+      display: block;
+    }
+
+    .empty-state {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 12px;
+      width: 100%;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .control-group {
+      flex: 1;
+      min-width: 220px;
+      background: var(--pane-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .control-group label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--ink);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .cta-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--panel);
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cta-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .link-btn {
+      border: 1px solid var(--accent);
+      color: var(--ink);
+      padding: 8px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .link-btn:hover {
+      background: var(--accent);
+      color: #F5F5F0;
+    }
+
+    .link-btn:active,
+    .link-btn.active {
+      background: var(--ink);
+      color: #F5F5F0;
+      border-color: var(--ink);
+      transform: scale(0.98);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style>
+
+  <meta name="geo.region" content="AU-VIC">
+  <link rel="alternate" hreflang="en-AU" href="https://scintilla.world/tools/image-enhancer/">
+  <link rel="alternate" hreflang="x-default" href="https://scintilla.world/tools/image-enhancer/">
+    <link rel="stylesheet" href="/assets/css/tailwind-blog.css">
+</head>
+<body>
+
+<!-- SCINTILLA WORLD HEADER -->
+<header style="position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,0.1);">
+  <a href="https://scintilla.world" style="color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;">
+    <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#2563eb);border-radius:8px;font-size:18px;font-weight:800;">S</span>
+    SCINTILLA WORLD
+  </a>
+  <nav style="display:flex;gap:16px;font-size:14px;">
+    <a href="https://scintilla.world/#tools" style="color:#d1d5db;text-decoration:none;">Tools</a>
+    <a href="https://scintilla.world/blogs/" style="color:#d1d5db;text-decoration:none;">Blogs</a>
+  </nav>
+</header>
+
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <h1>Instant Image Enhancer</h1>
+        <p>Fix blurry photos, brighten dull images, add clarity, and download in your original format (JPG, PNG, WEBP, GIF) in seconds. Entirely browser-based, so your files never leave your device.</p>
+        <div class="badge-list">
+          <span class="badge">100% local</span>
+          <span class="badge">No sign-up</span>
+          <span class="badge">Works offline</span>
+        </div>
+      </div>
+      <div class="hero-action">
+        <button class="primary-btn" id="uploadTrigger">Upload image</button>
+        <small style="color:var(--muted);">PNG, JPG, or HEIC up to ~20 MB</small>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <section class="panel">
+        <h2>Drop a file</h2>
+        <div class="drop-zone" id="dropZone">
+          Drag & drop your photo here or click to browse
+        </div>
+        <input type="file" id="fileInput" accept="image/*" hidden>
+        <div class="preview-grid">
+          <div class="preview-card">
+            <span>Original</span>
+            <img id="inputImg" alt="Original preview" />
+            <div class="empty-state" id="originalEmpty">Drop an image to see the original preview.</div>
+          </div>
+          <div class="preview-card">
+            <span>Enhanced</span>
+            <img id="outputImg" alt="Enhanced preview" />
+            <div class="empty-state" id="enhancedEmpty">Enhance the photo to view the result.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Fine tune</h2>
+        <div class="controls">
+          <div class="control-group">
+            <label>
+              Brightness
+              <span id="brightnessLabel">+10</span>
+            </label>
+            <input type="range" id="brightnessRange" min="-30" max="40" value="10">
+          </div>
+          <div class="control-group">
+            <label>
+              Contrast
+              <span id="contrastLabel">+10</span>
+            </label>
+            <input type="range" id="contrastRange" min="-20" max="40" value="10">
+          </div>
+          <div class="control-group">
+            <label>
+              Warmth
+              <span id="warmthLabel">+5</span>
+            </label>
+            <input type="range" id="warmthRange" min="-20" max="30" value="5">
+          </div>
+          <div class="control-group">
+            <label>
+              Sharpness
+              <span id="sharpnessLabel">0</span>
+            </label>
+            <input type="range" id="sharpnessRange" min="0" max="60" value="0">
+          </div>
+          <div class="control-group">
+            <label>
+              Deblur
+              <span id="deblurLabel">0</span>
+            </label>
+            <input type="range" id="deblurRange" min="0" max="100" value="0">
+          </div>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="primary-btn" id="enhanceBtn" disabled>Enhance image</button>
+          <button class="primary-btn" id="autoDeblurBtn" disabled style="background: var(--accent-soft);">Auto Fix Blur</button>
+          <a id="downloadLink" class="link-btn" style="display:none;">Download</a>
+        </div>
+        <div id="blurStatus" style="margin-top: 12px; padding: 12px; background: var(--pane-alt); border-radius: 8px; font-size: 0.9rem; color: var(--muted); display: none;">
+          <strong>Blur Detection:</strong> <span id="blurStatusText"></span>
+        </div>
+      </section>
+    </div>
+
+    <div class="cta-card">
+      <p>Editing late? Stay sharp the natural way with NutriThrive superfoods:</p>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
+        <a href="https://nutrithrive.com.au/pages/products/product-detail.html" class="link-btn" rel="noopener sponsored">Moringa Powder →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-curry-leaves.html" class="link-btn" rel="noopener sponsored">Curry Leaves →</a>
+        <a href="https://nutrithrive.com.au/pages/products/product-black-tea.html" class="link-btn" rel="noopener sponsored">Black Tea →</a>
+        <a href="https://nutrithrive.com.au/pages/products/products.html" class="link-btn" rel="noopener sponsored">All Products →</a>
+      </div>
+    </div>
+
+    
+<!-- SEO Content Section -->
+<section style="max-width:820px;margin:2rem auto;padding:2rem;color:#c4c4c4;font-family:Inter,system-ui,sans-serif;line-height:1.8;">
+    <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:600;color:#e8e8e8;margin-bottom:0.75rem;">Image Enhancer — Fix Blurry Photos Instantly, Free</h2>
+    <p>Scintilla World's Image Enhancer is a free browser-based tool that sharpens, brightens, and enhances blurry or low-quality photos in one click. No Photoshop skills needed — just upload, enhance, and download.</p>
+<h3>What It Does</h3>
+<ul>
+<li>Sharpens blurry and out-of-focus images</li>
+<li>Adjusts brightness, contrast, and saturation automatically</li>
+<li>Reduces noise in low-light photos</li>
+<li>Works on JPEG, PNG, and WebP formats</li>
+<li>All processing happens in your browser — your photos are never uploaded</li>
+</ul>
+<h3>When to Use It</h3>
+<p>Fix that one blurry photo from a holiday. Enhance a profile picture taken in bad lighting. Improve product photos for an online listing. Any time you need a quick image quality boost without professional editing software.</p>
+</section>
+<footer>
+      Processing happens locally using HTML5 Canvas. Blur detection and deblurring use advanced algorithms to improve image clarity. For severely blurred or scanned photos, you may need dedicated desktop software for best results.
+    </footer>
+  </div>
+
+  <canvas id="hiddenCanvas" style="display:none;"></canvas>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadTrigger = document.getElementById('uploadTrigger');
+    const dropZone = document.getElementById('dropZone');
+    const inputImg = document.getElementById('inputImg');
+    const outputImg = document.getElementById('outputImg');
+    const enhanceBtn = document.getElementById('enhanceBtn');
+    const downloadLink = document.getElementById('downloadLink');
+    const brightnessRange = document.getElementById('brightnessRange');
+    const contrastRange = document.getElementById('contrastRange');
+    const warmthRange = document.getElementById('warmthRange');
+    const brightnessLabel = document.getElementById('brightnessLabel');
+    const contrastLabel = document.getElementById('contrastLabel');
+    const warmthLabel = document.getElementById('warmthLabel');
+    const sharpnessRange = document.getElementById('sharpnessRange');
+    const sharpnessLabel = document.getElementById('sharpnessLabel');
+    const deblurRange = document.getElementById('deblurRange');
+    const deblurLabel = document.getElementById('deblurLabel');
+    const autoDeblurBtn = document.getElementById('autoDeblurBtn');
+    const blurStatus = document.getElementById('blurStatus');
+    const blurStatusText = document.getElementById('blurStatusText');
+    const originalEmpty = document.getElementById('originalEmpty');
+    const enhancedEmpty = document.getElementById('enhancedEmpty');
+    const canvas = document.getElementById('hiddenCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let uploadedImg = null;
+    let pendingTimeout = null;
+    let originalFormat = 'png';
+    let originalFileName = 'enhanced';
+
+    uploadTrigger.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) {
+        loadImage(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files[0]) loadImage(e.target.files[0]);
+    });
+
+    function resetOutputs() {
+      outputImg.classList.remove('visible');
+      outputImg.src = '';
+      enhancedEmpty.style.display = 'block';
+      downloadLink.style.display = 'none';
+      blurStatus.style.display = 'none';
+      deblurRange.value = 0;
+      deblurLabel.textContent = '0';
+    }
+
+    function loadImage(file) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        uploadedImg = new Image();
+        uploadedImg.onload = () => {
+          inputImg.src = uploadedImg.src;
+          inputImg.classList.add('visible');
+          originalEmpty.style.display = 'none';
+          resetOutputs();
+          enhanceBtn.disabled = false;
+          autoDeblurBtn.disabled = false;
+          
+          // Detect and store original format
+          const fileName = file.name.toLowerCase();
+          originalFileName = fileName.substring(0, fileName.lastIndexOf('.')) || 'enhanced';
+          
+          if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
+            originalFormat = 'jpeg';
+          } else if (fileName.endsWith('.png')) {
+            originalFormat = 'png';
+          } else if (fileName.endsWith('.webp')) {
+            originalFormat = 'webp';
+          } else if (fileName.endsWith('.gif')) {
+            originalFormat = 'gif';
+          } else {
+            // Try to detect from file type
+            const mimeType = file.type;
+            if (mimeType.includes('jpeg')) {
+              originalFormat = 'jpeg';
+            } else if (mimeType.includes('png')) {
+              originalFormat = 'png';
+            } else if (mimeType.includes('webp')) {
+              originalFormat = 'webp';
+            } else if (mimeType.includes('gif')) {
+              originalFormat = 'gif';
+            } else {
+              originalFormat = 'png'; // default fallback
+            }
+          }
+          
+          detectBlur();
+        };
+        uploadedImg.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function detectBlur() {
+      if (!uploadedImg) return;
+      
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      const sampleSize = Math.min(uploadedImg.width, uploadedImg.height, 400);
+      tempCanvas.width = sampleSize;
+      tempCanvas.height = sampleSize;
+      tempCtx.drawImage(uploadedImg, 0, 0, sampleSize, sampleSize);
+      
+      const imageData = tempCtx.getImageData(0, 0, sampleSize, sampleSize);
+      const data = imageData.data;
+      
+      let variance = 0;
+      let mean = 0;
+      const grayscale = [];
+      
+      for (let i = 0; i < data.length; i += 4) {
+        const gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        grayscale.push(gray);
+        mean += gray;
+      }
+      mean /= grayscale.length;
+      
+      for (let i = 0; i < grayscale.length; i++) {
+        variance += Math.pow(grayscale[i] - mean, 2);
+      }
+      variance /= grayscale.length;
+      
+      const blurScore = Math.sqrt(variance);
+      let blurLevel = 'Low';
+      let recommendedDeblur = 0;
+      
+      if (blurScore < 15) {
+        blurLevel = 'High';
+        recommendedDeblur = 60;
+      } else if (blurScore < 25) {
+        blurLevel = 'Medium';
+        recommendedDeblur = 35;
+      } else if (blurScore < 35) {
+        blurLevel = 'Low';
+        recommendedDeblur = 15;
+      }
+      
+      blurStatusText.textContent = `${blurLevel} blur detected (score: ${blurScore.toFixed(1)})`;
+      blurStatus.style.display = 'block';
+      
+      if (recommendedDeblur > 0) {
+        deblurRange.value = recommendedDeblur;
+        deblurLabel.textContent = recommendedDeblur;
+      }
+    }
+
+    function runEnhancements() {
+      if (!uploadedImg) return;
+      canvas.width = uploadedImg.width;
+      canvas.height = uploadedImg.height;
+      ctx.drawImage(uploadedImg, 0, 0);
+
+      const brightness = parseInt(brightnessRange.value, 10);
+      const contrast = parseInt(contrastRange.value, 10);
+      const warmth = parseInt(warmthRange.value, 10);
+      const sharpness = parseInt(sharpnessRange.value, 10);
+      const deblur = parseInt(deblurRange.value, 10);
+
+      brightnessLabel.textContent = brightness >= 0 ? `+${brightness}` : brightness;
+      contrastLabel.textContent = contrast >= 0 ? `+${contrast}` : contrast;
+      warmthLabel.textContent = warmth >= 0 ? `+${warmth}` : warmth;
+      sharpnessLabel.textContent = sharpness;
+      deblurLabel.textContent = deblur;
+
+      let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      const contrastFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] = clamp(contrastFactor * (data[i] - 128) + 128 + brightness + warmth, 0, 255);
+        data[i + 1] = clamp(contrastFactor * (data[i + 1] - 128) + 128 + brightness, 0, 255);
+        data[i + 2] = clamp(contrastFactor * (data[i + 2] - 128) + 128 + brightness - warmth / 2, 0, 255);
+      }
+
+      if (deblur > 0) {
+        imageData = applyDeblur(imageData, canvas.width, canvas.height, deblur / 100);
+      }
+
+      if (sharpness > 0) {
+        applySharpness(imageData, canvas.width, canvas.height, sharpness / 100);
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      
+      // Use original format for download
+      const mimeType = originalFormat === 'jpeg' ? 'image/jpeg' : 
+                       originalFormat === 'webp' ? 'image/webp' :
+                       originalFormat === 'gif' ? 'image/gif' : 'image/png';
+      const quality = originalFormat === 'jpeg' ? 0.92 : undefined;
+      
+      const resultURL = quality !== undefined ? 
+        canvas.toDataURL(mimeType, quality) : 
+        canvas.toDataURL(mimeType);
+      
+      outputImg.src = resultURL;
+      outputImg.classList.add('visible');
+      enhancedEmpty.style.display = 'none';
+      downloadLink.href = resultURL;
+      downloadLink.download = `${originalFileName}-enhanced.${originalFormat}`;
+      downloadLink.textContent = `Download ${originalFormat.toUpperCase()}`;
+      downloadLink.style.display = 'inline-flex';
+    }
+
+    function applyDeblur(imageData, width, height, intensity) {
+      const src = imageData.data;
+      const result = new ImageData(new Uint8ClampedArray(src), width, height);
+      const dst = result.data;
+      
+      const radius = Math.max(1, Math.floor(intensity * 3));
+      const unsharpAmount = intensity * 2;
+      
+      for (let y = radius; y < height - radius; y++) {
+        for (let x = radius; x < width - radius; x++) {
+          for (let c = 0; c < 3; c++) {
+            let sum = 0;
+            let count = 0;
+            
+            for (let ky = -radius; ky <= radius; ky++) {
+              for (let kx = -radius; kx <= radius; kx++) {
+                const dist = Math.sqrt(kx * kx + ky * ky);
+                if (dist <= radius) {
+                  const px = ((y + ky) * width + (x + kx)) * 4 + c;
+                  const weight = 1 - (dist / radius) * 0.5;
+                  sum += src[px] * weight;
+                  count += weight;
+                }
+              }
+            }
+            
+            const blurred = sum / count;
+            const idx = (y * width + x) * 4 + c;
+            const original = src[idx];
+            dst[idx] = clamp(original + (original - blurred) * unsharpAmount, 0, 255);
+          }
+        }
+      }
+      
+      return result;
+    }
+
+    function applySharpness(imageData, width, height, intensity) {
+      const src = imageData.data;
+      const copy = new Uint8ClampedArray(src);
+      const kernel = [
+        0, -1, 0,
+        -1, 4 + intensity * 4, -1,
+        0, -1, 0
+      ];
+
+      for (let y = 1; y < height - 1; y++) {
+        for (let x = 1; x < width - 1; x++) {
+          for (let c = 0; c < 3; c++) {
+            let accum = 0;
+            for (let ky = -1; ky <= 1; ky++) {
+              for (let kx = -1; kx <= 1; kx++) {
+                const px = ((y + ky) * width + (x + kx)) * 4 + c;
+                const weight = kernel[(ky + 1) * 3 + (kx + 1)];
+                accum += copy[px] * weight;
+              }
+            }
+            const idx = (y * width + x) * 4 + c;
+            src[idx] = clamp(accum, 0, 255);
+          }
+        }
+      }
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function scheduleEnhancement() {
+      if (!uploadedImg) return;
+      if (pendingTimeout) {
+        clearTimeout(pendingTimeout);
+      }
+      pendingTimeout = setTimeout(() => {
+        pendingTimeout = null;
+        runEnhancements();
+      }, 120);
+    }
+
+    enhanceBtn.addEventListener('click', () => {
+      if (pendingTimeout) {
+        clearTimeout(pendingTimeout);
+        pendingTimeout = null;
+      }
+      enhanceBtn.classList.add('active');
+      setTimeout(() => enhanceBtn.classList.remove('active'), 200);
+      runEnhancements();
+    });
+
+    autoDeblurBtn.addEventListener('click', () => {
+      if (!uploadedImg) return;
+      autoDeblurBtn.classList.add('active');
+      setTimeout(() => autoDeblurBtn.classList.remove('active'), 200);
+      detectBlur();
+      const recommendedDeblur = parseInt(deblurRange.value, 10);
+      if (recommendedDeblur > 0) {
+        sharpnessRange.value = Math.min(40, recommendedDeblur / 2);
+        sharpnessLabel.textContent = sharpnessRange.value;
+        runEnhancements();
+      }
+    });
+
+    downloadLink.addEventListener('click', () => {
+      downloadLink.classList.add('active');
+      setTimeout(() => downloadLink.classList.remove('active'), 200);
+    });
+
+    [brightnessRange, contrastRange, warmthRange, sharpnessRange, deblurRange].forEach(range => {
+      range.addEventListener('input', scheduleEnhancement);
+    });
+  </script>
+
+<!-- SCINTILLA WORLD FOOTER -->
+<footer style="background:#0a0a0a;color:#9ca3af;padding:20px;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:13px;border-top:1px solid rgba(255,255,255,0.1);">
+  <p>Powered by <a href="https://nutrithrive.com.au" style="color:#7c3aed;text-decoration:none;" rel="noopener sponsored">NutriThrive</a></p>
+  <p style="margin-top:4px;">&copy; 2026 Scintilla World &middot; <a href="https://scintilla.world/privacy-policy.html" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a></p>
+</footer>
+
+</body>
+</html>
+

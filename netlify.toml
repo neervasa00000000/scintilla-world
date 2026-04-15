@@ -3,79 +3,132 @@
   publish = "."
   command = ""
 
-# Serve main website from root (index.html redirects to website/)
+# Old website/ folder redirects
 [[redirects]]
-  from = "/"
-  to = "/website/index.html"
-  status = 200
-  force = false
+  from = "/website/"
+  to = "/"
+  status = 301
+  force = true
 
-# Allow website folder to be accessible
 [[redirects]]
-  from = "/website/*"
-  to = "/website/:splat"
-  status = 200
-  force = false
+  from = "/website/index.html"
+  to = "/"
+  status = 301
+  force = true
 
-# Allow extensions folder to be accessible
 [[redirects]]
-  from = "/extensions/*"
-  to = "/extensions /:splat"
-  status = 200
-  force = false
+  from = "/website/privacypolicy/Safeguard.html"
+  to = "/privacy/safeguard.html"
+  status = 301
 
-# Privacy policy redirect
+[[redirects]]
+  from = "/website/privacypolicy/asin.html"
+  to = "/privacy/asin.html"
+  status = 301
+
+# Old moringa-funnel redirect
+[[redirects]]
+  from = "/moringa-funnel.html"
+  to = "/best-moringa-powder-australia.html"
+  status = 301
+
+# Privacy policy
 [[redirects]]
   from = "/privacy-policy"
   to = "/extensions /SynapseSave/privacy-policy.html"
   status = 200
-  force = false
+
+# Tool redirects (old crazy-ideas paths → new clean paths)
+[[redirects]]
+  from = "/tools/crazy-ideas/sleep-cycle-calculator/"
+  to = "/tools/sleep-calculator/"
+  status = 301
 
 [[redirects]]
-  from = "/privacy-policy/*"
-  to = "/website/privacypolicy/:splat"
-  status = 200
-  force = false
+  from = "/tools/crazy-ideas/Image-Enhancer/"
+  to = "/tools/image-enhancer/"
+  status = 301
 
 [[redirects]]
-  from = "/privacypolicy/*"
-  to = "/website/privacypolicy/:splat"
-  status = 200
-  force = false
+  from = "/tools/crazy-ideas/convoter/"
+  to = "/tools/pdf-converter/"
+  status = 301
 
 [[redirects]]
-  from = "/privacy"
-  to = "/extensions /SynapseSave/privacy-policy.html"
-  status = 200
-  force = false
+  from = "/tools/crazy-ideas/pdf-editor/"
+  to = "/tools/pdf-editor/"
+  status = 301
 
-# Allow tools folder to be accessible
 [[redirects]]
-  from = "/tools/*"
-  to = "/tools/:splat"
-  status = 200
-  force = false
+  from = "/tools/crazy-ideas/cost-per-serve/"
+  to = "/tools/cost-calculator/"
+  status = 301
 
-# Allow assets folder to be accessible
 [[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
-  status = 200
-  force = false
+  from = "/tools/crazy-ideas/quick-recipes/"
+  to = "/tools/recipe-generator/"
+  status = 301
 
-# Allow blogs folder to be accessible
 [[redirects]]
-  from = "/blogs/*"
-  to = "/blogs/:splat"
-  status = 200
-  force = false
+  from = "/tools/crazy-ideas/clothes-size-finder/"
+  to = "/tools/size-converter/"
+  status = 301
 
-# Google Search Console verification file
+[[redirects]]
+  from = "/tools/crazy-ideas/calendar-reminder/"
+  to = "/tools/calendar-reminder/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/crazy-ideas/hex-colour-finder/"
+  to = "/tools/color-finder/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/crazy-ideas/lumina-editor/"
+  to = "/tools/lumina-editor/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/crazy-ideas/place-near-me/"
+  to = "/tools/place-finder/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/crazy-ideas/email-automation/"
+  to = "/tools/email-automation/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/crazy-ideas/cards/"
+  to = "/tools/card-studio/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/crazy-ideas/earning-finder/"
+  to = "/tools/meeting-cost-tracker/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/crazy-ideas/sigil/"
+  to = "/tools/sigil-generator/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/crazy-ideas/vision/"
+  to = "/tools/color-blindness-sim/"
+  status = 301
+
+[[redirects]]
+  from = "/tools/crazy-ideas/core/"
+  to = "/tools/thought-engine/"
+  status = 301
+
+# Google Search Console verification
 [[redirects]]
   from = "/google*.html"
   to = "/google-site-verification.html"
   status = 200
-  force = false
 
 [context.production.environment]
   NODE_ENV = "production"

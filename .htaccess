@@ -1,16 +1,29 @@
-# Redirect old URLs to new SEO-friendly URLs
-Redirect 301 /moringa-funnel.html /best-moringa-powder-australia.html
-
-# Enable rewrite engine
 RewriteEngine On
 
-# Redirect www to non-www (optional, for SEO consistency)
-# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-# RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+Redirect 301 /moringa-funnel.html /best-moringa-powder-australia.html
 
-# Force HTTPS (recommended)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+Redirect 301 /website/index.html /
+Redirect 301 /website/ / 
 
-# Custom 404 page
-ErrorDocument 404 /404.html
+Redirect 301 /website/privacypolicy/Safeguard.html /privacy/safeguard.html
+Redirect 301 /website/privacypolicy/asin.html /privacy/asin.html
+
+Redirect 301 /tools/crazy-ideas/sleep-cycle-calculator/ /tools/sleep-calculator/
+Redirect 301 /tools/crazy-ideas/Image-Enhancer/ /tools/image-enhancer/
+Redirect 301 /tools/crazy-ideas/convoter/ /tools/pdf-converter/
+Redirect 301 /tools/crazy-ideas/pdf-editor/ /tools/pdf-editor/
+Redirect 301 /tools/crazy-ideas/cost-per-serve/ /tools/cost-calculator/
+Redirect 301 /tools/crazy-ideas/quick-recipes/ /tools/recipe-generator/
+Redirect 301 /tools/crazy-ideas/clothes-size-finder/ /tools/size-converter/
+Redirect 301 /tools/crazy-ideas/calendar-reminder/ /tools/calendar-reminder/
+Redirect 301 /tools/crazy-ideas/hex-colour-finder/ /tools/color-finder/
+Redirect 301 /tools/crazy-ideas/lumina-editor/ /tools/lumina-editor/
+Redirect 301 /tools/crazy-ideas/place-near-me/ /tools/place-finder/
+Redirect 301 /tools/crazy-ideas/email-automation/ /tools/email-automation/
+Redirect 301 /tools/crazy-ideas/cards/ /tools/card-studio/
+Redirect 301 /tools/crazy-ideas/earning-finder/ /tools/meeting-cost-tracker/
+Redirect 301 /tools/crazy-ideas/sigil/ /tools/sigil-generator/
+Redirect 301 /tools/crazy-ideas/vision/ /tools/color-blindness-sim/
+Redirect 301 /tools/crazy-ideas/core/ /tools/thought-engine/
+
+ErrorDocument 404 /
