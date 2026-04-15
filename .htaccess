@@ -1,0 +1,16 @@
+# Redirect old URLs to new SEO-friendly URLs
+Redirect 301 /moringa-funnel.html /best-moringa-powder-australia.html
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Redirect www to non-www (optional, for SEO consistency)
+# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+# RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# Force HTTPS (recommended)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# Custom 404 page
+ErrorDocument 404 /404.html
