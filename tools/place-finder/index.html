@@ -1061,7 +1061,7 @@
           },
         ],
         notes: "Authentic Chinese dim sum. Popular with locals.",
-        url: "https://www.google.com.maps/search/?api=1&query=-37.8167,145.1167",
+        url: "https://www.google.com/maps/search/?api=1&query=-37.8167,145.1167",
       },
       {
         id: "19",
@@ -1339,6 +1339,78 @@
       });
     }
 
+    async function fetchPlacesFromOverpass(lat, lng, radiusM = 3000) {
+      const q =
+        `[out:json][timeout:25];
+(
+  node["amenity"~"restaurant|cafe|fast_food|food_court|bar|pub"](around:${radiusM},${lat},${lng});
+  way["amenity"~"restaurant|cafe|fast_food|food_court|bar|pub"](around:${radiusM},${lat},${lng});
+);
+out center tags;`;
+      try {
+        const response = await fetch("https://overpass-api.de/api/interpreter", {
+          method: "POST",
+          body: "data=" + encodeURIComponent(q),
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        });
+        if (!response.ok) return null;
+        const data = await response.json();
+        if (!data.elements || data.elements.length === 0) return null;
+
+        const seen = new Set();
+        const mapped = [];
+        for (const el of data.elements) {
+          const tags = el.tags || {};
+          const amenity = (tags.amenity || "restaurant").replace(/_/g, " ");
+          const name =
+            tags.name ||
+            tags.brand ||
+            tags["name:en"] ||
+            (tags.cuisine ? tags.cuisine + " spot" : "Unnamed " + amenity);
+          let plat;
+          let plon;
+          if (el.lat != null && el.lon != null) {
+            plat = el.lat;
+            plon = el.lon;
+          } else if (el.center) {
+            plat = el.center.lat;
+            plon = el.center.lon;
+          } else {
+            continue;
+          }
+          const dedupeKey = `${name}|${plat.toFixed(4)}|${plon.toFixed(4)}`;
+          if (seen.has(dedupeKey)) continue;
+          seen.add(dedupeKey);
+
+          const suburb =
+            tags["addr:suburb"] ||
+            tags["addr:city"] ||
+            tags["addr:town"] ||
+            tags["addr:hamlet"] ||
+            "Nearby";
+          const tagList = [amenity];
+          if (tags.cuisine) tagList.push(tags.cuisine.replace(/_/g, " "));
+          mapped.push({
+            id: `${el.type[0]}${el.id}`,
+            name,
+            suburb,
+            lat: plat,
+            lng: plon,
+            basePrice: 12 + Math.floor(Math.random() * 18),
+            rating: +(3.7 + Math.random() * 1.1).toFixed(1),
+            tags: tagList,
+            deals: [],
+            notes: tags.description || `${name} — ${amenity} (OpenStreetMap)`,
+            url: `https://www.google.com/maps/search/?api=1&query=${plat},${plon}`,
+          });
+        }
+        return mapped.length ? mapped.slice(0, 40) : null;
+      } catch (e) {
+        console.error("Overpass error:", e);
+        return null;
+      }
+    }
+
     async function fetchPlacesFromOpenStreetMap(lat, lng, radius = 5000) {
       try {
         const response = await fetch(
@@ -1389,13 +1461,18 @@
       if (!USE_FREE_API) {
         return null;
       }
-      
-      await new Promise(resolve => setTimeout(resolve, 1100));
+
+      const overpass = await fetchPlacesFromOverpass(lat, lng);
+      if (overpass && overpass.length > 0) {
+        return overpass;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1100));
       const osmResults = await fetchPlacesFromOpenStreetMap(lat, lng);
       if (osmResults && osmResults.length > 0) {
         return osmResults;
       }
-      
+
       return null;
     }
 
