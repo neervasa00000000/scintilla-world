@@ -32,10 +32,61 @@
   to = "/best-moringa-powder-australia.html"
   status = 301
 
+# Root blog pages moved into /blogs/ (keep old URLs alive)
+[[redirects]]
+  from = "/best-moringa-powder-australia.html"
+  to = "/blogs/best-moringa-powder-australia.html"
+  status = 301
+
+[[redirects]]
+  from = "/best-moringa-capsules-australia.html"
+  to = "/blogs/best-moringa-capsules-australia.html"
+  status = 301
+
+[[redirects]]
+  from = "/moringa-vs-turmeric-australia.html"
+  to = "/blogs/moringa-vs-turmeric-australia.html"
+  status = 301
+
+[[redirects]]
+  from = "/moringa-vs-spirulina-australia.html"
+  to = "/blogs/moringa-vs-spirulina-australia.html"
+  status = 301
+
+[[redirects]]
+  from = "/moringa-vs-matcha-australia.html"
+  to = "/blogs/moringa-vs-matcha-australia.html"
+  status = 301
+
+[[redirects]]
+  from = "/how-to-use-moringa-powder-australia.html"
+  to = "/blogs/how-to-use-moringa-powder-australia.html"
+  status = 301
+
+[[redirects]]
+  from = "/moringa-reviews-australia.html"
+  to = "/blogs/moringa-reviews-australia.html"
+  status = 301
+
+[[redirects]]
+  from = "/can-you-grow-moringa-australia.html"
+  to = "/blogs/can-you-grow-moringa-australia.html"
+  status = 301
+
+[[redirects]]
+  from = "/curry-leaves-guide-australia.html"
+  to = "/blogs/curry-leaves-guide-australia.html"
+  status = 301
+
+[[redirects]]
+  from = "/moringa-leaves-melbourne.html"
+  to = "/blogs/moringa-leaves-melbourne.html"
+  status = 301
+
 # Privacy policy
 [[redirects]]
   from = "/privacy-policy"
-  to = "/extensions /SynapseSave/privacy-policy.html"
+  to = "/extensions/SynapseSave/privacy-policy.html"
   status = 200
 
 # Tool redirects (old crazy-ideas paths → new clean paths)
