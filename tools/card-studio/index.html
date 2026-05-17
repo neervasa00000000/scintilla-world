@@ -240,24 +240,27 @@
   <meta name="geo.region" content="AU-VIC">
   <link rel="alternate" hreflang="en-AU" href="https://scintilla.world/tools/card-studio/">
   <link rel="alternate" hreflang="x-default" href="https://scintilla.world/tools/card-studio/">
+  <link rel="stylesheet" href="/assets/css/scintilla.css">
 </head>
 
 <body>
 <div id="app-loading" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#050505;color:#666;font-family:Inter,sans-serif;font-size:14px;">Loading tool...</div>
 
-<!-- SCINTILLA WORLD HEADER -->
-<header style="position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,0.1);">
-  <a href="https://scintilla.world" style="color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;">
-    <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#2563eb);border-radius:8px;font-size:18px;font-weight:800;">S</span>
-    SCINTILLA WORLD
-  </a>
-  <nav style="display:flex;gap:16px;font-size:14px;">
-    <a href="https://scintilla.world/#tools" style="color:#d1d5db;text-decoration:none;">Tools</a>
-    <a href="https://scintilla.world/blogs/" style="color:#d1d5db;text-decoration:none;">Blogs</a>
-  </nav>
+<!-- Scintilla chrome -->
+<header class="sw-header sw-header--tool">
+  <div class="sw-header__inner">
+    <a href="/" class="sw-logo">
+      <span class="sw-logo__mark" aria-hidden="true">S</span>
+      Scintilla World
+    </a>
+    <nav class="sw-nav" aria-label="Site">
+      <a href="/#tools">Tools</a>
+      <a href="/blogs/">Blog</a>
+    </nav>
+  </div>
 </header>
 
-    <div id="root" style="display:none"></div>
+<div id="root" style="display:none"></div>
 
     <script type="text/babel">
 

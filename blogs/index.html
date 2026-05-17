@@ -17,228 +17,143 @@
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Blog | Scintilla World — Australian Wellness & Tools">
     <meta property="og:description" content="Superfood science, free web tool guides, and Australian wellness insights.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; line-height: 1.6; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
-        
-        /* Header */
-        header { background: rgba(10,10,10,0.95); backdrop-filter: blur(10px); position: fixed; top: 0; left: 0; right: 0; z-index: 100; border-bottom: 1px solid #222; }
-        header .container { display: flex; justify-content: space-between; align-items: center; height: 64px; }
-        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: #fff; font-weight: 700; font-size: 1.25rem; }
-        .logo-icon { width: 32px; height: 32px; background: #10b981; color: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
-        nav { display: flex; gap: 2rem; }
-        nav a { color: #9ca3af; text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
-        nav a:hover { color: #fff; }
-        nav a.active { color: #10b981; }
-        
-        /* Hero */
-        .hero { padding: 120px 0 40px; text-align: center; }
-        .hero h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; }
-        .hero p { color: #9ca3af; font-size: 1.125rem; max-width: 600px; margin: 0 auto 1.5rem; }
-        
-        /* Search */
-        .search-box { max-width: 500px; margin: 0 auto 2rem; }
-        .search-input { width: 100%; padding: 0.875rem 1.25rem; background: #141414; border: 1px solid #222; border-radius: 8px; color: #fff; font-size: 0.9375rem; outline: none; }
-        .search-input:focus { border-color: #10b981; }
-        .search-input::placeholder { color: #6b7280; }
-        
-        /* Filters */
-        .filters { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
-        .filter-btn { padding: 0.5rem 1rem; background: #141414; border: 1px solid #222; border-radius: 20px; color: #9ca3af; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; }
-        .filter-btn:hover { border-color: #333; color: #fff; }
-        .filter-btn.active { background: rgba(16,185,129,0.1); border-color: #10b981; color: #10b981; }
-        
-        /* Blog Grid */
-        .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; }
-        .blog-card { background: #141414; border: 1px solid #222; border-radius: 12px; padding: 1.5rem; text-decoration: none; color: #fff; transition: all 0.2s; display: flex; flex-direction: column; }
-        .blog-card:hover { border-color: #333; background: #1a1a1a; }
-        .blog-card.hidden { display: none; }
-        .card-meta { display: flex; gap: 1rem; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem; }
-        .card-category { color: #10b981; font-weight: 500; }
-        .card-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; }
-        .card-desc { color: #9ca3af; font-size: 0.875rem; line-height: 1.5; flex-grow: 1; }
-        .card-link { color: #10b981; font-size: 0.875rem; font-weight: 500; margin-top: 1rem; }
-        
-        /* No results */
-        .no-results { text-align: center; padding: 3rem; color: #6b7280; display: none; }
-        .no-results.show { display: block; }
-        
-        /* Footer */
-        footer { border-top: 1px solid #222; padding: 40px 0; margin-top: 60px; }
-        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .footer-links { display: flex; gap: 1.5rem; }
-        .footer-links a { color: #6b7280; text-decoration: none; font-size: 0.875rem; }
-        .footer-links a:hover { color: #fff; }
-        .footer-links a.highlight { color: #10b981; }
-        
-        /* Mobile */
-        @media (max-width: 768px) {
-            nav { display: none; }
-            .hero h1 { font-size: 2rem; }
-            .blog-grid { grid-template-columns: 1fr; }
-            .footer-content { flex-direction: column; text-align: center; }
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/scintilla.css">
 </head>
-<body>
-    <header>
-        <div class="container">
-            <a href="/" class="logo">
-                <div class="logo-icon">S</div>
+<body class="sw-site">
+    <div class="sw-ambient" aria-hidden="true"></div>
+    <div class="sw-grain" aria-hidden="true"></div>
+
+    <header class="sw-header">
+        <div class="sw-header__inner">
+            <a href="/" class="sw-logo">
+                <span class="sw-logo__mark" aria-hidden="true">S</span>
                 Scintilla World
             </a>
-            <nav>
+            <button type="button" class="sw-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="sw-nav">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="sw-nav" id="sw-nav">
                 <a href="/#tools">Tools</a>
-                <a href="/blogs/" class="active">Blog</a>
+                <a href="/blogs/" class="is-active">Blog</a>
                 <a href="/best-moringa-powder-australia.html">Moringa</a>
                 <a href="/privacy-policy.html">Privacy</a>
             </nav>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="container">
-            <h1>Blog</h1>
-            <p>Superfood science, free web tool guides, and Australian wellness insights.</p>
-            
-            <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search articles... (e.g. moringa, sleep, PDF)">
-            </div>
-            
-            <div class="filters" id="filterButtons">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="superfood">Superfood</button>
-                <button class="filter-btn" data-filter="skincare">Skincare</button>
-                <button class="filter-btn" data-filter="freetools">Free Tools</button>
-                <button class="filter-btn" data-filter="localguides">Local</button>
-            </div>
-        </div>
-    </section>
+    <main>
+        <section class="sw-hero">
+            <div class="sw-container">
+                <div class="sw-hero__badge">Wellness &amp; tools</div>
+                <h1>Insights for <span class="sw-gradient">real life</span></h1>
+                <p class="sw-hero__lead">Superfood science, free web tool guides, and Australian wellness — written to be useful, not salesy.</p>
 
-    <section class="section">
-        <div class="container">
-            <div class="blog-grid" id="blogGrid">
-                
-                <a href="/blogs/moringa-for-beginners-melbourne-start-right-2026.html" class="blog-card" data-category="superfood" data-title="Moringa for Beginners" data-desc="Never tried moringa? Complete starter guide with dosage, recipes, and beginner mistakes.">
-                    <div class="card-meta">
-                        <span class="card-category">Superfood</span>
-                        <span>Apr 2026</span>
-                    </div>
-                    <h3 class="card-title">Moringa for Beginners: Start Right</h3>
-                    <p class="card-desc">Never tried moringa? Your complete starter guide — week-by-week timeline, dosage, recipes, beginner mistakes.</p>
-                    <span class="card-link">Read more →</span>
-                </a>
-
-                <a href="/blogs/moringa-benefits-melbourne-complete-guide-2026.html" class="blog-card" data-category="superfood" data-title="Moringa Benefits" data-desc="Every moringa benefit that matters for Melbourne Australians.">
-                    <div class="card-meta">
-                        <span class="card-category">Superfood</span>
-                        <span>Apr 2026</span>
-                    </div>
-                    <h3 class="card-title">Moringa Benefits: Complete Guide</h3>
-                    <p class="card-desc">Every moringa benefit that matters — energy, immunity, skin, cholesterol, digestion, dosage, recipes.</p>
-                    <span class="card-link">Read more →</span>
-                </a>
-
-                <a href="/blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html" class="blog-card" data-category="superfood" data-title="Where to Buy Moringa" data-desc="Where to buy quality moringa in Australia — retail vs specialist, freshness checks.">
-                    <div class="card-meta">
-                        <span class="card-category">Superfood</span>
-                        <span>Mar 2026</span>
-                    </div>
-                    <h3 class="card-title">Where to Buy Quality Moringa AU</h3>
-                    <p class="card-desc">Where to buy quality moringa in Australia — retail vs specialist, freshness checks, lab-testing context.</p>
-                    <span class="card-link">Read more →</span>
-                </a>
-
-                <a href="/blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html" class="blog-card" data-category="superfood" data-title="Moringa Reviews" data-desc="How to spot fake superfood reviews and evaluate health product claims.">
-                    <div class="card-meta">
-                        <span class="card-category">Superfood</span>
-                        <span>Mar 2026</span>
-                    </div>
-                    <h3 class="card-title">Real vs Fake Superfood Reviews</h3>
-                    <p class="card-desc">How to spot fake superfood reviews and evaluate health product claims — a 2026 buyer's literacy guide.</p>
-                    <span class="card-link">Read more →</span>
-                </a>
-
-                <a href="/blogs/moringa-vs-matcha-australia-2026.html" class="blog-card" data-category="superfood" data-title="Moringa vs Matcha" data-desc="Moringa vs matcha — which green powder delivers real healthspan benefits for Australians?">
-                    <div class="card-meta">
-                        <span class="card-category">Superfood</span>
-                        <span>Mar 2026</span>
-                    </div>
-                    <h3 class="card-title">Moringa vs Matcha Australia</h3>
-                    <p class="card-desc">Moringa vs matcha — which green powder delivers real healthspan benefits for Australians?</p>
-                    <span class="card-link">Read more →</span>
-                </a>
-
-                <a href="/blogs/truganina-secret-moringa-soap-australia-skincare-2026.html" class="blog-card" data-category="skincare" data-title="Moringa Skincare" data-desc="The science behind moringa in skincare — MO2 proteins, pH balance, and botanical cleansers.">
-                    <div class="card-meta">
-                        <span class="card-category">Skincare</span>
-                        <span>Mar 2026</span>
-                    </div>
-                    <h3 class="card-title">Moringa Skincare Science</h3>
-                    <p class="card-desc">The science behind moringa in skincare — MO2 proteins, pH balance, and how botanical cleansers compare.</p>
-                    <span class="card-link">Read more →</span>
-                </a>
-
-                <a href="/blogs/sleep-cycle-calculator-science.html" class="blog-card" data-category="freetools" data-title="Sleep Calculator" data-desc="The science behind 90-minute sleep cycles and how timing your wake-up can transform rest.">
-                    <div class="card-meta">
-                        <span class="card-category">Free Tools</span>
-                        <span>Nov 2025</span>
-                    </div>
-                    <h3 class="card-title">Sleep Cycle Calculator Science</h3>
-                    <p class="card-desc">The science behind 90-minute sleep cycles — and how timing your wake-up can transform how rested you feel.</p>
-                    <span class="card-link">Read more →</span>
-                </a>
-
-                <a href="/blogs/top-10-melbourne-health-wellness-shops-2026.html" class="blog-card" data-category="localguides" data-title="Melbourne Health Shops" data-desc="Melbourne's top 10 health and wellness shops for 2026.">
-                    <div class="card-meta">
-                        <span class="card-category">Local</span>
-                        <span>Mar 2026</span>
-                    </div>
-                    <h3 class="card-title">Top 10 Melbourne Health Shops</h3>
-                    <p class="card-desc">Melbourne's top 10 health and wellness shops for 2026 — from Victoria Market to specialist superfood stores.</p>
-                    <span class="card-link">Read more →</span>
-                </a>
-
-                <a href="/blogs/student-hack-pdf-to-text.html" class="blog-card" data-category="freetools" data-title="PDF to Text" data-desc="How to convert PDFs to editable text without signing up for anything.">
-                    <div class="card-meta">
-                        <span class="card-category">Free Tools</span>
-                        <span>Dec 2025</span>
-                    </div>
-                    <h3 class="card-title">Convert PDF to Text Free</h3>
-                    <p class="card-desc">How to convert PDFs to editable text without signing up for anything — free, private, and instant.</p>
-                    <span class="card-link">Read more →</span>
-                </a>
-
-            </div>
-            
-            <div class="no-results" id="noResults">
-                <p>No articles found. Try a different search term.</p>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div style="color: #6b7280; font-size: 0.875rem;">
-                    © 2026 Scintilla World
+                <div class="sw-search">
+                    <input type="search" id="searchInput" placeholder="Search articles… (moringa, sleep, PDF)" aria-label="Search blog articles">
                 </div>
-                <div class="footer-links">
-                    <a href="/">Tools</a>
-                    <a href="/best-moringa-powder-australia.html" class="highlight">Moringa Guide</a>
-                    <a href="/privacy-policy.html">Privacy</a>
+
+                <div class="sw-filters" id="filterButtons">
+                    <button type="button" class="sw-filter is-active" data-filter="all">All</button>
+                    <button type="button" class="sw-filter" data-filter="superfood">Superfood</button>
+                    <button type="button" class="sw-filter" data-filter="skincare">Skincare</button>
+                    <button type="button" class="sw-filter" data-filter="freetools">Free tools</button>
+                    <button type="button" class="sw-filter" data-filter="localguides">Local</button>
                 </div>
             </div>
+        </section>
+
+        <section class="sw-section" style="padding-top: 0;">
+            <div class="sw-container">
+                <div class="sw-grid sw-blog-grid" id="blogGrid">
+
+                    <a href="/blogs/moringa-for-beginners-melbourne-start-right-2026.html" class="sw-card" data-category="superfood" data-title="Moringa for Beginners" data-desc="Never tried moringa? Complete starter guide with dosage, recipes, and beginner mistakes.">
+                        <div class="sw-card__meta"><span class="sw-card__cat">Superfood</span> · Apr 2026</div>
+                        <h3>Moringa for Beginners: Start Right</h3>
+                        <p>Never tried moringa? Your complete starter guide — week-by-week timeline, dosage, recipes, beginner mistakes.</p>
+                        <span class="sw-card__arrow">Read article →</span>
+                    </a>
+
+                    <a href="/blogs/moringa-benefits-melbourne-complete-guide-2026.html" class="sw-card" data-category="superfood" data-title="Moringa Benefits" data-desc="Every moringa benefit that matters for Melbourne Australians.">
+                        <div class="sw-card__meta"><span class="sw-card__cat">Superfood</span> · Apr 2026</div>
+                        <h3>Moringa Benefits: Complete Guide</h3>
+                        <p>Every moringa benefit that matters — energy, immunity, skin, cholesterol, digestion, dosage, recipes.</p>
+                        <span class="sw-card__arrow">Read article →</span>
+                    </a>
+
+                    <a href="/blogs/australian-sourcing-quality-moringa-where-to-buy-2026.html" class="sw-card" data-category="superfood" data-title="Where to Buy Moringa" data-desc="Where to buy quality moringa in Australia — retail vs specialist, freshness checks.">
+                        <div class="sw-card__meta"><span class="sw-card__cat">Superfood</span> · Mar 2026</div>
+                        <h3>Where to Buy Quality Moringa AU</h3>
+                        <p>Where to buy quality moringa in Australia — retail vs specialist, freshness checks, lab-testing context.</p>
+                        <span class="sw-card__arrow">Read article →</span>
+                    </a>
+
+                    <a href="/blogs/nutri-thrive-verdict-moringa-reviews-australia-2026.html" class="sw-card" data-category="superfood" data-title="Moringa Reviews" data-desc="How to spot fake superfood reviews and evaluate health product claims.">
+                        <div class="sw-card__meta"><span class="sw-card__cat">Superfood</span> · Mar 2026</div>
+                        <h3>Real vs Fake Superfood Reviews</h3>
+                        <p>How to spot fake superfood reviews and evaluate health product claims — a 2026 buyer's literacy guide.</p>
+                        <span class="sw-card__arrow">Read article →</span>
+                    </a>
+
+                    <a href="/blogs/moringa-vs-matcha-australia-2026.html" class="sw-card" data-category="superfood" data-title="Moringa vs Matcha" data-desc="Moringa vs matcha — which green powder delivers real healthspan benefits for Australians?">
+                        <div class="sw-card__meta"><span class="sw-card__cat">Superfood</span> · Mar 2026</div>
+                        <h3>Moringa vs Matcha Australia</h3>
+                        <p>Moringa vs matcha — which green powder delivers real healthspan benefits for Australians?</p>
+                        <span class="sw-card__arrow">Read article →</span>
+                    </a>
+
+                    <a href="/blogs/truganina-secret-moringa-soap-australia-skincare-2026.html" class="sw-card" data-category="skincare" data-title="Moringa Skincare" data-desc="The science behind moringa in skincare — MO2 proteins, pH balance, and botanical cleansers.">
+                        <div class="sw-card__meta"><span class="sw-card__cat">Skincare</span> · Mar 2026</div>
+                        <h3>Moringa Skincare Science</h3>
+                        <p>The science behind moringa in skincare — MO2 proteins, pH balance, and how botanical cleansers compare.</p>
+                        <span class="sw-card__arrow">Read article →</span>
+                    </a>
+
+                    <a href="/blogs/sleep-cycle-calculator-science.html" class="sw-card" data-category="freetools" data-title="Sleep Calculator" data-desc="The science behind 90-minute sleep cycles and how timing your wake-up can transform rest.">
+                        <div class="sw-card__meta"><span class="sw-card__cat">Free tools</span> · Nov 2025</div>
+                        <h3>Sleep Cycle Calculator Science</h3>
+                        <p>The science behind 90-minute sleep cycles — and how timing your wake-up can transform how rested you feel.</p>
+                        <span class="sw-card__arrow">Read article →</span>
+                    </a>
+
+                    <a href="/blogs/top-10-melbourne-health-wellness-shops-2026.html" class="sw-card" data-category="localguides" data-title="Melbourne Health Shops" data-desc="Melbourne's top 10 health and wellness shops for 2026.">
+                        <div class="sw-card__meta"><span class="sw-card__cat">Local</span> · Mar 2026</div>
+                        <h3>Top 10 Melbourne Health Shops</h3>
+                        <p>Melbourne's top 10 health and wellness shops for 2026 — from Victoria Market to specialist superfood stores.</p>
+                        <span class="sw-card__arrow">Read article →</span>
+                    </a>
+
+                    <a href="/blogs/student-hack-pdf-to-text.html" class="sw-card" data-category="freetools" data-title="PDF to Text" data-desc="How to convert PDFs to editable text without signing up for anything.">
+                        <div class="sw-card__meta"><span class="sw-card__cat">Free tools</span> · Dec 2025</div>
+                        <h3>Convert PDF to Text Free</h3>
+                        <p>How to convert PDFs to editable text without signing up — free, private, and instant.</p>
+                        <span class="sw-card__arrow">Read article →</span>
+                    </a>
+
+                </div>
+
+                <div class="sw-no-results" id="noResults" role="status">
+                    <p>No articles found. Try a different search term.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="sw-footer">
+        <div class="sw-container sw-footer__inner">
+            <p class="sw-footer__brand">© 2026 Scintilla World</p>
+            <nav class="sw-footer__links" aria-label="Footer">
+                <a href="/">Tools</a>
+                <a href="/best-moringa-powder-australia.html" class="is-highlight">Moringa guide</a>
+                <a href="/privacy-policy.html">Privacy</a>
+            </nav>
         </div>
     </footer>
 
+    <script src="/assets/js/scintilla-nav.js" defer></script>
     <script>
         const searchInput = document.getElementById('searchInput');
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const cards = document.querySelectorAll('.blog-card');
+        const filterButtons = document.querySelectorAll('.sw-filter');
+        const cards = document.querySelectorAll('#blogGrid .sw-card');
         const noResults = document.getElementById('noResults');
         let activeFilter = 'all';
 
@@ -248,29 +163,27 @@
 
             cards.forEach(card => {
                 const category = card.getAttribute('data-category');
-                const title = card.getAttribute('data-title').toLowerCase();
-                const desc = card.getAttribute('data-desc').toLowerCase();
-
+                const title = (card.getAttribute('data-title') || '').toLowerCase();
+                const desc = (card.getAttribute('data-desc') || '').toLowerCase();
                 const matchesFilter = activeFilter === 'all' || category === activeFilter;
                 const matchesSearch = !query || title.includes(query) || desc.includes(query);
 
                 if (matchesFilter && matchesSearch) {
-                    card.classList.remove('hidden');
+                    card.classList.remove('is-hidden');
                     visible++;
                 } else {
-                    card.classList.add('hidden');
+                    card.classList.add('is-hidden');
                 }
             });
 
-            noResults.classList.toggle('show', visible === 0);
+            noResults.classList.toggle('is-visible', visible === 0);
         }
 
         searchInput.addEventListener('input', filterCards);
-
         filterButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                filterButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+                filterButtons.forEach(b => b.classList.remove('is-active'));
+                btn.classList.add('is-active');
                 activeFilter = btn.getAttribute('data-filter');
                 filterCards();
             });
