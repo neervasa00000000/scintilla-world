@@ -61,22 +61,30 @@
             table { font-size: 0.875rem; }
         }
     </style>
+  <link rel="stylesheet" href="/assets/css/scintilla.css">
 </head>
-<body>
-    <header>
-        <div class="container">
-            <a href="/" class="logo">
-                <div class="logo-icon">S</div>
-                Scintilla World
-            </a>
-            <nav>
-                <a href="/">Tools</a>
-                <a href="/blogs/">Blog</a>
-                <a href="/best-moringa-powder-australia.html">Moringa</a>
-                <a href="/privacy-policy.html">Privacy</a>
-            </nav>
-        </div>
-    </header>
+<body class="sw-site sw-blog-legacy">
+    <div class="sw-ambient" aria-hidden="true"></div>
+<div class="sw-grain" aria-hidden="true"></div>
+<header class="sw-header">
+  <div class="sw-header__inner">
+    <a href="/" class="sw-logo">
+      <span class="sw-logo__mark" aria-hidden="true">S</span>
+      Scintilla World
+    </a>
+    <button type="button" class="sw-menu-btn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="sw-nav" aria-label="Site">
+      <a href="/#tools">Tools</a>
+      <a href="/blogs/">Blog</a>
+      <a href="/privacy-policy.html">Privacy</a>
+    </nav>
+  </div>
+</header>
+<script src="/assets/js/scintilla-nav.js" defer></script>
+
+    
 
     <section class="hero">
         <div class="container">
@@ -150,17 +158,16 @@
         </div>
     </section>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div style="color: #6b7280; font-size: 0.875rem;">© 2026 Scintilla World</div>
-                <div class="footer-links">
-                    <a href="/">Tools</a>
-                    <a href="/blogs/">Blog</a>
-                    <a href="/privacy-policy.html">Privacy</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <footer class="sw-footer">
+  <div class="sw-container sw-footer__inner">
+    <p class="sw-footer__brand">© 2026 Scintilla World</p>
+    <nav class="sw-footer__links" aria-label="Footer">
+      <a href="/">Tools</a>
+      <a href="/blogs/">Blog</a>
+      <a href="/privacy-policy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
+
 </body>
 </html>

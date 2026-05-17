@@ -466,7 +466,6 @@
     }
   </style>
   <script src="pdf.min.js"></script>
-  <script src="pdf.worker.min.js" type="text/javascript"></script>
   <script src="jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js" onerror="console.error('Failed to load html-docx-js')"></script>
@@ -490,22 +489,25 @@
   <link rel="alternate" hreflang="en-AU" href="https://scintilla.world/tools/pdf-converter/">
   <link rel="alternate" hreflang="x-default" href="https://scintilla.world/tools/pdf-converter/">
     <link rel="stylesheet" href="/assets/css/tailwind-blog.css">
+  <link rel="stylesheet" href="/assets/css/scintilla.css">
 </head>
 <body>
 
-<!-- SCINTILLA WORLD HEADER -->
-<header style="position:sticky;top:0;z-index:9999;background:#0a0a0a;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-family:Inter,system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,0.1);">
-  <a href="https://scintilla.world" style="color:#fff;text-decoration:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;">
-    <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#2563eb);border-radius:8px;font-size:18px;font-weight:800;">S</span>
-    SCINTILLA WORLD
-  </a>
-  <nav style="display:flex;gap:16px;font-size:14px;">
-    <a href="https://scintilla.world/#tools" style="color:#d1d5db;text-decoration:none;">Tools</a>
-    <a href="https://scintilla.world/blogs/" style="color:#d1d5db;text-decoration:none;">Blogs</a>
-  </nav>
+<!-- Scintilla chrome -->
+<header class="sw-header sw-header--tool">
+  <div class="sw-header__inner">
+    <a href="/" class="sw-logo">
+      <span class="sw-logo__mark" aria-hidden="true">S</span>
+      Scintilla World
+    </a>
+    <nav class="sw-nav" aria-label="Site">
+      <a href="/#tools">Tools</a>
+      <a href="/blogs/">Blog</a>
+    </nav>
+  </div>
 </header>
 
-  <div class="app-container">
+<div class="app-container">
     <div class="header">
       <h1>Universal File Converter</h1>
       <p>Convert files between formats instantly. Images, Documents, Audio, Video, and Archives—all in your browser.</p>
@@ -1150,8 +1152,7 @@
       if (!window.pdfjsLib) throw new Error('PDF library not loaded');
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Universal File Converter | Scintilla World</title>    <link rel="stylesheet" href="/assets/css/tailwind-blog.css">
-</head><body>';
+      let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Universal File Converter | Scintilla World</title><link rel="stylesheet" href="/assets/css/tailwind-blog.css"></head><body>`;
       for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         const page = await pdf.getPage(pageNum);
         const content = await page.getTextContent();
@@ -1161,14 +1162,13 @@
         });
         html += '</div>';
       }
-      html += '
+      html += `
 <!-- SCINTILLA WORLD FOOTER -->
 <footer style="background:#0a0a0a;color:#9ca3af;padding:20px;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:13px;border-top:1px solid rgba(255,255,255,0.1);">
   <p>Powered by <a href="https://nutrithrive.com.au" style="color:#7c3aed;text-decoration:none;" rel="noopener sponsored">NutriThrive</a></p>
   <p style="margin-top:4px;">&copy; 2026 Scintilla World &middot; <a href="https://scintilla.world/privacy-policy.html" style="color:#9ca3af;text-decoration:underline;">Privacy Policy</a></p>
 </footer>
-
-</body></html>';
+</body></html>`;
       return new Blob([html], { type: 'text/html' });
     }
 
