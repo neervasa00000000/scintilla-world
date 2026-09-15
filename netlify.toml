@@ -9,5 +9,21 @@
   to = "/privacy-policy.html"
   status = 301
 
+# Keep HTML fresh so deploys never serve a stale page that 404s its JS chunks.
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/404.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
 [context.production.environment]
   NODE_ENV = "production"

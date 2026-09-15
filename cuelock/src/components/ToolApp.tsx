@@ -11,6 +11,7 @@ import {
   type AppSnapshot,
 } from "@/lib/store";
 import { MapPane } from "@/components/MapPane";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export function ToolApp() {
   const [snap, setSnap] = useState<AppSnapshot>(() => loadMelbourneDemo(15));
@@ -22,22 +23,38 @@ export function ToolApp() {
   const [openDetails, setOpenDetails] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    installWindowAPI();
+    try {
+      installWindowAPI();
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
-  const problems = useMemo(
-    () => (snap.lastResult ? buildProblems(snap.lastResult) : []),
-    [snap.lastResult]
-  );
-  const summary = useMemo(
-    () =>
-      snap.lastResult ? plainSummary(snap.lastResult, problems) : null,
-    [snap.lastResult, problems]
-  );
-  const failIds = useMemo(
-    () => (snap.lastResult ? failingCueIds(snap.lastResult) : new Set<string>()),
-    [snap.lastResult]
-  );
+  const problems = useMemo(() => {
+    try {
+      return snap.lastResult ? buildProblems(snap.lastResult) : [];
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }, [snap.lastResult]);
+  const summary = useMemo(() => {
+    try {
+      return snap.lastResult ? plainSummary(snap.lastResult, problems) : null;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }, [snap.lastResult, problems]);
+  const failIds = useMemo(() => {
+    try {
+      return snap.lastResult
+        ? failingCueIds(snap.lastResult)
+        : new Set<string>();
+    } catch {
+      return new Set<string>();
+    }
+  }, [snap.lastResult]);
   const callouts = useMemo(() => {
     if (snap.phase === "checked_pass") return [];
     const preferred = [
@@ -51,28 +68,29 @@ export function ToolApp() {
   }, [problems, snap.phase]);
 
   const onDemo = useCallback(() => {
-    setError(null);
-    const next = loadMelbourneDemo(threshold);
-    setSnap(next);
-    setResetToken((t) => t + 1);
-    setOpenDetails({});
+    try {
+      setError(null);
+      setSnap(loadMelbourneDemo(threshold));
+      setResetToken((t) => t + 1);
+      setOpenDetails({});
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Demo failed");
+    }
   }, [threshold]);
 
   const onCheck = useCallback(() => {
-    setError(null);
-    setSnap((s) => runCheck(s.cues, threshold, s.demo, s.fixChanges));
+    try {
+      setError(null);
+      setSnap((s) => runCheck(s.cues, threshold, s.demo, s.fixChanges));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Check failed");
+    }
   }, [threshold]);
 
   const onFix = useCallback(() => {
-    setError(null);
     try {
-      setSnap((s) => {
-        const next = applyFix(s.cues, threshold, s.demo);
-        if (!next.lastResult?.summary.pass) {
-          console.warn("Fix applied but still FAIL", next.lastResult?.summary);
-        }
-        return next;
-      });
+      setError(null);
+      setSnap((s) => applyFix(s.cues, threshold, s.demo, s.fixChanges));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Fix failed");
     }
@@ -80,15 +98,19 @@ export function ToolApp() {
 
   const onCopy = useCallback(async () => {
     if (!snap.lastResult) return;
-    await copyTestingReport(snap.lastResult, {
-      demo: snap.demo,
-      appUrl: window.location.href,
-      fixChanges: snap.fixChanges,
-      userAgent: navigator.userAgent,
-      viewport: `${window.innerWidth}×${window.innerHeight}`,
-    });
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await copyTestingReport(snap.lastResult, {
+        demo: snap.demo,
+        appUrl: window.location.href,
+        fixChanges: snap.fixChanges,
+        userAgent: navigator.userAgent,
+        viewport: `${window.innerWidth}×${window.innerHeight}`,
+      });
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not copy report");
+    }
   }, [snap]);
 
   const topProblems = problems.slice(0, 3);
@@ -159,13 +181,15 @@ export function ToolApp() {
       )}
 
       <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,0.65fr)_minmax(280px,0.35fr)]">
-        <section className="relative h-[min(70vh,640px)] min-h-[420px] border-b border-[var(--border)] lg:h-auto lg:min-h-[520px] lg:border-b-0 lg:border-r">
-          <MapPane
-            cues={snap.cues}
-            failingIds={failIds}
-            callouts={callouts}
-            resetToken={resetToken}
-          />
+        <section className="relative h-[min(70vh,640px)] min-h-[480px] border-b border-[var(--border)] lg:border-b-0 lg:border-r">
+          <ErrorBoundary>
+            <MapPane
+              cues={snap.cues}
+              failingIds={failIds}
+              callouts={callouts}
+              resetToken={resetToken}
+            />
+          </ErrorBoundary>
         </section>
 
         <section className="flex min-h-0 flex-col bg-[var(--panel)]">
@@ -203,8 +227,8 @@ export function ToolApp() {
                     Fix: {p.fixPlain}
                   </p>
                   <p className="mono mt-1 text-[11px] text-[var(--dim)]">
-                    difference {p.deltaEBefore.toFixed(0)} →{" "}
-                    {p.deltaEAfter.toFixed(0)} (need {p.threshold})
+                    difference {Number(p.deltaEBefore || 0).toFixed(0)} →{" "}
+                    {Number(p.deltaEAfter || 0).toFixed(0)} (need {p.threshold})
                   </p>
                   <button
                     type="button"

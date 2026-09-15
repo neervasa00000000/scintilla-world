@@ -86,37 +86,76 @@ export function MapWorkspace({
       if (cancelled || !containerRef.current) return;
       LRef.current = L;
 
-      const map = L.map(containerRef.current, {
-        center: [MELBOURNE_CENTER[1], MELBOURNE_CENTER[0]],
-        zoom: 15,
-        zoomControl: true,
-      });
+      const el = containerRef.current;
+      if ((el as HTMLElement & { _leaflet_id?: number })._leaflet_id) {
+        return;
+      }
 
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-        {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: "abcd",
-          maxZoom: 20,
-        }
-      ).addTo(map);
+      let map: import("leaflet").Map;
+      try {
+        map = L.map(el, {
+          center: [MELBOURNE_CENTER[1], MELBOURNE_CENTER[0]],
+          zoom: 15,
+          zoomControl: true,
+        });
+      } catch (err) {
+        console.error("Street map failed to create", err);
+        return;
+      }
+
+      try {
+        L.tileLayer(
+          "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+          {
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: "abcd",
+            maxZoom: 20,
+          }
+        ).addTo(map);
+      } catch (err) {
+        console.error("Tiles failed", err);
+      }
 
       mapRef.current = map;
       paint(L, map, cuesRef.current, failRef.current, layersRef);
-      requestAnimationFrame(() => map.invalidateSize());
-      window.setTimeout(() => map.invalidateSize(), 100);
+      requestAnimationFrame(() => {
+        try {
+          map.invalidateSize();
+        } catch {
+          /* ignore */
+        }
+      });
+      window.setTimeout(() => {
+        try {
+          map.invalidateSize();
+        } catch {
+          /* ignore */
+        }
+      }, 100);
     })().catch((err) => {
       console.error("Street map failed to load", err);
     });
 
-    const onResize = () => mapRef.current?.invalidateSize();
+    const onResize = () => {
+      const map = mapRef.current;
+      if (!mapAlive(map)) return;
+      try {
+        map.invalidateSize();
+      } catch {
+        /* ignore */
+      }
+    };
     window.addEventListener("resize", onResize);
 
     return () => {
       cancelled = true;
       window.removeEventListener("resize", onResize);
-      mapRef.current?.remove();
+      try {
+        mapRef.current?.remove();
+      } catch {
+        /* already torn down */
+      }
       mapRef.current = null;
       layersRef.current = { markers: [] };
     };
@@ -125,15 +164,19 @@ export function MapWorkspace({
   useEffect(() => {
     const map = mapRef.current;
     const L = LRef.current;
-    if (!map || !L) return;
+    if (!map || !L || !mapAlive(map)) return;
     paint(L, map, cues, failingIds, layersRef);
   }, [cues, failingIds]);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || resetToken === 0) return;
-    map.setView([MELBOURNE_CENTER[1], MELBOURNE_CENTER[0]], 15);
-    map.invalidateSize();
+    if (!map || resetToken === 0 || !mapAlive(map)) return;
+    try {
+      map.setView([MELBOURNE_CENTER[1], MELBOURNE_CENTER[0]], 15);
+      map.invalidateSize();
+    } catch {
+      /* ignore */
+    }
   }, [resetToken]);
 
   const active = cues.find((c) => (c.geometryRef ?? c.id) === "route-active");
@@ -187,6 +230,28 @@ export function MapWorkspace({
   );
 }
 
+function safeRemove(
+  map: import("leaflet").Map,
+  layer?: import("leaflet").Layer
+) {
+  if (!layer) return;
+  try {
+    map.removeLayer(layer);
+  } catch {
+    /* already gone */
+  }
+}
+
+function mapAlive(map: import("leaflet").Map | null): map is import("leaflet").Map {
+  if (!map) return false;
+  try {
+    const el = map.getContainer();
+    return Boolean(el && el.isConnected);
+  } catch {
+    return false;
+  }
+}
+
 function paint(
   L: LeafletNS,
   map: import("leaflet").Map,
@@ -198,74 +263,83 @@ function paint(
     markers: import("leaflet").Marker[];
   }>
 ) {
-  const prev = layersRef.current;
-  if (prev.active) map.removeLayer(prev.active);
-  if (prev.alt) map.removeLayer(prev.alt);
-  prev.markers.forEach((m) => map.removeLayer(m));
+  if (!mapAlive(map)) return;
+  try {
+    const prev = layersRef.current;
+    safeRemove(map, prev.active);
+    safeRemove(map, prev.alt);
+    prev.markers.forEach((m) => safeRemove(map, m));
 
-  const byRef = new Map(cues.map((c) => [c.geometryRef ?? c.id, c]));
-  const active = byRef.get("route-active");
-  const alt = byRef.get("route-alt");
+    const byRef = new Map(cues.map((c) => [c.geometryRef ?? c.id, c]));
+    const active = byRef.get("route-active");
+    const alt = byRef.get("route-alt");
 
-  const altLine = L.polyline(toLatLngs(ALT_ROUTE), {
-    color: alt?.colour ?? "#ef4444",
-    weight: alt?.secondaryEncoding.width ?? 5,
-    dashArray: dashArray(alt?.secondaryEncoding.pattern),
-    opacity: 0.95,
-    lineCap: "round",
-    lineJoin: "round",
-  }).addTo(map);
+    const altLine = L.polyline(toLatLngs(ALT_ROUTE), {
+      color: alt?.colour ?? "#ef4444",
+      weight: alt?.secondaryEncoding.width ?? 5,
+      dashArray: dashArray(alt?.secondaryEncoding.pattern),
+      opacity: 0.95,
+      lineCap: "round",
+      lineJoin: "round",
+    }).addTo(map);
 
-  const activeLine = L.polyline(toLatLngs(ACTIVE_ROUTE), {
-    color: active?.colour ?? "#22c55e",
-    weight: active?.secondaryEncoding.width ?? 5,
-    dashArray: dashArray(active?.secondaryEncoding.pattern),
-    opacity: 1,
-    lineCap: "round",
-    lineJoin: "round",
-  }).addTo(map);
+    const activeLine = L.polyline(toLatLngs(ACTIVE_ROUTE), {
+      color: active?.colour ?? "#22c55e",
+      weight: active?.secondaryEncoding.width ?? 5,
+      dashArray: dashArray(active?.secondaryEncoding.pattern),
+      opacity: 1,
+      lineCap: "round",
+      lineJoin: "round",
+    }).addTo(map);
 
-  const markers: import("leaflet").Marker[] = [];
+    const markers: import("leaflet").Marker[] = [];
 
-  markers.push(
-    L.marker([ORIGIN_POINT[1], ORIGIN_POINT[0]], {
-      icon: pinIcon(L, "#111827", "Start", false, "circle"),
-      interactive: false,
-    }).addTo(map)
-  );
-
-  const hazard = byRef.get("hazard");
-  if (hazard) {
     markers.push(
-      L.marker([HAZARD_POINT[1], HAZARD_POINT[0]], {
-        icon: pinIcon(
-          L,
-          hazard.colour,
-          FRIENDLY.hazard ?? "Hazard",
-          failingIds.has(hazard.id),
-          hazard.secondaryEncoding.icon ?? "circle"
-        ),
+      L.marker([ORIGIN_POINT[1], ORIGIN_POINT[0]], {
+        icon: pinIcon(L, "#111827", "Start", false, "circle"),
         interactive: false,
       }).addTo(map)
     );
-  }
 
-  const dest = byRef.get("destination");
-  if (dest) {
-    markers.push(
-      L.marker([DESTINATION_POINT[1], DESTINATION_POINT[0]], {
-        icon: pinIcon(
-          L,
-          dest.colour,
-          FRIENDLY.destination ?? "Destination",
-          failingIds.has(dest.id),
-          dest.secondaryEncoding.icon ?? "circle"
-        ),
-        interactive: false,
-      }).addTo(map)
-    );
-  }
+    const hazard = byRef.get("hazard");
+    if (hazard) {
+      markers.push(
+        L.marker([HAZARD_POINT[1], HAZARD_POINT[0]], {
+          icon: pinIcon(
+            L,
+            hazard.colour,
+            FRIENDLY.hazard ?? "Hazard",
+            failingIds.has(hazard.id),
+            hazard.secondaryEncoding.icon ?? "circle"
+          ),
+          interactive: false,
+        }).addTo(map)
+      );
+    }
 
-  layersRef.current = { active: activeLine, alt: altLine, markers };
-  map.invalidateSize();
+    const dest = byRef.get("destination");
+    if (dest) {
+      markers.push(
+        L.marker([DESTINATION_POINT[1], DESTINATION_POINT[0]], {
+          icon: pinIcon(
+            L,
+            dest.colour,
+            FRIENDLY.destination ?? "Destination",
+            failingIds.has(dest.id),
+            dest.secondaryEncoding.icon ?? "circle"
+          ),
+          interactive: false,
+        }).addTo(map)
+      );
+    }
+
+    layersRef.current = { active: activeLine, alt: altLine, markers };
+    try {
+      map.invalidateSize();
+    } catch {
+      /* layout not ready */
+    }
+  } catch (err) {
+    console.error("Map paint recovered", err);
+  }
 }

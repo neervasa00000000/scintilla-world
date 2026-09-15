@@ -149,11 +149,12 @@ export function buildProblems(
     (a, b) => a.deltaECvd / a.deltaENormal - b.deltaECvd / b.deltaENormal
   );
 
-  return sorted.map((p) => {
-    const ca = report.cues.find((c) => c.id === p.aId)!;
-    const cb = report.cues.find((c) => c.id === p.bId)!;
+  return sorted.flatMap((p) => {
+    const ca = report.cues.find((c) => c.id === p.aId);
+    const cb = report.cues.find((c) => c.id === p.bId);
+    if (!ca || !cb) return [];
     const title = problemTitle(p);
-    return {
+    return [{
       id: `${p.aId}-${p.bId}-${p.mode}`,
       title,
       affects: p.mode,
@@ -175,7 +176,7 @@ export function buildProblems(
       secondaryIdentical: !p.secondaryDiffer,
       technicalLine: `ΔE ${p.deltaENormal.toFixed(1)} → ${p.deltaECvd.toFixed(1)} under ${p.mode} (threshold ${p.threshold})`,
       verdict: p,
-    };
+    }];
   });
 }
 

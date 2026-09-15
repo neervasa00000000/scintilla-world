@@ -50,55 +50,68 @@ export function runCheck(
 
 /**
  * Mutate secondary encodings (escalate hazard colour if needed), then re-verify.
- * Throws if nothing changed.
+ * Safe to call repeatedly: already-fixed cues are a no-op, never a throw.
  */
 export function applyFix(
   cues: Cue[],
   threshold: number,
-  demo: AppSnapshot["demo"]
+  demo: AppSnapshot["demo"],
+  previousFixChanges: string[] = []
 ): AppSnapshot {
-  const before = cues.map((c) => structuredClone(c));
-  let next = applySafeEncoding(cues);
+  try {
+    const before = cues.map((c) => structuredClone(c));
+    let next = applySafeEncoding(cues);
 
-  let report = verifyCues(next, { threshold });
-  if (!report.summary.pass) {
-    next = next.map((c) =>
-      c.role === "hazard"
-        ? {
-            ...c,
-            colour: "#a855f7",
-            secondaryEncoding: {
-              pattern: "solid" as const,
-              width: c.secondaryEncoding.width ?? 4,
-              icon: "triangle",
-              labelOnMap: true,
-            },
-          }
-        : c
-    );
-    report = verifyCues(next, { threshold });
+    let report = verifyCues(next, { threshold });
+    if (!report.summary.pass) {
+      next = next.map((c) =>
+        c.role === "hazard"
+          ? {
+              ...c,
+              colour: "#a855f7",
+              secondaryEncoding: {
+                pattern: "solid" as const,
+                width: c.secondaryEncoding.width ?? 4,
+                icon: "triangle",
+                labelOnMap: true,
+              },
+            }
+          : c
+      );
+      report = verifyCues(next, { threshold });
+    }
+
+    const changes = describeSafeChanges(before, next);
+    const hazardBefore = before.find((c) => c.role === "hazard");
+    const hazardAfter = next.find((c) => c.role === "hazard");
+    if (
+      hazardBefore &&
+      hazardAfter &&
+      hazardBefore.colour !== hazardAfter.colour
+    ) {
+      changes.push(
+        `Hazard: colour ${hazardBefore.colour} → ${hazardAfter.colour}`
+      );
+    }
+
+    return {
+      cues: next,
+      threshold,
+      lastResult: report,
+      phase: report.summary.pass ? "checked_pass" : "checked_fail",
+      demo,
+      fixChanges: changes.length > 0 ? changes : previousFixChanges,
+    };
+  } catch (err) {
+    console.error("applyFix recovered", err);
+    const lastResult = verifyCues(cues, { threshold });
+    return {
+      cues,
+      threshold,
+      lastResult,
+      phase: lastResult.summary.pass ? "checked_pass" : "checked_fail",
+      demo,
+      fixChanges: previousFixChanges,
+    };
   }
-
-  const changes = describeSafeChanges(before, next);
-  const hazardBefore = before.find((c) => c.role === "hazard");
-  const hazardAfter = next.find((c) => c.role === "hazard");
-  if (hazardBefore && hazardAfter && hazardBefore.colour !== hazardAfter.colour) {
-    changes.push(`Hazard: colour ${hazardBefore.colour} → ${hazardAfter.colour}`);
-  }
-
-  if (changes.length === 0) {
-    const err = "Fix automatically did not change any cue fields";
-    console.error(err, { before, next });
-    throw new Error(err);
-  }
-  console.assert(changes.length > 0, "Fix must mutate cue encodings");
-
-  return {
-    cues: next,
-    threshold,
-    lastResult: report,
-    phase: report.summary.pass ? "checked_pass" : "checked_fail",
-    demo,
-    fixChanges: changes,
-  };
 }
