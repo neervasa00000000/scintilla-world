@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { installWindowAPI } from "@/lib/api";
 import { copyTestingReport, failingCueIds } from "@/lib/export";
@@ -11,18 +10,7 @@ import {
   runCheck,
   type AppSnapshot,
 } from "@/lib/store";
-
-const MapWorkspace = dynamic(
-  () => import("@/components/MapWorkspace").then((m) => m.MapWorkspace),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex h-full items-center justify-center text-[12px] text-[var(--dim)]">
-        Loading map…
-      </div>
-    ),
-  }
-);
+import { MapPane } from "@/components/MapPane";
 
 export function ToolApp() {
   const [snap, setSnap] = useState<AppSnapshot>(() => loadMelbourneDemo(15));
@@ -172,7 +160,7 @@ export function ToolApp() {
 
       <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,0.65fr)_minmax(280px,0.35fr)]">
         <section className="relative min-h-[360px] border-b border-[var(--border)] lg:border-b-0 lg:border-r">
-          <MapWorkspace
+          <MapPane
             cues={snap.cues}
             failingIds={failIds}
             callouts={callouts}
