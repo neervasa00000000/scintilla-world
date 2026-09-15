@@ -12,11 +12,27 @@ import {
   MELBOURNE_CENTER,
   routeGeoJSON,
 } from "@/lib/demo";
-import type { Cue } from "@/lib/types";
+import type { Cue, CueRole } from "@/lib/types";
+
+const FRIENDLY: Partial<Record<CueRole, string>> = {
+  route_active: "Main route",
+  route_alt: "Backup route",
+  hazard: "Hazard",
+  destination: "Destination",
+};
+
+function calloutForRole(role: CueRole): string {
+  if (role === "route_active" || role === "route_alt") {
+    return "These routes look too similar";
+  }
+  if (role === "hazard") return "Hazard may be missed";
+  return "Hard to tell apart";
+}
 
 type Props = {
   cues: Cue[];
   failingIds: Set<string>;
+  callouts?: string[];
   onMapReady?: (map: MapLibreMapType) => void;
 };
 
@@ -26,7 +42,12 @@ function dashArray(pattern?: string): number[] {
   return [1];
 }
 
-export function MapWorkspace({ cues, failingIds, onMapReady }: Props) {
+export function MapWorkspace({
+  cues,
+  failingIds,
+  callouts = [],
+  onMapReady,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMapType | null>(null);
   const markersRef = useRef<MarkerType[]>([]);
@@ -113,6 +134,18 @@ export function MapWorkspace({ cues, failingIds, onMapReady }: Props) {
   return (
     <div className="relative h-full w-full min-h-[320px]">
       <div ref={containerRef} className="h-full w-full" />
+      {callouts.length > 0 && (
+        <div className="pointer-events-none absolute left-3 top-3 z-10 flex max-w-[280px] flex-col gap-1.5">
+          {callouts.slice(0, 3).map((c) => (
+            <div
+              key={c}
+              className="rounded border border-[#c45c5c]/60 bg-[#c45c5c]/90 px-2 py-1 text-[11px] font-medium text-white shadow"
+            >
+              {c}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -178,9 +211,12 @@ function paintCues(
     const failing = failingIds.has(cue.id);
     const el = markerEl(
       cue.colour,
-      cue.secondaryEncoding.labelOnMap ? cue.label.split("—")[0].trim() : cue.role,
+      cue.secondaryEncoding.labelOnMap
+        ? cue.label.split("—")[0].trim()
+        : FRIENDLY[cue.role] ?? cue.role,
       failing,
-      cue.secondaryEncoding.icon ?? "circle"
+      cue.secondaryEncoding.icon ?? "circle",
+      failing ? calloutForRole(cue.role) : undefined
     );
     const m = new Marker({ element: el })
       .setLngLat(f.geometry.coordinates as [number, number])
@@ -193,7 +229,8 @@ function markerEl(
   colour: string,
   label: string,
   failing: boolean,
-  icon: string
+  icon: string,
+  failNote?: string
 ): HTMLDivElement {
   const wrap = document.createElement("div");
   wrap.style.display = "flex";
@@ -229,15 +266,17 @@ function markerEl(
   wrap.appendChild(shape);
 
   const text = document.createElement("div");
-  text.textContent = failing ? `FAIL · ${label}` : label;
+  text.textContent = failing && failNote ? failNote : label;
   text.style.fontSize = "10px";
-  text.style.fontFamily = "ui-monospace, Menlo, monospace";
+  text.style.fontFamily = "Inter, system-ui, sans-serif";
   text.style.color = "#e8eaed";
-  text.style.background = failing ? "rgba(196,92,92,0.9)" : "rgba(15,17,19,0.85)";
-  text.style.padding = "1px 4px";
-  text.style.borderRadius = "2px";
+  text.style.background = failing
+    ? "rgba(196,92,92,0.92)"
+    : "rgba(15,17,19,0.85)";
+  text.style.padding = "2px 5px";
+  text.style.borderRadius = "3px";
   text.style.whiteSpace = "nowrap";
-  text.style.maxWidth = "140px";
+  text.style.maxWidth = "160px";
   text.style.overflow = "hidden";
   text.style.textOverflow = "ellipsis";
   wrap.appendChild(text);

@@ -73,14 +73,14 @@ export type VerifyOptions = {
 };
 
 export const ROLE_LABELS: Record<CueRole, string> = {
-  route_active: "Active route",
-  route_alt: "Alternate route",
+  route_active: "Main route",
+  route_alt: "Backup route",
   hazard: "Hazard",
   mode_walk: "Walk mode",
   mode_transit: "Transit mode",
   destination: "Destination",
-  legend_chip: "Legend chip",
-  custom: "Custom",
+  legend_chip: "Legend colour",
+  custom: "Custom cue",
 };
 
 export const DEFAULT_CRITICAL: CueRole[] = [
