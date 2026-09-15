@@ -1,9 +1,9 @@
 # Netlify — See-the-Route (scintilla.world)
+# Static export published from /deploy (built from see-the-route).
 
 [build]
-  base = "see-the-route"
-  command = "npm run generate-samples && npm run build"
-  publish = "out"
+  publish = "deploy"
+  command = ""
 
 [[redirects]]
   from = "/privacy-policy"
@@ -11,5 +11,4 @@
   status = 301
 
 [context.production.environment]
-  NODE_VERSION = "20"
   NODE_ENV = "production"
