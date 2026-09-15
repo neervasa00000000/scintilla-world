@@ -5,9 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "CueLock",
-  description:
-    "Semantic navigation cue verifier for web maps. Machado 2009 · CIEDE2000 · dual-encoding gate.",
+  title: "Scintilla — Accessible routing",
+  description: "Accessible routing — plan travel with real accessibility needs in mind.",
   metadataBase: new URL("https://scintilla.world"),
 };
 

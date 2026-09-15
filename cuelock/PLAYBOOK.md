@@ -33,13 +33,13 @@ console.log('PLAYBOOK OK', {
 
 ## Manual (browser)
 
-1. Open app (fresh load) — Melbourne demo auto-loaded, map shows green + red routes + pins.
-2. Status strip shows FAIL with a number ≥ 1; Problems cards show real titles + `difference N → M`.
-3. Click **Fix automatically** — backup route becomes **dashed** (visible), hazard becomes **triangle + label**.
-4. Status shows PASS; right panel shows green Fixed panel with what changed.
-5. Click **Copy testing report** — toast “Testing report copied”; paste contains cues + ΔE / PASS result.
-6. Click **Melbourne demo** again — back to FAIL; repeat Fix → PASS.
+1. Open https://scintilla.world — **map shows immediately** (green + red routes, pins). Never stuck on “Loading map…”.
+2. Status FAIL; Problems cards with real `difference N → M`.
+3. **Fix automatically** — backup route becomes **dashed**, hazard becomes **triangle + Hazard label**.
+4. Status PASS; green Fixed panel.
+5. **Copy testing report** — toast; paste has cues + result.
+6. **Melbourne demo** → FAIL again; Fix → PASS.
 
 ## Definition of done
 
-Demo → FAIL → Fix → PASS → Copy report works every time with real math and real map updates.
+Demo → FAIL → Fix → PASS → Copy report works every time. Map always visible.
