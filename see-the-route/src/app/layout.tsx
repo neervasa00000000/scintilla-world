@@ -1,44 +1,25 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "See-the-Route · Accessibility Stress Card",
+  title: "See-the-Route",
   description:
-    "Stress-test map and routing UIs for colour vision deficiency and low vision. Research demo by Neer Vasa — Monash MIT.",
+    "In-browser CVD confusable-pair instrument for map and route UIs. Machado et al. 2009 · CIEDE2000.",
   metadataBase: new URL("https://scintilla.world"),
-  openGraph: {
-    title: "See-the-Route",
-    description:
-      "Stress-test map and routing UIs for colour vision deficiency and low vision.",
-    url: "https://scintilla.world/",
-    siteName: "See-the-Route",
-    type: "website",
-  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+    <html lang="en" className="h-full">
+      <body className={`${inter.className} h-full antialiased`}>{children}</body>
     </html>
   );
 }

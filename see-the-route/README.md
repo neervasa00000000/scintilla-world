@@ -1,69 +1,43 @@
 # See-the-Route
 
-**Accessibility stress tester for map & routing UIs.**
+In-browser **CVD confusable-pair instrument** for map and route UIs.
 
-Built by [Neer Vasa](https://github.com/neervasa00000000) · Monash MIT · [scintilla.world](https://scintilla.world)
-
-## Problem
-
-Popular map and route interfaces often encode meaning with colour alone — transit lines, traffic, legends, pins. Those encodings can collapse for people with colour vision deficiency (CVD) or low vision. Teams rarely see the failure until a demo or complaint.
+Neer Vasa · Monash MIT · [scintilla.world](https://scintilla.world) · [github.com/neervasa00000000](https://github.com/neervasa00000000)
 
 ## What it does
 
-1. **Upload** a PNG/JPG screenshot of any map/route UI (client-side only).
-2. **Simulate** Normal, Protanopia, Deuteranopia, Tritanopia, and Low vision side-by-side.
-3. **Flag** likely colour-only / contrast risks with High / Medium / Low severity.
-4. **Export** a one-page **Accessibility Stress Card** PNG for email, slides, or papers.
+1. Open / paste / capture a map or route screenshot.
+2. Simulate Normal, Protanopia, Deuteranopia, Tritanopia (Machado et al. 2009).
+3. Detect **confusable colour pairs** with CIEDE2000 collapse + bounding boxes.
+4. Eyedropper-probe any two pixels; live ΔE under each CVD mode.
+5. Optional A/B compare and evidence-style PNG report.
 
-No accounts. No backend. No LLM.
+Low-vision blur/contrast is an optional preview — never auto-merged into CVD findings.
 
 ## Method
 
-- **CVD model:** Machado, Oliveira & Fernandes (2009) linear-RGB 3×3 transforms at severity 1.0, applied after sRGB→linear decode. Documented in-app under Method.
-- **Low vision:** mild separable blur + contrast compression toward mid-grey.
-- **Heuristics (honest):** red–green separation collapse, legend-like chip confusion, local edge-contrast drop, luminance-similar red/green adjacency.  
-  *Heuristic flags for research demos — not a WCAG audit.*
+- **CVD:** Machado, Oliveira & Fernandes (2009), linear-RGB severity 1.0.
+- **Distance:** CIEDE2000 on simulated sRGB colours.
+- **Flags:** pairs distinguishable in Normal (ΔE ≥ min) that fall below threshold under CVD.
+- Heuristic research instrument — **not** a WCAG audit.
 
 ## Research question
 
-> How often do popular route/map UIs fail under CVD and low vision?
+How often do popular route/map UIs fail under CVD when meaning is hue-encoded?
 
-## Run locally
+## Run
 
 ```bash
 cd see-the-route
 npm install
-npm run generate-samples   # once
+npm run generate-samples
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
-
-## Build / deploy
+## Build
 
 ```bash
-cd see-the-route
 npm run build
 ```
 
-Static export lands in `see-the-route/out`.
-
-### Vercel
-
-From `see-the-route/`:
-
-```bash
-npx vercel
-```
-
-Or set the Vercel project root to `see-the-route`.
-
-### Netlify (scintilla.world)
-
-Repo `netlify.toml` builds this app and publishes `see-the-route/out` as the site root.
-
-## Author
-
-**Neer Vasa** · Monash MIT  
-- https://scintilla.world  
-- https://github.com/neervasa00000000
+Static export → `out/` (published via repo `/deploy` on Netlify).

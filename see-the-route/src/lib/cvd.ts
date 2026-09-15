@@ -1,41 +1,12 @@
 /**
- * Colour vision deficiency (CVD) simulation.
- *
- * Model: Machado, Oliveira & Fernandes (2009) — linear-RGB 3×3 transforms
- * at severity 1.0 (dichromacy), applied in linear light after sRGB decode.
- * See: https://www.inf.ufrgs.br/~oliveira/pubs_files/CVD_Simulation/CVD_Simulation.html
- *
- * Low vision: mild separable Gaussian blur + contrast compression toward mid-grey.
+ * Machado, Oliveira & Fernandes (2009) CVD simulation.
+ * Linear-RGB 3×3 at severity 1.0 (dichromacy), after sRGB decode.
  */
 
-export type SimulationKind =
-  | "normal"
-  | "protanopia"
-  | "deuteranopia"
-  | "tritanopia"
-  | "lowVision";
+import { linearToRgb, rgbToLinear } from "./color";
+import type { CvdMode, LowVisionSettings, Rgb } from "./types";
 
-export const SIMULATION_LABELS: Record<SimulationKind, string> = {
-  normal: "Normal",
-  protanopia: "Protanopia",
-  deuteranopia: "Deuteranopia",
-  tritanopia: "Tritanopia",
-  lowVision: "Low vision",
-};
-
-export const SIMULATION_ORDER: SimulationKind[] = [
-  "normal",
-  "protanopia",
-  "deuteranopia",
-  "tritanopia",
-  "lowVision",
-];
-
-/** Machado et al. 2009 — severity 1.0 matrices (linear RGB). */
-const MACHADO: Record<
-  "protanopia" | "deuteranopia" | "tritanopia",
-  number[][]
-> = {
+const MACHADO: Record<Exclude<CvdMode, "normal">, number[][]> = {
   protanopia: [
     [0.152286, 1.052583, -0.204868],
     [0.114503, 0.786281, 0.099216],
@@ -53,45 +24,44 @@ const MACHADO: Record<
   ],
 };
 
-function srgbToLinear(c: number): number {
-  const x = c / 255;
-  return x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
-}
-
-function linearToSrgb(c: number): number {
-  const x = Math.max(0, Math.min(1, c));
-  const encoded =
-    x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - 0.055;
-  return Math.round(Math.max(0, Math.min(255, encoded * 255)));
-}
-
-function applyMatrix(
-  r: number,
-  g: number,
-  b: number,
-  m: number[][]
-): [number, number, number] {
+function mul(m: number[][], v: [number, number, number]): [number, number, number] {
   return [
-    m[0][0] * r + m[0][1] * g + m[0][2] * b,
-    m[1][0] * r + m[1][1] * g + m[1][2] * b,
-    m[2][0] * r + m[2][1] * g + m[2][2] * b,
+    m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2],
+    m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
+    m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2],
   ];
 }
 
-function simulatePixel(
-  r: number,
-  g: number,
-  b: number,
-  kind: Exclude<SimulationKind, "normal" | "lowVision">
-): [number, number, number] {
-  const lr = srgbToLinear(r);
-  const lg = srgbToLinear(g);
-  const lb = srgbToLinear(b);
-  const [nr, ng, nb] = applyMatrix(lr, lg, lb, MACHADO[kind]);
-  return [linearToSrgb(nr), linearToSrgb(ng), linearToSrgb(nb)];
+export function simulateRgb(rgb: Rgb, mode: CvdMode): Rgb {
+  if (mode === "normal") return { ...rgb };
+  const lin = rgbToLinear(rgb);
+  return linearToRgb(mul(MACHADO[mode], lin));
 }
 
-/** Separable box approximation of Gaussian blur (radius in px). */
+export function simulateImageData(
+  source: ImageData,
+  mode: CvdMode
+): ImageData {
+  const out = new ImageData(source.width, source.height);
+  const s = source.data;
+  const d = out.data;
+  if (mode === "normal") {
+    d.set(s);
+    return out;
+  }
+  const m = MACHADO[mode];
+  for (let i = 0; i < s.length; i += 4) {
+    const rgb = simulateRgb({ r: s[i], g: s[i + 1], b: s[i + 2] }, mode);
+    // use precomputed path via matrix on linear — already in simulateRgb
+    void m;
+    d[i] = rgb.r;
+    d[i + 1] = rgb.g;
+    d[i + 2] = rgb.b;
+    d[i + 3] = s[i + 3];
+  }
+  return out;
+}
+
 function boxBlur(
   src: Uint8ClampedArray,
   w: number,
@@ -102,8 +72,6 @@ function boxBlur(
   const tmp = new Uint8ClampedArray(src.length);
   const out = new Uint8ClampedArray(src.length);
   const diam = radius * 2 + 1;
-
-  // Horizontal
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       let r = 0,
@@ -125,8 +93,6 @@ function boxBlur(
       tmp[o + 3] = a / diam;
     }
   }
-
-  // Vertical
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       let r = 0,
@@ -151,87 +117,60 @@ function boxBlur(
   return out;
 }
 
-function reduceContrast(data: Uint8ClampedArray, amount = 0.45): void {
-  // amount: 0 = no change, 1 = full mid-grey
-  for (let i = 0; i < data.length; i += 4) {
-    data[i] = Math.round(data[i] * (1 - amount) + 128 * amount);
-    data[i + 1] = Math.round(data[i + 1] * (1 - amount) + 128 * amount);
-    data[i + 2] = Math.round(data[i + 2] * (1 - amount) + 128 * amount);
-  }
-}
-
-export function processImageData(
+/** Optional low-vision pass — never mixed into CVD findings. */
+export function applyLowVision(
   source: ImageData,
-  kind: SimulationKind
+  settings: LowVisionSettings
 ): ImageData {
-  const { width, height, data } = source;
-  const out = new ImageData(width, height);
-
-  if (kind === "normal") {
-    out.data.set(data);
-    return out;
+  const radius = Math.max(0, Math.round(settings.blurSigma));
+  let data = boxBlur(source.data, source.width, source.height, radius);
+  if (radius >= 2) {
+    data = boxBlur(data, source.width, source.height, Math.floor(radius / 2));
   }
-
-  if (kind === "lowVision") {
-    const blurred = boxBlur(data, width, height, 2);
-    // second pass for softer Gaussian-ish feel
-    const soft = boxBlur(blurred, width, height, 1);
-    reduceContrast(soft, 0.42);
-    out.data.set(soft);
-    return out;
-  }
-
+  const amount = 1 - Math.max(0, Math.min(1, settings.contrast));
+  const out = new ImageData(source.width, source.height);
   for (let i = 0; i < data.length; i += 4) {
-    const [r, g, b] = simulatePixel(data[i], data[i + 1], data[i + 2], kind);
-    out.data[i] = r;
-    out.data[i + 1] = g;
-    out.data[i + 2] = b;
+    out.data[i] = Math.round(data[i] * (1 - amount) + 128 * amount);
+    out.data[i + 1] = Math.round(data[i + 1] * (1 - amount) + 128 * amount);
+    out.data[i + 2] = Math.round(data[i + 2] * (1 - amount) + 128 * amount);
     out.data[i + 3] = data[i + 3];
   }
   return out;
 }
 
-/** Downscale for fast heuristics / preview processing. */
-export function downscaleImageData(
-  source: ImageData,
-  maxEdge = 640
-): ImageData {
+export function imageDataToUrl(imageData: ImageData): string {
+  const c = document.createElement("canvas");
+  c.width = imageData.width;
+  c.height = imageData.height;
+  c.getContext("2d")!.putImageData(imageData, 0, 0);
+  return c.toDataURL("image/png");
+}
+
+export function downscale(source: ImageData, maxEdge = 800): ImageData {
   const { width, height } = source;
   const scale = Math.min(1, maxEdge / Math.max(width, height));
   if (scale >= 0.999) return source;
-
   const tw = Math.max(1, Math.round(width * scale));
   const th = Math.max(1, Math.round(height * scale));
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
-  ctx.putImageData(source, 0, 0);
-
-  const out = document.createElement("canvas");
-  out.width = tw;
-  out.height = th;
-  const octx = out.getContext("2d", { willReadFrequently: true })!;
-  octx.drawImage(canvas, 0, 0, tw, th);
-  return octx.getImageData(0, 0, tw, th);
+  const src = document.createElement("canvas");
+  src.width = width;
+  src.height = height;
+  src.getContext("2d")!.putImageData(source, 0, 0);
+  const dst = document.createElement("canvas");
+  dst.width = tw;
+  dst.height = th;
+  const ctx = dst.getContext("2d", { willReadFrequently: true })!;
+  ctx.drawImage(src, 0, 0, tw, th);
+  return ctx.getImageData(0, 0, tw, th);
 }
 
-export function imageDataToObjectUrl(imageData: ImageData): string {
-  const canvas = document.createElement("canvas");
-  canvas.width = imageData.width;
-  canvas.height = imageData.height;
-  canvas.getContext("2d")!.putImageData(imageData, 0, 0);
-  return canvas.toDataURL("image/png");
-}
-
-export async function loadImageFile(file: File | Blob): Promise<HTMLImageElement> {
+export async function loadFile(file: File | Blob): Promise<HTMLImageElement> {
   const url = URL.createObjectURL(file);
   try {
     const img = new Image();
-    img.decoding = "async";
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error("Failed to decode image"));
+    await new Promise<void>((res, rej) => {
+      img.onload = () => res();
+      img.onerror = () => rej(new Error("Failed to decode image"));
       img.src = url;
     });
     return img;
@@ -240,23 +179,58 @@ export async function loadImageFile(file: File | Blob): Promise<HTMLImageElement
   }
 }
 
-export async function loadImageUrl(src: string): Promise<HTMLImageElement> {
+export async function loadUrl(src: string): Promise<HTMLImageElement> {
   const img = new Image();
   img.crossOrigin = "anonymous";
-  img.decoding = "async";
-  await new Promise<void>((resolve, reject) => {
-    img.onload = () => resolve();
-    img.onerror = () => reject(new Error(`Failed to load ${src}`));
+  await new Promise<void>((res, rej) => {
+    img.onload = () => res();
+    img.onerror = () => rej(new Error(`Failed to load ${src}`));
     img.src = src;
   });
   return img;
 }
 
-export function imageToImageData(img: HTMLImageElement): ImageData {
-  const canvas = document.createElement("canvas");
-  canvas.width = img.naturalWidth || img.width;
-  canvas.height = img.naturalHeight || img.height;
-  const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+export function toImageData(img: HTMLImageElement): ImageData {
+  const c = document.createElement("canvas");
+  c.width = img.naturalWidth || img.width;
+  c.height = img.naturalHeight || img.height;
+  const ctx = c.getContext("2d", { willReadFrequently: true })!;
   ctx.drawImage(img, 0, 0);
-  return ctx.getImageData(0, 0, canvas.width, canvas.height);
+  return ctx.getImageData(0, 0, c.width, c.height);
+}
+
+export function sampleRgb(data: ImageData, x: number, y: number): Rgb {
+  const xx = Math.min(data.width - 1, Math.max(0, Math.round(x)));
+  const yy = Math.min(data.height - 1, Math.max(0, Math.round(y)));
+  const i = (yy * data.width + xx) * 4;
+  return { r: data.data[i], g: data.data[i + 1], b: data.data[i + 2] };
+}
+
+/** Average colour in a small window for stabler eyedropper. */
+export function sampleRgbWindow(
+  data: ImageData,
+  x: number,
+  y: number,
+  radius = 2
+): Rgb {
+  let r = 0,
+    g = 0,
+    b = 0,
+    n = 0;
+  for (let dy = -radius; dy <= radius; dy++) {
+    for (let dx = -radius; dx <= radius; dx++) {
+      const xx = Math.min(data.width - 1, Math.max(0, Math.round(x) + dx));
+      const yy = Math.min(data.height - 1, Math.max(0, Math.round(y) + dy));
+      const i = (yy * data.width + xx) * 4;
+      r += data.data[i];
+      g += data.data[i + 1];
+      b += data.data[i + 2];
+      n++;
+    }
+  }
+  return {
+    r: Math.round(r / n),
+    g: Math.round(g / n),
+    b: Math.round(b / n),
+  };
 }
