@@ -21,36 +21,36 @@ const FRIENDLY: Partial<Record<CueRole, string>> = {
   destination: "Destination",
 };
 
-function calloutForRole(role: CueRole): string {
-  if (role === "route_active" || role === "route_alt") {
-    return "These routes look too similar";
-  }
-  if (role === "hazard") return "Hazard may be missed";
-  return "Hard to tell apart";
-}
-
 type Props = {
   cues: Cue[];
   failingIds: Set<string>;
   callouts?: string[];
+  /** Bump to force camera reset (Melbourne demo). */
+  resetToken?: number;
   onMapReady?: (map: MapLibreMapType) => void;
 };
 
-function dashArray(pattern?: string): number[] {
+function dashFor(pattern?: string): [number, number] {
   if (pattern === "dashed") return [2, 2];
-  if (pattern === "dotted") return [0.5, 1.5];
-  return [1];
+  if (pattern === "dotted") return [0.8, 1.6];
+  // solid — MapLibre needs a dasharray property present to update later
+  return [1, 0];
 }
 
 export function MapWorkspace({
   cues,
   failingIds,
   callouts = [],
+  resetToken = 0,
   onMapReady,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMapType | null>(null);
   const markersRef = useRef<MarkerType[]>([]);
+  const cuesRef = useRef(cues);
+  const failRef = useRef(failingIds);
+  cuesRef.current = cues;
+  failRef.current = failingIds;
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -67,13 +67,7 @@ export function MapWorkspace({
             attribution: "© OpenStreetMap",
           },
         },
-        layers: [
-          {
-            id: "osm",
-            type: "raster",
-            source: "osm",
-          },
-        ],
+        layers: [{ id: "osm", type: "raster", source: "osm" }],
       },
       center: MELBOURNE_CENTER,
       zoom: 14.2,
@@ -88,6 +82,7 @@ export function MapWorkspace({
         data: routeGeoJSON(),
       });
 
+      // Both lines get dasharray so setPaintProperty works later
       map.addLayer({
         id: "route-alt-line",
         type: "line",
@@ -95,8 +90,9 @@ export function MapWorkspace({
         filter: ["==", ["get", "id"], "route-alt"],
         paint: {
           "line-color": "#ef4444",
-          "line-width": 5,
-          "line-dasharray": [1],
+          "line-width": 4,
+          "line-dasharray": [1, 0],
+          "line-opacity": 0.95,
         },
       });
 
@@ -107,13 +103,15 @@ export function MapWorkspace({
         filter: ["==", ["get", "id"], "route-active"],
         paint: {
           "line-color": "#22c55e",
-          "line-width": 5,
+          "line-width": 4,
+          "line-dasharray": [1, 0],
+          "line-opacity": 1,
         },
       });
 
       mapRef.current = map;
       onMapReady?.(map);
-      paintCues(map, cues, failingIds, markersRef);
+      paintCues(map, cuesRef.current, failRef.current, markersRef);
     });
 
     return () => {
@@ -125,21 +123,31 @@ export function MapWorkspace({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Repaint whenever cues / failures change
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
-    paintCues(map, cues, failingIds, markersRef);
+    if (!map) return;
+    const paint = () => paintCues(map, cues, failingIds, markersRef);
+    if (map.isStyleLoaded()) paint();
+    else map.once("load", paint);
   }, [cues, failingIds]);
+
+  // Reset camera on Melbourne demo
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || resetToken === 0) return;
+    map.flyTo({ center: MELBOURNE_CENTER, zoom: 14.2, essential: true });
+  }, [resetToken]);
 
   return (
     <div className="relative h-full w-full min-h-[320px]">
-      <div ref={containerRef} className="h-full w-full" />
+      <div ref={containerRef} className="absolute inset-0" />
       {callouts.length > 0 && (
-        <div className="pointer-events-none absolute left-3 top-3 z-10 flex max-w-[280px] flex-col gap-1.5">
-          {callouts.slice(0, 3).map((c) => (
+        <div className="pointer-events-none absolute left-3 top-3 z-10 flex max-w-[260px] flex-col gap-1.5">
+          {callouts.slice(0, 2).map((c) => (
             <div
               key={c}
-              className="rounded border border-[#c45c5c]/60 bg-[#c45c5c]/90 px-2 py-1 text-[11px] font-medium text-white shadow"
+              className="rounded border border-[#c45c5c]/50 bg-[#c45c5c]/90 px-2.5 py-1.5 text-[12px] font-medium text-white shadow"
             >
               {c}
             </div>
@@ -156,39 +164,38 @@ function paintCues(
   failingIds: Set<string>,
   markersRef: React.MutableRefObject<MarkerType[]>
 ) {
-  const byRef = new Map(cues.map((c) => [c.geometryRef ?? c.id, c]));
+  if (!map.getLayer("route-active-line")) return;
 
+  const byRef = new Map(cues.map((c) => [c.geometryRef ?? c.id, c]));
   const active = byRef.get("route-active");
   const alt = byRef.get("route-alt");
 
-  if (active && map.getLayer("route-active-line")) {
+  if (active) {
     map.setPaintProperty("route-active-line", "line-color", active.colour);
     map.setPaintProperty(
       "route-active-line",
       "line-width",
-      active.secondaryEncoding.width ?? 5
+      active.secondaryEncoding.width ?? 4
     );
-    const dash = dashArray(active.secondaryEncoding.pattern);
-    try {
-      map.setPaintProperty("route-active-line", "line-dasharray", dash);
-    } catch {
-      /* solid */
-    }
+    map.setPaintProperty(
+      "route-active-line",
+      "line-dasharray",
+      dashFor(active.secondaryEncoding.pattern)
+    );
   }
 
-  if (alt && map.getLayer("route-alt-line")) {
+  if (alt) {
     map.setPaintProperty("route-alt-line", "line-color", alt.colour);
     map.setPaintProperty(
       "route-alt-line",
       "line-width",
-      alt.secondaryEncoding.width ?? 5
+      alt.secondaryEncoding.width ?? 4
     );
-    const dash = dashArray(alt.secondaryEncoding.pattern);
-    try {
-      map.setPaintProperty("route-alt-line", "line-dasharray", dash);
-    } catch {
-      /* */
-    }
+    map.setPaintProperty(
+      "route-alt-line",
+      "line-dasharray",
+      dashFor(alt.secondaryEncoding.pattern)
+    );
   }
 
   markersRef.current.forEach((m) => m.remove());
@@ -199,29 +206,33 @@ function paintCues(
     if (f.geometry.type !== "Point") continue;
     const id = String(f.properties?.id ?? "");
     const cue = byRef.get(id);
+
     if (!cue && id === "origin") {
-      const el = markerEl("#111827", "Origin", false, "circle");
-      const m = new Marker({ element: el })
-        .setLngLat(f.geometry.coordinates as [number, number])
-        .addTo(map);
-      markersRef.current.push(m);
+      const el = markerEl("#111827", "Start", false, "circle");
+      markersRef.current.push(
+        new Marker({ element: el })
+          .setLngLat(f.geometry.coordinates as [number, number])
+          .addTo(map)
+      );
       continue;
     }
     if (!cue) continue;
+
     const failing = failingIds.has(cue.id);
+    const label = cue.secondaryEncoding.labelOnMap
+      ? FRIENDLY[cue.role] ?? cue.role
+      : FRIENDLY[cue.role] ?? cue.role;
     const el = markerEl(
       cue.colour,
-      cue.secondaryEncoding.labelOnMap
-        ? cue.label.split("—")[0].trim()
-        : FRIENDLY[cue.role] ?? cue.role,
+      label,
       failing,
-      cue.secondaryEncoding.icon ?? "circle",
-      failing ? calloutForRole(cue.role) : undefined
+      cue.secondaryEncoding.icon ?? "circle"
     );
-    const m = new Marker({ element: el })
-      .setLngLat(f.geometry.coordinates as [number, number])
-      .addTo(map);
-    markersRef.current.push(m);
+    markersRef.current.push(
+      new Marker({ element: el })
+        .setLngLat(f.geometry.coordinates as [number, number])
+        .addTo(map)
+    );
   }
 }
 
@@ -229,56 +240,31 @@ function markerEl(
   colour: string,
   label: string,
   failing: boolean,
-  icon: string,
-  failNote?: string
+  icon: string
 ): HTMLDivElement {
   const wrap = document.createElement("div");
-  wrap.style.display = "flex";
-  wrap.style.flexDirection = "column";
-  wrap.style.alignItems = "center";
-  wrap.style.gap = "2px";
+  wrap.style.cssText =
+    "display:flex;flex-direction:column;align-items:center;gap:2px;";
 
   const shape = document.createElement("div");
-  shape.style.width = "16px";
-  shape.style.height = "16px";
-  shape.style.background = colour;
-  shape.style.border = failing ? "2px solid #c45c5c" : "2px solid #0f1113";
-  shape.style.boxShadow = failing
-    ? "0 0 0 2px rgba(196,92,92,0.5)"
-    : "0 1px 3px rgba(0,0,0,0.35)";
   if (icon === "triangle") {
-    shape.style.width = "0";
-    shape.style.height = "0";
-    shape.style.background = "transparent";
-    shape.style.border = "none";
-    shape.style.borderLeft = "9px solid transparent";
-    shape.style.borderRight = "9px solid transparent";
-    shape.style.borderBottom = `16px solid ${colour}`;
-    shape.style.boxShadow = "none";
-    if (failing) {
-      shape.style.filter = "drop-shadow(0 0 2px #c45c5c)";
-    }
-  } else if (icon === "square") {
-    shape.style.borderRadius = "2px";
+    shape.style.cssText = `width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:16px solid ${colour};${
+      failing ? "filter:drop-shadow(0 0 3px #c45c5c);" : ""
+    }`;
   } else {
-    shape.style.borderRadius = "50%";
+    shape.style.cssText = `width:16px;height:16px;background:${colour};border:2px solid ${
+      failing ? "#c45c5c" : "#0f1113"
+    };border-radius:${icon === "square" ? "2px" : "50%"};box-shadow:${
+      failing ? "0 0 0 2px rgba(196,92,92,0.45)" : "0 1px 3px rgba(0,0,0,0.35)"
+    };`;
   }
   wrap.appendChild(shape);
 
   const text = document.createElement("div");
-  text.textContent = failing && failNote ? failNote : label;
-  text.style.fontSize = "10px";
-  text.style.fontFamily = "Inter, system-ui, sans-serif";
-  text.style.color = "#e8eaed";
-  text.style.background = failing
-    ? "rgba(196,92,92,0.92)"
-    : "rgba(15,17,19,0.85)";
-  text.style.padding = "2px 5px";
-  text.style.borderRadius = "3px";
-  text.style.whiteSpace = "nowrap";
-  text.style.maxWidth = "160px";
-  text.style.overflow = "hidden";
-  text.style.textOverflow = "ellipsis";
+  text.textContent = label;
+  text.style.cssText = `font-size:11px;font-family:Inter,system-ui,sans-serif;color:#e8eaed;background:${
+    failing ? "rgba(196,92,92,0.92)" : "rgba(15,17,19,0.88)"
+  };padding:2px 6px;border-radius:3px;white-space:nowrap;`;
   wrap.appendChild(text);
 
   return wrap;

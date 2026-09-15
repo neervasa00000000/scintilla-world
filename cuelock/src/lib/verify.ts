@@ -1,6 +1,6 @@
 /**
  * CueLock verification engine.
- * Dual-encoding gate: hue-confusable critical pairs FAIL unless secondary cues differ.
+ * Dual-encoding gate: if ΔE under CVD < threshold AND secondary encodings identical → FAIL.
  */
 
 import { deltaE2000, parseHex } from "./color";
@@ -16,7 +16,7 @@ import {
   type VerifyReport,
 } from "./types";
 
-function secondarySignature(s: SecondaryEncoding): string {
+export function secondarySignature(s: SecondaryEncoding): string {
   return [
     s.pattern ?? "solid",
     String(s.width ?? 0),
@@ -77,28 +77,23 @@ export function verifyCues(
     }
   }
 
-  // Apply instrument rule matching before/after demo:
-  // FAIL iff ΔE_cvd < threshold AND secondary encodings are identical.
-  // Also surface dualEncodingFail flag. If ΔE fails but secondary differs → PASS (rescued).
   for (const p of pairs) {
     if (p.colourFail && !p.secondaryDiffer) {
       p.status = "FAIL";
       p.dualEncodingFail = true;
-      p.reason = `FAIL — ${p.aLabel} vs ${p.bLabel}: ΔE ${p.deltaENormal.toFixed(1)} → ${p.deltaECvd.toFixed(1)} under ${p.mode} (threshold ${p.threshold}). No non-colour backup (pattern/width/icon/label identical).`;
+      p.reason = `FAIL — ${p.aLabel} vs ${p.bLabel}: ΔE ${p.deltaENormal.toFixed(1)} → ${p.deltaECvd.toFixed(1)} under ${p.mode} (threshold ${p.threshold}). No non-colour backup.`;
     } else if (p.colourFail && p.secondaryDiffer) {
       p.status = "PASS";
       p.dualEncodingFail = false;
-      p.reason = `PASS (dual-encoding rescue) — ${p.aLabel} vs ${p.bLabel}: hue ΔE ${p.deltaENormal.toFixed(1)} → ${p.deltaECvd.toFixed(1)} under ${p.mode} (< ${p.threshold}), but secondary encodings differ.`;
+      p.reason = `PASS (dual-encoding rescue) — ${p.aLabel} vs ${p.bLabel}: hue ΔE ${p.deltaENormal.toFixed(1)} → ${p.deltaECvd.toFixed(1)} under ${p.mode}, secondary encodings differ.`;
     } else {
       p.status = "PASS";
-      p.reason = `PASS — ${p.aLabel} vs ${p.bLabel}: ΔE ${p.deltaENormal.toFixed(1)} → ${p.deltaECvd.toFixed(1)} under ${p.mode} (≥ ${p.threshold}).`;
+      p.reason = `PASS — ${p.aLabel} vs ${p.bLabel}: ΔE ${p.deltaENormal.toFixed(1)} → ${p.deltaECvd.toFixed(1)} under ${p.mode}.`;
     }
   }
 
   const failCount = pairs.filter((p) => p.status === "FAIL").length;
   const passCount = pairs.filter((p) => p.status === "PASS").length;
-  const colourOnlyFails = pairs.filter((p) => p.dualEncodingFail).length;
-  const deltaEFails = pairs.filter((p) => p.colourFail).length;
 
   return {
     version: "1.0",
@@ -113,23 +108,27 @@ export function verifyCues(
       pass: failCount === 0,
       failCount,
       passCount,
-      colourOnlyFails,
-      deltaEFails,
+      colourOnlyFails: pairs.filter((p) => p.dualEncodingFail).length,
+      deltaEFails: pairs.filter((p) => p.colourFail).length,
     },
   };
 }
 
-/** Apply safe secondary encodings for the Melbourne bad palette demo. */
+/** Concrete Fix mutations — must visibly change map encodings. */
 export function applySafeEncoding(cues: Cue[]): Cue[] {
+  const main = cues.find((c) => c.role === "route_active");
+  const mainWidth = Math.max(main?.secondaryEncoding.width ?? 4, 4);
+  const backupWidth = Math.max(mainWidth + 3, 7);
+
   return cues.map((c) => {
     if (c.role === "route_active") {
       return {
         ...c,
         secondaryEncoding: {
           pattern: "solid",
-          width: 6,
-          labelOnMap: true,
+          width: mainWidth,
           icon: undefined,
+          labelOnMap: false,
         },
       };
     }
@@ -138,9 +137,9 @@ export function applySafeEncoding(cues: Cue[]): Cue[] {
         ...c,
         secondaryEncoding: {
           pattern: "dashed",
-          width: 4,
-          labelOnMap: false,
+          width: backupWidth,
           icon: undefined,
+          labelOnMap: false,
         },
       };
     }
@@ -149,7 +148,7 @@ export function applySafeEncoding(cues: Cue[]): Cue[] {
         ...c,
         secondaryEncoding: {
           pattern: "solid",
-          width: 0,
+          width: c.secondaryEncoding.width ?? 4,
           icon: "triangle",
           labelOnMap: true,
         },
@@ -160,12 +159,12 @@ export function applySafeEncoding(cues: Cue[]): Cue[] {
         ...c,
         secondaryEncoding: {
           pattern: "solid",
-          width: 0,
+          width: c.secondaryEncoding.width ?? 4,
           icon: "circle",
           labelOnMap: true,
         },
       };
     }
-    return { ...c };
+    return { ...c, secondaryEncoding: { ...c.secondaryEncoding } };
   });
 }

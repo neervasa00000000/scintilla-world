@@ -43,7 +43,7 @@ export function melbourneBadCues(): Cue[] {
     {
       id: "cue-route-active",
       role: "route_active",
-      label: "Active route (Flinders→Melb Central)",
+      label: "Main route (Flinders→Melb Central)",
       colour: "#22c55e",
       secondaryEncoding: { ...hueOnly },
       geometryRef: "route-active",
@@ -52,7 +52,7 @@ export function melbourneBadCues(): Cue[] {
     {
       id: "cue-route-alt",
       role: "route_alt",
-      label: "Alt route (via Exhibition St)",
+      label: "Backup route (via Exhibition St)",
       colour: "#ef4444",
       secondaryEncoding: { ...hueOnly },
       geometryRef: "route-alt",
