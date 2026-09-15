@@ -1,5 +1,4 @@
-# Netlify — See-the-Route (scintilla.world)
-# Static export published from /deploy (built from see-the-route).
+# Netlify — CueLock (scintilla.world)
 
 [build]
   publish = "deploy"

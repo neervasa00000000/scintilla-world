@@ -1,14 +1,13 @@
-# Scintilla World → See-the-Route
+# Scintilla World → CueLock
 
-The live site (**scintilla.world**) now ships **See-the-Route**, an accessible map/route UI stress tester.
+Live site (**scintilla.world**) ships **CueLock** — a semantic navigation cue verifier for web maps.
 
 ```bash
-cd see-the-route
+cd cuelock
 npm install
-npm run generate-samples
 npm run dev
 ```
 
-See [`see-the-route/README.md`](see-the-route/README.md) for method, deploy, and research framing.
+See [`cuelock/README.md`](cuelock/README.md).
 
-Legacy static pages (blogs, tools, extensions source) remain in this repo for reference; Netlify publishes `see-the-route/out`.
+Netlify publishes the static export from `/deploy`.

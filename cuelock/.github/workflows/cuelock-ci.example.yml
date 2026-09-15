@@ -1,0 +1,63 @@
+# Example GitHub Action — fail the PR if CueLock verify fails.
+# Copy to .github/workflows/cuelock.yml and adjust paths / cue fixture.
+
+name: CueLock verify
+
+on:
+  pull_request:
+    paths:
+      - "cuelock/**"
+      - "**/route*.geojson"
+      - "**/cues.json"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cuelock
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: cuelock/package-lock.json
+      - run: npm ci
+      - name: Verify cue fixture
+        run: |
+          npx --yes tsx <<'EOF'
+          import { readFileSync, writeFileSync } from "node:fs";
+          import { verifyCues } from "./src/lib/verify.ts";
+          import { melbourneBadCues } from "./src/lib/demo.ts";
+
+          // Prefer a project fixture if present; else Melbourne bad pack must FAIL (sanity).
+          let cues;
+          try {
+            cues = JSON.parse(readFileSync("fixtures/cues.json", "utf8"));
+          } catch {
+            cues = melbourneBadCues();
+            console.log("No fixtures/cues.json — running Melbourne bad pack sanity check (expect FAIL).");
+          }
+
+          const report = verifyCues(cues, { threshold: 15 });
+          writeFileSync("cuelock-report.json", JSON.stringify(report, null, 2));
+          console.log(JSON.stringify(report.summary, null, 2));
+
+          // For the demo fixture we assert FAIL. For product fixtures assert PASS:
+          // if (!report.summary.pass) process.exit(1);
+          if (cues === melbourneBadCues() || !process.env.CUELOCK_REQUIRE_PASS) {
+            if (report.summary.pass) {
+              console.error("Expected Melbourne bad pack to FAIL");
+              process.exit(1);
+            }
+          } else if (!report.summary.pass) {
+            console.error("CueLock FAIL — see cuelock-report.json");
+            process.exit(1);
+          }
+          EOF
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cuelock-report
+          path: cuelock/cuelock-report.json

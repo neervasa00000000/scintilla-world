@@ -3,6 +3,7 @@ node_modules/
 package-lock.json
 yarn.lock
 !see-the-route/package-lock.json
+!cuelock/package-lock.json
 
 # Environment variables
 .env
