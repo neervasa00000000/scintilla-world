@@ -159,7 +159,7 @@ export function ToolApp() {
       )}
 
       <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,0.65fr)_minmax(280px,0.35fr)]">
-        <section className="relative min-h-[360px] border-b border-[var(--border)] lg:border-b-0 lg:border-r">
+        <section className="relative h-[min(70vh,640px)] min-h-[420px] border-b border-[var(--border)] lg:h-auto lg:min-h-[520px] lg:border-b-0 lg:border-r">
           <MapPane
             cues={snap.cues}
             failingIds={failIds}

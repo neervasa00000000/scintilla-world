@@ -1,7 +1,7 @@
 "use client";
 
 import type { Cue } from "@/lib/types";
-import { FallbackMap } from "@/components/FallbackMap";
+import { MapWorkspace } from "@/components/MapWorkspace";
 
 type MapProps = {
   cues: Cue[];
@@ -10,17 +10,15 @@ type MapProps = {
   resetToken?: number;
 };
 
-/**
- * Reliable Melbourne demo map bound to cues[] state.
- * MapLibre is optional later — never block the product on a tile/chunk load.
- */
+/** Real Carto/OSM street map of Melbourne, bound to cues[] state. */
 export function MapPane(props: MapProps) {
   return (
-    <div className="relative h-full min-h-[360px] w-full">
-      <FallbackMap
+    <div className="relative h-full min-h-[420px] w-full">
+      <MapWorkspace
         cues={props.cues}
         failingIds={props.failingIds}
         callouts={props.callouts}
+        resetToken={props.resetToken}
       />
     </div>
   );

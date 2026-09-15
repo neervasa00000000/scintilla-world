@@ -1,18 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import {
-  Map as MapLibreMap,
-  Marker,
-  NavigationControl,
-} from "maplibre-gl";
-import type { Map as MapLibreMapType, Marker as MarkerType } from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-import {
-  MELBOURNE_CENTER,
-  routeGeoJSON,
-} from "@/lib/demo";
 import type { Cue, CueRole } from "@/lib/types";
+import {
+  ACTIVE_ROUTE,
+  ALT_ROUTE,
+  DESTINATION_POINT,
+  HAZARD_POINT,
+  MELBOURNE_CENTER,
+  ORIGIN_POINT,
+} from "@/lib/demo";
 
 const FRIENDLY: Partial<Record<CueRole, string>> = {
   route_active: "Main route",
@@ -25,16 +22,38 @@ type Props = {
   cues: Cue[];
   failingIds: Set<string>;
   callouts?: string[];
-  /** Bump to force camera reset (Melbourne demo). */
   resetToken?: number;
-  onMapReady?: (map: MapLibreMapType) => void;
 };
 
-function dashFor(pattern?: string): [number, number] {
-  if (pattern === "dashed") return [2, 2];
-  if (pattern === "dotted") return [0.8, 1.6];
-  // solid — MapLibre needs a dasharray property present to update later
-  return [1, 0];
+type LeafletNS = typeof import("leaflet");
+
+function toLatLngs(coords: [number, number][]): [number, number][] {
+  return coords.map(([lng, lat]) => [lat, lng]);
+}
+
+function dashArray(pattern?: string): string | undefined {
+  if (pattern === "dashed") return "12, 10";
+  if (pattern === "dotted") return "2, 8";
+  return undefined;
+}
+
+function pinIcon(
+  L: LeafletNS,
+  colour: string,
+  label: string,
+  failing: boolean,
+  icon: string
+) {
+  const shape =
+    icon === "triangle"
+      ? `<div style="width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:16px solid ${colour};${failing ? "filter:drop-shadow(0 0 3px #c45c5c);" : ""}"></div>`
+      : `<div style="width:16px;height:16px;background:${colour};border:2px solid ${failing ? "#c45c5c" : "#0f1113"};border-radius:${icon === "square" ? "2px" : "50%"};box-shadow:0 1px 3px rgba(0,0,0,.4)"></div>`;
+  return L.divIcon({
+    className: "cuelock-pin",
+    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:3px">${shape}<div style="font:500 11px Inter,system-ui,sans-serif;color:#e8eaed;background:${failing ? "rgba(196,92,92,.92)" : "rgba(15,17,19,.88)"};padding:2px 6px;border-radius:3px;white-space:nowrap">${label}</div></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
 }
 
 export function MapWorkspace({
@@ -42,11 +61,15 @@ export function MapWorkspace({
   failingIds,
   callouts = [],
   resetToken = 0,
-  onMapReady,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<MapLibreMapType | null>(null);
-  const markersRef = useRef<MarkerType[]>([]);
+  const mapRef = useRef<import("leaflet").Map | null>(null);
+  const LRef = useRef<LeafletNS | null>(null);
+  const layersRef = useRef<{
+    active?: import("leaflet").Polyline;
+    alt?: import("leaflet").Polyline;
+    markers: import("leaflet").Marker[];
+  }>({ markers: [] });
   const cuesRef = useRef(cues);
   const failRef = useRef(failingIds);
   cuesRef.current = cues;
@@ -54,96 +77,76 @@ export function MapWorkspace({
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
+    let cancelled = false;
 
-    const map = new MapLibreMap({
-      container: containerRef.current,
-      style: {
-        version: 8,
-        sources: {
-          osm: {
-            type: "raster",
-            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-            tileSize: 256,
-            attribution: "© OpenStreetMap",
-          },
-        },
-        layers: [{ id: "osm", type: "raster", source: "osm" }],
-      },
-      center: MELBOURNE_CENTER,
-      zoom: 14.2,
-      attributionControl: { compact: true },
-    });
+    (async () => {
+      const leafletMod = await import("leaflet");
+      const L = ((leafletMod as { default?: LeafletNS }).default ??
+        leafletMod) as LeafletNS;
+      if (cancelled || !containerRef.current) return;
+      LRef.current = L;
 
-    map.addControl(new NavigationControl({ showCompass: false }), "top-right");
-
-    map.on("load", () => {
-      map.addSource("cuelock-routes", {
-        type: "geojson",
-        data: routeGeoJSON(),
+      const map = L.map(containerRef.current, {
+        center: [MELBOURNE_CENTER[1], MELBOURNE_CENTER[0]],
+        zoom: 15,
+        zoomControl: true,
       });
 
-      // Both lines get dasharray so setPaintProperty works later
-      map.addLayer({
-        id: "route-alt-line",
-        type: "line",
-        source: "cuelock-routes",
-        filter: ["==", ["get", "id"], "route-alt"],
-        paint: {
-          "line-color": "#ef4444",
-          "line-width": 4,
-          "line-dasharray": [1, 0],
-          "line-opacity": 0.95,
-        },
-      });
-
-      map.addLayer({
-        id: "route-active-line",
-        type: "line",
-        source: "cuelock-routes",
-        filter: ["==", ["get", "id"], "route-active"],
-        paint: {
-          "line-color": "#22c55e",
-          "line-width": 4,
-          "line-dasharray": [1, 0],
-          "line-opacity": 1,
-        },
-      });
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: "abcd",
+          maxZoom: 20,
+        }
+      ).addTo(map);
 
       mapRef.current = map;
-      onMapReady?.(map);
-      paintCues(map, cuesRef.current, failRef.current, markersRef);
+      paint(L, map, cuesRef.current, failRef.current, layersRef);
+      requestAnimationFrame(() => map.invalidateSize());
+      window.setTimeout(() => map.invalidateSize(), 100);
+    })().catch((err) => {
+      console.error("Street map failed to load", err);
     });
 
+    const onResize = () => mapRef.current?.invalidateSize();
+    window.addEventListener("resize", onResize);
+
     return () => {
-      markersRef.current.forEach((m) => m.remove());
-      markersRef.current = [];
-      map.remove();
+      cancelled = true;
+      window.removeEventListener("resize", onResize);
+      mapRef.current?.remove();
       mapRef.current = null;
+      layersRef.current = { markers: [] };
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Repaint whenever cues / failures change
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
-    const paint = () => paintCues(map, cues, failingIds, markersRef);
-    if (map.isStyleLoaded()) paint();
-    else map.once("load", paint);
+    const L = LRef.current;
+    if (!map || !L) return;
+    paint(L, map, cues, failingIds, layersRef);
   }, [cues, failingIds]);
 
-  // Reset camera on Melbourne demo
   useEffect(() => {
     const map = mapRef.current;
     if (!map || resetToken === 0) return;
-    map.flyTo({ center: MELBOURNE_CENTER, zoom: 14.2, essential: true });
+    map.setView([MELBOURNE_CENTER[1], MELBOURNE_CENTER[0]], 15);
+    map.invalidateSize();
   }, [resetToken]);
 
+  const active = cues.find((c) => (c.geometryRef ?? c.id) === "route-active");
+  const alt = cues.find((c) => (c.geometryRef ?? c.id) === "route-alt");
+
   return (
-    <div className="relative h-full w-full min-h-[320px]">
-      <div ref={containerRef} className="absolute inset-0" />
+    <div className="relative h-full min-h-[420px] w-full">
+      <div ref={containerRef} className="absolute inset-0 z-0 bg-[#1a1e24]" />
+      <div className="pointer-events-none absolute left-3 top-3 z-[1000] max-w-[calc(100%-80px)] text-[13px] font-medium text-[#c5cad0]">
+        Melbourne CBD · Flinders St → Melbourne Central
+      </div>
       {callouts.length > 0 && (
-        <div className="pointer-events-none absolute left-3 top-3 z-10 flex max-w-[260px] flex-col gap-1.5">
+        <div className="pointer-events-none absolute left-3 top-10 z-[1000] flex max-w-[260px] flex-col gap-1.5">
           {callouts.slice(0, 2).map((c) => (
             <div
               key={c}
@@ -154,118 +157,115 @@ export function MapWorkspace({
           ))}
         </div>
       )}
+      <div className="pointer-events-none absolute bottom-8 left-3 z-[1000] flex items-center gap-4 rounded border border-[#2a2f36] bg-[#12161c]/92 px-3 py-2 text-[11px] text-[#8b929a]">
+        <span className="flex items-center gap-2">
+          <span
+            className="inline-block h-0.5 w-7"
+            style={{ background: active?.colour ?? "#22c55e" }}
+          />
+          Main
+        </span>
+        <span className="flex items-center gap-2">
+          <span
+            className="inline-block h-0.5 w-7"
+            style={{
+              backgroundImage:
+                alt?.secondaryEncoding.pattern === "dashed"
+                  ? `repeating-linear-gradient(90deg, ${alt?.colour ?? "#ef4444"} 0 8px, transparent 8px 14px)`
+                  : undefined,
+              backgroundColor:
+                alt?.secondaryEncoding.pattern === "dashed"
+                  ? "transparent"
+                  : alt?.colour ?? "#ef4444",
+            }}
+          />
+          Backup
+          {alt?.secondaryEncoding.pattern === "dashed" ? " (dashed)" : ""}
+        </span>
+      </div>
     </div>
   );
 }
 
-function paintCues(
-  map: MapLibreMapType,
+function paint(
+  L: LeafletNS,
+  map: import("leaflet").Map,
   cues: Cue[],
   failingIds: Set<string>,
-  markersRef: React.MutableRefObject<MarkerType[]>
+  layersRef: React.MutableRefObject<{
+    active?: import("leaflet").Polyline;
+    alt?: import("leaflet").Polyline;
+    markers: import("leaflet").Marker[];
+  }>
 ) {
-  if (!map.getLayer("route-active-line")) return;
+  const prev = layersRef.current;
+  if (prev.active) map.removeLayer(prev.active);
+  if (prev.alt) map.removeLayer(prev.alt);
+  prev.markers.forEach((m) => map.removeLayer(m));
 
   const byRef = new Map(cues.map((c) => [c.geometryRef ?? c.id, c]));
   const active = byRef.get("route-active");
   const alt = byRef.get("route-alt");
 
-  if (active) {
-    map.setPaintProperty("route-active-line", "line-color", active.colour);
-    map.setPaintProperty(
-      "route-active-line",
-      "line-width",
-      active.secondaryEncoding.width ?? 4
+  const altLine = L.polyline(toLatLngs(ALT_ROUTE), {
+    color: alt?.colour ?? "#ef4444",
+    weight: alt?.secondaryEncoding.width ?? 5,
+    dashArray: dashArray(alt?.secondaryEncoding.pattern),
+    opacity: 0.95,
+    lineCap: "round",
+    lineJoin: "round",
+  }).addTo(map);
+
+  const activeLine = L.polyline(toLatLngs(ACTIVE_ROUTE), {
+    color: active?.colour ?? "#22c55e",
+    weight: active?.secondaryEncoding.width ?? 5,
+    dashArray: dashArray(active?.secondaryEncoding.pattern),
+    opacity: 1,
+    lineCap: "round",
+    lineJoin: "round",
+  }).addTo(map);
+
+  const markers: import("leaflet").Marker[] = [];
+
+  markers.push(
+    L.marker([ORIGIN_POINT[1], ORIGIN_POINT[0]], {
+      icon: pinIcon(L, "#111827", "Start", false, "circle"),
+      interactive: false,
+    }).addTo(map)
+  );
+
+  const hazard = byRef.get("hazard");
+  if (hazard) {
+    markers.push(
+      L.marker([HAZARD_POINT[1], HAZARD_POINT[0]], {
+        icon: pinIcon(
+          L,
+          hazard.colour,
+          FRIENDLY.hazard ?? "Hazard",
+          failingIds.has(hazard.id),
+          hazard.secondaryEncoding.icon ?? "circle"
+        ),
+        interactive: false,
+      }).addTo(map)
     );
-    map.setPaintProperty(
-      "route-active-line",
-      "line-dasharray",
-      dashFor(active.secondaryEncoding.pattern)
+  }
+
+  const dest = byRef.get("destination");
+  if (dest) {
+    markers.push(
+      L.marker([DESTINATION_POINT[1], DESTINATION_POINT[0]], {
+        icon: pinIcon(
+          L,
+          dest.colour,
+          FRIENDLY.destination ?? "Destination",
+          failingIds.has(dest.id),
+          dest.secondaryEncoding.icon ?? "circle"
+        ),
+        interactive: false,
+      }).addTo(map)
     );
   }
 
-  if (alt) {
-    map.setPaintProperty("route-alt-line", "line-color", alt.colour);
-    map.setPaintProperty(
-      "route-alt-line",
-      "line-width",
-      alt.secondaryEncoding.width ?? 4
-    );
-    map.setPaintProperty(
-      "route-alt-line",
-      "line-dasharray",
-      dashFor(alt.secondaryEncoding.pattern)
-    );
-  }
-
-  markersRef.current.forEach((m) => m.remove());
-  markersRef.current = [];
-
-  const geo = routeGeoJSON();
-  for (const f of geo.features) {
-    if (f.geometry.type !== "Point") continue;
-    const id = String(f.properties?.id ?? "");
-    const cue = byRef.get(id);
-
-    if (!cue && id === "origin") {
-      const el = markerEl("#111827", "Start", false, "circle");
-      markersRef.current.push(
-        new Marker({ element: el })
-          .setLngLat(f.geometry.coordinates as [number, number])
-          .addTo(map)
-      );
-      continue;
-    }
-    if (!cue) continue;
-
-    const failing = failingIds.has(cue.id);
-    const label = cue.secondaryEncoding.labelOnMap
-      ? FRIENDLY[cue.role] ?? cue.role
-      : FRIENDLY[cue.role] ?? cue.role;
-    const el = markerEl(
-      cue.colour,
-      label,
-      failing,
-      cue.secondaryEncoding.icon ?? "circle"
-    );
-    markersRef.current.push(
-      new Marker({ element: el })
-        .setLngLat(f.geometry.coordinates as [number, number])
-        .addTo(map)
-    );
-  }
-}
-
-function markerEl(
-  colour: string,
-  label: string,
-  failing: boolean,
-  icon: string
-): HTMLDivElement {
-  const wrap = document.createElement("div");
-  wrap.style.cssText =
-    "display:flex;flex-direction:column;align-items:center;gap:2px;";
-
-  const shape = document.createElement("div");
-  if (icon === "triangle") {
-    shape.style.cssText = `width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:16px solid ${colour};${
-      failing ? "filter:drop-shadow(0 0 3px #c45c5c);" : ""
-    }`;
-  } else {
-    shape.style.cssText = `width:16px;height:16px;background:${colour};border:2px solid ${
-      failing ? "#c45c5c" : "#0f1113"
-    };border-radius:${icon === "square" ? "2px" : "50%"};box-shadow:${
-      failing ? "0 0 0 2px rgba(196,92,92,0.45)" : "0 1px 3px rgba(0,0,0,0.35)"
-    };`;
-  }
-  wrap.appendChild(shape);
-
-  const text = document.createElement("div");
-  text.textContent = label;
-  text.style.cssText = `font-size:11px;font-family:Inter,system-ui,sans-serif;color:#e8eaed;background:${
-    failing ? "rgba(196,92,92,0.92)" : "rgba(15,17,19,0.88)"
-  };padding:2px 6px;border-radius:3px;white-space:nowrap;`;
-  wrap.appendChild(text);
-
-  return wrap;
+  layersRef.current = { active: activeLine, alt: altLine, markers };
+  map.invalidateSize();
 }

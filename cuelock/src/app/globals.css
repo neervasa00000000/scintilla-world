@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 :root {
   --bg: #0f1113;
@@ -28,9 +29,24 @@ body {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-/* MapLibre overrides for dense tool chrome */
-.maplibregl-ctrl-attrib {
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: #1a1e24;
+  font-family: inherit;
+}
+
+.leaflet-control-attribution {
   font-size: 10px !important;
-  background: rgba(15, 17, 19, 0.75) !important;
+  background: rgba(15, 17, 19, 0.8) !important;
   color: #8b929a !important;
+}
+
+.leaflet-control-attribution a {
+  color: #c5cad0 !important;
+}
+
+.cuelock-pin {
+  background: transparent !important;
+  border: none !important;
 }
