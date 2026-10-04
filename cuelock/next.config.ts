@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   trailingSlash: true,
   outputFileTracingRoot: path.join(__dirname),
-  transpilePackages: ["leaflet"],
 };
 
 export default nextConfig;

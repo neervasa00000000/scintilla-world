@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], display: "swap" });
-
 export const metadata: Metadata = {
-  title: "Scintilla — Accessible routing",
-  description: "Accessible routing — plan travel with real accessibility needs in mind.",
+  title: "Scintilla — CueLock map accessibility checker",
+  description: "Check whether navigation routes and markers stay distinguishable for people with colour vision differences.",
   metadataBase: new URL("https://scintilla.world"),
 };
 
@@ -15,7 +12,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${inter.className} h-full antialiased`}>{children}</body>
+      <body className="h-full antialiased">{children}</body>
     </html>
   );
 }

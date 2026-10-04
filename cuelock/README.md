@@ -1,5 +1,9 @@
 # CueLock
 
+Run locally with `npm ci && npm run dev`. Use `npm run verify:demo` to check that the original Melbourne cues fail and the suggested encodings pass. `npm run build` creates the static site in `out/` for Netlify.
+
+The on-page Melbourne map is a self-contained schematic preview, so the demo works without map tiles or an API key. The report can be copied or downloaded.
+
 ### What CueLock is
 Semantic verifier for navigation cues on web maps.
 

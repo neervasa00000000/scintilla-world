@@ -10,4 +10,4 @@ npm run dev
 
 See [`cuelock/README.md`](cuelock/README.md).
 
-Netlify publishes the static export from `/deploy`.
+Netlify runs the CueLock build and publishes the static export from `/cuelock/out`.

@@ -7,11 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "verify:demo": "npx --yes tsx scripts/verify-demo.mjs"
+    "verify:demo": "node scripts/verify-demo.mjs"
   },
   "dependencies": {
-    "leaflet": "^1.9.4",
-    "maplibre-gl": "^6.9.1",
     "next": "15.5.25",
     "react": "19.1.0",
     "react-dom": "19.1.0"
@@ -19,7 +17,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/leaflet": "^1.9.22",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

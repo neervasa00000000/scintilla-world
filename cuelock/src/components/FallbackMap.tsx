@@ -126,7 +126,7 @@ export function FallbackMap({ cues, failingIds, callouts = [] }: Props) {
         <rect width={W} height={H} fill="#1a1e24" />
         <rect width={W} height={H} fill="url(#cuelock-grid)" />
 
-        {/* soft street blocks for context */}
+        {/* schematic blocks for orientation */}
         <rect
           x={80}
           y={100}
@@ -153,7 +153,7 @@ export function FallbackMap({ cues, failingIds, callouts = [] }: Props) {
           fontSize="12"
           fontFamily="system-ui, sans-serif"
         >
-          Melbourne CBD · Flinders St → Melbourne Central
+          Schematic preview · Flinders St → Melbourne Central
         </text>
 
         {/* Backup route (under) */}
@@ -223,7 +223,7 @@ export function FallbackMap({ cues, failingIds, callouts = [] }: Props) {
                 strokeWidth={2}
               />
             )}
-            <text
+            {hazard.secondaryEncoding.labelOnMap && <text
               x={hx + 14}
               y={hy + 4}
               fill="#e8eaed"
@@ -232,7 +232,7 @@ export function FallbackMap({ cues, failingIds, callouts = [] }: Props) {
               fontWeight={500}
             >
               Hazard
-            </text>
+            </text>}
           </g>
         )}
 
@@ -247,7 +247,7 @@ export function FallbackMap({ cues, failingIds, callouts = [] }: Props) {
               stroke="#0f1113"
               strokeWidth={2}
             />
-            <text
+            {dest.secondaryEncoding.labelOnMap && <text
               x={dx + 14}
               y={dy + 4}
               fill="#e8eaed"
@@ -256,7 +256,7 @@ export function FallbackMap({ cues, failingIds, callouts = [] }: Props) {
               fontWeight={500}
             >
               Destination
-            </text>
+            </text>}
           </g>
         )}
 

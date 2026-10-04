@@ -1,8 +1,8 @@
 # Netlify — CueLock (scintilla.world)
 
 [build]
-  publish = "deploy"
-  command = ""
+  publish = "cuelock/out"
+  command = "cd cuelock && npm ci && npm run build"
 
 [[redirects]]
   from = "/privacy-policy"
