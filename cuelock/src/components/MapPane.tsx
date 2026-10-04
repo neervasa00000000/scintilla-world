@@ -1,19 +1,23 @@
 "use client";
 
-import type { Cue } from "@/lib/types";
+import type { Cue, CvdMode } from "@/lib/types";
 import { FallbackMap } from "@/components/FallbackMap";
 
 type MapProps = {
   cues: Cue[];
   failingIds: Set<string>;
   callouts?: string[];
+  cvdMode?: CvdMode;
+  selectedCueId?: string | null;
+  onSelectCue?: (cueId: string) => void;
+  title?: string;
 };
 
-/** Self-contained map preview, so the demo works without external map tiles. */
+/** Self-contained map engine supporting custom routes, CVD simulation, and demo presets. */
 export function MapPane(props: MapProps) {
   return (
-    <div className="relative h-full min-h-[420px] w-full">
-      <FallbackMap cues={props.cues} failingIds={props.failingIds} callouts={props.callouts} />
+    <div className="relative h-full min-h-[440px] w-full">
+      <FallbackMap {...props} />
     </div>
   );
 }

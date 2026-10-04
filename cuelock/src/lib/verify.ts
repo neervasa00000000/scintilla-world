@@ -119,6 +119,8 @@ export function applySafeEncoding(cues: Cue[]): Cue[] {
   const main = cues.find((c) => c.role === "route_active");
   const mainWidth = Math.max(main?.secondaryEncoding.width ?? 4, 4);
   const backupWidth = Math.max(mainWidth + 3, 7);
+  let customRouteCount = 0;
+  let customPointCount = 0;
 
   return cues.map((c) => {
     if (c.role === "route_active") {
@@ -143,6 +145,28 @@ export function applySafeEncoding(cues: Cue[]): Cue[] {
         },
       };
     }
+    if (c.role === "mode_transit") {
+      return {
+        ...c,
+        secondaryEncoding: {
+          pattern: "solid",
+          width: 6,
+          icon: undefined,
+          labelOnMap: true,
+        },
+      };
+    }
+    if (c.role === "mode_walk") {
+      return {
+        ...c,
+        secondaryEncoding: {
+          pattern: "dotted",
+          width: 4,
+          icon: undefined,
+          labelOnMap: true,
+        },
+      };
+    }
     if (c.role === "hazard") {
       return {
         ...c,
@@ -164,6 +188,31 @@ export function applySafeEncoding(cues: Cue[]): Cue[] {
           labelOnMap: true,
         },
       };
+    }
+    if (c.role === "custom" || c.role === "legend_chip") {
+      const isLine = Array.isArray(c.coordinates) && c.coordinates.length > 1;
+      if (isLine) {
+        customRouteCount++;
+        return {
+          ...c,
+          secondaryEncoding: {
+            ...c.secondaryEncoding,
+            pattern: customRouteCount % 2 === 1 ? "dashed" : "solid",
+            width: (c.secondaryEncoding.width ?? 4) + (customRouteCount % 2 === 1 ? 2 : 0),
+          },
+        };
+      } else {
+        customPointCount++;
+        const shapes = ["square", "diamond", "triangle", "circle"];
+        return {
+          ...c,
+          secondaryEncoding: {
+            ...c.secondaryEncoding,
+            icon: shapes[customPointCount % shapes.length],
+            labelOnMap: true,
+          },
+        };
+      }
     }
     return { ...c, secondaryEncoding: { ...c.secondaryEncoding } };
   });

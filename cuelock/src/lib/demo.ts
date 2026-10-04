@@ -47,6 +47,7 @@ export function melbourneBadCues(): Cue[] {
       colour: "#22c55e",
       secondaryEncoding: { ...hueOnly },
       geometryRef: "route-active",
+      coordinates: ACTIVE_ROUTE,
       critical: true,
     },
     {
@@ -56,6 +57,7 @@ export function melbourneBadCues(): Cue[] {
       colour: "#ef4444",
       secondaryEncoding: { ...hueOnly },
       geometryRef: "route-alt",
+      coordinates: ALT_ROUTE,
       critical: true,
     },
     {
@@ -65,6 +67,7 @@ export function melbourneBadCues(): Cue[] {
       colour: "#f97316",
       secondaryEncoding: { ...hueOnly },
       geometryRef: "hazard",
+      coordinates: HAZARD_POINT,
       critical: true,
     },
     {
@@ -74,6 +77,115 @@ export function melbourneBadCues(): Cue[] {
       colour: "#3b82f6",
       secondaryEncoding: { ...hueOnly },
       geometryRef: "destination",
+      coordinates: DESTINATION_POINT,
+      critical: true,
+    },
+  ];
+}
+
+export const TRANSIT_ROUTE: [number, number][] = [
+  [144.9610, -37.8180],
+  [144.9630, -37.8150],
+  [144.9660, -37.8120],
+  [144.9680, -37.8090],
+];
+
+export const WALK_ROUTE: [number, number][] = [
+  [144.9610, -37.8180],
+  [144.9605, -37.8145],
+  [144.9635, -37.8115],
+  [144.9680, -37.8090],
+];
+
+export function transitVsWalkCues(): Cue[] {
+  const hueOnly = {
+    pattern: "solid" as const,
+    width: 4,
+    icon: undefined,
+    labelOnMap: false,
+  };
+  return [
+    {
+      id: "cue-transit",
+      role: "mode_transit",
+      label: "Transit rail / bus route",
+      colour: "#dc2626",
+      secondaryEncoding: { ...hueOnly },
+      coordinates: TRANSIT_ROUTE,
+      critical: true,
+    },
+    {
+      id: "cue-walk",
+      role: "mode_walk",
+      label: "Pedestrian walkway",
+      colour: "#16a34a",
+      secondaryEncoding: { ...hueOnly },
+      coordinates: WALK_ROUTE,
+      critical: true,
+    },
+    {
+      id: "cue-station",
+      role: "hazard",
+      label: "Track closure / delay",
+      colour: "#ea580c",
+      secondaryEncoding: { ...hueOnly },
+      coordinates: [144.9630, -37.8150],
+      critical: true,
+    },
+    {
+      id: "cue-terminus",
+      role: "destination",
+      label: "Transfer hub",
+      colour: "#2563eb",
+      secondaryEncoding: { ...hueOnly },
+      coordinates: [144.9680, -37.8090],
+      critical: true,
+    },
+  ];
+}
+
+export function emergencyEvacCues(): Cue[] {
+  const hueOnly = {
+    pattern: "solid" as const,
+    width: 4,
+    icon: undefined,
+    labelOnMap: false,
+  };
+  return [
+    {
+      id: "cue-evac-primary",
+      role: "route_active",
+      label: "Primary egress path",
+      colour: "#22c55e",
+      secondaryEncoding: { ...hueOnly },
+      coordinates: ACTIVE_ROUTE,
+      critical: true,
+    },
+    {
+      id: "cue-evac-secondary",
+      role: "route_alt",
+      label: "Secondary exit corridor",
+      colour: "#ef4444",
+      secondaryEncoding: { ...hueOnly },
+      coordinates: ALT_ROUTE,
+      critical: true,
+    },
+    {
+      id: "cue-evac-hazard",
+      role: "hazard",
+      label: "Hazard perimeter",
+      colour: "#f59e0b",
+      secondaryEncoding: { ...hueOnly },
+      coordinates: HAZARD_POINT,
+      critical: true,
+    },
+    {
+      id: "cue-evac-assembly",
+      role: "destination",
+      label: "Assembly point B",
+      colour: "#3b82f6",
+      secondaryEncoding: { ...hueOnly },
+      coordinates: DESTINATION_POINT,
       critical: true,
     },
   ];
@@ -116,3 +228,4 @@ export function routeGeoJSON() {
     ],
   };
 }
+

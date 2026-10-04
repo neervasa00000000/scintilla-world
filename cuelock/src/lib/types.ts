@@ -27,6 +27,7 @@ export type Cue = {
   secondaryEncoding: SecondaryEncoding;
   geometryRef?: string;
   critical?: boolean;
+  coordinates?: [number, number][] | [number, number];
 };
 
 export type CvdMode = "normal" | "protanopia" | "deuteranopia" | "tritanopia";
@@ -83,6 +84,17 @@ export const ROLE_LABELS: Record<CueRole, string> = {
   custom: "Custom cue",
 };
 
+export const ALL_ROLES: CueRole[] = [
+  "route_active",
+  "route_alt",
+  "hazard",
+  "destination",
+  "mode_walk",
+  "mode_transit",
+  "legend_chip",
+  "custom",
+];
+
 export const DEFAULT_CRITICAL: CueRole[] = [
   "route_active",
   "route_alt",
@@ -95,3 +107,4 @@ export const CVD_MODES: Exclude<CvdMode, "normal">[] = [
   "deuteranopia",
   "tritanopia",
 ];
+
