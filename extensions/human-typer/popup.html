@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Human Typer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>Human Typer</h1>
+  <p class="hint"><strong>EdStem:</strong> 1) Open <strong>.java</strong> 2) Click in code (cursor blinking) 3) <strong>Start</strong> with Exact mode on. Status below should change to “Typing…” — if it stays on “Starting” for 10s, refresh.</p>
+
+  <label>
+    <span>Text to type <em id="saveHint" class="save-hint"></em></span>
+    <textarea id="text" rows="10" spellcheck="false" placeholder="Paste or write what you want typed…"></textarea>
+  </label>
+
+  <label class="row">
+    <input type="checkbox" id="exactMode" checked>
+    <span><strong>Exact mode (code)</strong> — required on EdStem: keeps spaces &amp; line breaks exact, no typos.</span>
+  </label>
+
+  <label>
+    <span>Speed: <strong id="speedLabel">Normal</strong></span>
+    <input type="range" id="speed" min="1" max="7" value="2">
+  </label>
+
+  <label>
+    <span>Typos (wrong keys / wrong word → backspace → fix): <strong id="mistakeLabel">12%</strong></span>
+    <input type="range" id="mistakes" min="0" max="30" value="12">
+  </label>
+
+  <label class="row">
+    <input type="checkbox" id="clickToTarget" checked>
+    <span>Click on page to choose where to type (recommended)</span>
+  </label>
+
+  <div class="actions">
+    <button type="button" id="saveDraft" class="secondary">Save draft</button>
+    <button type="button" id="start" class="primary">Start typing</button>
+    <button type="button" id="stop" class="secondary">Stop</button>
+  </div>
+
+  <p id="status" class="status"></p>
+
+  <script src="popup.js"></script>
+</body>
+</html>

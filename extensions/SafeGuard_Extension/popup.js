@@ -25,21 +25,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   // Helper function to format warnings with markdown-style bold and emoji support
   function formatWarning(text) {
     if (!text) return text;
-    // Convert **text** to <strong>text</strong> for visual emphasis
-    return text.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #fbbf24; font-weight: 700;">$1</strong>');
+    const safe = escapeHtml(text);
+    return safe.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #fbbf24; font-weight: 700;">$1</strong>');
   }
 
   const data = await chrome.storage.local.get('currentRequest');
-  const request = data.currentRequest;
+  let request = data.currentRequest;
 
   // Check if request is still valid (not older than 5 minutes)
   if (request && request.timestamp) {
     const age = Date.now() - request.timestamp;
     if (age > 300000) { // 5 minutes
-      // Request is too old, clear it
       chrome.storage.local.remove('currentRequest');
       request = null;
     }
@@ -123,7 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let warningsHtml = '';
   if (transactionSummary) {
     warningsHtml += `<div style="color: #00f0ff; font-size: 11px; margin-bottom: 10px; font-weight: 700; letter-spacing: 0.3px; display: flex; align-items: center; gap: 6px;">
-      <span style="font-size: 11px; text-transform: uppercase;">Summary:</span> ${transactionSummary}
+      <span style="font-size: 11px; text-transform: uppercase;">Summary:</span> ${escapeHtml(transactionSummary)}
     </div>`;
   }
   if (warnings && warnings.length > 0) {

@@ -49,7 +49,7 @@ export async function getTokenPrice(tokenAddress, symbol, decimals, chainId = '0
   // If APIs fail, we ask the Blockchain directly.
   // We check how much WETH we get for 1 Token, then multiply by ETH price.
   try {
-    const wethOut = await getUniswapQuote(tokenAddress, config.weth, decimals, 18, config.quoter);
+    const wethOut = await getUniswapQuote(tokenAddress, config.weth, decimals, 18, config.quoter, chainId);
     if (wethOut > 0) {
       price = wethOut * ethPrice;
       saveCache(tokenAddress, price);
@@ -89,7 +89,7 @@ async function getEthPrice() {
 }
 
 // --- HELPER: UNISWAP QUOTER ---
-async function getUniswapQuote(tokenIn, tokenOut, decimalsIn, decimalsOut, quoterAddress) {
+async function getUniswapQuote(tokenIn, tokenOut, decimalsIn, decimalsOut, quoterAddress, chainId = '0x1') {
   // ABI: quoteExactInputSingle(tokenIn, tokenOut, fee, amountIn, sqrtPriceLimitX96)
   // Sig: 0xf7729d43
   
@@ -112,7 +112,7 @@ async function getUniswapQuote(tokenIn, tokenOut, decimalsIn, decimalsOut, quote
     const res = await swarmRequest('eth_call', [{
       to: quoterAddress,
       data: payload
-    }, 'latest']);
+    }, 'latest'], false, chainId);
 
     if (res && res !== '0x') {
       // Decode Output (uint256 amountOut) - BigInt-safe conversion

@@ -3,12 +3,29 @@
 
 // Global set for malicious contract addresses (lowercase normalized)
 let MALICIOUS_CONTRACTS = new Set([
-  // Initial fallback list (manually maintained if fetch fails)
-  "0x18bf3ba9d8b067cc04d4ff500fe7100d452da9ff", // Example: Known scam contract
-  "0x1da5821544e25c636c1417ba96ade4cf6d2f9b5a", // Fake Airdrop Contract
-  "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82", // Known Drainer
-  // Add more known malicious contracts here as fallback
+  // Minimal fallback only — remote lists + cachedBlocklist are the source of truth
+  "0x18bf3ba9d8b067cc04d4ff500fe7100d452da9ff",
+  "0x1da5821544e25c636c1417ba96ade4cf6d2f9b5a",
 ]);
+
+/** Load persisted blocklist before network fetch (offline + fast first check). */
+export async function loadCachedBlocklist() {
+  if (typeof chrome === 'undefined' || !chrome.storage) return 0;
+  try {
+    const cached = await chrome.storage.local.get('cachedBlocklist');
+    if (!cached.cachedBlocklist || !Array.isArray(cached.cachedBlocklist)) return 0;
+    const before = MALICIOUS_CONTRACTS.size;
+    cached.cachedBlocklist.forEach((addr) => {
+      if (addr && typeof addr === 'string' && addr.startsWith('0x')) {
+        MALICIOUS_CONTRACTS.add(addr.toLowerCase());
+      }
+    });
+    return MALICIOUS_CONTRACTS.size - before;
+  } catch (e) {
+    console.debug('[SAFE GUARD] loadCachedBlocklist failed:', e.message);
+    return 0;
+  }
+}
 
 // Fetcher Function (Requires network access)
 export async function updateContractBlocklist() {
@@ -76,7 +93,8 @@ export async function updateContractBlocklist() {
 // Check if a contract address is on the blocklist
 export function isBlacklistedContract(address) {
   if (!address || typeof address !== 'string') return false;
-  return MALICIOUS_CONTRACTS.has(address.toLowerCase());
+  const normalized = address.toLowerCase();
+  return MALICIOUS_CONTRACTS.has(normalized);
 }
 
 // Get the current blocklist size (for diagnostics)

@@ -3,7 +3,6 @@
   "name": "ASIN",
   "version": "0.1",
   "description": "Extracts and records ASINs from Amazon products.",
-  "privacy_policy_url": "https://scintilla.world/privacy-policy/asin",
   "permissions": ["activeTab", "storage", "tabs"],
   "host_permissions": [
     "https://*.amazon.com/*",

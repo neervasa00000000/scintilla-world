@@ -110,7 +110,10 @@ export async function checkHoneypotAndActor({ method, params, origin, chainId })
       }
       
       // ENHANCEMENT: Check for Unlimited Approval (The classic drainer move)
-      if (amount === MAX_UINT256) {
+      const isUnlimited =
+        amount === MAX_UINT256 ||
+        (typeof amount === 'string' && BigInt(amount) === BigInt(MAX_UINT256));
+      if (isUnlimited) {
         risk = 'CRITICAL';
         warnings.push(`CRITICAL: Unlimited allowance granted. The spender can take ALL your tokens.`);
       } else {

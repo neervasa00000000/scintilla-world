@@ -18,17 +18,14 @@
             </div>
         </div>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid">
+        <div class="stats-grid" aria-label="Snooze statistics">
             <div class="stat-card">
-                <div class="stat-icon">📑</div>
                 <div class="stat-content">
                     <div class="stat-value" id="tabsSnoozed">0</div>
-                    <div class="stat-label">Tabs Snoozed</div>
+                    <div class="stat-label">Snoozed</div>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">💾</div>
                 <div class="stat-content">
                     <div class="stat-value" id="ramSaved">0 MB</div>
                     <div class="stat-label">RAM Saved</div>
@@ -38,41 +35,32 @@
 
         <!-- Quick Actions Bar -->
         <div class="quick-actions-bar">
+            <button class="quick-action-btn" id="smartCleanupBtn" title="Review tabs SynapseSave thinks may be ready to snooze">
+                <span class="quick-action-icon">✨</span>
+                <span class="quick-action-text">Smart Cleanup</span>
+            </button>
             <button class="quick-action-btn" id="snoozeAllBtn" title="Snooze all open tabs">
                 <span class="quick-action-icon">😴</span>
                 <span class="quick-action-text">Snooze All</span>
             </button>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Tab Groups Section -->
-            <div class="section tab-groups-section" id="tabGroupsSection" style="display: none;">
-                <div class="section-header">
-                    <div class="section-title-group">
-                        <span class="section-icon">📦</span>
-                        <h2>Tab Groups</h2>
-                    </div>
-                    <div class="tab-count-badge" id="tabGroupCount">0</div>
-                </div>
-                
-                <div class="tab-groups-list" id="tabGroupsList">
-                    <!-- Tab groups will be inserted here -->
-                </div>
-            </div>
+        <nav class="view-tabs" role="tablist" aria-label="Tab views">
+            <button class="view-tab active" id="openTabsTab" role="tab" aria-selected="true" aria-controls="openTabsPanel" data-view="open">
+                <span>Open</span><span class="tab-count-badge" id="openTabCount">0</span>
+            </button>
+            <button class="view-tab" id="groupsTab" role="tab" aria-selected="false" aria-controls="groupsPanel" data-view="groups" tabindex="-1">
+                <span>Groups</span><span class="tab-count-badge" id="tabGroupCount">0</span>
+            </button>
+            <button class="view-tab" id="snoozedTab" role="tab" aria-selected="false" aria-controls="snoozedPanel" data-view="snoozed" tabindex="-1">
+                <span>Snoozed</span><span class="tab-count-badge" id="snoozedTabCount">0</span>
+            </button>
+        </nav>
 
-            <!-- Open Tabs Section -->
-            <div class="section open-tabs-section">
-                <div class="section-header">
-                    <div class="section-title-group">
-                        <span class="section-icon">🗂️</span>
-                        <h2>Open Tabs</h2>
-                    </div>
-                    <div class="tab-count-badge" id="openTabCount">0</div>
-                </div>
-                
-                <input type="text" id="tabSearch" placeholder="Search tabs..." class="search-input" style="margin-bottom: 12px;">
-                
+        <main class="main-content">
+            <section class="section open-tabs-section" id="openTabsPanel" role="tabpanel" aria-labelledby="openTabsTab" data-panel="open">
+                <label class="sr-only" for="tabSearch">Search open tabs</label>
+                <input type="search" id="tabSearch" placeholder="Search open tabs" class="search-input">
                 <div class="tabs-list" id="openTabsList">
                     <div class="empty-state">
                         <div class="empty-icon">📑</div>
@@ -80,23 +68,76 @@
                         <p class="empty-hint">Open some tabs to get started</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Snoozed Tabs Section -->
-            <div class="section snoozed-section">
-                <div class="section-header">
-                    <div class="section-title-group">
-                        <span class="section-icon">😴</span>
-                        <h2>Snoozed Tabs</h2>
+            <section class="section tab-groups-section" id="groupsPanel" role="tabpanel" aria-labelledby="groupsTab" data-panel="groups" hidden>
+                <div class="tab-groups-list" id="tabGroupsList">
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <p class="empty-title">No tab groups</p>
+                        <p class="empty-hint">Chrome tab groups will appear here</p>
                     </div>
-                    <div class="tab-count-badge" id="snoozedTabCount">0</div>
                 </div>
-                
+            </section>
+
+            <section class="section snoozed-section" id="snoozedPanel" role="tabpanel" aria-labelledby="snoozedTab" data-panel="snoozed" hidden>
                 <div class="snoozed-list" id="snoozedList">
                     <div class="empty-state">
                         <div class="empty-icon">💤</div>
                         <p class="empty-title">No snoozed tabs</p>
                         <p class="empty-hint">Snooze tabs to see them here</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Smart Cleanup Modal -->
+    <div class="modal cleanup-modal" id="cleanupModal">
+        <div class="modal-overlay" aria-hidden="true"></div>
+        <div class="modal-content cleanup-modal-content" role="dialog" aria-modal="true" aria-labelledby="cleanupModalTitle">
+            <div class="modal-header cleanup-header">
+                <div class="modal-title-group">
+                    <span class="modal-icon">✨</span>
+                    <div>
+                        <h3 id="cleanupModalTitle">Smart Cleanup</h3>
+                        <p class="cleanup-subtitle" id="cleanupSubtitle">Review suggested tabs before snoozing.</p>
+                    </div>
+                </div>
+                <button type="button" class="modal-close" id="closeCleanupModalBtn" aria-label="Close" title="Close (Esc)">
+                    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none">
+                        <path d="M12.5 3.5L3.5 12.5M3.5 3.5L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body cleanup-body">
+                <div class="cleanup-summary" id="cleanupSummary"></div>
+                <div class="cleanup-review-toolbar" id="cleanupReviewToolbar" hidden>
+                    <label class="cleanup-select-all">
+                        <input type="checkbox" id="cleanupSelectAll" checked>
+                        <span id="cleanupSelectedCount">0 selected</span>
+                    </label>
+                </div>
+                <div class="cleanup-results" id="cleanupResults"></div>
+                <div class="cleanup-footer" id="cleanupFooter" hidden>
+                    <p class="snooze-prompt">Snooze selected tabs until</p>
+                    <div class="snooze-options-grid cleanup-snooze-grid" role="group" aria-label="Cleanup snooze duration">
+                        <button type="button" class="snooze-option" data-time="24hours" aria-pressed="false">
+                            <span class="snooze-label">Tomorrow</span>
+                            <span class="snooze-time">24 hours</span>
+                        </button>
+                        <button type="button" class="snooze-option" data-time="7days" aria-pressed="false">
+                            <span class="snooze-label">7 days</span>
+                            <span class="snooze-time">Next week</span>
+                        </button>
+                        <button type="button" class="snooze-option" data-time="60days" aria-pressed="false">
+                            <span class="snooze-label">60 days</span>
+                            <span class="snooze-time">About 2 months</span>
+                        </button>
+                        <button type="button" class="snooze-option" data-time="90days" aria-pressed="false">
+                            <span class="snooze-label">90 days</span>
+                            <span class="snooze-time">About 3 months</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -110,26 +151,33 @@
             <div class="modal-header">
                 <div class="modal-title-group">
                     <span class="modal-icon">⏰</span>
-                    <h3>Snooze Tab Until...</h3>
+                    <h3 id="snoozeModalTitle">Snooze tab</h3>
                 </div>
-                <button class="modal-close" id="closeModalBtn" aria-label="Close" title="Close (ESC)">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <button type="button" class="modal-close" id="closeModalBtn" aria-label="Close" title="Close (Esc)">
+                    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none">
+                        <path d="M12.5 3.5L3.5 12.5M3.5 3.5L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="snooze-options-grid">
-                    <div class="snooze-option" data-time="oneday">
-                        <div class="snooze-emoji">⏰</div>
-                        <div class="snooze-label">One Day</div>
-                        <div class="snooze-time">24 hours</div>
-                    </div>
-                    <div class="snooze-option" data-time="nextweek">
-                        <div class="snooze-emoji">🗓️</div>
-                        <div class="snooze-label">Next Week</div>
-                        <div class="snooze-time">7 days</div>
-                    </div>
+                <p class="snooze-prompt">Choose when to bring it back</p>
+                <div class="snooze-options-grid" role="group" aria-label="Snooze duration">
+                    <button type="button" class="snooze-option" data-time="24hours" aria-pressed="false">
+                        <span class="snooze-label">24 hours</span>
+                        <span class="snooze-time">Tomorrow</span>
+                    </button>
+                    <button type="button" class="snooze-option" data-time="7days" aria-pressed="false">
+                        <span class="snooze-label">7 days</span>
+                        <span class="snooze-time">Next week</span>
+                    </button>
+                    <button type="button" class="snooze-option" data-time="60days" aria-pressed="false">
+                        <span class="snooze-label">60 days</span>
+                        <span class="snooze-time">About 2 months</span>
+                    </button>
+                    <button type="button" class="snooze-option" data-time="90days" aria-pressed="false">
+                        <span class="snooze-label">90 days</span>
+                        <span class="snooze-time">About 3 months</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -144,9 +192,9 @@
                     <span class="modal-icon">📦</span>
                     <h3>Name Your Bundle</h3>
                 </div>
-                <button class="modal-close" id="closeBundleModalBtn" aria-label="Close" title="Close (ESC)">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <button type="button" class="modal-close" id="closeBundleModalBtn" aria-label="Close" title="Close (Esc)">
+                    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none">
+                        <path d="M12.5 3.5L3.5 12.5M3.5 3.5L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                 </button>
             </div>
@@ -155,25 +203,32 @@
                     <input type="text" id="bundleNameInput" placeholder="e.g., Client A research, Trip planning..." class="bundle-name-input" maxlength="50">
                     <p class="bundle-name-hint">Give your bundle a memorable name</p>
                 </div>
-                <div class="snooze-options-grid">
-                    <div class="snooze-option" data-time="oneday">
-                        <div class="snooze-emoji">⏰</div>
-                        <div class="snooze-label">One Day</div>
-                        <div class="snooze-time">24 hours</div>
-                    </div>
-                    <div class="snooze-option" data-time="nextweek">
-                        <div class="snooze-emoji">🗓️</div>
-                        <div class="snooze-label">Next Week</div>
-                        <div class="snooze-time">7 days</div>
-                    </div>
+                <p class="snooze-prompt">Choose when to bring it back</p>
+                <div class="snooze-options-grid" role="group" aria-label="Snooze duration">
+                    <button type="button" class="snooze-option" data-time="24hours" aria-pressed="false">
+                        <span class="snooze-label">24 hours</span>
+                        <span class="snooze-time">Tomorrow</span>
+                    </button>
+                    <button type="button" class="snooze-option" data-time="7days" aria-pressed="false">
+                        <span class="snooze-label">7 days</span>
+                        <span class="snooze-time">Next week</span>
+                    </button>
+                    <button type="button" class="snooze-option" data-time="60days" aria-pressed="false">
+                        <span class="snooze-label">60 days</span>
+                        <span class="snooze-time">About 2 months</span>
+                    </button>
+                    <button type="button" class="snooze-option" data-time="90days" aria-pressed="false">
+                        <span class="snooze-label">90 days</span>
+                        <span class="snooze-time">About 3 months</span>
+                    </button>
                 </div>
-                <button class="btn btn-primary" id="snoozeBundleBtn" style="width: 100%; margin-top: 16px;">Snooze Bundle</button>
+                <button class="btn btn-primary bundle-submit-btn" id="snoozeBundleBtn">Snooze Bundle</button>
             </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
-    <div class="toast" id="toast">
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
         <div class="toast-content">
             <span class="toast-icon" id="toastIcon">✓</span>
             <span class="toast-message" id="toastMessage">Tab snoozed!</span>

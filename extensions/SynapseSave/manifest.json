@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SynapseSave - Snooze Your Tabs",
-  "version": "1.1.13",
+  "version": "1.1.19",
   "description": "Snooze tabs to specific times. Free your RAM. Save your sanity.",
   "icons": {
     "16": "lazy-sleep1.png",
@@ -13,8 +13,8 @@
     "tabGroups",
     "storage",
     "alarms",
-    "notifications",
-    "favicon"
+    "favicon",
+    "contextMenus"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -29,4 +29,3 @@
     "service_worker": "background.js"
   }
 }
-

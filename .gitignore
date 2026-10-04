@@ -28,6 +28,6 @@ build/
 *.tmp
 *.temp
 
-
-
-
+# Secrets and keys
+*.pem
+*.key

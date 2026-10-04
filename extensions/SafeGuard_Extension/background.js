@@ -1,9 +1,36 @@
 // background.js
 import { checkHoneypotAndActor } from './honeypot.js';
-import { updateContractBlocklist, cacheBlocklist, getBlocklistSize } from './blocklist.js';
+import { updateContractBlocklist, cacheBlocklist, getBlocklistSize, loadCachedBlocklist } from './blocklist.js';
 
 let currentPopupWindow = null;
-let pendingRequests = new Map(); // Store reqId -> tabId mapping
+let pendingRequests = new Map(); // reqId -> tabId
+
+async function persistPendingRequests() {
+  try {
+    await chrome.storage.session.set({ pendingWeb3: Object.fromEntries(pendingRequests) });
+  } catch {
+    /* session storage unavailable */
+  }
+}
+
+chrome.storage.session.get('pendingWeb3').then((data) => {
+  if (data.pendingWeb3 && typeof data.pendingWeb3 === 'object') {
+    Object.entries(data.pendingWeb3).forEach(([reqId, tabId]) => {
+      if (tabId) pendingRequests.set(reqId, tabId);
+    });
+  }
+}).catch(() => {});
+
+async function resolveTabId(reqId, tabIdFromMessage) {
+  if (tabIdFromMessage) return tabIdFromMessage;
+  if (pendingRequests.has(reqId)) return pendingRequests.get(reqId);
+  try {
+    const data = await chrome.storage.session.get('pendingWeb3');
+    return data.pendingWeb3?.[reqId] ?? null;
+  } catch {
+    return null;
+  }
+}
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'WEB3_REQUEST') {
@@ -13,12 +40,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   
   // Handle decision from the Popup UI
   if (message.type === 'USER_DECISION') {
+    (async () => {
     const { reqId, approved, tabId } = message;
     
     console.log('[SAFE GUARD] User decision:', approved, 'for reqId:', reqId, 'tabId:', tabId);
     
     // Get the stored tabId if not provided
-    const targetTabId = tabId || pendingRequests.get(reqId);
+    const targetTabId = await resolveTabId(reqId, tabId);
     
     // Close the popup window first
     if (currentPopupWindow) {
@@ -45,6 +73,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Clean up - Clear the currentRequest from storage
     chrome.storage.local.remove('currentRequest').catch(() => {});
     pendingRequests.delete(reqId);
+    await persistPendingRequests();
+    })();
     
     return true; // Keep channel open for async response
   }
@@ -59,9 +89,9 @@ async function handleWeb3Request(message, sender) {
         return;
       }
   
-  // Store the mapping
   pendingRequests.set(reqId, tabId);
-  
+  await persistPendingRequests();
+
   console.log('[SAFE GUARD] Intercepted request:', payload.method, 'reqId:', reqId, 'tabId:', tabId);
   
   // 1. Run Analysis
@@ -82,7 +112,7 @@ async function handleWeb3Request(message, sender) {
     
     // Don't set left/top - Chrome automatically centers popup windows
     // This ensures it appears in the center of the screen
-    const window = await chrome.windows.create({
+    const popupWin = await chrome.windows.create({
       url: chrome.runtime.getURL('popup.html'),
       type: 'popup',
       width: popupWidth,
@@ -90,7 +120,7 @@ async function handleWeb3Request(message, sender) {
       focused: true
       // Intentionally NOT setting left/top - Chrome centers automatically
     });
-        currentPopupWindow = window.id;
+        currentPopupWindow = popupWin.id;
       } catch (e) {
         console.warn('[SAFE GUARD] Failed to open popup window:', e.message || 'Unknown error');
         // If popup fails, default to reject
@@ -153,6 +183,7 @@ setInterval(updateBlocklist, 3600000);
 // Initialize Contract Blocklist on Startup
 async function initContractBlocklist() {
   console.log('[SAFE GUARD] Initializing malicious contract blocklist...');
+  await loadCachedBlocklist();
   await updateContractBlocklist();
   await cacheBlocklist(); // Persist to storage for offline use
   console.log(`[SAFE GUARD] Contract blocklist ready: ${getBlocklistSize()} entries.`);
@@ -173,11 +204,12 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       
       // A. Check Typosquatting (Before phishing check)
       SAFE_DOMAINS.forEach(safe => {
+        if (hostname === safe || hostname.endsWith('.' + safe)) return;
         const dist = getDistance(hostname, safe);
-        // If distance is 1 or 2 (very close), but NOT exact match -> It's a Fake!
-        if (dist > 0 && dist <= 2 && hostname !== safe) {
+        // Distance 1 only — reduces false blocks on legitimate lookalikes
+        if (dist === 1) {
           console.warn(`[SAFE GUARD] Typosquat Detected: ${hostname} mimics ${safe}`);
-          chrome.tabs.update(tabId, { url: chrome.runtime.getURL(`blocked.html?safe=${safe}`) });
+          chrome.tabs.update(tabId, { url: chrome.runtime.getURL(`blocked.html?safe=${encodeURIComponent(safe)}`) });
         }
       });
       
