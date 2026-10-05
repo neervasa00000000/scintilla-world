@@ -63,6 +63,7 @@ export function ToolApp() {
   const [cvdMode, setCvdMode] = useState<CvdMode>("normal");
   const [activeTab, setActiveTab] = useState<"issues" | "editor" | "geojson">("issues");
   const [selectedCueId, setSelectedCueId] = useState<string | null>(null);
+  const [placingCueId, setPlacingCueId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [notice, setNotice] = useState("");
@@ -118,6 +119,7 @@ export function ToolApp() {
     const next = runCheck(newCues, snap.threshold, name === "melbourne" ? "melbourne" : "custom", []);
     setSnap(next);
     setSelectedCueId(null);
+    setPlacingCueId(null);
     setNotice(
       name === "melbourne"
         ? "Melbourne CBD demo loaded."
@@ -175,17 +177,17 @@ export function ToolApp() {
     setSnap(next);
   }
 
-  function addCue() {
+  function addCue(kind: "route" | "marker") {
     const id = `cue-${Date.now()}`;
     const colors = ["#8b5cf6", "#ec4899", "#14b8a6", "#f59e0b", "#3b82f6", "#10b981"];
     const newCue: Cue = {
       id,
-      role: "custom",
-      label: `New Cue ${snap.cues.length + 1}`,
+      role: kind === "route" ? "route_alt" : "custom",
+      label: `New ${kind} ${snap.cues.length + 1}`,
       colour: colors[snap.cues.length % colors.length],
       secondaryEncoding: {
         pattern: "solid",
-        width: 4,
+        width: kind === "route" ? 5 : 0,
         icon: "circle",
         labelOnMap: true,
       },
@@ -195,8 +197,9 @@ export function ToolApp() {
     const next = runCheck(updated, snap.threshold, "custom", snap.fixChanges);
     setSnap(next);
     setSelectedCueId(id);
+    setPlacingCueId(id);
     setActiveTab("editor");
-    setNotice("New cue added.");
+    setNotice(`New ${kind} added. Click the street map to ${kind === "route" ? "add route points" : "place the marker"}.`);
   }
 
   function removeCue(id: string) {
@@ -208,13 +211,45 @@ export function ToolApp() {
     const next = runCheck(updated, snap.threshold, "custom", snap.fixChanges);
     setSnap(next);
     if (selectedCueId === id) setSelectedCueId(null);
+    if (placingCueId === id) setPlacingCueId(null);
     setNotice("Cue removed.");
+  }
+
+  function placeCoordinate(point: [number, number]) {
+    if (!placingCueId) return;
+    const cue = snap.cues.find((item) => item.id === placingCueId);
+    if (!cue) return;
+    const isLine = cue.role.includes("route") || cue.role.includes("mode") ||
+      (cue.secondaryEncoding.width ?? 0) > 0;
+    const previous = cue.coordinates;
+    const coordinates: Cue["coordinates"] = isLine
+      ? [...(previous && Array.isArray(previous[0]) ? previous as [number, number][] : []), point]
+      : point;
+    updateCue(cue.id, { coordinates, geometryRef: undefined });
+    if (isLine) {
+      setNotice(`${cue.label}: point ${(coordinates as [number, number][]).length} added. Click another place or Finish drawing.`);
+    } else {
+      setPlacingCueId(null);
+      setNotice(`${cue.label} placed at ${point[1].toFixed(5)}, ${point[0].toFixed(5)}.`);
+    }
+  }
+
+  function undoLastPoint(cue: Cue) {
+    if (!cue.coordinates || !Array.isArray(cue.coordinates[0])) return;
+    const points = (cue.coordinates as [number, number][]).slice(0, -1);
+    updateCue(cue.id, { coordinates: points.length ? points : undefined });
+    setNotice(`Removed the last point from ${cue.label}.`);
   }
 
   // GeoJSON Import
   function handleImportFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    if (file.size > 5_000_000) {
+      setError("GeoJSON must be smaller than 5 MB.");
+      event.target.value = "";
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
@@ -235,6 +270,7 @@ export function ToolApp() {
     if (Array.isArray(json.cues)) {
       const next = runCheck(json.cues, snap.threshold, "custom", []);
       setSnap(next);
+      setPlacingCueId(null);
       setNotice(`Imported ${json.cues.length} cues from CueLock export.`);
       return;
     }
@@ -243,7 +279,7 @@ export function ToolApp() {
       type?: string;
       geometry?: {
         type?: string;
-        coordinates?: [number, number][] | [number, number];
+          coordinates?: [number, number][][] | [number, number][] | [number, number];
       };
       properties?: {
         id?: string;
@@ -262,20 +298,30 @@ export function ToolApp() {
       };
     };
 
-    const rawFeatures: unknown[] = json.features || (json.type === "Feature" ? [json] : []);
-    const features = rawFeatures as GeoJsonFeature[];
-    if (!features || features.length === 0) {
+    const rawFeatures: unknown = json.features ?? (json.type === "Feature" ? [json] : []);
+    if (!Array.isArray(rawFeatures) || rawFeatures.length === 0) {
       throw new Error("No GeoJSON features found in file.");
     }
+    const features = rawFeatures as GeoJsonFeature[];
 
     const palette = ["#22c55e", "#ef4444", "#f97316", "#3b82f6", "#a855f7", "#06b6d4"];
     const imported: Cue[] = [];
 
+    let skipped = 0;
     features.forEach((feat, idx: number) => {
       const geomType = feat.geometry?.type;
       const props = feat.properties || {};
       const coords = feat.geometry?.coordinates;
       const isLine = geomType === "LineString" || geomType === "MultiLineString";
+      if (geomType !== "LineString" && geomType !== "MultiLineString" && geomType !== "Point") {
+        skipped++;
+        return;
+      }
+      const geometries = geomType === "MultiLineString" ? coords as [number, number][][] : [coords];
+      if (!Array.isArray(geometries)) {
+        skipped++;
+        return;
+      }
 
       const role: CueRole =
         props.role && ALL_ROLES.includes(props.role)
@@ -294,30 +340,44 @@ export function ToolApp() {
         props.title ||
         (isLine ? `Route ${idx + 1}` : `Location ${idx + 1}`);
 
-      const colour =
+      const colourInput =
         props.colour || props.color || props.stroke || palette[idx % palette.length];
-
-      imported.push({
-        id: props.id ? `imported-${props.id}` : `cue-${Date.now()}-${idx}`,
-        role,
-        label,
-        colour,
-        secondaryEncoding: {
-          pattern: props.pattern || (role === "route_alt" ? "dashed" : "solid"),
-          width: props.width || (isLine ? 5 : 0),
-          icon: props.icon || (role === "hazard" ? "triangle" : "circle"),
-          labelOnMap: Boolean(props.labelOnMap ?? true),
-        },
-        coordinates: coords,
-        critical: true,
+      const colour = /^#[0-9a-fA-F]{6}$/.test(colourInput) ? colourInput : palette[idx % palette.length];
+      geometries.forEach((part, partIndex) => {
+        const validPoint = (point: unknown): point is [number, number] =>
+          Array.isArray(point) && point.length === 2 &&
+          point.every((value) => typeof value === "number" && Number.isFinite(value)) &&
+          Math.abs(point[0]) <= 180 && Math.abs(point[1]) <= 90;
+        const valid = isLine
+          ? Array.isArray(part) && part.length >= 2 && part.every(validPoint)
+          : validPoint(part);
+        if (!valid) { skipped++; return; }
+        imported.push({
+          id: `imported-${props.id ?? idx}-${partIndex}`,
+          role,
+          label: geometries.length > 1 ? `${label} ${partIndex + 1}` : label,
+          colour,
+          secondaryEncoding: {
+            pattern: props.pattern === "dashed" || props.pattern === "dotted" ? props.pattern : "solid",
+            width: isLine ? Math.min(Math.max(Number(props.width) || 5, 2), 20) : 0,
+            icon: props.icon || (role === "hazard" ? "triangle" : "circle"),
+            labelOnMap: Boolean(props.labelOnMap ?? true),
+          },
+          coordinates: part as [number, number][] | [number, number],
+          critical: props.critical ?? true,
+        });
       });
     });
 
     if (imported.length > 0) {
       const next = runCheck(imported, snap.threshold, "custom", []);
       setSnap(next);
-      setNotice(`Imported ${imported.length} features from GeoJSON.`);
+      setPlacingCueId(null);
+      setNotice(`Imported ${imported.length} map cues from GeoJSON.${skipped ? ` Skipped ${skipped} unsupported or invalid geometries.` : ""}`);
       setActiveTab("editor");
+      setError("");
+    } else {
+      throw new Error("No supported Point or LineString geometry found. Use GeoJSON points or routes.");
     }
   }
 
@@ -441,9 +501,9 @@ export function ToolApp() {
             </p>
             <h1>Verify & Secure Map Cues</h1>
             <p className="intro-copy">
-              Ensure critical map cues (routes, hazards, and destinations) survive colour vision
-              differences. Simulate red/green/blue blindness, auto-differentiate with dual
-              encodings, and export audit reports.
+              Work on a real street map: import GeoJSON or draw routes and markers anywhere.
+              Check how critical cues hold up under simulated colour vision differences,
+              improve their visual encodings, and export the results.
             </p>
           </div>
 
@@ -503,10 +563,11 @@ export function ToolApp() {
               <button
                 type="button"
                 className="button button-secondary"
-                onClick={addCue}
+                onClick={() => addCue("route")}
               >
-                + Add Cue
+                + Add Route
               </button>
+              <button type="button" className="button button-secondary" onClick={() => addCue("marker")}>+ Add Marker</button>
               <button
                 type="button"
                 className="button button-secondary"
@@ -613,7 +674,7 @@ export function ToolApp() {
               </div>
 
               <div className="text-xs text-[var(--dim)]">
-                {CVD_TABS.find((t) => t.id === cvdMode)?.desc}
+                {CVD_TABS.find((t) => t.id === cvdMode)?.desc} The simulation changes cue colours; street tiles remain in their original colours.
               </div>
             </div>
           </div>
@@ -657,6 +718,7 @@ export function ToolApp() {
                   </h2>
                 </div>
                 <div className="flex items-center gap-2">
+                  {placingCueId && <button type="button" className="button button-primary text-xs" onClick={() => setPlacingCueId(null)}>Finish drawing</button>}
                   <span className="demo-pill">
                     {snap.demo === "melbourne" ? "Melbourne Demo" : `${snap.cues.length} Cues`}
                   </span>
@@ -671,6 +733,8 @@ export function ToolApp() {
                     callouts={callouts}
                     cvdMode={cvdMode}
                     selectedCueId={selectedCueId}
+                    placingCueId={placingCueId}
+                    onPlaceCoordinate={placeCoordinate}
                     onSelectCue={(id) => {
                       setSelectedCueId(id);
                       setActiveTab("editor");
@@ -808,13 +872,10 @@ export function ToolApp() {
                       <span className="text-xs text-[var(--muted)]">
                         Customize roles, colors, patterns, and icons:
                       </span>
-                      <button
-                        type="button"
-                        className="button button-secondary text-xs"
-                        onClick={addCue}
-                      >
-                        + Add Cue
-                      </button>
+                      <div className="flex flex-wrap gap-2">
+                        <button type="button" className="button button-secondary text-xs" onClick={() => addCue("route")}>+ Add route</button>
+                        <button type="button" className="button button-secondary text-xs" onClick={() => addCue("marker")}>+ Add marker</button>
+                      </div>
                     </div>
 
                     {snap.cues.map((cue) => {
@@ -855,14 +916,13 @@ export function ToolApp() {
                               />
                             </div>
 
-                            <button
-                              type="button"
-                              onClick={() => removeCue(cue.id)}
-                              className="text-xs text-[var(--danger)] hover:underline"
-                              title="Delete cue"
-                            >
-                              Remove
-                            </button>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <button type="button" className="text-xs text-[var(--accent)] hover:underline" onClick={() => { setSelectedCueId(cue.id); setPlacingCueId(cue.id); setNotice(`Click the street map to place ${cue.label}.`); }}>
+                                {placingCueId === cue.id ? "Drawing…" : isLine ? "Draw on map" : "Place on map"}
+                              </button>
+                              {isLine && Array.isArray(cue.coordinates?.[0]) && <button type="button" className="text-xs text-[var(--muted)] hover:underline" onClick={() => undoLastPoint(cue)}>Undo point</button>}
+                              <button type="button" onClick={() => removeCue(cue.id)} className="text-xs text-[var(--danger)] hover:underline" title="Delete cue">Remove</button>
+                            </div>
                           </div>
 
                           {/* Role & Pattern Row */}

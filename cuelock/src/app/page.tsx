@@ -11,8 +11,8 @@ export default function ScintillaHome() {
         <div>
           <p className="eyebrow">Introducing CueLock</p>
           <h1>Can everyone read your map?</h1>
-          <p>Colour alone can make a route, hazard, or destination hard to recognise. CueLock checks critical map cues under simulated colour vision differences, then shows how pattern, shape, and labels can help.</p>
-          <div className="home-actions"><Link className="button button-primary" href="/cuelock">Try the Melbourne demo <span aria-hidden="true">↗</span></Link><a className="button button-secondary" href="https://github.com/neervasa00000000" target="_blank" rel="noopener noreferrer">View GitHub</a></div>
+          <p>Colour alone can make a route, hazard, or destination hard to recognise. Import your GeoJSON or draw cues on a real street map, check them under simulated colour vision differences, and improve them with pattern, shape, and labels.</p>
+          <div className="home-actions"><Link className="button button-primary" href="/cuelock">Open the map studio <span aria-hidden="true">↗</span></Link><a className="button button-secondary" href="https://github.com/neervasa00000000" target="_blank" rel="noopener noreferrer">View GitHub</a></div>
         </div>
         <div className="home-preview" aria-hidden="true">
           <span className="preview-label">MELBOURNE DEMO</span>

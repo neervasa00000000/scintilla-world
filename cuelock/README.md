@@ -2,7 +2,7 @@
 
 Run locally with `npm ci && npm run dev`. Use `npm run verify:demo` to check that the original Melbourne cues fail and the suggested encodings pass. `npm run build` creates the static site in `out/` for Netlify.
 
-CueLock operates in both **Preset Demo mode** (Melbourne CBD, Transit vs Walk, Evacuation Corridor) and a **Full Custom Map Studio** where designers can upload GeoJSON, edit cue roles, colors, patterns, and marker shapes, toggle live CVD simulation modes (Normal, Protanopia, Deuteranopia, Tritanopia), and export audit reports or evidence cards.
+CueLock opens on a real OpenStreetMap street map. Designers can pan and zoom anywhere, draw routes or place markers directly, or import GeoJSON Point, LineString, and MultiLineString features. A schematic fallback stays available when street tiles cannot load. The app also includes Melbourne, transit, and evacuation presets; cue editing; simulated colour vision modes; and report exports. The simulation changes cue colours only, not the underlying street tiles.
 
 ### What CueLock is
 Semantic verifier for navigation cues on web maps.
